@@ -1,0 +1,29 @@
+version: '3.3'
+
+services:
+  app:
+    image: totallator:latest
+    restart: always
+    environment:
+      - DATABASE_URL="postgres://root:totallator@db:5433/totallator"
+      - VITE_AUTH_SECRET=8rYn7aAB89tPfkMMMeXLQH3LAnc58AxquKJOFGPNEN1UYYfQpj
+      - VITE_ALLOW_SIGNUP=false
+      - VITE_ALLOW_HTTP=true
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+
+
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - totallatordb:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD: totallator
+      - POSTGRES_USER: root
+      - POSTGRES_DB: totallator
+
+volumes:
+   totallatordb:

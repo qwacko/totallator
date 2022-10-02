@@ -1,9 +1,7 @@
 # Before Considering Using In Anger
 
 TODO Make github action
-TODO Make into public repository
-TODO Update Readme.
-TODO Update to Totallator.
+TODO Make Docker-Compose file work
 
 NEXT Make It So An Account Grouping Can Be Seeded
 
