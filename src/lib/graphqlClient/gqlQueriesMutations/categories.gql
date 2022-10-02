@@ -1,0 +1,55 @@
+fragment categoryReturn on Category {
+	id
+	title
+	group
+	single
+	accountGrouping {
+		id
+		title
+		status
+		allowUpdate
+		userIsAdmin
+	}
+	status
+	deleted
+	active
+	disabled
+	allowUpdate
+	createdAt
+	updatedAt
+	userIsAdmin
+}
+
+query getCategories($filter: CategoryFilter, $offset: Int, $limit: Int, $sort: [CategorySort!]) {
+	categories(filter: $filter, offset: $offset, limit: $limit, sort: $sort) {
+		count
+		categories {
+			...categoryReturn
+		}
+	}
+}
+
+query categoriesDropdown($search: String!, $accountGrouping: UUID!) {
+	categories(
+		filter: { title: { contains: $search }, accountGroupingId: { equals: $accountGrouping } }
+		sort: [{ title: asc }]
+		limit: 10
+	) {
+		categories {
+			id
+			title
+		}
+	}
+}
+
+mutation createCategory($input: CreateCategoryInput!) {
+	createCategory(input: $input) {
+		...categoryReturn
+	}
+}
+
+mutation updateCategory($id: String!, $input: UpdateCategoryInput!) {
+	updateCategories(filter: { id: { equals: $id } }, input: $input) {
+		...categoryReturn
+	}
+}

@@ -1,0 +1,53 @@
+fragment billReturn on Bill {
+	id
+	title
+	accountGrouping {
+		id
+		title
+		status
+		allowUpdate
+		userIsAdmin
+	}
+	status
+	deleted
+	active
+	disabled
+	allowUpdate
+	createdAt
+	updatedAt
+	userIsAdmin
+}
+
+query getBills($filter: BillFilter, $offset: Int, $limit: Int, $sort: [BillSort!]) {
+	bills(filter: $filter, offset: $offset, limit: $limit, sort: $sort) {
+		count
+		bills {
+			...billReturn
+		}
+	}
+}
+
+query billsDropdown($search: String!, $accountGrouping: UUID!) {
+	bills(
+		filter: { title: { contains: $search }, accountGroupingId: { equals: $accountGrouping } }
+		sort: [{ title: asc }]
+		limit: 10
+	) {
+		bills {
+			id
+			title
+		}
+	}
+}
+
+mutation createBill($input: CreateBillInput!) {
+	createBill(input: $input) {
+		...billReturn
+	}
+}
+
+mutation updateBill($id: String!, $input: UpdateBillInput!) {
+	updateBills(filter: { id: { equals: $id } }, input: $input) {
+		...billReturn
+	}
+}

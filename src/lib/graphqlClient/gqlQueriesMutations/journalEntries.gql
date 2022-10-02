@@ -1,0 +1,157 @@
+fragment JournalEntryReturn on JournalEntry {
+	id
+	date
+	description
+	amount
+	linked
+	primary
+	reconciled
+	dataChecked
+	complete
+	userIsAdmin
+	createdAt
+	updatedAt
+	primaryJournalId
+	primaryJournal {
+		id
+		journalEntries {
+			id
+			amount
+			account {
+				id
+				title
+				allowUpdate
+				accountTitleCombined
+				type
+			}
+		}
+	}
+	accountGrouping {
+		id
+		title
+		allowUpdate
+	}
+	account {
+		id
+		title
+		allowUpdate
+		accountTitleCombined
+		type
+	}
+	editable
+	amountEditable
+	total
+	tag {
+		id
+		title
+		allowUpdate
+	}
+	bill {
+		id
+		title
+		allowUpdate
+	}
+	budget {
+		id
+		title
+		allowUpdate
+	}
+	category {
+		id
+		title
+		allowUpdate
+	}
+}
+
+query GetJournals(
+	$filter: JournalEntryFilter
+	$sort: [JournalEntrySort!]
+	$offset: Int
+	$limit: Int
+) {
+	journalEntries(filter: $filter, sort: $sort, offset: $offset, limit: $limit) {
+		journalEntries {
+			...JournalEntryReturn
+		}
+		sum
+		count
+	}
+}
+
+mutation CreateTransasction($input: [CreateJournalInput!]!) {
+	createTransaction(input: $input) {
+		...JournalEntryReturn
+	}
+}
+
+mutation UpdateSingleJournal($id: UUID, $input: UpdateJournalInput!) {
+	updateJournalEntries(filter: { id: { equals: $id } }, input: $input) {
+		...JournalEntryReturn
+	}
+}
+
+mutation UpdateJournalsById($ids: [UUID!]!, $input: UpdateJournalInput!) {
+	updateJournalEntries(filter: { id: { in: $ids } }, input: $input) {
+		...JournalEntryReturn
+	}
+}
+
+mutation UpdatePrimary($oldPrimaryId: UUID!, $newPrimaryId: UUID!) {
+	changePrimaryJournal(newPrimaryId: $newPrimaryId, oldPrimaryId: $oldPrimaryId) {
+		...JournalEntryReturn
+	}
+}
+
+mutation LinkTransaction($id: UUID!) {
+	linkTransactions(primaryJournalIds: [$id]) {
+		...JournalEntryReturn
+	}
+}
+
+mutation UnlinkTransaction($id: UUID!) {
+	unlinkTransactions(primaryJournalIds: [$id]) {
+		...JournalEntryReturn
+	}
+}
+
+mutation CompleteTransaction($id: UUID!) {
+	transactionsToComplete(primaryJournalIds: [$id]) {
+		...JournalEntryReturn
+	}
+}
+
+mutation MarkTransactionsComplete($ids: [UUID!]!) {
+	transactionsToComplete(primaryJournalIds: $ids) {
+		...JournalEntryReturn
+	}
+}
+
+mutation IncompleteTransaction($id: UUID!) {
+	transactionsToIncomplete(primaryJournalIds: [$id]) {
+		...JournalEntryReturn
+	}
+}
+
+mutation MarkTransactionsIncomplete($ids: [UUID!]!) {
+	transactionsToIncomplete(primaryJournalIds: $ids) {
+		...JournalEntryReturn
+	}
+}
+
+mutation AddExpenseToJournals($id: UUID!, $expenseName: String!) {
+	addExpenseAndConnectToJournals(expenseName: $expenseName, journalIds: [$id]) {
+		...JournalEntryReturn
+	}
+}
+
+mutation CloneTransactions($ids: [UUID]!, $input: UpdateJournalInput) {
+	cloneTransactions(ids: $ids, input: $input) {
+		...JournalEntryReturn
+	}
+}
+
+mutation DeleteJournals($ids: [UUID]!) {
+	deleteJournalEntries(journalIds: $ids) {
+		...JournalEntryReturn
+	}
+}

@@ -1,0 +1,6 @@
+projects:
+  default:
+    schema:
+      - './src/lib/server/graphqlServer/graphql/combinedSchema.graphql'
+    documents:
+      - '**/*.gql'

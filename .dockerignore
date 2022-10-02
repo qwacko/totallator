@@ -1,0 +1,16 @@
+.git
+node_modules
+.eslint*
+.prettier*
+.git*
+.vscode
+README.md
+Dockerfile*
+docker-compose.yml
+public
+.svelte-kit
+built
+todo.md,
+.env
+/build
+/docs

@@ -1,0 +1,55 @@
+fragment tagReturn on Tag {
+	id
+	title
+	group
+	single
+	accountGrouping {
+		id
+		title
+		status
+		allowUpdate
+		userIsAdmin
+	}
+	status
+	deleted
+	active
+	disabled
+	allowUpdate
+	createdAt
+	updatedAt
+	userIsAdmin
+}
+
+query getTags($filter: TagFilter, $offset: Int, $limit: Int, $sort: [TagSort!]) {
+	tags(filter: $filter, offset: $offset, limit: $limit, sort: $sort) {
+		count
+		tags {
+			...tagReturn
+		}
+	}
+}
+
+query tagsDropdown($search: String!, $accountGrouping: UUID!) {
+	tags(
+		filter: { title: { contains: $search }, accountGroupingId: { equals: $accountGrouping } }
+		sort: [{ title: asc }]
+		limit: 10
+	) {
+		tags {
+			id
+			title
+		}
+	}
+}
+
+mutation createTag($input: CreateTagInput!) {
+	createTag(input: $input) {
+		...tagReturn
+	}
+}
+
+mutation updateTag($id: String!, $input: UpdateTagInput!) {
+	updateTags(filter: { id: { equals: $id } }, input: $input) {
+		...tagReturn
+	}
+}

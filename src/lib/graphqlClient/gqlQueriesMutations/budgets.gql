@@ -1,0 +1,53 @@
+fragment budgetReturn on Budget {
+	id
+	title
+	accountGrouping {
+		id
+		title
+		status
+		allowUpdate
+		userIsAdmin
+	}
+	status
+	deleted
+	active
+	disabled
+	allowUpdate
+	createdAt
+	updatedAt
+	userIsAdmin
+}
+
+query getBudgets($filter: BudgetFilter, $offset: Int, $limit: Int, $sort: [BudgetSort!]) {
+	budgets(filter: $filter, offset: $offset, limit: $limit, sort: $sort) {
+		count
+		budgets {
+			...budgetReturn
+		}
+	}
+}
+
+query budgetsDropdown($search: String!, $accountGrouping: UUID!) {
+	budgets(
+		filter: { title: { contains: $search }, accountGroupingId: { equals: $accountGrouping } }
+		sort: [{ title: asc }]
+		limit: 10
+	) {
+		budgets {
+			id
+			title
+		}
+	}
+}
+
+mutation createBudget($input: CreateBudgetInput!) {
+	createBudget(input: $input) {
+		...budgetReturn
+	}
+}
+
+mutation updateBudget($id: String!, $input: UpdateBudgetInput!) {
+	updateBudgets(filter: { id: { equals: $id } }, input: $input) {
+		...budgetReturn
+	}
+}

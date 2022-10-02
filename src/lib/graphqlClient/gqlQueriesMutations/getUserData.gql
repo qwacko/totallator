@@ -1,0 +1,32 @@
+fragment UserDisplayedData on User {
+	id
+	admin
+	email
+	firstName
+	lastName
+}
+
+fragment UserPrivateData on User {
+	darkMode
+	dateFormat
+	currencyFormat
+	firstMonthFY
+}
+
+query GetUserData {
+	user {
+		...UserDisplayedData
+		...UserPrivateData
+	}
+}
+
+mutation UpdateUserMutation($input: UpdateUserInput!) {
+	updateUser(input: $input) {
+		...UserDisplayedData
+		...UserPrivateData
+	}
+}
+
+mutation CreateUserMutation($data: CreateUserInput!) {
+	createUser(data: $data)
+}
