@@ -8,6 +8,7 @@ export const cleanseObject = <
 ): OutType | undefined => {
 	if (input) {
 		console.log({ cleanseObject: true, input });
+		console.log({ chain: chain(input).value() });
 		console.log({ firstOmit: chain(input).omitBy(isUndefined).value() });
 		console.log({
 			mapped: chain(input)
