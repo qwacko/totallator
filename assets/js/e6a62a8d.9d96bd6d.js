@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[812],{6621:c=>{c.exports=JSON.parse('{"title":"Account Grouping","slug":"/category/account-grouping","permalink":"/docs/category/account-grouping","navigation":{"previous":{"title":"Docs Intro","permalink":"/docs/intro"},"next":{"title":"Basics","permalink":"/docs/accountGroupings/account-grouping-basics"}}}')}}]);
