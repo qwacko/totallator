@@ -1,5 +1,5 @@
 ---
-layout: defult
+layout: default
 title: 'Home'
 permalink: /
 ---
