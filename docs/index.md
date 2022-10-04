@@ -1,6 +1,8 @@
-layout: page
-title: "Totallator"
+---
+layout: defult
+title: 'Home'
 permalink: /
+---
 
 ## Totallator
 
