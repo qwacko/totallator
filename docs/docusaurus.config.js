@@ -9,7 +9,7 @@ const config = {
   title: "Totallator",
   tagline: "Totallator Documentation",
   url: "https://docs.totallator.com",
-  baseUrl: "/",
+  baseUrl: "/totallator/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
