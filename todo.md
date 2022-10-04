@@ -1,7 +1,6 @@
 # Before Considering Using In Anger
 
-TODO Make github action
-TODO Make Docker-Compose file work
+TODO Make it so query re-runs on adding an item (Currently doesn't work in production)
 
 NEXT Make It So An Account Grouping Can Be Seeded
 
@@ -19,7 +18,6 @@ LATER Add Ability to do automated and scheduled dumps / backups (May require add
 
 #Other Stuff
 
-LATER Figure out if lucia cookies can work under http
 LATER Add summaries to Tag / Account / etc... tables
 LATER User Save / Recall Filters
 LATER Basic Graph with Filtering.
