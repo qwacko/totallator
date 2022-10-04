@@ -1,4 +1,4 @@
-import { chain, isEmpty, isUndefined, mapValues, omitBy } from 'lodash-es';
+import { isEmpty, isUndefined, mapValues, omitBy } from 'lodash-es';
 
 export const cleanseObject = <
 	InType extends Record<string, unknown>,
@@ -19,8 +19,6 @@ export const cleanseObject = <
 			return item;
 		});
 		const omitEmpty = omitBy(arraysMapped, isEmpty);
-
-		console.log({ input, omitEmpty });
 
 		return omitEmpty as OutType;
 	}
