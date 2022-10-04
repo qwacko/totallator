@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "Starting Load"
-cd /app
+cd /app/app
 
 echo "Installing Dependencies"
 pnpm install
