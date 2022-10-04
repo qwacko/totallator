@@ -4,10 +4,10 @@ echo "Starting Load"
 cd /app
 
 echo "Installing Dependencies"
-npm install
+pnpm install
 
 echo "Building Server"
-npm run build
+pnpm build
 
 echo "Updating DB"
 npx prisma migrate deploy
