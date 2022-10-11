@@ -1,5 +1,7 @@
 # Before Considering Using In Anger
 
+TODO Make it so that Docker file uses a two stage. Requires better use of environment variables.
+
 NEXT Make It So An Account Grouping Can Be Seeded
 
 LATER Readd Favicon
