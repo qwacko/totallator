@@ -16,6 +16,7 @@
 	import AccountGroupingSelect from '../AccountGrouping/AccountGroupingSelect.svelte';
 	import toastsStore from '../Toasts/toastsStore';
 	import { BudgetCreateValidation } from './BudgetCreateValidation';
+	import { budgetTableRefreshTrigger } from './budgetStores';
 
 	const dispatch = createEventDispatcher();
 
@@ -35,6 +36,7 @@
 	}
 
 	$: if ($result?.data) {
+		budgetTableRefreshTrigger.trigger();
 		dispatch('complete');
 	}
 

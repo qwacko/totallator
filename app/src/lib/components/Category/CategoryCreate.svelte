@@ -14,6 +14,7 @@
 	import AccountGroupingSelect from '../AccountGrouping/AccountGroupingSelect.svelte';
 	import toastsStore from '../Toasts/toastsStore';
 	import { CategoryCreateValidation } from './CategoryCreateValidation';
+	import { categoryTableRefreshTrigger } from './categoryStores';
 
 	const dispatch = createEventDispatcher();
 
@@ -36,6 +37,7 @@
 
 	$: if ($result?.data) {
 		dispatch('complete');
+		categoryTableRefreshTrigger.trigger();
 	}
 
 	const client = getContextClient();

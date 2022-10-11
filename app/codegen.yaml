@@ -9,6 +9,14 @@ generates:
       - typescript
       - typescript-operations
       - typed-document-node
+  ./src/lib/graphqlClient/urqlGenerated.ts:
+    plugins:
+      - urql-introspection
+    config:
+      useTypeImports: true
+      includeScalars: true
+      includeEnums: true
+      includeInputs: true
 
   ./src/lib/server/graphqlServer/types/generated-resolvers.ts:
     plugins:

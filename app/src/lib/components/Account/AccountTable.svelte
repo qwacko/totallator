@@ -7,6 +7,7 @@
 	import Table from '../Table/Table.svelte';
 	import TableCell from '../Table/TableCell.svelte';
 	import TableColumnHead from '../Table/TableColumnHead.svelte';
+	import { accountTableRefreshTrigger } from './accountStores';
 	import { AccountTableColumnConfig } from './AccountTableConfig';
 	import { getAccounts } from './getAccounts';
 	import { onAccountFilter } from './onAccountFilter';
@@ -21,6 +22,7 @@
 	//URQL Version
 	const client = getContextClient();
 	$: data = getAccounts(client, { sort, offset, limit: pageSize, filter });
+	$: $accountTableRefreshTrigger && data.refetch();
 	$: AccountColumnConfig = AccountTableColumnConfig(client);
 	$: useData = $data?.data?.accounts?.accounts ? $data.data.accounts.accounts : undefined;
 	$: numberItems = $data?.data?.accounts?.count || 0;

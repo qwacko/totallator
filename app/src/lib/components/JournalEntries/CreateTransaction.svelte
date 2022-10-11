@@ -32,6 +32,7 @@
 		CreateTransactionValidation,
 		type CreateTransactionValidationType
 	} from './CreateTransactionValidation';
+	import { journalEntryTableRefreshTrigger } from './journalEntryStores';
 
 	const dispatch = createEventDispatcher();
 
@@ -123,6 +124,7 @@
 
 	$: if ($result?.data) {
 		dispatch('complete');
+		journalEntryTableRefreshTrigger.trigger();
 	}
 
 	const client = getContextClient();

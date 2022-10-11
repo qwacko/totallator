@@ -13,11 +13,11 @@
 	import { getContextClient, mutationStore } from '@urql/svelte';
 	import type { OperationResultStore } from '@urql/svelte/dist/types/common';
 	import { createEventDispatcher } from 'svelte';
-	import { z } from 'zod';
 
 	import AccountGroupingSelect from '../AccountGrouping/AccountGroupingSelect.svelte';
 	import toastsStore from '../Toasts/toastsStore';
 	import { AccountCreateValidation } from './AccountCreateValidation';
+	import { accountTableRefreshTrigger } from './accountStores';
 
 	const dispatch = createEventDispatcher();
 
@@ -42,6 +42,7 @@
 	}
 
 	$: if ($result?.data) {
+		accountTableRefreshTrigger.trigger();
 		dispatch('complete');
 	}
 

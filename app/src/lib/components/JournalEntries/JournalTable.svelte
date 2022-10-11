@@ -6,7 +6,6 @@
 		JournalEntryFilter,
 		JournalEntrySort
 	} from '$lib/graphqlClient/generated';
-	import { cleanseObject } from '$lib/utils/cleanseObject';
 	import { getContextClient } from '@urql/svelte';
 	import type { OperationResultStore } from '@urql/svelte/dist/types/common';
 
@@ -23,6 +22,7 @@
 	import { mergeJournalFilter } from './mergeJournalFilter';
 	import { onJournalFilter } from './onJournalFilter';
 	import { onJournalSort } from './onJournalSort';
+	import { journalEntryTableRefreshTrigger } from './journalEntryStores';
 
 	export let loading = false;
 	export let offset = 0;
@@ -56,6 +56,9 @@
 
 	//Refetch when one of the actions is complete
 	$: if ($actionsResultStore && !$actionsResultStore.fetching) data.refetch();
+
+	//Refetch when transaction created
+	$: $journalEntryTableRefreshTrigger && data.refetch();
 </script>
 
 <Modal bind:show={openEditPopup}>

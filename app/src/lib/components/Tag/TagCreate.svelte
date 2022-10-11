@@ -5,15 +5,16 @@
 		CreateTagDocument,
 		type CreateTagInput,
 		type CreateTagMutation,
-		type CreateTagMutationVariables,
+		type CreateTagMutationVariables
 	} from '$lib/graphqlClient/generated';
 	import { getContextClient, mutationStore } from '@urql/svelte';
 	import type { OperationResultStore } from '@urql/svelte/dist/types/common';
 	import { createEventDispatcher } from 'svelte';
-	import {TagCreateValidation} from './TagCreateValidation'
+	import { TagCreateValidation } from './TagCreateValidation';
 
 	import AccountGroupingSelect from '../AccountGrouping/AccountGroupingSelect.svelte';
 	import toastsStore from '../Toasts/toastsStore';
+	import { tagTableRefreshTrigger } from './tagStores';
 
 	const dispatch = createEventDispatcher();
 
@@ -34,11 +35,11 @@
 
 	$: if ($result?.data) {
 		dispatch('complete');
+		tagTableRefreshTrigger.trigger();
 	}
 
 	const client = getContextClient();
 	const createTagSubmit = async () => {
-
 		const parsedTag = TagCreateValidation.safeParse(newTag);
 
 		if (!parsedTag.success) {
@@ -92,6 +93,6 @@
 			placeholder={`New Tag Single`}
 			disabled={newTagLoading}
 			errorMessage={errors['single']} />
-		<Button defaultText="Add Category" type="submit" loading={newTagLoading} />
+		<Button defaultText="Add Tag" type="submit" loading={newTagLoading} />
 	</div>
 </form>

@@ -7,6 +7,7 @@
 	import Table from '../Table/Table.svelte';
 	import TableCell from '../Table/TableCell.svelte';
 	import TableColumnHead from '../Table/TableColumnHead.svelte';
+	import { categoryTableRefreshTrigger } from './categoryStores';
 	import { CategoryTableColumnConfig } from './CategoryTableConfig';
 	import { getCategories } from './getCategories';
 	import { onCategoryFilter } from './onCategoryFilter';
@@ -20,6 +21,7 @@
 
 	const client = getContextClient();
 	$: data = getCategories(client, { sort, offset, limit: pageSize, filter });
+	$: $categoryTableRefreshTrigger && data.refetch();
 	$: CategoryColumnConfig = CategoryTableColumnConfig(client);
 	$: useData = $data?.data?.categories?.categories ? $data.data.categories.categories : undefined;
 	$: numberItems = $data?.data?.categories?.count || 0;

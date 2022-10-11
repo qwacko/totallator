@@ -11,6 +11,7 @@
 	import { getTags } from './getTags';
 	import { onTagFilter } from './onTagFilter';
 	import { onTagSort } from './onTagSort';
+	import { tagTableRefreshTrigger } from './tagStores';
 
 	export let loading = false;
 	export let offset = 0;
@@ -19,6 +20,7 @@
 	export let filter: InputMaybe<TagFilter> | undefined = undefined;
 
 	const client = getContextClient();
+	$: $tagTableRefreshTrigger && data.refetch(); //Trigger Refetch on new tag creation.
 	$: data = getTags(client, { sort, offset, limit: pageSize, filter });
 	$: TagColumnConfig = TagTableColumnConfig(client);
 	$: useData = $data?.data?.tags?.tags ? $data.data.tags.tags : undefined;

@@ -7,6 +7,7 @@
 	import Table from '../Table/Table.svelte';
 	import TableCell from '../Table/TableCell.svelte';
 	import TableColumnHead from '../Table/TableColumnHead.svelte';
+	import { billTableRefreshTrigger } from './billStores';
 	import { BillTableColumnConfig } from './BillTableConfig';
 	import { getBills } from './getBills';
 	import { onBillFilter } from './onBillFilter';
@@ -20,6 +21,7 @@
 
 	const client = getContextClient();
 	$: data = getBills(client, { sort, offset, limit: pageSize, filter });
+	$: $billTableRefreshTrigger && data.refetch();
 	$: BillColumnConfig = BillTableColumnConfig(client);
 	$: useData = $data?.data?.bills?.bills ? $data.data.bills.bills : undefined;
 	$: numberItems = $data?.data?.bills?.count || 0;

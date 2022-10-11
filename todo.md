@@ -1,10 +1,6 @@
 # Before Considering Using In Anger
 
-TODO Make it so query re-runs on adding an item (Currently doesn't work in production)
-
 NEXT Make It So An Account Grouping Can Be Seeded
-
-LATER Allow User To Select first Month of FY
 
 LATER Readd Favicon
 LATER Add Logo / Branding

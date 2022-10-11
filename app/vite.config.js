@@ -10,7 +10,7 @@ const config = {
 			{
 				name: 'Graphql Update',
 				watch: path.resolve('src/**/*.(gql|graphql|svelte)'),
-				run: 'npm run generate',
+				run: 'pnpm generate',
 				delay: 100,
 				watchKind: ['ready', 'add', 'change', 'unlink']
 			}

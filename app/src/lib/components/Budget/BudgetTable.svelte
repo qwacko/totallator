@@ -7,6 +7,7 @@
 	import Table from '../Table/Table.svelte';
 	import TableCell from '../Table/TableCell.svelte';
 	import TableColumnHead from '../Table/TableColumnHead.svelte';
+	import { budgetTableRefreshTrigger } from './budgetStores';
 	import { BudgetTableColumnConfig } from './BudgetTableConfig';
 	import { getBudgets } from './getBudgets';
 	import { onBudgetFilter } from './onBudgetFilter';
@@ -20,6 +21,7 @@
 
 	const client = getContextClient();
 	$: data = getBudgets(client, { sort, offset, limit: pageSize, filter });
+	$: $budgetTableRefreshTrigger && data.refetch();
 	$: BudgetColumnConfig = BudgetTableColumnConfig(client);
 	$: useData = $data?.data?.budgets?.budgets ? $data.data.budgets.budgets : undefined;
 	$: numberItems = $data?.data?.budgets?.count || 0;

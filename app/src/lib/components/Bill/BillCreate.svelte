@@ -16,6 +16,7 @@
 	import AccountGroupingSelect from '../AccountGrouping/AccountGroupingSelect.svelte';
 	import toastsStore from '../Toasts/toastsStore';
 	import { BillCreateValidation } from './BillCreateValidation';
+	import { billTableRefreshTrigger } from './billStores';
 
 	const dispatch = createEventDispatcher();
 
@@ -36,6 +37,7 @@
 
 	$: if ($result?.data) {
 		dispatch('complete');
+		billTableRefreshTrigger.trigger();
 	}
 
 	const client = getContextClient();

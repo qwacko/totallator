@@ -8,9 +8,22 @@ import { Client, queryStore } from '@urql/svelte';
 export const getCategories = (client: Client, variables: GetCategoriesQueryVariables) => {
 	const filter = removeBlankEmptyFromObject({ ...variables.filter });
 	const newVariables = { ...variables, filter };
-	return queryStore({
-		client,
-		query: GetCategoriesDocument,
-		variables: newVariables
-	});
+
+	const refetch = () => {
+		queryStore({
+			client,
+			query: GetCategoriesDocument,
+			variables: newVariables,
+			requestPolicy: 'network-only'
+		});
+	};
+
+	return {
+		...queryStore({
+			client,
+			query: GetCategoriesDocument,
+			variables: newVariables
+		}),
+		refetch
+	};
 };

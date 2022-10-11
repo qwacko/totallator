@@ -5,9 +5,21 @@ import { Client, queryStore } from '@urql/svelte';
 export const getTags = (client: Client, variables: GetTagsQueryVariables) => {
 	const filter = removeBlankEmptyFromObject({ ...variables.filter });
 	const newVariables = { ...variables, filter };
-	return queryStore({
-		client,
-		query: GetTagsDocument,
-		variables: newVariables
-	});
+
+	const refetch = () =>
+		queryStore({
+			client,
+			query: GetTagsDocument,
+			variables: newVariables,
+			requestPolicy: 'network-only'
+		});
+
+	return {
+		...queryStore({
+			client,
+			query: GetTagsDocument,
+			variables: newVariables
+		}),
+		refetch
+	};
 };

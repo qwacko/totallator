@@ -5,9 +5,22 @@ import { Client, queryStore } from '@urql/svelte';
 export const getAccounts = (client: Client, variables: GetAccountsQueryVariables) => {
 	const filter = removeBlankEmptyFromObject({ ...variables.filter });
 	const newVariables = { ...variables, filter };
-	return queryStore({
-		client,
-		query: GetAccountsDocument,
-		variables: newVariables
-	});
+
+	const refetch = () => {
+		queryStore({
+			client,
+			query: GetAccountsDocument,
+			variables: newVariables,
+			requestPolicy: 'network-only'
+		});
+	};
+
+	return {
+		...queryStore({
+			client,
+			query: GetAccountsDocument,
+			variables: newVariables
+		}),
+		refetch
+	};
 };
