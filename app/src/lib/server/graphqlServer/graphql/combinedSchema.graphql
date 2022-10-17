@@ -30,6 +30,7 @@ input AccountFilter {
   accountGroupingId: AccountGroupingIdFilter
   accountTitleCombined: StringFilter
   active: BooleanFilter
+  allowUpdate: BooleanFilter
   deleted: BooleanFilter
   disabled: BooleanFilter
   endDate: DateFilter
@@ -117,6 +118,7 @@ input AccountTypeFilter {
 type AccountsReturn {
   accounts: [Account!]!
   count: Int!
+  id: String
 }
 
 input AddJournalInput {
@@ -174,6 +176,7 @@ input BillSort {
 type BillsReturn {
   bills: [Bill!]!
   count: Int!
+  id: String
 }
 
 input BooleanFilter {
@@ -220,6 +223,7 @@ input BudgetSort {
 type BudgetsReturn {
   budgets: [Budget!]!
   count: Int!
+  id: String
 }
 
 scalar Byte
@@ -227,6 +231,7 @@ scalar Byte
 type CategoriesReturn {
   categories: [Category!]!
   count: Int!
+  id: String
 }
 
 type Category {
@@ -421,6 +426,68 @@ scalar ISBN
 
 scalar ISO8601Duration
 
+input ImportDataInput {
+  accountId: String
+  accountTitle: String
+  amount: Float!
+  billId: String
+  billTitle: String
+  budgetId: String
+  budgetTitle: String
+  categoryId: String
+  categoryTitle: String
+  complete: Boolean
+  dataChecked: Boolean
+  date: String!
+  description: String!
+  journalId: String
+  linked: Boolean
+  reconciled: Boolean
+  tagId: String
+  tagTitle: String
+  transactionId: String!
+}
+
+type ImportDataProcessed {
+  accountId: String!
+  accountTitle: String!
+  amount: Float!
+  billId: String
+  billTitle: String
+  budgetId: String
+  budgetTitle: String
+  categoryId: String
+  categoryTitle: String
+  complete: Boolean!
+  dataChecked: Boolean!
+  date: String!
+  description: String!
+  journalId: String
+  linked: Boolean!
+  reconciled: Boolean!
+  status: ImportDataReturnStatus
+  tagId: String
+  tagTitle: String
+  transactionId: String!
+}
+
+type ImportDataReturn {
+  data: [ImportDataProcessed!]
+  errors: [ImportReturnError!]
+}
+
+enum ImportDataReturnStatus {
+  existingJournal
+  existingTransaction
+  new
+}
+
+type ImportReturnError {
+  location: String
+  message: String
+  title: String
+}
+
 scalar JSON
 
 scalar JSONObject
@@ -435,6 +502,7 @@ input JournalEntriesFilter {
 
 type JournalEntriesReturn {
   count: Int!
+  id: String
   journalEntries: [JournalEntry!]!
   sum: Float!
 }
@@ -586,6 +654,7 @@ type Mutation {
   createCategory(input: CreateCategoryInput!): Category!
   createTag(input: CreateTagInput!): Tag!
   createTransaction(input: [CreateJournalInput!]!): [JournalEntry!]
+  createTransactions(input: [[CreateJournalInput!]!]!): [JournalEntry!]
   createUser(data: CreateUserInput!): String!
   deleteJournalEntries(journalIds: [UUID]!): [JournalEntry!]
   linkTransactions(primaryJournalIds: [UUID]!): [JournalEntry!]
@@ -653,6 +722,7 @@ type Query {
   budgets(filter: BudgetFilter, limit: Int, offset: Int, sort: [BudgetSort!]): BudgetsReturn
   categories(filter: CategoryFilter, limit: Int, offset: Int, sort: [CategorySort!]): CategoriesReturn
   category(id: UUID!): Category!
+  importDataCheck(accountGroupingId: String!, data: [ImportDataInput]!): ImportDataReturn
   journalEntries(filter: JournalEntryFilter, limit: Int, offset: Int, sort: [JournalEntrySort!]): JournalEntriesReturn
   journalEntry(id: UUID!): JournalEntry!
   tag(id: UUID!): Tag!
@@ -741,6 +811,7 @@ input TagSort {
 
 type TagsReturn {
   count: Int!
+  id: String
   tags: [Tag!]!
 }
 

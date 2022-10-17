@@ -107,6 +107,7 @@ export type AccountFilter = {
   accountGroupingId?: InputMaybe<AccountGroupingIdFilter>;
   accountTitleCombined?: InputMaybe<StringFilter>;
   active?: InputMaybe<BooleanFilter>;
+  allowUpdate?: InputMaybe<BooleanFilter>;
   deleted?: InputMaybe<BooleanFilter>;
   disabled?: InputMaybe<BooleanFilter>;
   endDate?: InputMaybe<DateFilter>;
@@ -193,6 +194,7 @@ export type AccountsReturn = {
   __typename?: 'AccountsReturn';
   accounts: Array<Account>;
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
 };
 
 export type AddJournalInput = {
@@ -250,6 +252,7 @@ export type BillsReturn = {
   __typename?: 'BillsReturn';
   bills: Array<Bill>;
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
 };
 
 export type BooleanFilter = {
@@ -298,12 +301,14 @@ export type BudgetsReturn = {
   __typename?: 'BudgetsReturn';
   budgets: Array<Budget>;
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
 };
 
 export type CategoriesReturn = {
   __typename?: 'CategoriesReturn';
   categories: Array<Category>;
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
 };
 
 export type Category = {
@@ -463,6 +468,70 @@ export type EmptyFirst =
   | 'EMPTY_FIRST'
   | 'EMPTY_LAST';
 
+export type ImportDataInput = {
+  accountId?: InputMaybe<Scalars['String']>;
+  accountTitle?: InputMaybe<Scalars['String']>;
+  amount: Scalars['Float'];
+  billId?: InputMaybe<Scalars['String']>;
+  billTitle?: InputMaybe<Scalars['String']>;
+  budgetId?: InputMaybe<Scalars['String']>;
+  budgetTitle?: InputMaybe<Scalars['String']>;
+  categoryId?: InputMaybe<Scalars['String']>;
+  categoryTitle?: InputMaybe<Scalars['String']>;
+  complete?: InputMaybe<Scalars['Boolean']>;
+  dataChecked?: InputMaybe<Scalars['Boolean']>;
+  date: Scalars['String'];
+  description: Scalars['String'];
+  journalId?: InputMaybe<Scalars['String']>;
+  linked?: InputMaybe<Scalars['Boolean']>;
+  reconciled?: InputMaybe<Scalars['Boolean']>;
+  tagId?: InputMaybe<Scalars['String']>;
+  tagTitle?: InputMaybe<Scalars['String']>;
+  transactionId: Scalars['String'];
+};
+
+export type ImportDataProcessed = {
+  __typename?: 'ImportDataProcessed';
+  accountId: Scalars['String'];
+  accountTitle: Scalars['String'];
+  amount: Scalars['Float'];
+  billId?: Maybe<Scalars['String']>;
+  billTitle?: Maybe<Scalars['String']>;
+  budgetId?: Maybe<Scalars['String']>;
+  budgetTitle?: Maybe<Scalars['String']>;
+  categoryId?: Maybe<Scalars['String']>;
+  categoryTitle?: Maybe<Scalars['String']>;
+  complete: Scalars['Boolean'];
+  dataChecked: Scalars['Boolean'];
+  date: Scalars['String'];
+  description: Scalars['String'];
+  journalId?: Maybe<Scalars['String']>;
+  linked: Scalars['Boolean'];
+  reconciled: Scalars['Boolean'];
+  status?: Maybe<ImportDataReturnStatus>;
+  tagId?: Maybe<Scalars['String']>;
+  tagTitle?: Maybe<Scalars['String']>;
+  transactionId: Scalars['String'];
+};
+
+export type ImportDataReturn = {
+  __typename?: 'ImportDataReturn';
+  data?: Maybe<Array<ImportDataProcessed>>;
+  errors?: Maybe<Array<ImportReturnError>>;
+};
+
+export type ImportDataReturnStatus =
+  | 'existingJournal'
+  | 'existingTransaction'
+  | 'new';
+
+export type ImportReturnError = {
+  __typename?: 'ImportReturnError';
+  location?: Maybe<Scalars['String']>;
+  message?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+};
+
 export type JournalEntriesFilter = {
   every?: InputMaybe<JournalEntryFilter>;
   none?: InputMaybe<JournalEntryFilter>;
@@ -472,6 +541,7 @@ export type JournalEntriesFilter = {
 export type JournalEntriesReturn = {
   __typename?: 'JournalEntriesReturn';
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
   journalEntries: Array<JournalEntry>;
   sum: Scalars['Float'];
 };
@@ -609,6 +679,7 @@ export type Mutation = {
   createCategory: Category;
   createTag: Tag;
   createTransaction?: Maybe<Array<JournalEntry>>;
+  createTransactions?: Maybe<Array<JournalEntry>>;
   createUser: Scalars['String'];
   deleteJournalEntries?: Maybe<Array<JournalEntry>>;
   linkTransactions?: Maybe<Array<JournalEntry>>;
@@ -690,6 +761,11 @@ export type MutationCreateTagArgs = {
 
 export type MutationCreateTransactionArgs = {
   input: Array<CreateJournalInput>;
+};
+
+
+export type MutationCreateTransactionsArgs = {
+  input: Array<Array<CreateJournalInput>>;
 };
 
 
@@ -810,6 +886,7 @@ export type Query = {
   budgets?: Maybe<BudgetsReturn>;
   categories?: Maybe<CategoriesReturn>;
   category: Category;
+  importDataCheck?: Maybe<ImportDataReturn>;
   journalEntries?: Maybe<JournalEntriesReturn>;
   journalEntry: JournalEntry;
   tag: Tag;
@@ -873,6 +950,12 @@ export type QueryCategoriesArgs = {
 
 export type QueryCategoryArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryImportDataCheckArgs = {
+  accountGroupingId: Scalars['String'];
+  data: Array<InputMaybe<ImportDataInput>>;
 };
 
 
@@ -978,6 +1061,7 @@ export type TagSort = {
 export type TagsReturn = {
   __typename?: 'TagsReturn';
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
   tags: Array<Tag>;
 };
 
@@ -1212,6 +1296,11 @@ export type ResolversTypes = {
   IPv6: ResolverTypeWrapper<Scalars['IPv6']>;
   ISBN: ResolverTypeWrapper<Scalars['ISBN']>;
   ISO8601Duration: ResolverTypeWrapper<Scalars['ISO8601Duration']>;
+  ImportDataInput: ImportDataInput;
+  ImportDataProcessed: ResolverTypeWrapper<ImportDataProcessed>;
+  ImportDataReturn: ResolverTypeWrapper<ImportDataReturn>;
+  ImportDataReturnStatus: ImportDataReturnStatus;
+  ImportReturnError: ResolverTypeWrapper<ImportReturnError>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
@@ -1346,6 +1435,10 @@ export type ResolversParentTypes = {
   IPv6: Scalars['IPv6'];
   ISBN: Scalars['ISBN'];
   ISO8601Duration: Scalars['ISO8601Duration'];
+  ImportDataInput: ImportDataInput;
+  ImportDataProcessed: ImportDataProcessed;
+  ImportDataReturn: ImportDataReturn;
+  ImportReturnError: ImportReturnError;
   Int: Scalars['Int'];
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
@@ -1465,6 +1558,7 @@ export interface AccountNumberScalarConfig extends GraphQLScalarTypeConfig<Resol
 export type AccountsReturnResolvers<ContextType = any, ParentType extends ResolversParentTypes['AccountsReturn'] = ResolversParentTypes['AccountsReturn']> = {
   accounts?: Resolver<Array<ResolversTypes['Account']>, ParentType, ContextType>;
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1490,6 +1584,7 @@ export type BillResolvers<ContextType = any, ParentType extends ResolversParentT
 export type BillsReturnResolvers<ContextType = any, ParentType extends ResolversParentTypes['BillsReturn'] = ResolversParentTypes['BillsReturn']> = {
   bills?: Resolver<Array<ResolversTypes['Bill']>, ParentType, ContextType>;
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1511,6 +1606,7 @@ export type BudgetResolvers<ContextType = any, ParentType extends ResolversParen
 export type BudgetsReturnResolvers<ContextType = any, ParentType extends ResolversParentTypes['BudgetsReturn'] = ResolversParentTypes['BudgetsReturn']> = {
   budgets?: Resolver<Array<ResolversTypes['Budget']>, ParentType, ContextType>;
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1521,6 +1617,7 @@ export interface ByteScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 export type CategoriesReturnResolvers<ContextType = any, ParentType extends ResolversParentTypes['CategoriesReturn'] = ResolversParentTypes['CategoriesReturn']> = {
   categories?: Resolver<Array<ResolversTypes['Category']>, ParentType, ContextType>;
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1609,6 +1706,43 @@ export interface Iso8601DurationScalarConfig extends GraphQLScalarTypeConfig<Res
   name: 'ISO8601Duration';
 }
 
+export type ImportDataProcessedResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportDataProcessed'] = ResolversParentTypes['ImportDataProcessed']> = {
+  accountId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  accountTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  billId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  billTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  budgetId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  budgetTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  categoryId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  categoryTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  complete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  dataChecked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  journalId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  linked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  reconciled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['ImportDataReturnStatus']>, ParentType, ContextType>;
+  tagId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tagTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  transactionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportDataReturnResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportDataReturn'] = ResolversParentTypes['ImportDataReturn']> = {
+  data?: Resolver<Maybe<Array<ResolversTypes['ImportDataProcessed']>>, ParentType, ContextType>;
+  errors?: Resolver<Maybe<Array<ResolversTypes['ImportReturnError']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportReturnErrorResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportReturnError'] = ResolversParentTypes['ImportReturnError']> = {
+  location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON';
 }
@@ -1623,6 +1757,7 @@ export interface JwtScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes[
 
 export type JournalEntriesReturnResolvers<ContextType = any, ParentType extends ResolversParentTypes['JournalEntriesReturn'] = ResolversParentTypes['JournalEntriesReturn']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   journalEntries?: Resolver<Array<ResolversTypes['JournalEntry']>, ParentType, ContextType>;
   sum?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1703,6 +1838,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createCategory?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<MutationCreateCategoryArgs, 'input'>>;
   createTag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<MutationCreateTagArgs, 'input'>>;
   createTransaction?: Resolver<Maybe<Array<ResolversTypes['JournalEntry']>>, ParentType, ContextType, RequireFields<MutationCreateTransactionArgs, 'input'>>;
+  createTransactions?: Resolver<Maybe<Array<ResolversTypes['JournalEntry']>>, ParentType, ContextType, RequireFields<MutationCreateTransactionsArgs, 'input'>>;
   createUser?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'data'>>;
   deleteJournalEntries?: Resolver<Maybe<Array<ResolversTypes['JournalEntry']>>, ParentType, ContextType, RequireFields<MutationDeleteJournalEntriesArgs, 'journalIds'>>;
   linkTransactions?: Resolver<Maybe<Array<ResolversTypes['JournalEntry']>>, ParentType, ContextType, RequireFields<MutationLinkTransactionsArgs, 'primaryJournalIds'>>;
@@ -1785,6 +1921,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   budgets?: Resolver<Maybe<ResolversTypes['BudgetsReturn']>, ParentType, ContextType, Partial<QueryBudgetsArgs>>;
   categories?: Resolver<Maybe<ResolversTypes['CategoriesReturn']>, ParentType, ContextType, Partial<QueryCategoriesArgs>>;
   category?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<QueryCategoryArgs, 'id'>>;
+  importDataCheck?: Resolver<Maybe<ResolversTypes['ImportDataReturn']>, ParentType, ContextType, RequireFields<QueryImportDataCheckArgs, 'accountGroupingId' | 'data'>>;
   journalEntries?: Resolver<Maybe<ResolversTypes['JournalEntriesReturn']>, ParentType, ContextType, Partial<QueryJournalEntriesArgs>>;
   journalEntry?: Resolver<ResolversTypes['JournalEntry'], ParentType, ContextType, RequireFields<QueryJournalEntryArgs, 'id'>>;
   tag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
@@ -1828,6 +1965,7 @@ export type TagResolvers<ContextType = any, ParentType extends ResolversParentTy
 
 export type TagsReturnResolvers<ContextType = any, ParentType extends ResolversParentTypes['TagsReturn'] = ResolversParentTypes['TagsReturn']> = {
   count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tags?: Resolver<Array<ResolversTypes['Tag']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1930,6 +2068,9 @@ export type Resolvers<ContextType = any> = {
   IPv6?: GraphQLScalarType;
   ISBN?: GraphQLScalarType;
   ISO8601Duration?: GraphQLScalarType;
+  ImportDataProcessed?: ImportDataProcessedResolvers<ContextType>;
+  ImportDataReturn?: ImportDataReturnResolvers<ContextType>;
+  ImportReturnError?: ImportReturnErrorResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
   JWT?: GraphQLScalarType;

@@ -6,6 +6,7 @@ import { accountsSchema } from './graphql/accounts';
 import { billsSchema } from './graphql/bills';
 import { budgetsSchema } from './graphql/budgets';
 import { categoriesSchema } from './graphql/categories';
+import { importSchema } from './graphql/import';
 import { journalEntriesSchema } from './graphql/journalEntries';
 import { standardFunctionsSchema } from './graphql/standardFunctions';
 import { tagsSchema } from './graphql/tags';
@@ -30,6 +31,7 @@ export const getTypeDefs = () => {
 		billsSchema,
 		budgetsSchema,
 		categoriesSchema,
+		importSchema,
 		...scalarTypeDefs
 	]);
 

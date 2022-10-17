@@ -22,5 +22,5 @@ export const accounts: GraphqlQueryResolvers['accounts'] = async (_, args, conte
 		_count: true
 	});
 
-	return { accounts, count: count._count };
+	return { accounts, count: count._count, id: JSON.stringify(args) };
 };

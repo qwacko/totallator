@@ -38,6 +38,7 @@ export const billsSchema = /* GraphQL */ `
 	}
 
 	type BillsReturn {
+		id: String
 		bills: [Bill!]!
 		count: Int!
 	}

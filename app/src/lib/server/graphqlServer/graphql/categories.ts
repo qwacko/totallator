@@ -44,6 +44,7 @@ export const categoriesSchema = /* GraphQL */ `
 	}
 
 	type CategoriesReturn {
+		id: String
 		categories: [Category!]!
 		count: Int!
 	}

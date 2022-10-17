@@ -44,6 +44,7 @@ export const tagsSchema = /* GraphQL */ `
 	}
 
 	type TagsReturn {
+		id: String
 		tags: [Tag!]!
 		count: Int!
 	}

@@ -104,6 +104,7 @@ export type AccountFilter = {
   accountGroupingId?: InputMaybe<AccountGroupingIdFilter>;
   accountTitleCombined?: InputMaybe<StringFilter>;
   active?: InputMaybe<BooleanFilter>;
+  allowUpdate?: InputMaybe<BooleanFilter>;
   deleted?: InputMaybe<BooleanFilter>;
   disabled?: InputMaybe<BooleanFilter>;
   endDate?: InputMaybe<DateFilter>;
@@ -191,6 +192,7 @@ export type AccountsReturn = {
   __typename?: 'AccountsReturn';
   accounts: Array<Account>;
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
 };
 
 export type AddJournalInput = {
@@ -248,6 +250,7 @@ export type BillsReturn = {
   __typename?: 'BillsReturn';
   bills: Array<Bill>;
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
 };
 
 export type BooleanFilter = {
@@ -296,12 +299,14 @@ export type BudgetsReturn = {
   __typename?: 'BudgetsReturn';
   budgets: Array<Budget>;
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
 };
 
 export type CategoriesReturn = {
   __typename?: 'CategoriesReturn';
   categories: Array<Category>;
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
 };
 
 export type Category = {
@@ -463,6 +468,71 @@ export enum EmptyFirst {
   EmptyLast = 'EMPTY_LAST'
 }
 
+export type ImportDataInput = {
+  accountId?: InputMaybe<Scalars['String']>;
+  accountTitle?: InputMaybe<Scalars['String']>;
+  amount: Scalars['Float'];
+  billId?: InputMaybe<Scalars['String']>;
+  billTitle?: InputMaybe<Scalars['String']>;
+  budgetId?: InputMaybe<Scalars['String']>;
+  budgetTitle?: InputMaybe<Scalars['String']>;
+  categoryId?: InputMaybe<Scalars['String']>;
+  categoryTitle?: InputMaybe<Scalars['String']>;
+  complete?: InputMaybe<Scalars['Boolean']>;
+  dataChecked?: InputMaybe<Scalars['Boolean']>;
+  date: Scalars['String'];
+  description: Scalars['String'];
+  journalId?: InputMaybe<Scalars['String']>;
+  linked?: InputMaybe<Scalars['Boolean']>;
+  reconciled?: InputMaybe<Scalars['Boolean']>;
+  tagId?: InputMaybe<Scalars['String']>;
+  tagTitle?: InputMaybe<Scalars['String']>;
+  transactionId: Scalars['String'];
+};
+
+export type ImportDataProcessed = {
+  __typename?: 'ImportDataProcessed';
+  accountId: Scalars['String'];
+  accountTitle: Scalars['String'];
+  amount: Scalars['Float'];
+  billId?: Maybe<Scalars['String']>;
+  billTitle?: Maybe<Scalars['String']>;
+  budgetId?: Maybe<Scalars['String']>;
+  budgetTitle?: Maybe<Scalars['String']>;
+  categoryId?: Maybe<Scalars['String']>;
+  categoryTitle?: Maybe<Scalars['String']>;
+  complete: Scalars['Boolean'];
+  dataChecked: Scalars['Boolean'];
+  date: Scalars['String'];
+  description: Scalars['String'];
+  journalId?: Maybe<Scalars['String']>;
+  linked: Scalars['Boolean'];
+  reconciled: Scalars['Boolean'];
+  status?: Maybe<ImportDataReturnStatus>;
+  tagId?: Maybe<Scalars['String']>;
+  tagTitle?: Maybe<Scalars['String']>;
+  transactionId: Scalars['String'];
+};
+
+export type ImportDataReturn = {
+  __typename?: 'ImportDataReturn';
+  data?: Maybe<Array<ImportDataProcessed>>;
+  errors?: Maybe<Array<ImportReturnError>>;
+};
+
+export enum ImportDataReturnStatus {
+  ExistingJournal = 'existingJournal',
+  ExistingTransaction = 'existingTransaction',
+  New = 'new'
+}
+
+export type ImportReturnError = {
+  __typename?: 'ImportReturnError';
+  location?: Maybe<Scalars['String']>;
+  message?: Maybe<Scalars['String']>;
+  title?: Maybe<Scalars['String']>;
+};
+
 export type JournalEntriesFilter = {
   every?: InputMaybe<JournalEntryFilter>;
   none?: InputMaybe<JournalEntryFilter>;
@@ -472,6 +542,7 @@ export type JournalEntriesFilter = {
 export type JournalEntriesReturn = {
   __typename?: 'JournalEntriesReturn';
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
   journalEntries: Array<JournalEntry>;
   sum: Scalars['Float'];
 };
@@ -609,6 +680,7 @@ export type Mutation = {
   createCategory: Category;
   createTag: Tag;
   createTransaction?: Maybe<Array<JournalEntry>>;
+  createTransactions?: Maybe<Array<JournalEntry>>;
   createUser: Scalars['String'];
   deleteJournalEntries?: Maybe<Array<JournalEntry>>;
   linkTransactions?: Maybe<Array<JournalEntry>>;
@@ -690,6 +762,11 @@ export type MutationCreateTagArgs = {
 
 export type MutationCreateTransactionArgs = {
   input: Array<CreateJournalInput>;
+};
+
+
+export type MutationCreateTransactionsArgs = {
+  input: Array<Array<CreateJournalInput>>;
 };
 
 
@@ -810,6 +887,7 @@ export type Query = {
   budgets?: Maybe<BudgetsReturn>;
   categories?: Maybe<CategoriesReturn>;
   category: Category;
+  importDataCheck?: Maybe<ImportDataReturn>;
   journalEntries?: Maybe<JournalEntriesReturn>;
   journalEntry: JournalEntry;
   tag: Tag;
@@ -873,6 +951,12 @@ export type QueryCategoriesArgs = {
 
 export type QueryCategoryArgs = {
   id: Scalars['UUID'];
+};
+
+
+export type QueryImportDataCheckArgs = {
+  accountGroupingId: Scalars['String'];
+  data: Array<InputMaybe<ImportDataInput>>;
 };
 
 
@@ -980,6 +1064,7 @@ export type TagSort = {
 export type TagsReturn = {
   __typename?: 'TagsReturn';
   count: Scalars['Int'];
+  id?: Maybe<Scalars['String']>;
   tags: Array<Tag>;
 };
 
@@ -1315,6 +1400,14 @@ export type CreateUserMutationMutationVariables = Exact<{
 
 export type CreateUserMutationMutation = { __typename?: 'Mutation', createUser: string };
 
+export type GetImportInfoQueryVariables = Exact<{
+  data: Array<InputMaybe<ImportDataInput>> | InputMaybe<ImportDataInput>;
+  accountGroupingId: Scalars['String'];
+}>;
+
+
+export type GetImportInfoQuery = { __typename?: 'Query', importDataCheck?: { __typename?: 'ImportDataReturn', data?: Array<{ __typename?: 'ImportDataProcessed', transactionId: string, journalId?: string | null, date: string, description: string, linked: boolean, reconciled: boolean, dataChecked: boolean, complete: boolean, amount: number, accountTitle: string, accountId: string, categoryTitle?: string | null, categoryId?: string | null, billTitle?: string | null, billId?: string | null, budgetTitle?: string | null, budgetId?: string | null, tagTitle?: string | null, tagId?: string | null, status?: ImportDataReturnStatus | null }> | null, errors?: Array<{ __typename?: 'ImportReturnError', title?: string | null, message?: string | null, location?: string | null }> | null } | null };
+
 export type JournalEntryReturnFragment = { __typename?: 'JournalEntry', id: any, date: any, description: string, amount: number, linked: boolean, primary: boolean, reconciled: boolean, dataChecked: boolean, complete: boolean, userIsAdmin: boolean, createdAt: any, updatedAt: any, primaryJournalId: string, editable: boolean, amountEditable: boolean, total: number, primaryJournal: { __typename?: 'JournalEntry', id: any, journalEntries: Array<{ __typename?: 'JournalEntry', id: any, amount: number, account: { __typename?: 'Account', id: any, title: string, allowUpdate: boolean, accountTitleCombined?: string | null, type: AccountType } }> }, accountGrouping: { __typename?: 'AccountGrouping', id: any, title: string, allowUpdate: boolean }, account: { __typename?: 'Account', id: any, title: string, allowUpdate: boolean, accountTitleCombined?: string | null, type: AccountType }, tag?: { __typename?: 'Tag', id: any, title: string, allowUpdate: boolean } | null, bill?: { __typename?: 'Bill', id: any, title: string, allowUpdate: boolean } | null, budget?: { __typename?: 'Budget', id: any, title: string, allowUpdate: boolean } | null, category?: { __typename?: 'Category', id: any, title: string, allowUpdate: boolean } | null };
 
 export type GetJournalsQueryVariables = Exact<{
@@ -1327,12 +1420,19 @@ export type GetJournalsQueryVariables = Exact<{
 
 export type GetJournalsQuery = { __typename?: 'Query', journalEntries?: { __typename?: 'JournalEntriesReturn', sum: number, count: number, journalEntries: Array<{ __typename?: 'JournalEntry', id: any, date: any, description: string, amount: number, linked: boolean, primary: boolean, reconciled: boolean, dataChecked: boolean, complete: boolean, userIsAdmin: boolean, createdAt: any, updatedAt: any, primaryJournalId: string, editable: boolean, amountEditable: boolean, total: number, primaryJournal: { __typename?: 'JournalEntry', id: any, journalEntries: Array<{ __typename?: 'JournalEntry', id: any, amount: number, account: { __typename?: 'Account', id: any, title: string, allowUpdate: boolean, accountTitleCombined?: string | null, type: AccountType } }> }, accountGrouping: { __typename?: 'AccountGrouping', id: any, title: string, allowUpdate: boolean }, account: { __typename?: 'Account', id: any, title: string, allowUpdate: boolean, accountTitleCombined?: string | null, type: AccountType }, tag?: { __typename?: 'Tag', id: any, title: string, allowUpdate: boolean } | null, bill?: { __typename?: 'Bill', id: any, title: string, allowUpdate: boolean } | null, budget?: { __typename?: 'Budget', id: any, title: string, allowUpdate: boolean } | null, category?: { __typename?: 'Category', id: any, title: string, allowUpdate: boolean } | null }> } | null };
 
-export type CreateTransasctionMutationVariables = Exact<{
+export type CreateTransactionMutationVariables = Exact<{
   input: Array<CreateJournalInput> | CreateJournalInput;
 }>;
 
 
-export type CreateTransasctionMutation = { __typename?: 'Mutation', createTransaction?: Array<{ __typename?: 'JournalEntry', id: any, date: any, description: string, amount: number, linked: boolean, primary: boolean, reconciled: boolean, dataChecked: boolean, complete: boolean, userIsAdmin: boolean, createdAt: any, updatedAt: any, primaryJournalId: string, editable: boolean, amountEditable: boolean, total: number, primaryJournal: { __typename?: 'JournalEntry', id: any, journalEntries: Array<{ __typename?: 'JournalEntry', id: any, amount: number, account: { __typename?: 'Account', id: any, title: string, allowUpdate: boolean, accountTitleCombined?: string | null, type: AccountType } }> }, accountGrouping: { __typename?: 'AccountGrouping', id: any, title: string, allowUpdate: boolean }, account: { __typename?: 'Account', id: any, title: string, allowUpdate: boolean, accountTitleCombined?: string | null, type: AccountType }, tag?: { __typename?: 'Tag', id: any, title: string, allowUpdate: boolean } | null, bill?: { __typename?: 'Bill', id: any, title: string, allowUpdate: boolean } | null, budget?: { __typename?: 'Budget', id: any, title: string, allowUpdate: boolean } | null, category?: { __typename?: 'Category', id: any, title: string, allowUpdate: boolean } | null }> | null };
+export type CreateTransactionMutation = { __typename?: 'Mutation', createTransaction?: Array<{ __typename?: 'JournalEntry', id: any, date: any, description: string, amount: number, linked: boolean, primary: boolean, reconciled: boolean, dataChecked: boolean, complete: boolean, userIsAdmin: boolean, createdAt: any, updatedAt: any, primaryJournalId: string, editable: boolean, amountEditable: boolean, total: number, primaryJournal: { __typename?: 'JournalEntry', id: any, journalEntries: Array<{ __typename?: 'JournalEntry', id: any, amount: number, account: { __typename?: 'Account', id: any, title: string, allowUpdate: boolean, accountTitleCombined?: string | null, type: AccountType } }> }, accountGrouping: { __typename?: 'AccountGrouping', id: any, title: string, allowUpdate: boolean }, account: { __typename?: 'Account', id: any, title: string, allowUpdate: boolean, accountTitleCombined?: string | null, type: AccountType }, tag?: { __typename?: 'Tag', id: any, title: string, allowUpdate: boolean } | null, bill?: { __typename?: 'Bill', id: any, title: string, allowUpdate: boolean } | null, budget?: { __typename?: 'Budget', id: any, title: string, allowUpdate: boolean } | null, category?: { __typename?: 'Category', id: any, title: string, allowUpdate: boolean } | null }> | null };
+
+export type CreateTransactionsMutationVariables = Exact<{
+  input: Array<Array<CreateJournalInput> | CreateJournalInput> | Array<CreateJournalInput> | CreateJournalInput;
+}>;
+
+
+export type CreateTransactionsMutation = { __typename?: 'Mutation', createTransactions?: Array<{ __typename?: 'JournalEntry', id: any, date: any, description: string, amount: number, linked: boolean, primary: boolean, reconciled: boolean, dataChecked: boolean, complete: boolean, userIsAdmin: boolean, createdAt: any, updatedAt: any, primaryJournalId: string, editable: boolean, amountEditable: boolean, total: number, primaryJournal: { __typename?: 'JournalEntry', id: any, journalEntries: Array<{ __typename?: 'JournalEntry', id: any, amount: number, account: { __typename?: 'Account', id: any, title: string, allowUpdate: boolean, accountTitleCombined?: string | null, type: AccountType } }> }, accountGrouping: { __typename?: 'AccountGrouping', id: any, title: string, allowUpdate: boolean }, account: { __typename?: 'Account', id: any, title: string, allowUpdate: boolean, accountTitleCombined?: string | null, type: AccountType }, tag?: { __typename?: 'Tag', id: any, title: string, allowUpdate: boolean } | null, bill?: { __typename?: 'Bill', id: any, title: string, allowUpdate: boolean } | null, budget?: { __typename?: 'Budget', id: any, title: string, allowUpdate: boolean } | null, category?: { __typename?: 'Category', id: any, title: string, allowUpdate: boolean } | null }> | null };
 
 export type UpdateSingleJournalMutationVariables = Exact<{
   id?: InputMaybe<Scalars['UUID']>;
@@ -1496,8 +1596,10 @@ export const GetTestDataDocument = {"kind":"Document","definitions":[{"kind":"Op
 export const GetUserDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserDisplayedData"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserPrivateData"}}]}}]}},...UserDisplayedDataFragmentDoc.definitions,...UserPrivateDataFragmentDoc.definitions]} as unknown as DocumentNode<GetUserDataQuery, GetUserDataQueryVariables>;
 export const UpdateUserMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUserMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserDisplayedData"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserPrivateData"}}]}}]}},...UserDisplayedDataFragmentDoc.definitions,...UserPrivateDataFragmentDoc.definitions]} as unknown as DocumentNode<UpdateUserMutationMutation, UpdateUserMutationMutationVariables>;
 export const CreateUserMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUserMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}]}]}}]} as unknown as DocumentNode<CreateUserMutationMutation, CreateUserMutationMutationVariables>;
+export const GetImportInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getImportInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ImportDataInput"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accountGroupingId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"importDataCheck"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}},{"kind":"Argument","name":{"kind":"Name","value":"accountGroupingId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accountGroupingId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"transactionId"}},{"kind":"Field","name":{"kind":"Name","value":"journalId"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"linked"}},{"kind":"Field","name":{"kind":"Name","value":"reconciled"}},{"kind":"Field","name":{"kind":"Name","value":"dataChecked"}},{"kind":"Field","name":{"kind":"Name","value":"complete"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"accountTitle"}},{"kind":"Field","name":{"kind":"Name","value":"accountId"}},{"kind":"Field","name":{"kind":"Name","value":"categoryTitle"}},{"kind":"Field","name":{"kind":"Name","value":"categoryId"}},{"kind":"Field","name":{"kind":"Name","value":"billTitle"}},{"kind":"Field","name":{"kind":"Name","value":"billId"}},{"kind":"Field","name":{"kind":"Name","value":"budgetTitle"}},{"kind":"Field","name":{"kind":"Name","value":"budgetId"}},{"kind":"Field","name":{"kind":"Name","value":"tagTitle"}},{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"location"}}]}}]}}]}}]} as unknown as DocumentNode<GetImportInfoQuery, GetImportInfoQueryVariables>;
 export const GetJournalsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetJournals"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"JournalEntryFilter"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JournalEntrySort"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"journalEntries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"journalEntries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"JournalEntryReturn"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sum"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},...JournalEntryReturnFragmentDoc.definitions]} as unknown as DocumentNode<GetJournalsQuery, GetJournalsQueryVariables>;
-export const CreateTransasctionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTransasction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateJournalInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTransaction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"JournalEntryReturn"}}]}}]}},...JournalEntryReturnFragmentDoc.definitions]} as unknown as DocumentNode<CreateTransasctionMutation, CreateTransasctionMutationVariables>;
+export const CreateTransactionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTransaction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateJournalInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTransaction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"JournalEntryReturn"}}]}}]}},...JournalEntryReturnFragmentDoc.definitions]} as unknown as DocumentNode<CreateTransactionMutation, CreateTransactionMutationVariables>;
+export const CreateTransactionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTransactions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateJournalInput"}}}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTransactions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"JournalEntryReturn"}}]}}]}},...JournalEntryReturnFragmentDoc.definitions]} as unknown as DocumentNode<CreateTransactionsMutation, CreateTransactionsMutationVariables>;
 export const UpdateSingleJournalDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateSingleJournal"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateJournalInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateJournalEntries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"equals"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"JournalEntryReturn"}}]}}]}},...JournalEntryReturnFragmentDoc.definitions]} as unknown as DocumentNode<UpdateSingleJournalMutation, UpdateSingleJournalMutationVariables>;
 export const UpdateJournalsByIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateJournalsById"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateJournalInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateJournalEntries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"id"},"value":{"kind":"ObjectValue","fields":[{"kind":"ObjectField","name":{"kind":"Name","value":"in"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}]}}]}},{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"JournalEntryReturn"}}]}}]}},...JournalEntryReturnFragmentDoc.definitions]} as unknown as DocumentNode<UpdateJournalsByIdMutation, UpdateJournalsByIdMutationVariables>;
 export const UpdatePrimaryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdatePrimary"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"oldPrimaryId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"newPrimaryId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UUID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"changePrimaryJournal"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"newPrimaryId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"newPrimaryId"}}},{"kind":"Argument","name":{"kind":"Name","value":"oldPrimaryId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"oldPrimaryId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"JournalEntryReturn"}}]}}]}},...JournalEntryReturnFragmentDoc.definitions]} as unknown as DocumentNode<UpdatePrimaryMutation, UpdatePrimaryMutationVariables>;

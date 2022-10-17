@@ -38,6 +38,7 @@ export const budgetsSchema = /* GraphQL */ `
 	}
 
 	type BudgetsReturn {
+		id: String
 		budgets: [Budget!]!
 		count: Int!
 	}

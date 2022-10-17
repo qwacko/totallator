@@ -22,5 +22,5 @@ export const tags: GraphqlQueryResolvers['tags'] = async (_, args, context) => {
 		_count: true
 	});
 
-	return { tags, count: count._count };
+	return { tags, count: count._count, id: JSON.stringify(args) };
 };

@@ -21,5 +21,5 @@ export const categories: GraphqlQueryResolvers['categories'] = async (_, args, c
 		_count: true
 	});
 
-	return { categories, count: count._count };
+	return { categories, count: count._count, id: JSON.stringify(args) };
 };

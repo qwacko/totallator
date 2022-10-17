@@ -1,6 +1,6 @@
 import type {
 	CreateJournalInput,
-	CreateTransasctionMutationVariables
+	CreateTransactionMutationVariables
 } from '$lib/graphqlClient/generated';
 import { z } from 'zod';
 
@@ -56,7 +56,7 @@ export const CreateSingleTransactionVariables = (input: CreateTransactionValidat
 		...rest
 	} = CreateTransactionValidation.parse(input);
 
-	const QueryInput: CreateTransasctionMutationVariables = {
+	const QueryInput: CreateTransactionMutationVariables = {
 		input: [
 			{
 				...rest,

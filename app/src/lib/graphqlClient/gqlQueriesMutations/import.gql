@@ -1,0 +1,31 @@
+query getImportInfo($data: [ImportDataInput]!, $accountGroupingId: String!) {
+	importDataCheck(data: $data, accountGroupingId: $accountGroupingId) {
+		data {
+			transactionId
+			journalId
+			date
+			description
+			linked
+			reconciled
+			dataChecked
+			complete
+			amount
+			accountTitle
+			accountId
+			categoryTitle
+			categoryId
+			billTitle
+			billId
+			budgetTitle
+			budgetId
+			tagTitle
+			tagId
+			status
+		}
+		errors {
+			title
+			message
+			location
+		}
+	}
+}

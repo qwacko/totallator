@@ -140,6 +140,7 @@ export const journalEntriesSchema = /* GraphQL */ `
 	}
 
 	type JournalEntriesReturn {
+		id: String
 		journalEntries: [JournalEntry!]!
 		sum: Float!
 		count: Int!
@@ -237,6 +238,7 @@ export const journalEntriesSchema = /* GraphQL */ `
 
 	type Mutation {
 		createTransaction(input: [CreateJournalInput!]!): [JournalEntry!]
+		createTransactions(input: [[CreateJournalInput!]!]!): [JournalEntry!]
 		updateJournalEntries(filter: JournalEntryFilter!, input: UpdateJournalInput!): [JournalEntry!]
 		transactionsToIncomplete(primaryJournalIds: [UUID]!): [JournalEntry!]
 		transactionsToComplete(primaryJournalIds: [UUID]!): [JournalEntry!]

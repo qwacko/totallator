@@ -16,13 +16,13 @@ import { z } from 'zod';
 
 import { generateAccountSummary } from '../helpers/accounts/generateAccountSummary';
 import { basicStatusToDBRequired } from '../helpers/general/basicStatusToDB';
-import { CreateJournalEntry } from '../helpers/journalEntries/CreateJournalEntry';
 import { CreateJournalInputArrayValidation } from '../helpers/journalEntries/CreateJournalInputValidation';
 import { UpdateJournalInputValidation } from '../helpers/journalEntries/UpdateJournalInputValidation';
 import { checkLinkedItems } from '../helpers/journalEntries/checkLinkedItems';
 import { checkValidatedUpdateJournalInput } from '../helpers/journalEntries/checkUpdateJournalValidatedInput';
 import { journalFilterBuilder } from '../helpers/journalEntries/journalFilterBuilder';
 import { updateJournalAmounts } from '../helpers/journalEntries/updateJournalAmounts';
+import { createSingleTransaction } from '../helpers/journalEntries/createSingleTransaction';
 
 export const createTransaction: GraphqlMutationResolvers['createTransaction'] = async (
 	_,
@@ -35,42 +35,31 @@ export const createTransaction: GraphqlMutationResolvers['createTransaction'] = 
 		args.input
 	);
 
-	const [primaryJournal, ...otherJournals] = validatedInput;
-	let primaryJournalId: string | undefined;
-
-	await prisma.$transaction(async (transClient) => {
-		//Create The Primary Journal Entry
-		const primaryJournalCreated = await CreateJournalEntry({
-			isPrimary: true,
-			admin,
-			userId,
-			client: transClient,
-			journalInfo: primaryJournal
-		});
-
-		if (!primaryJournalCreated) {
-			throw new GraphQLYogaError('Primary Journal Not Correctly Created');
-		}
-
-		primaryJournalId = primaryJournalCreated.id;
-
-		await Promise.all(
-			otherJournals.map(async (currentJournal) =>
-				CreateJournalEntry({
-					isPrimary: false,
-					admin,
-					userId,
-					client: transClient,
-					primaryInfo: primaryJournalCreated,
-					journalInfo: currentJournal
-				})
-			)
-		);
+	return prisma.$transaction(async (transClient) => {
+		return createSingleTransaction(validatedInput, admin, userId, transClient);
 	});
+};
 
-	return prisma.journalEntry.findMany({
-		where: { primaryJournalId: { equals: primaryJournalId } },
-		include: journalEntriesInclude
+export const createTransactions: GraphqlMutationResolvers['createTransactions'] = async (
+	_,
+	args,
+	context
+) => {
+	const { userId, admin } = authCheckPrisma(context);
+
+	const validatedInput = await z
+		.array(CreateJournalInputArrayValidation({ admin, userId }))
+		.parseAsync(args.input);
+
+	return prisma.$transaction(async (transClient) => {
+		const data = await Promise.all(
+			validatedInput.map(async (item) => createSingleTransaction(item, admin, userId, transClient))
+		);
+		const flattenedData = data.reduce((prev, current) => {
+			return [...prev, ...current];
+		}, []);
+
+		return flattenedData;
 	});
 };
 

@@ -13,6 +13,13 @@ const config = {
 				run: 'pnpm generate',
 				delay: 100,
 				watchKind: ['ready', 'add', 'change', 'unlink']
+			},
+			{
+				name: 'Graphql Update',
+				watch: path.resolve('src/lib/server/graphqlServer/graphql/*.(ts)'),
+				run: 'pnpm generate',
+				delay: 100,
+				watchKind: ['ready', 'add', 'change', 'unlink']
 			}
 		])
 	],

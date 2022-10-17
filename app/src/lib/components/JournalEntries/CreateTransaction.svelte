@@ -2,9 +2,9 @@
 	import Button from '$lib/components/Basic/Button.svelte';
 	import Input from '$lib/components/Basic/Input.svelte';
 	import {
-		CreateTransasctionDocument,
-		type CreateTransasctionMutation,
-		type CreateTransasctionMutationVariables
+		CreateTransactionDocument,
+		type CreateTransactionMutation,
+		type CreateTransactionMutationVariables
 	} from '$lib/graphqlClient/generated';
 	import { getContextClient, mutationStore } from '@urql/svelte';
 	import type { OperationResultStore } from '@urql/svelte/dist/types/common';
@@ -108,7 +108,7 @@
 	}
 
 	let result:
-		| OperationResultStore<CreateTransasctionMutation, CreateTransasctionMutationVariables>
+		| OperationResultStore<CreateTransactionMutation, CreateTransactionMutationVariables>
 		| undefined;
 
 	$: newTransactionLoading = $result?.fetching || false;
@@ -152,7 +152,7 @@
 		} else {
 			result = mutationStore({
 				client,
-				query: CreateTransasctionDocument,
+				query: CreateTransactionDocument,
 				variables: CreateSingleTransactionVariables(parsedTransaction.data)
 			});
 		}

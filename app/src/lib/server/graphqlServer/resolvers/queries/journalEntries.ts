@@ -33,5 +33,10 @@ export const journalEntries: GraphqlQueryResolvers['journalEntries'] = async (_,
 		}
 	});
 
-	return { journalEntries, count: count._count, sum: sum._sum.amount ? sum._sum.amount : 0 };
+	return {
+		journalEntries,
+		count: count._count,
+		sum: sum._sum.amount ? sum._sum.amount : 0,
+		id: JSON.stringify(args)
+	};
 };

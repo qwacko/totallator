@@ -31,6 +31,7 @@ importers:
       '@types/graphql-fields': ^1.3.4
       '@types/lodash': ^4.14.182
       '@types/lodash-es': ^4.17.6
+      '@types/papaparse': ^5.3.5
       '@types/uuid': ^8.3.4
       '@typescript-eslint/eslint-plugin': ^5.27.0
       '@typescript-eslint/parser': ^5.27.0
@@ -50,6 +51,7 @@ importers:
       graphql-tag: ^2.12.6
       lodash-es: ^4.17.21
       lucia-sveltekit: ^0.9.1
+      papaparse: ^5.3.2
       postcss: ^8.4.14
       prettier: ^2.7.1
       prettier-plugin-svelte: ^2.7.0
@@ -88,6 +90,7 @@ importers:
       graphql-tag: 2.12.6_graphql@16.6.0
       lodash-es: 4.17.21
       lucia-sveltekit: 0.9.1
+      papaparse: 5.3.2
       prisma: 4.4.0
       uuid: 9.0.0
       zod: 3.19.1
@@ -102,7 +105,7 @@ importers:
       '@graphql-codegen/urql-introspection': 2.2.1_graphql@16.6.0
       '@graphql-eslint/eslint-plugin': 3.11.2_uhhuyzfihrudb4hzhirhzkf33e
       '@graphql-tools/load-files': 6.6.1_graphql@16.6.0
-      '@sveltejs/adapter-auto': 1.0.0-next.80
+      '@sveltejs/adapter-auto': 1.0.0-next.81
       '@sveltejs/adapter-node': 1.0.0-next.96
       '@sveltejs/adapter-static': 1.0.0-next.44
       '@sveltejs/kit': 1.0.0-next.508_svelte@3.50.1+vite@3.1.4
@@ -110,6 +113,7 @@ importers:
       '@types/graphql-fields': 1.3.4
       '@types/lodash': 4.14.186
       '@types/lodash-es': 4.17.6
+      '@types/papaparse': 5.3.5
       '@types/uuid': 8.3.4
       '@typescript-eslint/eslint-plugin': 5.39.0_xyciw6oqjoiiono4dhv3uhn5my
       '@typescript-eslint/parser': 5.39.0_ypn2ylkkyfa5i233caldtndbqa
@@ -3689,11 +3693,11 @@ packages:
       webpack-sources: 3.2.3
     dev: false
 
-  /@sveltejs/adapter-auto/1.0.0-next.80:
-    resolution: {integrity: sha512-352WoZr9fQgxJqgNENvxRr2gsA+wTF6V9AVaQaaatDYd3RVEBaXTYOOalFaRLSa25mRUJaLYP2aaliqczMl23g==}
+  /@sveltejs/adapter-auto/1.0.0-next.81:
+    resolution: {integrity: sha512-q+0Rh2upU7i3m0fVi/CHrkt+BbTR7bkQ2OoVTVMKwSqrBenr6utPB/7y8tyRrZ21gzUihMSbeFpzbpmzVOI+2g==}
     dependencies:
       '@sveltejs/adapter-cloudflare': 1.0.0-next.38
-      '@sveltejs/adapter-netlify': 1.0.0-next.78
+      '@sveltejs/adapter-netlify': 1.0.0-next.79
       '@sveltejs/adapter-vercel': 1.0.0-next.77
     transitivePeerDependencies:
       - encoding
@@ -3708,8 +3712,8 @@ packages:
       worktop: 0.8.0-next.14
     dev: true
 
-  /@sveltejs/adapter-netlify/1.0.0-next.78:
-    resolution: {integrity: sha512-Yyn/j/0QcLK3Db442ducLUZmyvkO74j7Gdcwu9xN0fQN3kBlCJP9Itx5o4SySrPFGc4Q8cLJ5ELNg+mWduLBAA==}
+  /@sveltejs/adapter-netlify/1.0.0-next.79:
+    resolution: {integrity: sha512-XaihONVwUeXVVt9f2xcFgRExfG8jWKPkyqi715kzPbrgpqH3zaRgLJM2ABEGQ3g2MEn+6op+Z2olIWhM+RA0Cg==}
     dependencies:
       '@iarna/toml': 2.2.5
       esbuild: 0.15.10
@@ -4323,6 +4327,12 @@ packages:
 
   /@types/node/18.8.2:
     resolution: {integrity: sha512-cRMwIgdDN43GO4xMWAfJAecYn8wV4JbsOGHNfNUIDiuYkUYAR5ec4Rj7IO2SAhFPEfpPtLtUTbbny/TCT7aDwA==}
+
+  /@types/papaparse/5.3.5:
+    resolution: {integrity: sha512-R1icl/hrJPFRpuYj9PVG03WBAlghJj4JW9Py5QdR8FFSxaLmZRyu7xYDCCBZIJNfUv3MYaeBbhBoX958mUTAaw==}
+    dependencies:
+      '@types/node': 18.8.2
+    dev: true
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
@@ -9867,6 +9877,10 @@ packages:
       registry-auth-token: 4.2.2
       registry-url: 5.1.0
       semver: 6.3.0
+    dev: false
+
+  /papaparse/5.3.2:
+    resolution: {integrity: sha512-6dNZu0Ki+gyV0eBsFKJhYr+MdQYAzFUGlBMNj3GNrmHxmz1lfRa24CjFObPXtjcetlOv5Ad299MhIK0znp3afw==}
     dev: false
 
   /param-case/3.0.4:

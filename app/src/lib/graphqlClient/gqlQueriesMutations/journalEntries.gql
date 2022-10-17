@@ -78,8 +78,14 @@ query GetJournals(
 	}
 }
 
-mutation CreateTransasction($input: [CreateJournalInput!]!) {
+mutation CreateTransaction($input: [CreateJournalInput!]!) {
 	createTransaction(input: $input) {
+		...JournalEntryReturn
+	}
+}
+
+mutation CreateTransactions($input: [[CreateJournalInput!]!]!) {
+	createTransactions(input: $input) {
 		...JournalEntryReturn
 	}
 }

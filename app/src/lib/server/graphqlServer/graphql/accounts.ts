@@ -49,6 +49,7 @@ export const accountsSchema = /* GraphQL */ `
 		deleted: BooleanFilter
 		active: BooleanFilter
 		disabled: BooleanFilter
+		allowUpdate: BooleanFilter
 		accountTitleCombined: StringFilter
 		type: AccountTypeFilter
 		startDate: DateFilter
@@ -77,6 +78,7 @@ export const accountsSchema = /* GraphQL */ `
 	}
 
 	type AccountsReturn {
+		id: String
 		accounts: [Account!]!
 		count: Int!
 	}
