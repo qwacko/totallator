@@ -1,3 +1,20 @@
+fragment categoryExportReturn on CategoriesReturn {
+	id
+	count
+	categories {
+		id
+		title
+		single
+		group
+		status
+		accountGrouping {
+			id
+		}
+		createdAt
+		updatedAt
+	}
+}
+
 fragment categoryReturn on Category {
 	id
 	title

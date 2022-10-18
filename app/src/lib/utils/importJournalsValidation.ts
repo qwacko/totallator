@@ -19,8 +19,9 @@ export const importJournalsValidation = z
 	.array(
 		z
 			.object({
-				transactionId: z.string(),
-				journalId: validateUUIDMaybeBlank.optional(),
+				primaryJournalId: z.string(),
+				accountGroupingId: z.string().optional(),
+				id: validateUUIDMaybeBlank.optional(),
 				date: z
 					.string()
 					.regex(new RegExp('([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))'), {
@@ -38,6 +39,7 @@ export const importJournalsValidation = z
 						{ message: 'Date Must Be Valid' }
 					),
 				description: z.string().min(1, { message: 'Description cannot be empty' }),
+				primary: booleanImportValidation.optional(),
 				linked: booleanImportValidation.optional(),
 				reconciled: booleanImportValidation.optional(),
 				dataChecked: booleanImportValidation.optional(),
@@ -52,39 +54,44 @@ export const importJournalsValidation = z
 				billTitle: z.string().optional(),
 				billId: validateUUIDMaybeBlank.optional(),
 				budgetTitle: z.string().optional(),
-				budgetId: validateUUIDMaybeBlank.optional()
+				budgetId: validateUUIDMaybeBlank.optional(),
+				createdAt: z
+					.string()
+					.regex(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/)
+					.transform((item) => new Date(item))
+					.or(z.date())
+					.optional(),
+				updatedAt: z
+					.string()
+					.regex(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/)
+					.transform((item) => new Date(item))
+					.or(z.date())
+					.optional()
 			})
 			.strict()
 			.refine((item) => item.accountId || item.accountTitle, {
 				message: 'Row Must Have an account name or account id'
 			})
-			.refine((item) => !(item.accountId && item.accountTitle), {
-				message: 'Row cannot have both account name and account id'
-			})
-			.refine((item) => !(item.tagId && item.tagTitle), {
-				message: 'Row cannot have both tag name and tag id'
-			})
-			.refine((item) => !(item.categoryId && item.categoryTitle), {
-				message: 'Row cannot have both category name and category id'
-			})
-			.refine((item) => !(item.billId && item.billTitle), {
-				message: 'Row cannot have both bill name and bill id'
-			})
-			.refine((item) => !(item.budgetId && item.budgetTitle), {
-				message: 'Row cannot have both budget name and budget id'
+			.transform((item) => {
+				if (item.accountId && item.accountTitle) delete item.accountTitle;
+				if (item.categoryId && item.categoryTitle) delete item.categoryTitle;
+				if (item.billId && item.billTitle) delete item.billTitle;
+				if (item.budgetId && item.budgetTitle) delete item.budgetTitle;
+				if (item.tagId && item.tagTitle) delete item.tagTitle;
+				return item;
 			})
 	)
 	.superRefine((arg, ctx) => {
 		arg.forEach((row, rowId) => {
 			// Check that transaction total is zero.
 			const rowTotal = arg
-				.filter((item) => item.transactionId === row.transactionId)
+				.filter((item) => item.primaryJournalId === row.primaryJournalId)
 				.reduce((prev, current) => prev + current.amount, 0);
 			if (rowTotal !== 0) {
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					path: [...ctx.path, `${rowId}`],
-					message: `Transaction ${row.transactionId} has a non-zero sum of all journals ($${rowTotal})`
+					message: `Transaction ${row.primaryJournalId} has a non-zero sum of all journals ($${rowTotal})`
 				});
 			}
 		});

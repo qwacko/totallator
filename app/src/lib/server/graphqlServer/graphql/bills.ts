@@ -45,7 +45,7 @@ export const billsSchema = /* GraphQL */ `
 
 	type Query {
 		bill(id: UUID!): Bill!
-		bills(filter: BillFilter, offset: Int, limit: Int, sort: [BillSort!]): BillsReturn
+		bills(filter: BillFilter, offset: Int, limit: Int, sort: [BillSort!]): BillsReturn!
 	}
 
 	input CreateBillInput {

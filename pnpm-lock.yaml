@@ -60,6 +60,7 @@ importers:
       svelte: ^3.49.0
       svelte-adapter-deno: ^0.7.0
       svelte-check: ^2.7.1
+      svelte-csv: ^1.2.8
       svelte-preprocess: ^4.10.7
       tailwindcss: ^3.1.6
       tslib: ^2.3.1
@@ -92,6 +93,7 @@ importers:
       lucia-sveltekit: 0.9.1
       papaparse: 5.3.2
       prisma: 4.4.0
+      svelte-csv: 1.2.8_svelte@3.50.1
       uuid: 9.0.0
       zod: 3.19.1
     devDependencies:
@@ -105,7 +107,7 @@ importers:
       '@graphql-codegen/urql-introspection': 2.2.1_graphql@16.6.0
       '@graphql-eslint/eslint-plugin': 3.11.2_uhhuyzfihrudb4hzhirhzkf33e
       '@graphql-tools/load-files': 6.6.1_graphql@16.6.0
-      '@sveltejs/adapter-auto': 1.0.0-next.81
+      '@sveltejs/adapter-auto': 1.0.0-next.83
       '@sveltejs/adapter-node': 1.0.0-next.96
       '@sveltejs/adapter-static': 1.0.0-next.44
       '@sveltejs/kit': 1.0.0-next.508_svelte@3.50.1+vite@3.1.4
@@ -3693,27 +3695,27 @@ packages:
       webpack-sources: 3.2.3
     dev: false
 
-  /@sveltejs/adapter-auto/1.0.0-next.81:
-    resolution: {integrity: sha512-q+0Rh2upU7i3m0fVi/CHrkt+BbTR7bkQ2OoVTVMKwSqrBenr6utPB/7y8tyRrZ21gzUihMSbeFpzbpmzVOI+2g==}
+  /@sveltejs/adapter-auto/1.0.0-next.83:
+    resolution: {integrity: sha512-6Km4x792PjHaN0H0odsy7JOj3jdDZqN1tA58B1b96xWUUUj87tw6XYC7VWRBjwo2wZqWkRat94IegrtAAhYVaA==}
     dependencies:
-      '@sveltejs/adapter-cloudflare': 1.0.0-next.38
-      '@sveltejs/adapter-netlify': 1.0.0-next.79
-      '@sveltejs/adapter-vercel': 1.0.0-next.77
+      '@sveltejs/adapter-cloudflare': 1.0.0-next.39
+      '@sveltejs/adapter-netlify': 1.0.0-next.81
+      '@sveltejs/adapter-vercel': 1.0.0-next.79
     transitivePeerDependencies:
       - encoding
       - supports-color
     dev: true
 
-  /@sveltejs/adapter-cloudflare/1.0.0-next.38:
-    resolution: {integrity: sha512-N6jdTomRZkdKlcNoguwYD7lpdXSt0beIyUJsp0MS/YLm/4gI83y698zFYInFKJ9t5e6DAnuEBSAXcg568z2oFA==}
+  /@sveltejs/adapter-cloudflare/1.0.0-next.39:
+    resolution: {integrity: sha512-95iRY3+mFVqEp4BqTJQGAyga7gSovIsm4SvhqsfBE/IQLkb2MnwLq2usRkXm9R6nby4w/jzEwgQM2ohsZD2HHA==}
     dependencies:
       '@cloudflare/workers-types': 3.16.0
       esbuild: 0.15.10
       worktop: 0.8.0-next.14
     dev: true
 
-  /@sveltejs/adapter-netlify/1.0.0-next.79:
-    resolution: {integrity: sha512-XaihONVwUeXVVt9f2xcFgRExfG8jWKPkyqi715kzPbrgpqH3zaRgLJM2ABEGQ3g2MEn+6op+Z2olIWhM+RA0Cg==}
+  /@sveltejs/adapter-netlify/1.0.0-next.81:
+    resolution: {integrity: sha512-jWZHw2uqUMJk8lFPzRm0xxmBZoDc430tbeCU9EtYhG+ypze2B6pJAlNTtcN3/J7wapHq19TgEK5oNt4LqORfNg==}
     dependencies:
       '@iarna/toml': 2.2.5
       esbuild: 0.15.10
@@ -3733,8 +3735,8 @@ packages:
     resolution: {integrity: sha512-qBtkmIMYGiDv5r2F3AfSG0ABHZim2NC+1PL2YVCa+QYz8IVCm1E/wGQ0RW4KVrANZ3MZk8y52PPajx+8/fwmNw==}
     dev: true
 
-  /@sveltejs/adapter-vercel/1.0.0-next.77:
-    resolution: {integrity: sha512-r4MqtP+lzx83HfcvI8PU0Yxzmxt6WQq9nzZETLboJouJzhSBUFIN5RmNZfEn6nNIlUwZbGQUEK/FxsRnnxI/Ig==}
+  /@sveltejs/adapter-vercel/1.0.0-next.79:
+    resolution: {integrity: sha512-Mitw34vS+wR/qxZm6qOUltf910N8gcekYZHaEVxO6HaE/9LyEZ/O03e9rRKwo4LAWrHXOkHMdUxvv1VcS9BqmQ==}
     dependencies:
       '@vercel/nft': 0.22.1
       esbuild: 0.15.10
@@ -4332,7 +4334,6 @@ packages:
     resolution: {integrity: sha512-R1icl/hrJPFRpuYj9PVG03WBAlghJj4JW9Py5QdR8FFSxaLmZRyu7xYDCCBZIJNfUv3MYaeBbhBoX958mUTAaw==}
     dependencies:
       '@types/node': 18.8.2
-    dev: true
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
@@ -11830,6 +11831,16 @@ packages:
       - stylus
       - sugarss
     dev: true
+
+  /svelte-csv/1.2.8_svelte@3.50.1:
+    resolution: {integrity: sha512-UzUxIww6bRN3scRpTkopNKEPO7fXxx99RvayMwAt5K509pmY2/Iu0Nsydfvt7hI/XxANuC+CUlT3Jfprq4UJEQ==}
+    peerDependencies:
+      svelte: ^3.29.0
+    dependencies:
+      '@types/papaparse': 5.3.5
+      papaparse: 5.3.2
+      svelte: 3.50.1
+    dev: false
 
   /svelte-eslint-parser/0.18.4_svelte@3.50.1:
     resolution: {integrity: sha512-mCl/gsshy11LrFCEsTKlbNHXKCGCpan0vJWoBmorn6En11OWRKsrXEi3RwPKUjjcO3WKOWRfG68L3zpCg1BilQ==}

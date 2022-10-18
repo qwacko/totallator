@@ -1,3 +1,20 @@
+fragment tagExportReturn on TagsReturn {
+	id
+	count
+	tags {
+		id
+		title
+		single
+		group
+		status
+		accountGrouping {
+			id
+		}
+		createdAt
+		updatedAt
+	}
+}
+
 fragment tagReturn on Tag {
 	id
 	title

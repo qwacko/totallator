@@ -1,7 +1,7 @@
 query getImportInfo($data: [ImportDataInput!]!, $accountGroupingId: String!) {
 	importDataCheck(data: $data, accountGroupingId: $accountGroupingId) {
 		data {
-			transactionId
+			primaryJournalId
 			journalId
 			date
 			description
@@ -21,6 +21,8 @@ query getImportInfo($data: [ImportDataInput!]!, $accountGroupingId: String!) {
 			tagTitle
 			tagId
 			status
+			createdAt
+			updatedAt
 		}
 		errors {
 			title

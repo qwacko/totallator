@@ -13,7 +13,7 @@ export const importSchema = /* GraphQL */ `
 	}
 
 	type ImportDataProcessed {
-		transactionId: String!
+		primaryJournalId: String!
 		journalId: String
 		date: String!
 		description: String!
@@ -34,11 +34,13 @@ export const importSchema = /* GraphQL */ `
 		tagId: String
 		status: [ImportDataReturnStatus!]!
 		foundJournalID: String
+		createdAt: DateTime
+		updatedAt: DateTime
 	}
 
 	input ImportDataInput {
-		transactionId: String!
-		journalId: String
+		primaryJournalId: String!
+		id: String
 		date: String!
 		description: String!
 		linked: Boolean
@@ -56,6 +58,8 @@ export const importSchema = /* GraphQL */ `
 		budgetId: String
 		tagTitle: String
 		tagId: String
+		createdAt: DateTime
+		updatedAt: DateTime
 	}
 
 	type ImportDataReturn {

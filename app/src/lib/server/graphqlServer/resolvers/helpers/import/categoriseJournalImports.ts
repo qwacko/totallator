@@ -21,7 +21,7 @@ export const categoriseJournalImports = async (
 	const foundJournalsByIdSet = new Set(foundJournalsById.map((item) => item.id));
 
 	const transactionIdsInData = new Set(
-		data.map((item) => item.transactionId).filter((item) => item) as string[]
+		data.map((item) => item.primaryJournalId).filter((item) => item) as string[]
 	);
 
 	const foundTransactionsById = await prisma.journalEntry.findMany({
@@ -61,7 +61,7 @@ export const categoriseJournalImports = async (
 				status.push('journalIdMatch');
 			}
 
-			if (row.transactionId && foundTransactionsByIdSet.has(row.transactionId)) {
+			if (row.primaryJournalId && foundTransactionsByIdSet.has(row.primaryJournalId)) {
 				status.push('transactionIdMatch');
 			}
 

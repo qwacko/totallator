@@ -2925,6 +2925,14 @@ export default {
             }
           },
           {
+            "name": "createdAt",
+            "type": {
+              "kind": "SCALAR",
+              "name": "DateTime",
+              "ofType": null
+            }
+          },
+          {
             "name": "dataChecked",
             "type": {
               "kind": "SCALAR",
@@ -2955,7 +2963,7 @@ export default {
             }
           },
           {
-            "name": "journalId",
+            "name": "id",
             "type": {
               "kind": "SCALAR",
               "name": "String",
@@ -2968,6 +2976,17 @@ export default {
               "kind": "SCALAR",
               "name": "Boolean",
               "ofType": null
+            }
+          },
+          {
+            "name": "primaryJournalId",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             }
           },
           {
@@ -2995,14 +3014,11 @@ export default {
             }
           },
           {
-            "name": "transactionId",
+            "name": "updatedAt",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "DateTime",
+              "ofType": null
             }
           }
         ]
@@ -3114,6 +3130,15 @@ export default {
             "args": []
           },
           {
+            "name": "createdAt",
+            "type": {
+              "kind": "SCALAR",
+              "name": "DateTime",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
             "name": "dataChecked",
             "type": {
               "kind": "NON_NULL",
@@ -3180,6 +3205,18 @@ export default {
             "args": []
           },
           {
+            "name": "primaryJournalId",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
             "name": "reconciled",
             "type": {
               "kind": "NON_NULL",
@@ -3228,14 +3265,11 @@ export default {
             "args": []
           },
           {
-            "name": "transactionId",
+            "name": "updatedAt",
             "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "DateTime",
+              "ofType": null
             },
             "args": []
           }
@@ -5682,9 +5716,12 @@ export default {
           {
             "name": "bills",
             "type": {
-              "kind": "OBJECT",
-              "name": "BillsReturn",
-              "ofType": null
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "BillsReturn",
+                "ofType": null
+              }
             },
             "args": [
               {
@@ -5754,9 +5791,12 @@ export default {
           {
             "name": "budgets",
             "type": {
-              "kind": "OBJECT",
-              "name": "BudgetsReturn",
-              "ofType": null
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "BudgetsReturn",
+                "ofType": null
+              }
             },
             "args": [
               {
@@ -5802,9 +5842,12 @@ export default {
           {
             "name": "categories",
             "type": {
-              "kind": "OBJECT",
-              "name": "CategoriesReturn",
-              "ofType": null
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "CategoriesReturn",
+                "ofType": null
+              }
             },
             "args": [
               {
@@ -5944,9 +5987,12 @@ export default {
           {
             "name": "journalEntries",
             "type": {
-              "kind": "OBJECT",
-              "name": "JournalEntriesReturn",
-              "ofType": null
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "JournalEntriesReturn",
+                "ofType": null
+              }
             },
             "args": [
               {
@@ -6040,9 +6086,12 @@ export default {
           {
             "name": "tags",
             "type": {
-              "kind": "OBJECT",
-              "name": "TagsReturn",
-              "ofType": null
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "TagsReturn",
+                "ofType": null
+              }
             },
             "args": [
               {

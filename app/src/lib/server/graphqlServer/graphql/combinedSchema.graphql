@@ -437,15 +437,17 @@ input ImportDataInput {
   categoryId: String
   categoryTitle: String
   complete: Boolean
+  createdAt: DateTime
   dataChecked: Boolean
   date: String!
   description: String!
-  journalId: String
+  id: String
   linked: Boolean
+  primaryJournalId: String!
   reconciled: Boolean
   tagId: String
   tagTitle: String
-  transactionId: String!
+  updatedAt: DateTime
 }
 
 type ImportDataProcessed {
@@ -459,17 +461,19 @@ type ImportDataProcessed {
   categoryId: String
   categoryTitle: String
   complete: Boolean!
+  createdAt: DateTime
   dataChecked: Boolean!
   date: String!
   description: String!
   foundJournalID: String
   journalId: String
   linked: Boolean!
+  primaryJournalId: String!
   reconciled: Boolean!
   status: [ImportDataReturnStatus!]!
   tagId: String
   tagTitle: String
-  transactionId: String!
+  updatedAt: DateTime
 }
 
 type ImportDataReturn {
@@ -719,16 +723,16 @@ type Query {
   accountGroupings: [AccountGrouping!]!
   accounts(filter: AccountFilter, limit: Int, offset: Int, sort: [AccountSort!]): AccountsReturn!
   bill(id: UUID!): Bill!
-  bills(filter: BillFilter, limit: Int, offset: Int, sort: [BillSort!]): BillsReturn
+  bills(filter: BillFilter, limit: Int, offset: Int, sort: [BillSort!]): BillsReturn!
   budget(id: UUID!): Budget!
-  budgets(filter: BudgetFilter, limit: Int, offset: Int, sort: [BudgetSort!]): BudgetsReturn
-  categories(filter: CategoryFilter, limit: Int, offset: Int, sort: [CategorySort!]): CategoriesReturn
+  budgets(filter: BudgetFilter, limit: Int, offset: Int, sort: [BudgetSort!]): BudgetsReturn!
+  categories(filter: CategoryFilter, limit: Int, offset: Int, sort: [CategorySort!]): CategoriesReturn!
   category(id: UUID!): Category!
   importDataCheck(accountGroupingId: String!, data: [ImportDataInput!]!, excludeCheckJournalDetails: Boolean, excludeCheckJournalId: Boolean, excludeCheckTransactionId: Boolean, excludeTransactions: Boolean): ImportDataReturn
-  journalEntries(filter: JournalEntryFilter, limit: Int, offset: Int, sort: [JournalEntrySort!]): JournalEntriesReturn
+  journalEntries(filter: JournalEntryFilter, limit: Int, offset: Int, sort: [JournalEntrySort!]): JournalEntriesReturn!
   journalEntry(id: UUID!): JournalEntry!
   tag(id: UUID!): Tag!
-  tags(filter: TagFilter, limit: Int, offset: Int, sort: [TagSort!]): TagsReturn
+  tags(filter: TagFilter, limit: Int, offset: Int, sort: [TagSort!]): TagsReturn!
   testResult(id: String): TestResult
   user: User
 }

@@ -153,7 +153,7 @@ export const journalEntriesSchema = /* GraphQL */ `
 			offset: Int
 			limit: Int
 			sort: [JournalEntrySort!]
-		): JournalEntriesReturn
+		): JournalEntriesReturn!
 	}
 
 	input ConnectOrCreateAccount {

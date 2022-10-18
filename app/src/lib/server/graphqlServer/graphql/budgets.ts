@@ -45,7 +45,7 @@ export const budgetsSchema = /* GraphQL */ `
 
 	type Query {
 		budget(id: UUID!): Budget!
-		budgets(filter: BudgetFilter, offset: Int, limit: Int, sort: [BudgetSort!]): BudgetsReturn
+		budgets(filter: BudgetFilter, offset: Int, limit: Int, sort: [BudgetSort!]): BudgetsReturn!
 	}
 
 	input CreateBudgetInput {

@@ -479,15 +479,17 @@ export type ImportDataInput = {
   categoryId?: InputMaybe<Scalars['String']>;
   categoryTitle?: InputMaybe<Scalars['String']>;
   complete?: InputMaybe<Scalars['Boolean']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
   dataChecked?: InputMaybe<Scalars['Boolean']>;
   date: Scalars['String'];
   description: Scalars['String'];
-  journalId?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
   linked?: InputMaybe<Scalars['Boolean']>;
+  primaryJournalId: Scalars['String'];
   reconciled?: InputMaybe<Scalars['Boolean']>;
   tagId?: InputMaybe<Scalars['String']>;
   tagTitle?: InputMaybe<Scalars['String']>;
-  transactionId: Scalars['String'];
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type ImportDataProcessed = {
@@ -502,17 +504,19 @@ export type ImportDataProcessed = {
   categoryId?: Maybe<Scalars['String']>;
   categoryTitle?: Maybe<Scalars['String']>;
   complete: Scalars['Boolean'];
+  createdAt?: Maybe<Scalars['DateTime']>;
   dataChecked: Scalars['Boolean'];
   date: Scalars['String'];
   description: Scalars['String'];
   foundJournalID?: Maybe<Scalars['String']>;
   journalId?: Maybe<Scalars['String']>;
   linked: Scalars['Boolean'];
+  primaryJournalId: Scalars['String'];
   reconciled: Scalars['Boolean'];
   status: Array<ImportDataReturnStatus>;
   tagId?: Maybe<Scalars['String']>;
   tagTitle?: Maybe<Scalars['String']>;
-  transactionId: Scalars['String'];
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type ImportDataReturn = {
@@ -883,16 +887,16 @@ export type Query = {
   accountGroupings: Array<AccountGrouping>;
   accounts: AccountsReturn;
   bill: Bill;
-  bills?: Maybe<BillsReturn>;
+  bills: BillsReturn;
   budget: Budget;
-  budgets?: Maybe<BudgetsReturn>;
-  categories?: Maybe<CategoriesReturn>;
+  budgets: BudgetsReturn;
+  categories: CategoriesReturn;
   category: Category;
   importDataCheck?: Maybe<ImportDataReturn>;
-  journalEntries?: Maybe<JournalEntriesReturn>;
+  journalEntries: JournalEntriesReturn;
   journalEntry: JournalEntry;
   tag: Tag;
-  tags?: Maybe<TagsReturn>;
+  tags: TagsReturn;
   testResult?: Maybe<TestResult>;
   user?: Maybe<User>;
 };
@@ -1723,17 +1727,19 @@ export type ImportDataProcessedResolvers<ContextType = any, ParentType extends R
   categoryId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   categoryTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   complete?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   dataChecked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   foundJournalID?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   journalId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   linked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  primaryJournalId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reconciled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   status?: Resolver<Array<ResolversTypes['ImportDataReturnStatus']>, ParentType, ContextType>;
   tagId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tagTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  transactionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1923,16 +1929,16 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   accountGroupings?: Resolver<Array<ResolversTypes['AccountGrouping']>, ParentType, ContextType>;
   accounts?: Resolver<ResolversTypes['AccountsReturn'], ParentType, ContextType, Partial<QueryAccountsArgs>>;
   bill?: Resolver<ResolversTypes['Bill'], ParentType, ContextType, RequireFields<QueryBillArgs, 'id'>>;
-  bills?: Resolver<Maybe<ResolversTypes['BillsReturn']>, ParentType, ContextType, Partial<QueryBillsArgs>>;
+  bills?: Resolver<ResolversTypes['BillsReturn'], ParentType, ContextType, Partial<QueryBillsArgs>>;
   budget?: Resolver<ResolversTypes['Budget'], ParentType, ContextType, RequireFields<QueryBudgetArgs, 'id'>>;
-  budgets?: Resolver<Maybe<ResolversTypes['BudgetsReturn']>, ParentType, ContextType, Partial<QueryBudgetsArgs>>;
-  categories?: Resolver<Maybe<ResolversTypes['CategoriesReturn']>, ParentType, ContextType, Partial<QueryCategoriesArgs>>;
+  budgets?: Resolver<ResolversTypes['BudgetsReturn'], ParentType, ContextType, Partial<QueryBudgetsArgs>>;
+  categories?: Resolver<ResolversTypes['CategoriesReturn'], ParentType, ContextType, Partial<QueryCategoriesArgs>>;
   category?: Resolver<ResolversTypes['Category'], ParentType, ContextType, RequireFields<QueryCategoryArgs, 'id'>>;
   importDataCheck?: Resolver<Maybe<ResolversTypes['ImportDataReturn']>, ParentType, ContextType, RequireFields<QueryImportDataCheckArgs, 'accountGroupingId' | 'data'>>;
-  journalEntries?: Resolver<Maybe<ResolversTypes['JournalEntriesReturn']>, ParentType, ContextType, Partial<QueryJournalEntriesArgs>>;
+  journalEntries?: Resolver<ResolversTypes['JournalEntriesReturn'], ParentType, ContextType, Partial<QueryJournalEntriesArgs>>;
   journalEntry?: Resolver<ResolversTypes['JournalEntry'], ParentType, ContextType, RequireFields<QueryJournalEntryArgs, 'id'>>;
   tag?: Resolver<ResolversTypes['Tag'], ParentType, ContextType, RequireFields<QueryTagArgs, 'id'>>;
-  tags?: Resolver<Maybe<ResolversTypes['TagsReturn']>, ParentType, ContextType, Partial<QueryTagsArgs>>;
+  tags?: Resolver<ResolversTypes['TagsReturn'], ParentType, ContextType, Partial<QueryTagsArgs>>;
   testResult?: Resolver<Maybe<ResolversTypes['TestResult']>, ParentType, ContextType, Partial<QueryTestResultArgs>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 };

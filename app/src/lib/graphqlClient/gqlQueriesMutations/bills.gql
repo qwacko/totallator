@@ -1,3 +1,18 @@
+fragment billExportReturn on BillsReturn {
+	id
+	count
+	bills {
+		id
+		title
+		status
+		accountGrouping {
+			id
+		}
+		createdAt
+		updatedAt
+	}
+}
+
 fragment billReturn on Bill {
 	id
 	title

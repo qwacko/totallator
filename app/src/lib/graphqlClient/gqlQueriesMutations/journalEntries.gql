@@ -1,3 +1,39 @@
+fragment JournalEntryExportReturn on JournalEntriesReturn {
+	count
+	journalEntries {
+		id
+		date
+		description
+		amount
+		linked
+		primary
+		reconciled
+		dataChecked
+		complete
+		createdAt
+		updatedAt
+		primaryJournalId
+		accountGrouping {
+			id
+		}
+		bill {
+			id
+		}
+		budget {
+			id
+		}
+		tag {
+			id
+		}
+		category {
+			id
+		}
+		account {
+			id
+		}
+	}
+}
+
 fragment JournalEntryReturn on JournalEntry {
 	id
 	date

@@ -1,3 +1,18 @@
+fragment budgetExportReturn on BudgetsReturn {
+	id
+	count
+	budgets {
+		id
+		title
+		status
+		accountGrouping {
+			id
+		}
+		createdAt
+		updatedAt
+	}
+}
+
 fragment budgetReturn on Budget {
 	id
 	title

@@ -1,3 +1,27 @@
+fragment accountExportReturn on AccountsReturn {
+	id
+	count
+	accounts {
+		id
+		title
+		isCash
+		isNetWorth
+		type
+		accountGroup
+		accountGroup2
+		accountGroup3
+		accountGroupCombined
+		accountGrouping {
+			id
+		}
+		startDate
+		endDate
+		status
+		createdAt
+		updatedAt
+	}
+}
+
 fragment accountReturn on Account {
 	id
 	title

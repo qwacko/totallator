@@ -3,6 +3,7 @@ import { GetImportInfoDocument, type ImportDataProcessed } from '$lib/graphqlCli
 import papa from 'papaparse';
 import { z } from 'zod';
 import { importJournalsValidation } from '$lib/utils/importJournalsValidation';
+import { omit } from 'lodash-es';
 
 export type ImportErrorType = {
 	title: string;
@@ -60,10 +61,14 @@ export const handleImport = async ({
 					if (validated.success) {
 						setStatus({ loading: true, message: 'Processing CSV File' });
 
+						const removeUnwanted = validated.data.map((item) =>
+							omit(item, ['primary', 'accountGroupingId'])
+						);
+
 						const importInfoCheck = await client
 							.query(GetImportInfoDocument, {
 								accountGroupingId,
-								data: validated.data
+								data: removeUnwanted
 							})
 							.toPromise();
 

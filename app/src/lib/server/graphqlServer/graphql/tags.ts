@@ -51,7 +51,7 @@ export const tagsSchema = /* GraphQL */ `
 
 	type Query {
 		tag(id: UUID!): Tag!
-		tags(filter: TagFilter, offset: Int, limit: Int, sort: [TagSort!]): TagsReturn
+		tags(filter: TagFilter, offset: Int, limit: Int, sort: [TagSort!]): TagsReturn!
 	}
 
 	input CreateTagInput {

@@ -56,7 +56,7 @@ export const categoriesSchema = /* GraphQL */ `
 			offset: Int
 			limit: Int
 			sort: [CategorySort!]
-		): CategoriesReturn
+		): CategoriesReturn!
 	}
 
 	input CreateCategoryInput {

@@ -31,12 +31,17 @@ export const accountGrouping: GraphqlQueryResolvers['accountGrouping'] = async (
 	args,
 	context
 ): Promise<AccountGroupingModel> => {
-	const { userId } = authCheckPrisma(context);
+	const { userId, admin } = authCheckPrisma(context);
 
-	const accountGrouping = await prisma.accountGrouping.findMany({
-		where: { id: args.id, viewUsers: { some: { id: userId } } },
-		include: accountGroupingInclude
-	});
+	const accountGrouping = admin
+		? await prisma.accountGrouping.findMany({
+				where: { id: args.id },
+				include: accountGroupingInclude
+		  })
+		: await prisma.accountGrouping.findMany({
+				where: { id: args.id, viewUsers: { some: { id: userId } } },
+				include: accountGroupingInclude
+		  });
 	if (accountGrouping.length === 0) {
 		throw new GraphQLYogaError('Account Grouping Not Found');
 	}
