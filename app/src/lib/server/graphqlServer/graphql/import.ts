@@ -1,8 +1,9 @@
 export const importSchema = /* GraphQL */ `
 	enum ImportDataReturnStatus {
-		new
-		existingJournal
-		existingTransaction
+		journalIdMatch
+		similarJournalFound
+		transactionIdMatch
+		referenceOnly
 	}
 
 	type ImportReturnError {
@@ -31,7 +32,8 @@ export const importSchema = /* GraphQL */ `
 		budgetId: String
 		tagTitle: String
 		tagId: String
-		status: ImportDataReturnStatus
+		status: [ImportDataReturnStatus!]!
+		foundJournalID: String
 	}
 
 	input ImportDataInput {
@@ -62,6 +64,13 @@ export const importSchema = /* GraphQL */ `
 	}
 
 	type Query {
-		importDataCheck(data: [ImportDataInput]!, accountGroupingId: String!): ImportDataReturn
+		importDataCheck(
+			data: [ImportDataInput!]!
+			accountGroupingId: String!
+			excludeTransactions: Boolean
+			excludeCheckJournalDetails: Boolean
+			excludeCheckJournalId: Boolean
+			excludeCheckTransactionId: Boolean
+		): ImportDataReturn
 	}
 `;

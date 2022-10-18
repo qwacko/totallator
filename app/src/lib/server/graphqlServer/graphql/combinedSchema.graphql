@@ -462,10 +462,11 @@ type ImportDataProcessed {
   dataChecked: Boolean!
   date: String!
   description: String!
+  foundJournalID: String
   journalId: String
   linked: Boolean!
   reconciled: Boolean!
-  status: ImportDataReturnStatus
+  status: [ImportDataReturnStatus!]!
   tagId: String
   tagTitle: String
   transactionId: String!
@@ -477,9 +478,10 @@ type ImportDataReturn {
 }
 
 enum ImportDataReturnStatus {
-  existingJournal
-  existingTransaction
-  new
+  journalIdMatch
+  referenceOnly
+  similarJournalFound
+  transactionIdMatch
 }
 
 type ImportReturnError {
@@ -722,7 +724,7 @@ type Query {
   budgets(filter: BudgetFilter, limit: Int, offset: Int, sort: [BudgetSort!]): BudgetsReturn
   categories(filter: CategoryFilter, limit: Int, offset: Int, sort: [CategorySort!]): CategoriesReturn
   category(id: UUID!): Category!
-  importDataCheck(accountGroupingId: String!, data: [ImportDataInput]!): ImportDataReturn
+  importDataCheck(accountGroupingId: String!, data: [ImportDataInput!]!, excludeCheckJournalDetails: Boolean, excludeCheckJournalId: Boolean, excludeCheckTransactionId: Boolean, excludeTransactions: Boolean): ImportDataReturn
   journalEntries(filter: JournalEntryFilter, limit: Int, offset: Int, sort: [JournalEntrySort!]): JournalEntriesReturn
   journalEntry(id: UUID!): JournalEntry!
   tag(id: UUID!): Tag!

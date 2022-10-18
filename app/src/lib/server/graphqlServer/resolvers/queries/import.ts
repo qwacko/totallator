@@ -4,6 +4,7 @@ import prisma from '$lib/server/prisma/client';
 import { importJournalsValidation } from '$lib/utils/importJournalsValidation';
 import { GraphQLYogaError } from '@graphql-yoga/common';
 import { buildCompleteImport } from '../helpers/import/buildCompleteImport';
+import { categoriseJournalImports } from '../helpers/import/categoriseJournalImports';
 import { checkImportInfo } from '../helpers/import/checkImportInfo';
 import { importGetUniqueItems } from '../helpers/import/importGetUniqueItems';
 
@@ -13,15 +14,17 @@ export const importDataCheck: GraphqlQueryResolvers['importDataCheck'] = async (
 	context
 ) => {
 	const { userId, admin } = authCheckPrisma(context);
-	const accountGrouping = await prisma.accountGrouping.findMany({
-		where: { id: args.accountGroupingId, adminUsers: { some: { id: { equals: userId } } } }
-	});
+	const accountGrouping = admin
+		? await prisma.accountGrouping.findMany({
+				where: { id: args.accountGroupingId }
+		  })
+		: await prisma.accountGrouping.findMany({
+				where: { id: args.accountGroupingId, adminUsers: { some: { id: { equals: userId } } } }
+		  });
 
 	if (!accountGrouping) {
 		throw new GraphQLYogaError('User Cannot Access Chosen Account Grouping');
 	}
-
-	console.log({ userId, admin, data: args.data });
 
 	const validated = importJournalsValidation.safeParse(args.data);
 
@@ -39,12 +42,12 @@ export const importDataCheck: GraphqlQueryResolvers['importDataCheck'] = async (
 	//Get all the unique information
 	const uniqueInfo = importGetUniqueItems(validated.data);
 
-	//Check which
 	const { errorArray, matches } = await checkImportInfo(uniqueInfo, args.accountGroupingId);
 
 	if (errorArray.length > 0) return { errors: errorArray };
 
 	const processedData = buildCompleteImport(validated.data, matches, args.accountGroupingId);
+	const withAddedDetails = await categoriseJournalImports(processedData, args.accountGroupingId);
 
-	return { data: processedData };
+	return { data: withAddedDetails };
 };

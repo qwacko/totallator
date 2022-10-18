@@ -505,10 +505,11 @@ export type ImportDataProcessed = {
   dataChecked: Scalars['Boolean'];
   date: Scalars['String'];
   description: Scalars['String'];
+  foundJournalID?: Maybe<Scalars['String']>;
   journalId?: Maybe<Scalars['String']>;
   linked: Scalars['Boolean'];
   reconciled: Scalars['Boolean'];
-  status?: Maybe<ImportDataReturnStatus>;
+  status: Array<ImportDataReturnStatus>;
   tagId?: Maybe<Scalars['String']>;
   tagTitle?: Maybe<Scalars['String']>;
   transactionId: Scalars['String'];
@@ -521,9 +522,10 @@ export type ImportDataReturn = {
 };
 
 export type ImportDataReturnStatus =
-  | 'existingJournal'
-  | 'existingTransaction'
-  | 'new';
+  | 'journalIdMatch'
+  | 'referenceOnly'
+  | 'similarJournalFound'
+  | 'transactionIdMatch';
 
 export type ImportReturnError = {
   __typename?: 'ImportReturnError';
@@ -955,7 +957,11 @@ export type QueryCategoryArgs = {
 
 export type QueryImportDataCheckArgs = {
   accountGroupingId: Scalars['String'];
-  data: Array<InputMaybe<ImportDataInput>>;
+  data: Array<ImportDataInput>;
+  excludeCheckJournalDetails?: InputMaybe<Scalars['Boolean']>;
+  excludeCheckJournalId?: InputMaybe<Scalars['Boolean']>;
+  excludeCheckTransactionId?: InputMaybe<Scalars['Boolean']>;
+  excludeTransactions?: InputMaybe<Scalars['Boolean']>;
 };
 
 
@@ -1720,10 +1726,11 @@ export type ImportDataProcessedResolvers<ContextType = any, ParentType extends R
   dataChecked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  foundJournalID?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   journalId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   linked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   reconciled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  status?: Resolver<Maybe<ResolversTypes['ImportDataReturnStatus']>, ParentType, ContextType>;
+  status?: Resolver<Array<ResolversTypes['ImportDataReturnStatus']>, ParentType, ContextType>;
   tagId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tagTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   transactionId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

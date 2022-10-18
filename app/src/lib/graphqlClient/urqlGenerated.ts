@@ -3150,6 +3150,15 @@ export default {
             "args": []
           },
           {
+            "name": "foundJournalID",
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
             "name": "journalId",
             "type": {
               "kind": "SCALAR",
@@ -3185,9 +3194,18 @@ export default {
           {
             "name": "status",
             "type": {
-              "kind": "ENUM",
-              "name": "ImportDataReturnStatus",
-              "ofType": null
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "LIST",
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "ImportDataReturnStatus",
+                    "ofType": null
+                  }
+                }
+              }
             },
             "args": []
           },
@@ -3266,13 +3284,16 @@ export default {
         "name": "ImportDataReturnStatus",
         "enumValues": [
           {
-            "name": "existingJournal"
+            "name": "journalIdMatch"
           },
           {
-            "name": "existingTransaction"
+            "name": "referenceOnly"
           },
           {
-            "name": "new"
+            "name": "similarJournalFound"
+          },
+          {
+            "name": "transactionIdMatch"
           }
         ]
       },
@@ -5876,11 +5897,46 @@ export default {
                   "ofType": {
                     "kind": "LIST",
                     "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "ImportDataInput",
-                      "ofType": null
+                      "kind": "NON_NULL",
+                      "ofType": {
+                        "kind": "INPUT_OBJECT",
+                        "name": "ImportDataInput",
+                        "ofType": null
+                      }
                     }
                   }
+                }
+              },
+              {
+                "name": "excludeCheckJournalDetails",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "excludeCheckJournalId",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "excludeCheckTransactionId",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "excludeTransactions",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Boolean",
+                  "ofType": null
                 }
               }
             ]

@@ -5,8 +5,7 @@ LATER Readd Favicon
 LATER Add Logo / Branding
 
 LATER High level filtering from URL
-LATER Link to High Level Filtered Journal List from Referenced Items
-LATER Preliminary Bulk Data Loading
+LATER Link to High Level Filtered Journal List from Referenced Items (i.e. from Bill / Budget etc.. pages)
 LATER Make Work On Mobile (Responsive)
 LATER Make sure all the dispalys / buttons / etc... are consistent
 LATER Add Ability to do automated and scheduled dumps / backups (May require addition of a separate process to auto-request through a CRON job)
@@ -22,3 +21,5 @@ LATER Structured Reports
 LATER Setup Iconify to use offline icons (Don't rely on API)
 LATER Confirm that all the Tag / Bill / Budget / Category updatable prevents updates (or possibly remove these options?)
 LATER Bulk reallocation of journals from Bill / Budget / Tag / Category Pages
+LATER Add ability to have bill / budget / tag / category / account synonyms to make importing easier from external sources.
+LATER Add ability to have a more generic import that allows for the user to have a config (stored in DB) that will take a generic JSON and translate it into a normal import.

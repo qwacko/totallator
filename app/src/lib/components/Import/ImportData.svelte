@@ -14,8 +14,9 @@
 
 	//TODO Improve import look and feel
 	//TODO Add ability to download import templates
-	//TODO Expand import to include other items (Tags, Bills, Budgets, Accounts, Categories)
+	//TODO Expand import to include other items (Tags, Bills, Budgets, Accounts, Categories) - Make this a single import
 	//TODO Add ability to export to same template as import (To allow for update and import)
+	//LATER Allow import from JSON file (so a simpler export format) - Should also export to the same format.
 </script>
 
 <div class="flex flex-col">

@@ -1,4 +1,4 @@
-query getImportInfo($data: [ImportDataInput]!, $accountGroupingId: String!) {
+query getImportInfo($data: [ImportDataInput!]!, $accountGroupingId: String!) {
 	importDataCheck(data: $data, accountGroupingId: $accountGroupingId) {
 		data {
 			transactionId
