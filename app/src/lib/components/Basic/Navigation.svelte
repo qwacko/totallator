@@ -7,6 +7,7 @@
 
 	const pages = [
 		{ title: 'Home', path: '/' },
+		{ title: 'Import', path: '/import' },
 		{ title: 'Account', path: '/account' },
 		{ title: 'Account Groupings', path: '/accountGroupings' },
 		{ title: 'Accounts', path: '/accounts' },
