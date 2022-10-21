@@ -1,11 +1,12 @@
 import { authCheckPrisma } from '$lib/server/auth/authCheck';
 import type { GraphqlQueryResolvers } from '$lib/server/graphqlServer/types/resolvers';
 import prisma from '$lib/server/prisma/client';
-import { importJournalsValidation } from '$lib/utils/importJournalsValidation';
+import { importJSONValidation } from '$lib/utils/importValidation/importJSONValidation';
 import { GraphQLYogaError } from '@graphql-yoga/common';
 import { buildCompleteImport } from '../helpers/import/buildCompleteImport';
 import { categoriseJournalImports } from '../helpers/import/categoriseJournalImports';
 import { checkImportInfo } from '../helpers/import/checkImportInfo';
+import { getOtherInformationForImport } from '../helpers/import/getOtherInformationForImport';
 import { importGetUniqueItems } from '../helpers/import/importGetUniqueItems';
 
 export const importDataCheck: GraphqlQueryResolvers['importDataCheck'] = async (
@@ -26,7 +27,7 @@ export const importDataCheck: GraphqlQueryResolvers['importDataCheck'] = async (
 		throw new GraphQLYogaError('User Cannot Access Chosen Account Grouping');
 	}
 
-	const validated = importJournalsValidation.safeParse(args.data);
+	const validated = importJSONValidation.safeParse(args.data);
 
 	if (!validated.success) {
 		console.log('There was an error');
@@ -39,15 +40,21 @@ export const importDataCheck: GraphqlQueryResolvers['importDataCheck'] = async (
 		};
 	}
 
+	const result = await getOtherInformationForImport(validated.data, args.accountGroupingId);
+
 	//Get all the unique information
-	const uniqueInfo = importGetUniqueItems(validated.data);
+	const uniqueInfo = importGetUniqueItems(validated.data.journalEntries);
 
 	const { errorArray, matches } = await checkImportInfo(uniqueInfo, args.accountGroupingId);
 
 	if (errorArray.length > 0) return { errors: errorArray };
 
-	const processedData = buildCompleteImport(validated.data, matches, args.accountGroupingId);
+	const processedData = buildCompleteImport(
+		validated.data.journalEntries,
+		matches,
+		args.accountGroupingId
+	);
 	const withAddedDetails = await categoriseJournalImports(processedData, args.accountGroupingId);
 
-	return { data: withAddedDetails };
+	return { data: { journals: withAddedDetails, ...result } };
 };

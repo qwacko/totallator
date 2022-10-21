@@ -426,7 +426,126 @@ scalar ISBN
 
 scalar ISO8601Duration
 
-input ImportDataInput {
+input ImportAccountInput {
+  accountGroup: String
+  accountGroup2: String
+  accountGroup3: String
+  createdAt: DateTime
+  endDate: Date
+  id: String!
+  isCash: Boolean
+  isNetWorth: Boolean
+  startDate: Date
+  status: StatusEnum
+  title: String
+  type: AccountType
+  updatedAt: DateTime
+}
+
+type ImportAccountProcessed {
+  accountGroup: String
+  accountGroup2: String
+  accountGroup3: String
+  createdAt: DateTime
+  endDate: Date
+  id: String!
+  isCash: Boolean
+  isNetWorth: Boolean
+  processingResult: ImportChecksReturn
+  startDate: Date
+  status: StatusEnum
+  title: String
+  type: AccountType
+  updatedAt: DateTime
+}
+
+input ImportBillInput {
+  createdAt: DateTime
+  id: String!
+  status: StatusEnum
+  title: String
+  updatedAt: DateTime
+}
+
+type ImportBillProcessed {
+  createdAt: DateTime
+  id: String!
+  processingResult: ImportChecksReturn
+  status: StatusEnum
+  title: String
+  updatedAt: DateTime
+}
+
+input ImportBudgetInput {
+  createdAt: DateTime
+  id: String!
+  status: StatusEnum
+  title: String
+  updatedAt: DateTime
+}
+
+type ImportBudgetProcessed {
+  createdAt: DateTime
+  id: String!
+  processingResult: ImportChecksReturn
+  status: StatusEnum
+  title: String
+  updatedAt: DateTime
+}
+
+input ImportCategoryInput {
+  createdAt: DateTime
+  group: String
+  id: String!
+  single: String
+  status: StatusEnum
+  title: String
+  updatedAt: DateTime
+}
+
+type ImportCategoryProcessed {
+  createdAt: DateTime
+  group: String
+  id: String!
+  processingResult: ImportChecksReturn
+  single: String
+  status: StatusEnum
+  title: String
+  updatedAt: DateTime
+}
+
+type ImportChecksReturn {
+  dataChanged: Boolean
+  dataInJournals: Boolean
+  idInItemList: Boolean
+  idInJournals: Boolean
+}
+
+input ImportDataCombined {
+  accounts: [ImportAccountInput!]
+  bills: [ImportBillInput!]
+  budgets: [ImportBudgetInput!]
+  categories: [ImportCategoryInput!]
+  journals: [ImportJournalInput!]
+  tags: [ImportTagInput!]
+}
+
+type ImportDataResult {
+  accounts: [ImportAccountProcessed!]
+  bills: [ImportBillProcessed!]
+  budgets: [ImportBudgetProcessed!]
+  categories: [ImportCategoryProcessed!]
+  journals: [ImportJournalProcessed!]
+  tags: [ImportTagProcessed!]
+}
+
+type ImportDataReturn {
+  data: ImportDataResult
+  errors: [ImportReturnError!]
+}
+
+input ImportJournalInput {
+  accountGroupingId: String
   accountId: String
   accountTitle: String
   amount: Float!
@@ -441,8 +560,9 @@ input ImportDataInput {
   dataChecked: Boolean
   date: String!
   description: String!
-  id: String
+  id: String!
   linked: Boolean
+  primary: Boolean
   primaryJournalId: String!
   reconciled: Boolean
   tagId: String
@@ -450,7 +570,7 @@ input ImportDataInput {
   updatedAt: DateTime
 }
 
-type ImportDataProcessed {
+type ImportJournalProcessed {
   accountId: String!
   accountTitle: String!
   amount: Float!
@@ -470,18 +590,13 @@ type ImportDataProcessed {
   linked: Boolean!
   primaryJournalId: String!
   reconciled: Boolean!
-  status: [ImportDataReturnStatus!]!
+  status: [ImportJournalReturnStatus!]!
   tagId: String
   tagTitle: String
   updatedAt: DateTime
 }
 
-type ImportDataReturn {
-  data: [ImportDataProcessed!]
-  errors: [ImportReturnError!]
-}
-
-enum ImportDataReturnStatus {
+enum ImportJournalReturnStatus {
   journalIdMatch
   referenceOnly
   similarJournalFound
@@ -492,6 +607,27 @@ type ImportReturnError {
   location: String
   message: String
   title: String
+}
+
+input ImportTagInput {
+  createdAt: DateTime
+  group: String
+  id: String!
+  single: String
+  status: StatusEnum
+  title: String
+  updatedAt: DateTime
+}
+
+type ImportTagProcessed {
+  createdAt: DateTime
+  group: String
+  id: String!
+  processingResult: ImportChecksReturn
+  single: String
+  status: StatusEnum
+  title: String
+  updatedAt: DateTime
 }
 
 scalar JSON
@@ -728,7 +864,7 @@ type Query {
   budgets(filter: BudgetFilter, limit: Int, offset: Int, sort: [BudgetSort!]): BudgetsReturn!
   categories(filter: CategoryFilter, limit: Int, offset: Int, sort: [CategorySort!]): CategoriesReturn!
   category(id: UUID!): Category!
-  importDataCheck(accountGroupingId: String!, data: [ImportDataInput!]!, excludeCheckJournalDetails: Boolean, excludeCheckJournalId: Boolean, excludeCheckTransactionId: Boolean, excludeTransactions: Boolean): ImportDataReturn
+  importDataCheck(accountGroupingId: String!, data: ImportDataCombined!, excludeCheckJournalDetails: Boolean, excludeCheckJournalId: Boolean, excludeCheckTransactionId: Boolean, excludeTransactions: Boolean): ImportDataReturn
   journalEntries(filter: JournalEntryFilter, limit: Int, offset: Int, sort: [JournalEntrySort!]): JournalEntriesReturn!
   journalEntry(id: UUID!): JournalEntry!
   tag(id: UUID!): Tag!

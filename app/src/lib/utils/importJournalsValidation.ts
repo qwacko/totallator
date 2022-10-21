@@ -1,19 +1,11 @@
 import { parse } from 'date-fns';
 import { z } from 'zod';
-
-const booleanOptions = ['TRUE', 'True', 'true', '1', 'FALSE', 'False', 'false', '0'] as const;
-
-const booleanImportValidation = z
-	.string()
-	.max(0, { message: `String must be empty or one of ${booleanOptions.join(', ')}` })
-	.or(z.enum(booleanOptions))
-	.or(z.boolean().transform((arg) => (arg ? 'True' : 'False')))
-	.transform((arg) => {
-		if (arg in ['TRUE', 'True', 'true', '1']) return true;
-		else return false;
-	});
-
-const validateUUIDMaybeBlank = z.string().trim().uuid().or(z.string().max(0));
+import { validateDate } from './importValidation/validateDate';
+import { validateISOTime } from './importValidation/validateISOTime';
+import {
+	validateUUIDMaybeBlank,
+	booleanImportValidation
+} from './importValidation/validateUUIDMaybeBlank';
 
 export const importJournalsValidation = z
 	.array(
@@ -22,22 +14,7 @@ export const importJournalsValidation = z
 				primaryJournalId: z.string(),
 				accountGroupingId: z.string().optional(),
 				id: validateUUIDMaybeBlank.optional(),
-				date: z
-					.string()
-					.regex(new RegExp('([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))'), {
-						message: 'Date must be of format YYYY-MM-DD'
-					})
-					.refine(
-						(arg) => {
-							const newDate = parse(arg, 'yyyy-MM-dd', new Date());
-							if (isNaN(newDate.valueOf())) {
-								return false;
-							}
-
-							return true;
-						},
-						{ message: 'Date Must Be Valid' }
-					),
+				date: validateDate,
 				description: z.string().min(1, { message: 'Description cannot be empty' }),
 				primary: booleanImportValidation.optional(),
 				linked: booleanImportValidation.optional(),
@@ -47,28 +24,23 @@ export const importJournalsValidation = z
 				amount: z.preprocess((a) => parseFloat(String(a)), z.number()),
 				accountTitle: z.string().optional(),
 				accountId: validateUUIDMaybeBlank.optional(),
-				tagTitle: z.string().optional(),
+				tagTitle: z
+					.string()
+					.regex(/.*\/.*/, { message: 'Must Have a /' })
+					.optional(),
 				tagId: validateUUIDMaybeBlank.optional(),
-				categoryTitle: z.string().optional(),
+				categoryTitle: z
+					.string()
+					.regex(/.*\/.*/, { message: 'Must Have a /' })
+					.optional(),
 				categoryId: validateUUIDMaybeBlank.optional(),
 				billTitle: z.string().optional(),
 				billId: validateUUIDMaybeBlank.optional(),
 				budgetTitle: z.string().optional(),
 				budgetId: validateUUIDMaybeBlank.optional(),
-				createdAt: z
-					.string()
-					.regex(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/)
-					.transform((item) => new Date(item))
-					.or(z.date())
-					.optional(),
-				updatedAt: z
-					.string()
-					.regex(/\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/)
-					.transform((item) => new Date(item))
-					.or(z.date())
-					.optional()
+				createdAt: validateISOTime.optional(),
+				updatedAt: validateISOTime.optional()
 			})
-			.strict()
 			.refine((item) => item.accountId || item.accountTitle, {
 				message: 'Row Must Have an account name or account id'
 			})

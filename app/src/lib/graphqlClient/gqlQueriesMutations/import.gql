@@ -1,29 +1,101 @@
-query getImportInfo($data: [ImportDataInput!]!, $accountGroupingId: String!) {
+fragment importChecksReturnAll on ImportChecksReturn {
+	idInItemList
+	idInJournals
+	dataChanged
+	dataInJournals
+}
+
+query getImportInfo($data: ImportDataCombined!, $accountGroupingId: String!) {
 	importDataCheck(data: $data, accountGroupingId: $accountGroupingId) {
 		data {
-			primaryJournalId
-			journalId
-			date
-			description
-			linked
-			reconciled
-			dataChecked
-			complete
-			amount
-			accountTitle
-			accountId
-			categoryTitle
-			categoryId
-			billTitle
-			billId
-			budgetTitle
-			budgetId
-			tagTitle
-			tagId
-			status
-			createdAt
-			updatedAt
+			journals {
+				primaryJournalId
+				journalId
+				date
+				description
+				linked
+				reconciled
+				dataChecked
+				complete
+				amount
+				accountTitle
+				accountId
+				categoryTitle
+				categoryId
+				billTitle
+				billId
+				budgetTitle
+				budgetId
+				tagTitle
+				tagId
+				status
+				createdAt
+				updatedAt
+			}
+			accounts {
+				id
+				title
+				isCash
+				isNetWorth
+				type
+				accountGroup
+				accountGroup2
+				accountGroup3
+				startDate
+				endDate
+				status
+				createdAt
+				updatedAt
+				processingResult {
+					...importChecksReturnAll
+				}
+			}
+			categories {
+				id
+				title
+				group
+				single
+				status
+				createdAt
+				updatedAt
+				processingResult {
+					...importChecksReturnAll
+				}
+			}
+			tags {
+				id
+				title
+				group
+				single
+				status
+				createdAt
+				updatedAt
+				processingResult {
+					...importChecksReturnAll
+				}
+			}
+			bills {
+				id
+				title
+				status
+				createdAt
+				updatedAt
+				processingResult {
+					...importChecksReturnAll
+				}
+			}
+			budgets {
+				id
+				title
+				status
+				createdAt
+				updatedAt
+				processingResult {
+					...importChecksReturnAll
+				}
+			}
 		}
+
 		errors {
 			title
 			message

@@ -468,7 +468,133 @@ export enum EmptyFirst {
   EmptyLast = 'EMPTY_LAST'
 }
 
-export type ImportDataInput = {
+export type ImportAccountInput = {
+  accountGroup?: InputMaybe<Scalars['String']>;
+  accountGroup2?: InputMaybe<Scalars['String']>;
+  accountGroup3?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  endDate?: InputMaybe<Scalars['Date']>;
+  id: Scalars['String'];
+  isCash?: InputMaybe<Scalars['Boolean']>;
+  isNetWorth?: InputMaybe<Scalars['Boolean']>;
+  startDate?: InputMaybe<Scalars['Date']>;
+  status?: InputMaybe<StatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<AccountType>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ImportAccountProcessed = {
+  __typename?: 'ImportAccountProcessed';
+  accountGroup?: Maybe<Scalars['String']>;
+  accountGroup2?: Maybe<Scalars['String']>;
+  accountGroup3?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  endDate?: Maybe<Scalars['Date']>;
+  id: Scalars['String'];
+  isCash?: Maybe<Scalars['Boolean']>;
+  isNetWorth?: Maybe<Scalars['Boolean']>;
+  processingResult?: Maybe<ImportChecksReturn>;
+  startDate?: Maybe<Scalars['Date']>;
+  status?: Maybe<StatusEnum>;
+  title?: Maybe<Scalars['String']>;
+  type?: Maybe<AccountType>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ImportBillInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  status?: InputMaybe<StatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ImportBillProcessed = {
+  __typename?: 'ImportBillProcessed';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  processingResult?: Maybe<ImportChecksReturn>;
+  status?: Maybe<StatusEnum>;
+  title?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ImportBudgetInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  status?: InputMaybe<StatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ImportBudgetProcessed = {
+  __typename?: 'ImportBudgetProcessed';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  processingResult?: Maybe<ImportChecksReturn>;
+  status?: Maybe<StatusEnum>;
+  title?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ImportCategoryInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  group?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  single?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<StatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ImportCategoryProcessed = {
+  __typename?: 'ImportCategoryProcessed';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  group?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  processingResult?: Maybe<ImportChecksReturn>;
+  single?: Maybe<Scalars['String']>;
+  status?: Maybe<StatusEnum>;
+  title?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ImportChecksReturn = {
+  __typename?: 'ImportChecksReturn';
+  dataChanged?: Maybe<Scalars['Boolean']>;
+  dataInJournals?: Maybe<Scalars['Boolean']>;
+  idInItemList?: Maybe<Scalars['Boolean']>;
+  idInJournals?: Maybe<Scalars['Boolean']>;
+};
+
+export type ImportDataCombined = {
+  accounts?: InputMaybe<Array<ImportAccountInput>>;
+  bills?: InputMaybe<Array<ImportBillInput>>;
+  budgets?: InputMaybe<Array<ImportBudgetInput>>;
+  categories?: InputMaybe<Array<ImportCategoryInput>>;
+  journals?: InputMaybe<Array<ImportJournalInput>>;
+  tags?: InputMaybe<Array<ImportTagInput>>;
+};
+
+export type ImportDataResult = {
+  __typename?: 'ImportDataResult';
+  accounts?: Maybe<Array<ImportAccountProcessed>>;
+  bills?: Maybe<Array<ImportBillProcessed>>;
+  budgets?: Maybe<Array<ImportBudgetProcessed>>;
+  categories?: Maybe<Array<ImportCategoryProcessed>>;
+  journals?: Maybe<Array<ImportJournalProcessed>>;
+  tags?: Maybe<Array<ImportTagProcessed>>;
+};
+
+export type ImportDataReturn = {
+  __typename?: 'ImportDataReturn';
+  data?: Maybe<ImportDataResult>;
+  errors?: Maybe<Array<ImportReturnError>>;
+};
+
+export type ImportJournalInput = {
+  accountGroupingId?: InputMaybe<Scalars['String']>;
   accountId?: InputMaybe<Scalars['String']>;
   accountTitle?: InputMaybe<Scalars['String']>;
   amount: Scalars['Float'];
@@ -483,8 +609,9 @@ export type ImportDataInput = {
   dataChecked?: InputMaybe<Scalars['Boolean']>;
   date: Scalars['String'];
   description: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
   linked?: InputMaybe<Scalars['Boolean']>;
+  primary?: InputMaybe<Scalars['Boolean']>;
   primaryJournalId: Scalars['String'];
   reconciled?: InputMaybe<Scalars['Boolean']>;
   tagId?: InputMaybe<Scalars['String']>;
@@ -492,8 +619,8 @@ export type ImportDataInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type ImportDataProcessed = {
-  __typename?: 'ImportDataProcessed';
+export type ImportJournalProcessed = {
+  __typename?: 'ImportJournalProcessed';
   accountId: Scalars['String'];
   accountTitle: Scalars['String'];
   amount: Scalars['Float'];
@@ -513,19 +640,13 @@ export type ImportDataProcessed = {
   linked: Scalars['Boolean'];
   primaryJournalId: Scalars['String'];
   reconciled: Scalars['Boolean'];
-  status: Array<ImportDataReturnStatus>;
+  status: Array<ImportJournalReturnStatus>;
   tagId?: Maybe<Scalars['String']>;
   tagTitle?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-export type ImportDataReturn = {
-  __typename?: 'ImportDataReturn';
-  data?: Maybe<Array<ImportDataProcessed>>;
-  errors?: Maybe<Array<ImportReturnError>>;
-};
-
-export enum ImportDataReturnStatus {
+export enum ImportJournalReturnStatus {
   JournalIdMatch = 'journalIdMatch',
   ReferenceOnly = 'referenceOnly',
   SimilarJournalFound = 'similarJournalFound',
@@ -537,6 +658,28 @@ export type ImportReturnError = {
   location?: Maybe<Scalars['String']>;
   message?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
+};
+
+export type ImportTagInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  group?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  single?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<StatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ImportTagProcessed = {
+  __typename?: 'ImportTagProcessed';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  group?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  processingResult?: Maybe<ImportChecksReturn>;
+  single?: Maybe<Scalars['String']>;
+  status?: Maybe<StatusEnum>;
+  title?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type JournalEntriesFilter = {
@@ -962,7 +1105,7 @@ export type QueryCategoryArgs = {
 
 export type QueryImportDataCheckArgs = {
   accountGroupingId: Scalars['String'];
-  data: Array<ImportDataInput>;
+  data: ImportDataCombined;
   excludeCheckJournalDetails?: InputMaybe<Scalars['Boolean']>;
   excludeCheckJournalId?: InputMaybe<Scalars['Boolean']>;
   excludeCheckTransactionId?: InputMaybe<Scalars['Boolean']>;
@@ -1425,13 +1568,15 @@ export type CreateUserMutationMutationVariables = Exact<{
 
 export type CreateUserMutationMutation = { __typename?: 'Mutation', createUser: string };
 
+export type ImportChecksReturnAllFragment = { __typename?: 'ImportChecksReturn', idInItemList?: boolean | null, idInJournals?: boolean | null, dataChanged?: boolean | null, dataInJournals?: boolean | null };
+
 export type GetImportInfoQueryVariables = Exact<{
-  data: Array<ImportDataInput> | ImportDataInput;
+  data: ImportDataCombined;
   accountGroupingId: Scalars['String'];
 }>;
 
 
-export type GetImportInfoQuery = { __typename?: 'Query', importDataCheck?: { __typename?: 'ImportDataReturn', data?: Array<{ __typename?: 'ImportDataProcessed', primaryJournalId: string, journalId?: string | null, date: string, description: string, linked: boolean, reconciled: boolean, dataChecked: boolean, complete: boolean, amount: number, accountTitle: string, accountId: string, categoryTitle?: string | null, categoryId?: string | null, billTitle?: string | null, billId?: string | null, budgetTitle?: string | null, budgetId?: string | null, tagTitle?: string | null, tagId?: string | null, status: Array<ImportDataReturnStatus>, createdAt?: any | null, updatedAt?: any | null }> | null, errors?: Array<{ __typename?: 'ImportReturnError', title?: string | null, message?: string | null, location?: string | null }> | null } | null };
+export type GetImportInfoQuery = { __typename?: 'Query', importDataCheck?: { __typename?: 'ImportDataReturn', data?: { __typename?: 'ImportDataResult', journals?: Array<{ __typename?: 'ImportJournalProcessed', primaryJournalId: string, journalId?: string | null, date: string, description: string, linked: boolean, reconciled: boolean, dataChecked: boolean, complete: boolean, amount: number, accountTitle: string, accountId: string, categoryTitle?: string | null, categoryId?: string | null, billTitle?: string | null, billId?: string | null, budgetTitle?: string | null, budgetId?: string | null, tagTitle?: string | null, tagId?: string | null, status: Array<ImportJournalReturnStatus>, createdAt?: any | null, updatedAt?: any | null }> | null, accounts?: Array<{ __typename?: 'ImportAccountProcessed', id: string, title?: string | null, isCash?: boolean | null, isNetWorth?: boolean | null, type?: AccountType | null, accountGroup?: string | null, accountGroup2?: string | null, accountGroup3?: string | null, startDate?: any | null, endDate?: any | null, status?: StatusEnum | null, createdAt?: any | null, updatedAt?: any | null, processingResult?: { __typename?: 'ImportChecksReturn', idInItemList?: boolean | null, idInJournals?: boolean | null, dataChanged?: boolean | null, dataInJournals?: boolean | null } | null }> | null, categories?: Array<{ __typename?: 'ImportCategoryProcessed', id: string, title?: string | null, group?: string | null, single?: string | null, status?: StatusEnum | null, createdAt?: any | null, updatedAt?: any | null, processingResult?: { __typename?: 'ImportChecksReturn', idInItemList?: boolean | null, idInJournals?: boolean | null, dataChanged?: boolean | null, dataInJournals?: boolean | null } | null }> | null, tags?: Array<{ __typename?: 'ImportTagProcessed', id: string, title?: string | null, group?: string | null, single?: string | null, status?: StatusEnum | null, createdAt?: any | null, updatedAt?: any | null, processingResult?: { __typename?: 'ImportChecksReturn', idInItemList?: boolean | null, idInJournals?: boolean | null, dataChanged?: boolean | null, dataInJournals?: boolean | null } | null }> | null, bills?: Array<{ __typename?: 'ImportBillProcessed', id: string, title?: string | null, status?: StatusEnum | null, createdAt?: any | null, updatedAt?: any | null, processingResult?: { __typename?: 'ImportChecksReturn', idInItemList?: boolean | null, idInJournals?: boolean | null, dataChanged?: boolean | null, dataInJournals?: boolean | null } | null }> | null, budgets?: Array<{ __typename?: 'ImportBudgetProcessed', id: string, title?: string | null, status?: StatusEnum | null, createdAt?: any | null, updatedAt?: any | null, processingResult?: { __typename?: 'ImportChecksReturn', idInItemList?: boolean | null, idInJournals?: boolean | null, dataChanged?: boolean | null, dataInJournals?: boolean | null } | null }> | null } | null, errors?: Array<{ __typename?: 'ImportReturnError', title?: string | null, message?: string | null, location?: string | null }> | null } | null };
 
 export type JournalEntryExportReturnFragment = { __typename?: 'JournalEntriesReturn', count: number, journalEntries: Array<{ __typename?: 'JournalEntry', id: any, date: any, description: string, amount: number, linked: boolean, primary: boolean, reconciled: boolean, dataChecked: boolean, complete: boolean, createdAt: any, updatedAt: any, primaryJournalId: string, accountGrouping: { __typename?: 'AccountGrouping', id: any }, bill?: { __typename?: 'Bill', id: any } | null, budget?: { __typename?: 'Budget', id: any } | null, tag?: { __typename?: 'Tag', id: any } | null, category?: { __typename?: 'Category', id: any } | null, account: { __typename?: 'Account', id: any } }> };
 
@@ -1599,6 +1744,7 @@ export const CategoryExportReturnFragmentDoc = {"kind":"Document","definitions":
 export const CategoryReturnFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"categoryReturn"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Category"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"group"}},{"kind":"Field","name":{"kind":"Name","value":"single"}},{"kind":"Field","name":{"kind":"Name","value":"accountGrouping"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"allowUpdate"}},{"kind":"Field","name":{"kind":"Name","value":"userIsAdmin"}}]}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"deleted"}},{"kind":"Field","name":{"kind":"Name","value":"active"}},{"kind":"Field","name":{"kind":"Name","value":"disabled"}},{"kind":"Field","name":{"kind":"Name","value":"allowUpdate"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"userIsAdmin"}}]}}]} as unknown as DocumentNode<CategoryReturnFragment, unknown>;
 export const UserDisplayedDataFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserDisplayedData"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"admin"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]} as unknown as DocumentNode<UserDisplayedDataFragment, unknown>;
 export const UserPrivateDataFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"UserPrivateData"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"darkMode"}},{"kind":"Field","name":{"kind":"Name","value":"dateFormat"}},{"kind":"Field","name":{"kind":"Name","value":"currencyFormat"}},{"kind":"Field","name":{"kind":"Name","value":"firstMonthFY"}}]}}]} as unknown as DocumentNode<UserPrivateDataFragment, unknown>;
+export const ImportChecksReturnAllFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"importChecksReturnAll"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ImportChecksReturn"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"idInItemList"}},{"kind":"Field","name":{"kind":"Name","value":"idInJournals"}},{"kind":"Field","name":{"kind":"Name","value":"dataChanged"}},{"kind":"Field","name":{"kind":"Name","value":"dataInJournals"}}]}}]} as unknown as DocumentNode<ImportChecksReturnAllFragment, unknown>;
 export const JournalEntryExportReturnFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"JournalEntryExportReturn"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"JournalEntriesReturn"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"journalEntries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"linked"}},{"kind":"Field","name":{"kind":"Name","value":"primary"}},{"kind":"Field","name":{"kind":"Name","value":"reconciled"}},{"kind":"Field","name":{"kind":"Name","value":"dataChecked"}},{"kind":"Field","name":{"kind":"Name","value":"complete"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"primaryJournalId"}},{"kind":"Field","name":{"kind":"Name","value":"accountGrouping"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bill"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"budget"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<JournalEntryExportReturnFragment, unknown>;
 export const JournalEntryReturnFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"JournalEntryReturn"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"JournalEntry"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"linked"}},{"kind":"Field","name":{"kind":"Name","value":"primary"}},{"kind":"Field","name":{"kind":"Name","value":"reconciled"}},{"kind":"Field","name":{"kind":"Name","value":"dataChecked"}},{"kind":"Field","name":{"kind":"Name","value":"complete"}},{"kind":"Field","name":{"kind":"Name","value":"userIsAdmin"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"primaryJournalId"}},{"kind":"Field","name":{"kind":"Name","value":"primaryJournal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"journalEntries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"allowUpdate"}},{"kind":"Field","name":{"kind":"Name","value":"accountTitleCombined"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"accountGrouping"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"allowUpdate"}}]}},{"kind":"Field","name":{"kind":"Name","value":"account"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"allowUpdate"}},{"kind":"Field","name":{"kind":"Name","value":"accountTitleCombined"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}},{"kind":"Field","name":{"kind":"Name","value":"editable"}},{"kind":"Field","name":{"kind":"Name","value":"amountEditable"}},{"kind":"Field","name":{"kind":"Name","value":"total"}},{"kind":"Field","name":{"kind":"Name","value":"tag"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"allowUpdate"}}]}},{"kind":"Field","name":{"kind":"Name","value":"bill"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"allowUpdate"}}]}},{"kind":"Field","name":{"kind":"Name","value":"budget"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"allowUpdate"}}]}},{"kind":"Field","name":{"kind":"Name","value":"category"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"allowUpdate"}}]}}]}}]} as unknown as DocumentNode<JournalEntryReturnFragment, unknown>;
 export const TagExportReturnFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"tagExportReturn"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TagsReturn"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"count"}},{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"single"}},{"kind":"Field","name":{"kind":"Name","value":"group"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"accountGrouping"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<TagExportReturnFragment, unknown>;
@@ -1632,7 +1778,7 @@ export const GetTestDataDocument = {"kind":"Document","definitions":[{"kind":"Op
 export const GetUserDataDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetUserData"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserDisplayedData"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserPrivateData"}}]}}]}},...UserDisplayedDataFragmentDoc.definitions,...UserPrivateDataFragmentDoc.definitions]} as unknown as DocumentNode<GetUserDataQuery, GetUserDataQueryVariables>;
 export const UpdateUserMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UpdateUserMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UpdateUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"updateUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserDisplayedData"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"UserPrivateData"}}]}}]}},...UserDisplayedDataFragmentDoc.definitions,...UserPrivateDataFragmentDoc.definitions]} as unknown as DocumentNode<UpdateUserMutationMutation, UpdateUserMutationMutationVariables>;
 export const CreateUserMutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUserMutation"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateUserInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}]}]}}]} as unknown as DocumentNode<CreateUserMutationMutation, CreateUserMutationMutationVariables>;
-export const GetImportInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getImportInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ImportDataInput"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accountGroupingId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"importDataCheck"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}},{"kind":"Argument","name":{"kind":"Name","value":"accountGroupingId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accountGroupingId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primaryJournalId"}},{"kind":"Field","name":{"kind":"Name","value":"journalId"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"linked"}},{"kind":"Field","name":{"kind":"Name","value":"reconciled"}},{"kind":"Field","name":{"kind":"Name","value":"dataChecked"}},{"kind":"Field","name":{"kind":"Name","value":"complete"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"accountTitle"}},{"kind":"Field","name":{"kind":"Name","value":"accountId"}},{"kind":"Field","name":{"kind":"Name","value":"categoryTitle"}},{"kind":"Field","name":{"kind":"Name","value":"categoryId"}},{"kind":"Field","name":{"kind":"Name","value":"billTitle"}},{"kind":"Field","name":{"kind":"Name","value":"billId"}},{"kind":"Field","name":{"kind":"Name","value":"budgetTitle"}},{"kind":"Field","name":{"kind":"Name","value":"budgetId"}},{"kind":"Field","name":{"kind":"Name","value":"tagTitle"}},{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"location"}}]}}]}}]}}]} as unknown as DocumentNode<GetImportInfoQuery, GetImportInfoQueryVariables>;
+export const GetImportInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getImportInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ImportDataCombined"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"accountGroupingId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"importDataCheck"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}},{"kind":"Argument","name":{"kind":"Name","value":"accountGroupingId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"accountGroupingId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"data"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"journals"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"primaryJournalId"}},{"kind":"Field","name":{"kind":"Name","value":"journalId"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"linked"}},{"kind":"Field","name":{"kind":"Name","value":"reconciled"}},{"kind":"Field","name":{"kind":"Name","value":"dataChecked"}},{"kind":"Field","name":{"kind":"Name","value":"complete"}},{"kind":"Field","name":{"kind":"Name","value":"amount"}},{"kind":"Field","name":{"kind":"Name","value":"accountTitle"}},{"kind":"Field","name":{"kind":"Name","value":"accountId"}},{"kind":"Field","name":{"kind":"Name","value":"categoryTitle"}},{"kind":"Field","name":{"kind":"Name","value":"categoryId"}},{"kind":"Field","name":{"kind":"Name","value":"billTitle"}},{"kind":"Field","name":{"kind":"Name","value":"billId"}},{"kind":"Field","name":{"kind":"Name","value":"budgetTitle"}},{"kind":"Field","name":{"kind":"Name","value":"budgetId"}},{"kind":"Field","name":{"kind":"Name","value":"tagTitle"}},{"kind":"Field","name":{"kind":"Name","value":"tagId"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}},{"kind":"Field","name":{"kind":"Name","value":"accounts"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"isCash"}},{"kind":"Field","name":{"kind":"Name","value":"isNetWorth"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"accountGroup"}},{"kind":"Field","name":{"kind":"Name","value":"accountGroup2"}},{"kind":"Field","name":{"kind":"Name","value":"accountGroup3"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"endDate"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"processingResult"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"importChecksReturnAll"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"categories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"group"}},{"kind":"Field","name":{"kind":"Name","value":"single"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"processingResult"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"importChecksReturnAll"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"tags"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"group"}},{"kind":"Field","name":{"kind":"Name","value":"single"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"processingResult"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"importChecksReturnAll"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"bills"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"processingResult"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"importChecksReturnAll"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"budgets"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"processingResult"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"importChecksReturnAll"}}]}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"errors"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"title"}},{"kind":"Field","name":{"kind":"Name","value":"message"}},{"kind":"Field","name":{"kind":"Name","value":"location"}}]}}]}}]}},...ImportChecksReturnAllFragmentDoc.definitions]} as unknown as DocumentNode<GetImportInfoQuery, GetImportInfoQueryVariables>;
 export const GetJournalsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetJournals"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"JournalEntryFilter"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JournalEntrySort"}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"journalEntries"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"journalEntries"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"JournalEntryReturn"}}]}},{"kind":"Field","name":{"kind":"Name","value":"sum"}},{"kind":"Field","name":{"kind":"Name","value":"count"}}]}}]}},...JournalEntryReturnFragmentDoc.definitions]} as unknown as DocumentNode<GetJournalsQuery, GetJournalsQueryVariables>;
 export const CreateTransactionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTransaction"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateJournalInput"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTransaction"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"JournalEntryReturn"}}]}}]}},...JournalEntryReturnFragmentDoc.definitions]} as unknown as DocumentNode<CreateTransactionMutation, CreateTransactionMutationVariables>;
 export const CreateTransactionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTransactions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateJournalInput"}}}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createTransactions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"JournalEntryReturn"}}]}}]}},...JournalEntryReturnFragmentDoc.definitions]} as unknown as DocumentNode<CreateTransactionsMutation, CreateTransactionsMutationVariables>;

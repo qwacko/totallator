@@ -468,7 +468,133 @@ export type EmptyFirst =
   | 'EMPTY_FIRST'
   | 'EMPTY_LAST';
 
-export type ImportDataInput = {
+export type ImportAccountInput = {
+  accountGroup?: InputMaybe<Scalars['String']>;
+  accountGroup2?: InputMaybe<Scalars['String']>;
+  accountGroup3?: InputMaybe<Scalars['String']>;
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  endDate?: InputMaybe<Scalars['Date']>;
+  id: Scalars['String'];
+  isCash?: InputMaybe<Scalars['Boolean']>;
+  isNetWorth?: InputMaybe<Scalars['Boolean']>;
+  startDate?: InputMaybe<Scalars['Date']>;
+  status?: InputMaybe<StatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  type?: InputMaybe<AccountType>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ImportAccountProcessed = {
+  __typename?: 'ImportAccountProcessed';
+  accountGroup?: Maybe<Scalars['String']>;
+  accountGroup2?: Maybe<Scalars['String']>;
+  accountGroup3?: Maybe<Scalars['String']>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  endDate?: Maybe<Scalars['Date']>;
+  id: Scalars['String'];
+  isCash?: Maybe<Scalars['Boolean']>;
+  isNetWorth?: Maybe<Scalars['Boolean']>;
+  processingResult?: Maybe<ImportChecksReturn>;
+  startDate?: Maybe<Scalars['Date']>;
+  status?: Maybe<StatusEnum>;
+  title?: Maybe<Scalars['String']>;
+  type?: Maybe<AccountType>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ImportBillInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  status?: InputMaybe<StatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ImportBillProcessed = {
+  __typename?: 'ImportBillProcessed';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  processingResult?: Maybe<ImportChecksReturn>;
+  status?: Maybe<StatusEnum>;
+  title?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ImportBudgetInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  status?: InputMaybe<StatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ImportBudgetProcessed = {
+  __typename?: 'ImportBudgetProcessed';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  id: Scalars['String'];
+  processingResult?: Maybe<ImportChecksReturn>;
+  status?: Maybe<StatusEnum>;
+  title?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ImportCategoryInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  group?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  single?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<StatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ImportCategoryProcessed = {
+  __typename?: 'ImportCategoryProcessed';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  group?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  processingResult?: Maybe<ImportChecksReturn>;
+  single?: Maybe<Scalars['String']>;
+  status?: Maybe<StatusEnum>;
+  title?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ImportChecksReturn = {
+  __typename?: 'ImportChecksReturn';
+  dataChanged?: Maybe<Scalars['Boolean']>;
+  dataInJournals?: Maybe<Scalars['Boolean']>;
+  idInItemList?: Maybe<Scalars['Boolean']>;
+  idInJournals?: Maybe<Scalars['Boolean']>;
+};
+
+export type ImportDataCombined = {
+  accounts?: InputMaybe<Array<ImportAccountInput>>;
+  bills?: InputMaybe<Array<ImportBillInput>>;
+  budgets?: InputMaybe<Array<ImportBudgetInput>>;
+  categories?: InputMaybe<Array<ImportCategoryInput>>;
+  journals?: InputMaybe<Array<ImportJournalInput>>;
+  tags?: InputMaybe<Array<ImportTagInput>>;
+};
+
+export type ImportDataResult = {
+  __typename?: 'ImportDataResult';
+  accounts?: Maybe<Array<ImportAccountProcessed>>;
+  bills?: Maybe<Array<ImportBillProcessed>>;
+  budgets?: Maybe<Array<ImportBudgetProcessed>>;
+  categories?: Maybe<Array<ImportCategoryProcessed>>;
+  journals?: Maybe<Array<ImportJournalProcessed>>;
+  tags?: Maybe<Array<ImportTagProcessed>>;
+};
+
+export type ImportDataReturn = {
+  __typename?: 'ImportDataReturn';
+  data?: Maybe<ImportDataResult>;
+  errors?: Maybe<Array<ImportReturnError>>;
+};
+
+export type ImportJournalInput = {
+  accountGroupingId?: InputMaybe<Scalars['String']>;
   accountId?: InputMaybe<Scalars['String']>;
   accountTitle?: InputMaybe<Scalars['String']>;
   amount: Scalars['Float'];
@@ -483,8 +609,9 @@ export type ImportDataInput = {
   dataChecked?: InputMaybe<Scalars['Boolean']>;
   date: Scalars['String'];
   description: Scalars['String'];
-  id?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
   linked?: InputMaybe<Scalars['Boolean']>;
+  primary?: InputMaybe<Scalars['Boolean']>;
   primaryJournalId: Scalars['String'];
   reconciled?: InputMaybe<Scalars['Boolean']>;
   tagId?: InputMaybe<Scalars['String']>;
@@ -492,8 +619,8 @@ export type ImportDataInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
 };
 
-export type ImportDataProcessed = {
-  __typename?: 'ImportDataProcessed';
+export type ImportJournalProcessed = {
+  __typename?: 'ImportJournalProcessed';
   accountId: Scalars['String'];
   accountTitle: Scalars['String'];
   amount: Scalars['Float'];
@@ -513,19 +640,13 @@ export type ImportDataProcessed = {
   linked: Scalars['Boolean'];
   primaryJournalId: Scalars['String'];
   reconciled: Scalars['Boolean'];
-  status: Array<ImportDataReturnStatus>;
+  status: Array<ImportJournalReturnStatus>;
   tagId?: Maybe<Scalars['String']>;
   tagTitle?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-export type ImportDataReturn = {
-  __typename?: 'ImportDataReturn';
-  data?: Maybe<Array<ImportDataProcessed>>;
-  errors?: Maybe<Array<ImportReturnError>>;
-};
-
-export type ImportDataReturnStatus =
+export type ImportJournalReturnStatus =
   | 'journalIdMatch'
   | 'referenceOnly'
   | 'similarJournalFound'
@@ -536,6 +657,28 @@ export type ImportReturnError = {
   location?: Maybe<Scalars['String']>;
   message?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
+};
+
+export type ImportTagInput = {
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  group?: InputMaybe<Scalars['String']>;
+  id: Scalars['String'];
+  single?: InputMaybe<Scalars['String']>;
+  status?: InputMaybe<StatusEnum>;
+  title?: InputMaybe<Scalars['String']>;
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+export type ImportTagProcessed = {
+  __typename?: 'ImportTagProcessed';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  group?: Maybe<Scalars['String']>;
+  id: Scalars['String'];
+  processingResult?: Maybe<ImportChecksReturn>;
+  single?: Maybe<Scalars['String']>;
+  status?: Maybe<StatusEnum>;
+  title?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type JournalEntriesFilter = {
@@ -961,7 +1104,7 @@ export type QueryCategoryArgs = {
 
 export type QueryImportDataCheckArgs = {
   accountGroupingId: Scalars['String'];
-  data: Array<ImportDataInput>;
+  data: ImportDataCombined;
   excludeCheckJournalDetails?: InputMaybe<Scalars['Boolean']>;
   excludeCheckJournalId?: InputMaybe<Scalars['Boolean']>;
   excludeCheckTransactionId?: InputMaybe<Scalars['Boolean']>;
@@ -1306,11 +1449,24 @@ export type ResolversTypes = {
   IPv6: ResolverTypeWrapper<Scalars['IPv6']>;
   ISBN: ResolverTypeWrapper<Scalars['ISBN']>;
   ISO8601Duration: ResolverTypeWrapper<Scalars['ISO8601Duration']>;
-  ImportDataInput: ImportDataInput;
-  ImportDataProcessed: ResolverTypeWrapper<ImportDataProcessed>;
+  ImportAccountInput: ImportAccountInput;
+  ImportAccountProcessed: ResolverTypeWrapper<ImportAccountProcessed>;
+  ImportBillInput: ImportBillInput;
+  ImportBillProcessed: ResolverTypeWrapper<ImportBillProcessed>;
+  ImportBudgetInput: ImportBudgetInput;
+  ImportBudgetProcessed: ResolverTypeWrapper<ImportBudgetProcessed>;
+  ImportCategoryInput: ImportCategoryInput;
+  ImportCategoryProcessed: ResolverTypeWrapper<ImportCategoryProcessed>;
+  ImportChecksReturn: ResolverTypeWrapper<ImportChecksReturn>;
+  ImportDataCombined: ImportDataCombined;
+  ImportDataResult: ResolverTypeWrapper<ImportDataResult>;
   ImportDataReturn: ResolverTypeWrapper<ImportDataReturn>;
-  ImportDataReturnStatus: ImportDataReturnStatus;
+  ImportJournalInput: ImportJournalInput;
+  ImportJournalProcessed: ResolverTypeWrapper<ImportJournalProcessed>;
+  ImportJournalReturnStatus: ImportJournalReturnStatus;
   ImportReturnError: ResolverTypeWrapper<ImportReturnError>;
+  ImportTagInput: ImportTagInput;
+  ImportTagProcessed: ResolverTypeWrapper<ImportTagProcessed>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
@@ -1445,10 +1601,23 @@ export type ResolversParentTypes = {
   IPv6: Scalars['IPv6'];
   ISBN: Scalars['ISBN'];
   ISO8601Duration: Scalars['ISO8601Duration'];
-  ImportDataInput: ImportDataInput;
-  ImportDataProcessed: ImportDataProcessed;
+  ImportAccountInput: ImportAccountInput;
+  ImportAccountProcessed: ImportAccountProcessed;
+  ImportBillInput: ImportBillInput;
+  ImportBillProcessed: ImportBillProcessed;
+  ImportBudgetInput: ImportBudgetInput;
+  ImportBudgetProcessed: ImportBudgetProcessed;
+  ImportCategoryInput: ImportCategoryInput;
+  ImportCategoryProcessed: ImportCategoryProcessed;
+  ImportChecksReturn: ImportChecksReturn;
+  ImportDataCombined: ImportDataCombined;
+  ImportDataResult: ImportDataResult;
   ImportDataReturn: ImportDataReturn;
+  ImportJournalInput: ImportJournalInput;
+  ImportJournalProcessed: ImportJournalProcessed;
   ImportReturnError: ImportReturnError;
+  ImportTagInput: ImportTagInput;
+  ImportTagProcessed: ImportTagProcessed;
   Int: Scalars['Int'];
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
@@ -1716,7 +1885,81 @@ export interface Iso8601DurationScalarConfig extends GraphQLScalarTypeConfig<Res
   name: 'ISO8601Duration';
 }
 
-export type ImportDataProcessedResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportDataProcessed'] = ResolversParentTypes['ImportDataProcessed']> = {
+export type ImportAccountProcessedResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportAccountProcessed'] = ResolversParentTypes['ImportAccountProcessed']> = {
+  accountGroup?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  accountGroup2?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  accountGroup3?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  endDate?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  isCash?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  isNetWorth?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  processingResult?: Resolver<Maybe<ResolversTypes['ImportChecksReturn']>, ParentType, ContextType>;
+  startDate?: Resolver<Maybe<ResolversTypes['Date']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['StatusEnum']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  type?: Resolver<Maybe<ResolversTypes['AccountType']>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportBillProcessedResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportBillProcessed'] = ResolversParentTypes['ImportBillProcessed']> = {
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  processingResult?: Resolver<Maybe<ResolversTypes['ImportChecksReturn']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['StatusEnum']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportBudgetProcessedResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportBudgetProcessed'] = ResolversParentTypes['ImportBudgetProcessed']> = {
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  processingResult?: Resolver<Maybe<ResolversTypes['ImportChecksReturn']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['StatusEnum']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportCategoryProcessedResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportCategoryProcessed'] = ResolversParentTypes['ImportCategoryProcessed']> = {
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  processingResult?: Resolver<Maybe<ResolversTypes['ImportChecksReturn']>, ParentType, ContextType>;
+  single?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['StatusEnum']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportChecksReturnResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportChecksReturn'] = ResolversParentTypes['ImportChecksReturn']> = {
+  dataChanged?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  dataInJournals?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  idInItemList?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  idInJournals?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportDataResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportDataResult'] = ResolversParentTypes['ImportDataResult']> = {
+  accounts?: Resolver<Maybe<Array<ResolversTypes['ImportAccountProcessed']>>, ParentType, ContextType>;
+  bills?: Resolver<Maybe<Array<ResolversTypes['ImportBillProcessed']>>, ParentType, ContextType>;
+  budgets?: Resolver<Maybe<Array<ResolversTypes['ImportBudgetProcessed']>>, ParentType, ContextType>;
+  categories?: Resolver<Maybe<Array<ResolversTypes['ImportCategoryProcessed']>>, ParentType, ContextType>;
+  journals?: Resolver<Maybe<Array<ResolversTypes['ImportJournalProcessed']>>, ParentType, ContextType>;
+  tags?: Resolver<Maybe<Array<ResolversTypes['ImportTagProcessed']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportDataReturnResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportDataReturn'] = ResolversParentTypes['ImportDataReturn']> = {
+  data?: Resolver<Maybe<ResolversTypes['ImportDataResult']>, ParentType, ContextType>;
+  errors?: Resolver<Maybe<Array<ResolversTypes['ImportReturnError']>>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportJournalProcessedResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportJournalProcessed'] = ResolversParentTypes['ImportJournalProcessed']> = {
   accountId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   accountTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -1736,16 +1979,10 @@ export type ImportDataProcessedResolvers<ContextType = any, ParentType extends R
   linked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   primaryJournalId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   reconciled?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  status?: Resolver<Array<ResolversTypes['ImportDataReturnStatus']>, ParentType, ContextType>;
+  status?: Resolver<Array<ResolversTypes['ImportJournalReturnStatus']>, ParentType, ContextType>;
   tagId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   tagTitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type ImportDataReturnResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportDataReturn'] = ResolversParentTypes['ImportDataReturn']> = {
-  data?: Resolver<Maybe<Array<ResolversTypes['ImportDataProcessed']>>, ParentType, ContextType>;
-  errors?: Resolver<Maybe<Array<ResolversTypes['ImportReturnError']>>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1753,6 +1990,18 @@ export type ImportReturnErrorResolvers<ContextType = any, ParentType extends Res
   location?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ImportTagProcessedResolvers<ContextType = any, ParentType extends ResolversParentTypes['ImportTagProcessed'] = ResolversParentTypes['ImportTagProcessed']> = {
+  createdAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
+  group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  processingResult?: Resolver<Maybe<ResolversTypes['ImportChecksReturn']>, ParentType, ContextType>;
+  single?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  status?: Resolver<Maybe<ResolversTypes['StatusEnum']>, ParentType, ContextType>;
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<Maybe<ResolversTypes['DateTime']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -2081,9 +2330,16 @@ export type Resolvers<ContextType = any> = {
   IPv6?: GraphQLScalarType;
   ISBN?: GraphQLScalarType;
   ISO8601Duration?: GraphQLScalarType;
-  ImportDataProcessed?: ImportDataProcessedResolvers<ContextType>;
+  ImportAccountProcessed?: ImportAccountProcessedResolvers<ContextType>;
+  ImportBillProcessed?: ImportBillProcessedResolvers<ContextType>;
+  ImportBudgetProcessed?: ImportBudgetProcessedResolvers<ContextType>;
+  ImportCategoryProcessed?: ImportCategoryProcessedResolvers<ContextType>;
+  ImportChecksReturn?: ImportChecksReturnResolvers<ContextType>;
+  ImportDataResult?: ImportDataResultResolvers<ContextType>;
   ImportDataReturn?: ImportDataReturnResolvers<ContextType>;
+  ImportJournalProcessed?: ImportJournalProcessedResolvers<ContextType>;
   ImportReturnError?: ImportReturnErrorResolvers<ContextType>;
+  ImportTagProcessed?: ImportTagProcessedResolvers<ContextType>;
   JSON?: GraphQLScalarType;
   JSONObject?: GraphQLScalarType;
   JWT?: GraphQLScalarType;

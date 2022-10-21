@@ -32,6 +32,27 @@
 		? $exportData.data.accountGrouping?.title
 		: '';
 
+	const downloadJSON = () => {
+		console.log('Downloading');
+		const filename = `${date}-${accountGroupingTitle}-data`;
+
+		const jsonFileData = new Blob([`${JSON.stringify(processedData, null, 2)}`], {
+			type: 'text/csv;charset=utf-8;'
+		});
+
+		let csvURL = null;
+		if (navigator.msSaveBlob) {
+			csvURL = navigator.msSaveBlob(jsonFileData, `${filename}.json`);
+		} else {
+			csvURL = window.URL.createObjectURL(jsonFileData);
+		}
+		const link = document.createElement('a');
+		link.href = csvURL;
+		link.setAttribute('download', `${filename}.json`);
+		link.click();
+		link.remove();
+	};
+
 	//TODO Make the export page actually look nice.
 </script>
 
@@ -43,6 +64,9 @@
 
 	{#if processedData}
 		<div class="flex">Data Received</div>
+		<button
+			class="=flex p-2 border border-black rounded-sm bg-blue-100 hover:bg-blue-300"
+			on:click={downloadJSON}>Download All Data (JSON)</button>
 		<div class="flex">
 			{#if processedData.accounts.length > 0}
 				<CSVDownloader

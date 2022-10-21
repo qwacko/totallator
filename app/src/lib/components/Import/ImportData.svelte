@@ -1,16 +1,43 @@
 <script lang="ts">
-	import { handleImport, type ImportErrorType } from './handleImport';
+	import { handleImport, type ImportErrorType, type ImportType } from './handleImport';
 	import { getContextClient } from '@urql/svelte';
 	import AccountGroupingSelect from '../AccountGrouping/AccountGroupingSelect.svelte';
 	import ImportDataTable from './ImportDataTable.svelte';
-	import type { ImportDataProcessed } from '$lib/graphqlClient/generated';
+	import Buttons from '../Basic/Buttons.svelte';
+	import type { ButtonsOptions } from '../Basic/ButtonsOptions';
+	import type { ImportDataResult } from '$lib/graphqlClient/generated';
 	let files: FileList | null | undefined;
 	let errors: ImportErrorType[] | undefined | null;
 
 	const client = getContextClient();
 	let loadingStatus: { loading: boolean; message: string } = { loading: false, message: '' };
 	let accountGroupingId = '';
-	let currentImportData: ImportDataProcessed[] = [];
+	let currentImportData: ImportDataResult = {};
+	let importType: ImportType = 'json';
+
+	let importModeOptions: ButtonsOptions = [];
+	$: importModeOptions = [
+		{
+			label: 'CSV',
+			value: 'csv',
+			selected: importType === 'csv',
+			onClick: () => {
+				files = undefined;
+				importType = 'csv';
+			},
+			colour: 'blue'
+		},
+		{
+			label: 'JSON',
+			value: 'json',
+			selected: importType === 'json',
+			onClick: () => {
+				files = undefined;
+				importType = 'json';
+			},
+			colour: 'blue'
+		}
+	];
 
 	//TODO Improve import look and feel
 	//TODO Add ability to download import templates
@@ -25,10 +52,17 @@
 			<AccountGroupingSelect bind:value={accountGroupingId} id="ag" name="ag" />
 		</div>
 		{#if accountGroupingId !== ''}
+			<Buttons class="flex w-52" options={importModeOptions} />
 			{#if !files}
-				<div class="flex m-1">
-					<input type="file" accept=".csv" bind:files />
-				</div>
+				{#if importType === 'csv'}
+					<div class="flex m-1">
+						<input type="file" accept=".csv" bind:files />
+					</div>
+				{:else if importType === 'json'}
+					<div class="flex m-1">
+						<input type="file" accept=".json" bind:files />
+					</div>
+				{/if}
 			{:else}
 				<div class="flex flex-row">
 					<div class="flex m-1">
@@ -48,7 +82,8 @@
 							setStatus: (newStatus) => (loadingStatus = newStatus),
 							setData: (newData) => (currentImportData = newData),
 							client,
-							accountGroupingId
+							accountGroupingId,
+							importType
 						})}>Check Import</button>
 			{/if}
 		{/if}
@@ -83,7 +118,7 @@
 			{/each}
 		</div>
 	{/if}
-	{#if currentImportData.length > 0}
-		<ImportDataTable data={currentImportData} />
+	{#if currentImportData?.journals && currentImportData.journals.length > 0}
+		<ImportDataTable data={currentImportData.journals} />
 	{/if}
 </div>
