@@ -5,7 +5,7 @@ import { importBillValidation, importBudgetValidation } from './importBillBudget
 import { importCategoryValidation, importTagValidation } from './importTagCategoryValidation';
 
 export const importJSONValidation = z.object({
-	journalEntries: importJournalsValidation.default([]),
+	journals: importJournalsValidation.default([]),
 	bills: z.array(importBillValidation).default([]),
 	budgets: z.array(importBudgetValidation).default([]),
 	tags: z.array(importTagValidation).default([]),

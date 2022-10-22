@@ -1,11 +1,4 @@
-import type {
-	ImportAccountProcessed,
-	ImportBillProcessed,
-	ImportBudgetProcessed,
-	ImportCategoryProcessed,
-	ImportChecksReturn,
-	ImportTagProcessed
-} from '$lib/server/graphqlServer/types/generated-resolvers';
+import type { ImportChecksReturn } from '$lib/server/graphqlServer/types/generated-resolvers';
 import {
 	tagBuildProcessing,
 	categoryBuildProcessing,
@@ -14,45 +7,59 @@ import {
 	accountBuildProcessing
 } from './importTypeBuildProcessing';
 import type { allImportType, buildProcessing } from './importTypeBuildProcessing';
+import type { ImportErrorType } from '$lib/components/Import/handleImport';
 
 export const getOtherInformationForImport = async (
 	data: allImportType,
 	accountGroupingId: string
 ) => {
-	console.log({ data, accountGroupingId });
+	const tagsToReturn = await buildReturnItemsList(
+		data,
+		accountGroupingId,
+		tagBuildProcessing,
+		'Tag'
+	);
+	const categoriesToReturn = await buildReturnItemsList(
+		data,
+		accountGroupingId,
+		categoryBuildProcessing,
+		'Category'
+	);
+	const billsToReturn = await buildReturnItemsList(
+		data,
+		accountGroupingId,
+		billBuildProcessing,
+		'Bill'
+	);
+	const budgetsToReturn = await buildReturnItemsList(
+		data,
+		accountGroupingId,
+		budgetBuildProcessing,
+		'Budget'
+	);
+	const accountsToReturn = await buildReturnItemsList(
+		data,
+		accountGroupingId,
+		accountBuildProcessing,
+		'Account'
+	);
 
-	const tagsToReturn: ImportTagProcessed[] = await buildReturnItemsList(
-		data,
-		accountGroupingId,
-		tagBuildProcessing
-	);
-	const categoriesToReturn: ImportCategoryProcessed[] = await buildReturnItemsList(
-		data,
-		accountGroupingId,
-		categoryBuildProcessing
-	);
-	const billsToReturn: ImportBillProcessed[] = await buildReturnItemsList(
-		data,
-		accountGroupingId,
-		billBuildProcessing
-	);
-	const budgetsToReturn: ImportBudgetProcessed[] = await buildReturnItemsList(
-		data,
-		accountGroupingId,
-		budgetBuildProcessing
-	);
-	const accountsToReturn: ImportAccountProcessed[] = await buildReturnItemsList(
-		data,
-		accountGroupingId,
-		accountBuildProcessing
-	);
-
+	const errors = [
+		...tagsToReturn.errors,
+		...categoriesToReturn.errors,
+		...billsToReturn.errors,
+		...budgetsToReturn.errors,
+		...accountsToReturn.errors
+	];
 	return {
-		tags: tagsToReturn,
-		categories: categoriesToReturn,
-		bills: billsToReturn,
-		budgets: budgetsToReturn,
-		accounts: accountsToReturn
+		data: {
+			tags: tagsToReturn.data,
+			categories: categoriesToReturn.data,
+			bills: billsToReturn.data,
+			budgets: budgetsToReturn.data,
+			accounts: accountsToReturn.data
+		},
+		errors
 	};
 };
 
@@ -67,16 +74,17 @@ async function buildReturnItemsList<
 >(
 	data: allImportType,
 	accountGroupingId: string,
-	processing: buildProcessing<ReturnType, ItemDetail, PrismaItemType, ImportType>
+	processing: buildProcessing<ReturnType, ItemDetail, PrismaItemType, ImportType>,
+	title: string
 ) {
 	const itemIdsInData = processing.buildIdList(data);
-	const itemIdsInJournals = data.journalEntries
+	const itemIdsInJournals = data.journals
 		.map(processing.getIdFromJournal)
 		.filter((item) => item) as string[];
 
 	const combinedItemIdsToQuery = [...new Set([...itemIdsInData, ...itemIdsInJournals])];
 
-	const dataDetailInJournals = data.journalEntries
+	const dataDetailInJournals = data.journals
 		.map(processing.getDetailFromJournal)
 		.filter((item) => item) as ItemDetail[];
 
@@ -97,12 +105,12 @@ async function buildReturnItemsList<
 			.find((item) => item.id === foundItem.id);
 
 		//Check if the item is found in the journal list, and hightlight as such
-		const itemIdInJournalList = data.journalEntries.find(
+		const itemIdInJournalList = data.journals.find(
 			(item) => processing.getIdFromJournal(item) === foundItem.id
 		);
 		const itemDetailInJournalList = itemIdInJournalList
 			? undefined
-			: data.journalEntries.find((item) =>
+			: data.journals.find((item) =>
 					processing.compareDetail(
 						processing.getDetailFromJournal(item),
 						processing.getDetailFromPrismaItemType(foundItem)
@@ -143,13 +151,40 @@ async function buildReturnItemsList<
 	});
 
 	//Make Return List have placeholders for items that id in item list cant be found.
-	//Add errors for journals that don't have the selected item (id or detail)
 
 	const idsFound = dataToReturn.map((item) => item.id);
+	const detailsFound = dataToReturn
+		.map(processing.getDetailFromReturnType)
+		.filter((item) => item) as ItemDetail[];
 	const idsNotFound = processing
 		.getImportTypeFromAllImport(data)
 		.filter((item) => !idsFound.includes(item.id));
 	const newtoReturn = processing.importTypeToReturnType(idsNotFound);
 
-	return [...dataToReturn, ...newtoReturn];
+	//Add errors for journals that don't have the selected item (id or detail)
+	const idsInJournalListNotFound = itemIdsInJournals
+		.map((item, index) => ({ id: item, index }))
+		.filter((item) => !idsFound.includes(item.id));
+	const itemDetailInJournalListNotFound = dataDetailInJournals
+		.map((item, index) => ({ data: item, index }))
+		.filter((item) =>
+			Boolean(detailsFound.find((detail) => processing.compareDetail(detail, item.data)))
+		);
+
+	const errors: ImportErrorType[] = [
+		...idsInJournalListNotFound.map((item) => ({
+			message: `${title} ID ${item.id} found in journals, but not found in import or database`,
+			title: `${title} Missing`,
+			location: `Journal List - Row ${item.index}`
+		})),
+		...itemDetailInJournalListNotFound.map((item) => ({
+			message: `${title} Detail ${JSON.stringify(
+				item.data
+			)} found in journals, but not found in import or database`,
+			title: `${title} Missing`,
+			location: `Journal List - Row ${item.index}`
+		}))
+	];
+
+	return { data: [...dataToReturn, ...newtoReturn], errors };
 }

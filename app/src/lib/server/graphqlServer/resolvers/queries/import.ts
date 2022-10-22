@@ -42,19 +42,24 @@ export const importDataCheck: GraphqlQueryResolvers['importDataCheck'] = async (
 
 	const result = await getOtherInformationForImport(validated.data, args.accountGroupingId);
 
-	//Get all the unique information
-	const uniqueInfo = importGetUniqueItems(validated.data.journalEntries);
+	// If there is an error in the checking of other data, then return this
+	if (result.errors && result.errors.length > 0) {
+		return { errors: result.errors };
+	}
 
-	const { errorArray, matches } = await checkImportInfo(uniqueInfo, args.accountGroupingId);
+	//Get all the unique information (Probably can be removed)
+	// const uniqueInfo = importGetUniqueItems(validated.data.journals);
 
-	if (errorArray.length > 0) return { errors: errorArray };
+	// const { errorArray, matches } = await checkImportInfo(uniqueInfo, args.accountGroupingId);
 
-	const processedData = buildCompleteImport(
-		validated.data.journalEntries,
-		matches,
-		args.accountGroupingId
-	);
-	const withAddedDetails = await categoriseJournalImports(processedData, args.accountGroupingId);
+	// if (errorArray.length > 0) return { errors: errorArray };
 
-	return { data: { journals: withAddedDetails, ...result } };
+	// const processedData = buildCompleteImport(
+	// 	validated.data.journals,
+	// 	matches,
+	// 	args.accountGroupingId
+	// );
+	// const withAddedDetails = await categoriseJournalImports(processedData, args.accountGroupingId);
+
+	return { data: { ...result.data } };
 };

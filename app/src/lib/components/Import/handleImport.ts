@@ -137,7 +137,7 @@ export const handleImport = async ({
 					.query(GetImportInfoDocument, {
 						accountGroupingId,
 						data: {
-							journals: validated.data.journalEntries,
+							journals: validated.data.journals,
 							bills,
 							categories,
 							tags,

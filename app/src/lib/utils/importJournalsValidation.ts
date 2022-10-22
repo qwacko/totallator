@@ -22,21 +22,21 @@ export const importJournalsValidation = z
 				complete: booleanImportValidation.optional(),
 				amount: z.preprocess((a) => parseFloat(String(a)), z.number()),
 				accountTitle: z.string().optional(),
-				accountId: validateUUIDMaybeBlank.optional(),
+				accountId: z.string().optional(),
 				tagTitle: z
 					.string()
 					.regex(/.*\/.*/, { message: 'Must Have a /' })
 					.optional(),
-				tagId: validateUUIDMaybeBlank.optional(),
+				tagId: z.string().optional(),
 				categoryTitle: z
 					.string()
 					.regex(/.*\/.*/, { message: 'Must Have a /' })
 					.optional(),
-				categoryId: validateUUIDMaybeBlank.optional(),
+				categoryId: z.string().optional(),
 				billTitle: z.string().optional(),
-				billId: validateUUIDMaybeBlank.optional(),
+				billId: z.string().optional(),
 				budgetTitle: z.string().optional(),
-				budgetId: validateUUIDMaybeBlank.optional(),
+				budgetId: z.string().optional(),
 				createdAt: validateISOTime.optional(),
 				updatedAt: validateISOTime.optional()
 			})

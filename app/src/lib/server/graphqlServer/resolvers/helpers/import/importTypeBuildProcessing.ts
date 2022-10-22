@@ -18,7 +18,7 @@ type categoryItemType = z.infer<typeof importJSONValidation>['categories'][0];
 type billItemType = z.infer<typeof importJSONValidation>['bills'][0];
 type budgetImportTypeFromAllImport = z.infer<typeof importJSONValidation>['budgets'][0];
 type accountItemType = z.infer<typeof importJSONValidation>['accounts'][0];
-type journalItemType = z.infer<typeof importJSONValidation>['journalEntries'][0];
+type journalItemType = z.infer<typeof importJSONValidation>['journals'][0];
 
 const accountKeys = [
 	'id',
@@ -47,6 +47,7 @@ export const accountBuildProcessing: buildProcessing<
 	getDetailFromJournal: (data) => data.accountTitle,
 	getDetailFromPrismaItemType: (data) => data.title,
 	getDetailFromImportItemType: (data) => data.title,
+	getDetailFromReturnType: (data) => data.title || undefined,
 	compareDetail: (item1, item2) => (item1 && item2 ? item1 === item2 : false),
 	getDataFromPrisma: async (ids, details, accountGroupingId) =>
 		prisma.account.findMany({
@@ -77,8 +78,6 @@ const compareValues = (
 	prismaData: { [key: string]: unknown; createdAt: Date; updatedAt: Date },
 	keys: readonly string[]
 ) => {
-	console.log({ dataA: importData, dataB: prismaData, keys });
-
 	const useKeys = keys.filter((item) => item !== 'createdAt' && item !== 'updatedAt');
 
 	const keysEqual = useKeys.reduce((prev, current) => {
@@ -112,6 +111,7 @@ export const billBuildProcessing: buildProcessing<ImportBillProcessed, string, B
 		getDetailFromJournal: (data) => data.billTitle,
 		getDetailFromPrismaItemType: (data) => data.title,
 		getDetailFromImportItemType: (data) => data.title,
+		getDetailFromReturnType: (data) => data.title || undefined,
 		compareDetail: (item1, item2) => (item1 && item2 ? item1 === item2 : false),
 		getDataFromPrisma: async (ids, details, accountGroupingId) =>
 			prisma.bill.findMany({
@@ -153,6 +153,7 @@ export const budgetBuildProcessing: buildProcessing<
 	getDetailFromJournal: (data) => data.budgetTitle,
 	getDetailFromPrismaItemType: (data) => data.title,
 	getDetailFromImportItemType: (data) => data.title,
+	getDetailFromReturnType: (data) => data.title || undefined,
 	compareDetail: (item1, item2) => (item1 && item2 ? item1 === item2 : false),
 	getDataFromPrisma: async (ids, details, accountGroupingId) =>
 		prisma.budget.findMany({
@@ -189,6 +190,7 @@ export const tagBuildProcessing: buildProcessing<ImportTagProcessed, string, Tag
 	getDetailFromJournal: (data) => data.tagTitle,
 	getDetailFromPrismaItemType: (data) => data.title,
 	getDetailFromImportItemType: (data) => data.title,
+	getDetailFromReturnType: (data) => data.title || undefined,
 	compareDetail: (item1, item2) => (item1 && item2 ? item1 === item2 : false),
 	getDataFromPrisma: async (ids, details, accountGroupingId) =>
 		prisma.tag.findMany({
@@ -236,6 +238,7 @@ export const categoryBuildProcessing: buildProcessing<
 	getDetailFromJournal: (data) => data.categoryTitle,
 	getDetailFromPrismaItemType: (data) => data.title,
 	getDetailFromImportItemType: (data) => data.title,
+	getDetailFromReturnType: (data) => data.title || undefined,
 	compareDetail: (item1, item2) => (item1 && item2 ? item1 === item2 : false),
 	getDataFromPrisma: async (ids, details, accountGroupingId) =>
 		prisma.category.findMany({
@@ -275,6 +278,7 @@ export type buildProcessing<
 	getDetailFromJournal: (data: journalItemType) => itemDetail | undefined;
 	getDetailFromPrismaItemType: (data: PrismaItemType) => itemDetail | undefined;
 	getDetailFromImportItemType: (data: ImportType) => itemDetail | undefined;
+	getDetailFromReturnType: (data: ReturnType) => itemDetail | undefined;
 	compareDetail: (data1: itemDetail | undefined, data2: itemDetail | undefined) => boolean;
 	getDataFromPrisma: (
 		ids: string[],
