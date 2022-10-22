@@ -6,6 +6,11 @@
 	import Buttons from '../Basic/Buttons.svelte';
 	import type { ButtonsOptions } from '../Basic/ButtonsOptions';
 	import type { ImportDataResult } from '$lib/graphqlClient/generated';
+	import ImportTagTable from './ImportTagTable.svelte';
+	import ImportAccountTable from './ImportAccountTable.svelte';
+	import ImportBillTable from './ImportBillTable.svelte';
+	import ImportBudgetTable from './ImportBudgetTable.svelte';
+	import ImportCategoryTable from './ImportCategoryTable.svelte';
 	let files: FileList | null | undefined;
 	let errors: ImportErrorType[] | undefined | null;
 
@@ -37,6 +42,38 @@
 			},
 			colour: 'blue'
 		}
+	];
+
+	//Handle Button Mode
+	type DisplayTabs = 'Journals' | 'Accounts' | 'Categories' | 'Bills' | 'Budgets' | 'Tags';
+	let displayTab: DisplayTabs = 'Journals';
+	let displayButtons: ButtonsOptions = [];
+	$: journalCount = currentImportData.journals ? currentImportData.journals.length : 0;
+	$: accountCount = currentImportData.accounts ? currentImportData.accounts.length : 0;
+	$: categoryCount = currentImportData.categories ? currentImportData.categories.length : 0;
+	$: billCount = currentImportData.bills ? currentImportData.bills.length : 0;
+	$: budgetCount = currentImportData.budgets ? currentImportData.budgets.length : 0;
+	$: tagCount = currentImportData.tags ? currentImportData.tags.length : 0;
+	$: resultsExist =
+		journalCount || accountCount || categoryCount || billCount || budgetCount || tagCount;
+	const displayButton = (
+		selection: DisplayTabs,
+		title: DisplayTabs,
+		count: number
+	): ButtonsOptions[0] => ({
+		label: `${title} (${count})`,
+		value: title,
+		selected: selection === title,
+		onClick: () => (displayTab = title),
+		colour: 'blue'
+	});
+	$: displayButtons = [
+		displayButton(displayTab, 'Journals', journalCount),
+		displayButton(displayTab, 'Accounts', accountCount),
+		displayButton(displayTab, 'Categories', categoryCount),
+		displayButton(displayTab, 'Bills', billCount),
+		displayButton(displayTab, 'Budgets', budgetCount),
+		displayButton(displayTab, 'Tags', tagCount)
 	];
 
 	//TODO Improve import look and feel
@@ -118,7 +155,21 @@
 			{/each}
 		</div>
 	{/if}
-	{#if currentImportData?.journals && currentImportData.journals.length > 0}
-		<ImportDataTable data={currentImportData.journals} />
+	{#if resultsExist}
+		<Buttons options={displayButtons} />
+		{#if currentImportData.journals && displayTab === 'Journals'}
+			{#if journalCount > 0}
+				<ImportDataTable data={currentImportData.journals} />
+			{:else}
+				<div class="bg-blue-200 rounded-md border">No Journals Found</div>
+			{/if}
+		{/if}
+		<ImportAccountTable data={currentImportData.accounts} selected={displayTab === 'Accounts'} />
+		<ImportTagTable data={currentImportData.tags} selected={displayTab === 'Tags'} />
+		<ImportBillTable data={currentImportData.bills} selected={displayTab === 'Bills'} />
+		<ImportBudgetTable data={currentImportData.budgets} selected={displayTab === 'Budgets'} />
+		<ImportCategoryTable
+			data={currentImportData.categories}
+			selected={displayTab === 'Categories'} />
 	{/if}
 </div>

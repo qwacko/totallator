@@ -73,8 +73,6 @@ export const handleImport = async ({
 				);
 				setStatus({ loading: false, message: '' });
 			} else {
-				console.log(validated.data.journalEntries);
-
 				const stringToStatus = <
 					T extends {
 						status?: z.infer<typeof statusEnumValidation>;

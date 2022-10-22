@@ -69,10 +69,32 @@ export const accountBuildProcessing: buildProcessing<
 		...pick(importData, accountKeys)
 	}),
 	compareImportTypeToPrismaType: (importData, prismaData) =>
-		accountKeys.reduce(
-			(prev, current) => (prev ? importData[current] !== prismaData[current] : false),
-			true
-		)
+		compareValues(importData, prismaData, accountKeys)
+};
+
+const compareValues = (
+	importData: { [key: string]: unknown; createdAt?: Date; updatedAt?: Date },
+	prismaData: { [key: string]: unknown; createdAt: Date; updatedAt: Date },
+	keys: readonly string[]
+) => {
+	console.log({ dataA: importData, dataB: prismaData, keys });
+
+	const useKeys = keys.filter((item) => item !== 'createdAt' && item !== 'updatedAt');
+
+	const keysEqual = useKeys.reduce((prev, current) => {
+		const dataChanged = importData[current] !== prismaData[current];
+
+		return prev ? true : dataChanged;
+	}, false);
+
+	const updatedAtEqual = importData.updatedAt
+		? importData.updatedAt.getTime() === prismaData.updatedAt.getTime()
+		: true;
+	const createdAtEqual = importData.createdAt
+		? importData.createdAt.getTime() === prismaData.createdAt.getTime()
+		: true;
+
+	return keysEqual && updatedAtEqual && createdAtEqual;
 };
 
 //BILLS
@@ -109,10 +131,7 @@ export const billBuildProcessing: buildProcessing<ImportBillProcessed, string, B
 			...pick(importData, billKeys)
 		}),
 		compareImportTypeToPrismaType: (importData, prismaData) =>
-			billKeys.reduce(
-				(prev, current) => (prev ? importData[current] !== prismaData[current] : false),
-				true
-			)
+			compareValues(importData, prismaData, billKeys)
 	};
 
 //BUDGETS
@@ -153,10 +172,7 @@ export const budgetBuildProcessing: buildProcessing<
 		...pick(importData, budgetKeys)
 	}),
 	compareImportTypeToPrismaType: (importData, prismaData) =>
-		budgetKeys.reduce(
-			(prev, current) => (prev ? importData[current] !== prismaData[current] : false),
-			true
-		)
+		compareValues(importData, prismaData, budgetKeys)
 };
 
 //TAGS
@@ -193,10 +209,7 @@ export const tagBuildProcessing: buildProcessing<ImportTagProcessed, string, Tag
 		...pick(importData, tagKeys)
 	}),
 	compareImportTypeToPrismaType: (importData, prismaData) =>
-		tagKeys.reduce(
-			(prev, current) => (prev ? importData[current] !== prismaData[current] : false),
-			true
-		)
+		compareValues(importData, prismaData, tagKeys)
 };
 
 const categoryKeys = [
@@ -242,10 +255,7 @@ export const categoryBuildProcessing: buildProcessing<
 		...pick(importData, categoryKeys)
 	}),
 	compareImportTypeToPrismaType: (importData, prismaData) =>
-		categoryKeys.reduce(
-			(prev, current) => (prev ? importData[current] !== prismaData[current] : false),
-			true
-		)
+		compareValues(importData, prismaData, categoryKeys)
 };
 
 export type buildProcessing<

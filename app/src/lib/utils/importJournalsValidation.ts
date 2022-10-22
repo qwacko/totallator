@@ -1,4 +1,3 @@
-import { parse } from 'date-fns';
 import { z } from 'zod';
 import { validateDate } from './importValidation/validateDate';
 import { validateISOTime } from './importValidation/validateISOTime';
@@ -13,7 +12,7 @@ export const importJournalsValidation = z
 			.object({
 				primaryJournalId: z.string(),
 				accountGroupingId: z.string().optional(),
-				id: validateUUIDMaybeBlank.optional(),
+				id: validateUUIDMaybeBlank,
 				date: validateDate,
 				description: z.string().min(1, { message: 'Description cannot be empty' }),
 				primary: booleanImportValidation.optional(),

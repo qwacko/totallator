@@ -10,7 +10,12 @@ export const urqlclient = (access_token: string | undefined) =>
 		exchanges: [
 			devtoolsExchange,
 			cacheExchange({
-				schema
+				schema,
+				keys: {
+					ImportChecksReturn: () => null,
+					ImportDataResult: () => null,
+					ImportDataReturn: () => null
+				}
 			}),
 			...defaultExchanges
 		],

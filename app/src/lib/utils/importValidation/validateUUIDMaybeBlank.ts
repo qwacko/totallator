@@ -7,7 +7,8 @@ export const booleanImportValidation = z
 	.or(z.enum(booleanOptions))
 	.or(z.boolean().transform((arg) => (arg ? 'True' : 'False')))
 	.transform((arg) => {
-		if (arg in ['TRUE', 'True', 'true', '1']) return true;
-		else return false;
+		if (['TRUE', 'True', 'true', '1'].includes(arg)) {
+			return true;
+		} else return false;
 	});
 export const validateUUIDMaybeBlank = z.string().trim().uuid().or(z.string().max(0));
