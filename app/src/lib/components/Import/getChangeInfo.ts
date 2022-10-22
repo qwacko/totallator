@@ -30,5 +30,5 @@ export const getChangeInfo = (info?: ImportChecksReturn | null) => {
 		green: newItem
 	};
 
-	return { text: infoText, colour: colourOutput };
+	return { text: infoText, colour: colourOutput, newItem, updateExisting };
 };

@@ -82,6 +82,9 @@ const compareValues = (
 	const useKeys = keys.filter((item) => item !== 'createdAt' && item !== 'updatedAt');
 
 	const keysEqual = useKeys.reduce((prev, current) => {
+		if (importData[current] === undefined) {
+			return prev;
+		}
 		const dataChanged = importData[current] !== prismaData[current];
 
 		return prev ? true : dataChanged;
