@@ -16,7 +16,8 @@
 		"quality:eslint": "eslint --ignore-path .gitignore .",
 		"quality:prettier": "prettier --ignore-path .gitignore --check --plugin-search-dir=. .",
 		"quality:ts": "svelte-check --tsconfig ./tsconfig.json",
-		"generate": "graphql-codegen"
+		"generate": "graphql-codegen",
+		"prisma-deploy": "npx prisma migrate deploy"
 	},
 	"devDependencies": {
 		"@graphql-codegen/cli": "^2.11.2",

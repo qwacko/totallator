@@ -8,5 +8,8 @@ node_modules
 !.env.example
 
 $houdini
+docker-compose.yml
+docker-compose.yaml
+/data
 
 

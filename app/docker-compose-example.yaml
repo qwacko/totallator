@@ -1,10 +1,8 @@
 version: '3.3'
-name: 'TotallatorBuild'
 
 services:
   app:
-    build:
-      context: ./
+    image: totallator/totallator:master
     restart: always
     environment:
       - DATABASE_URL=postgres://root:totallator@db:5432/totallator
@@ -12,7 +10,7 @@ services:
       - ALLOW_SIGNUP=false
       - ALLOW_HTTP=true
     ports:
-      - 3012:3000
+      - 3000:3000
     depends_on:
       - db
 
@@ -20,8 +18,11 @@ services:
     image: postgres
     restart: always
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - totallatordb:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=totallator
       - POSTGRES_USER=root
       - POSTGRES_DB=totallator
+
+volumes:
+  totallatordb:
