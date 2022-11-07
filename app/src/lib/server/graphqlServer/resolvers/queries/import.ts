@@ -3,11 +3,8 @@ import type { GraphqlQueryResolvers } from '$lib/server/graphqlServer/types/reso
 import prisma from '$lib/server/prisma/client';
 import { importJSONValidation } from '$lib/utils/importValidation/importJSONValidation';
 import { GraphQLYogaError } from '@graphql-yoga/common';
-import { buildCompleteImport } from '../helpers/import/buildCompleteImport';
-import { categoriseJournalImports } from '../helpers/import/categoriseJournalImports';
-import { checkImportInfo } from '../helpers/import/checkImportInfo';
 import { getOtherInformationForImport } from '../helpers/import/getOtherInformationForImport';
-import { importGetUniqueItems } from '../helpers/import/importGetUniqueItems';
+import { getJournalImportInfo } from '../helpers/import/getJournalImportInfo';
 
 export const importDataCheck: GraphqlQueryResolvers['importDataCheck'] = async (
 	_,
@@ -46,20 +43,8 @@ export const importDataCheck: GraphqlQueryResolvers['importDataCheck'] = async (
 	if (result.errors && result.errors.length > 0) {
 		return { errors: result.errors };
 	}
-
-	//Get all the unique information (Probably can be removed)
-	// const uniqueInfo = importGetUniqueItems(validated.data.journals);
-
-	// const { errorArray, matches } = await checkImportInfo(uniqueInfo, args.accountGroupingId);
-
-	// if (errorArray.length > 0) return { errors: errorArray };
-
-	// const processedData = buildCompleteImport(
-	// 	validated.data.journals,
-	// 	matches,
-	// 	args.accountGroupingId
-	// );
-	// const withAddedDetails = await categoriseJournalImports(processedData, args.accountGroupingId);
+	// Now Check and process the import data
+	const journalsResult = await getJournalImportInfo(validated.data, args.accountGroupingId);
 
 	return { data: { ...result.data } };
 };

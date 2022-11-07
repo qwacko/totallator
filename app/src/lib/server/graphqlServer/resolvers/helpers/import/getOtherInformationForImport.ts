@@ -63,7 +63,7 @@ export const getOtherInformationForImport = async (
 	};
 };
 
-async function buildReturnItemsList<
+export async function buildReturnItemsList<
 	ReturnType extends {
 		processingResult?: ImportChecksReturn | undefined | null;
 		[key: string]: unknown;
