@@ -22,7 +22,7 @@ COPY --from=build /app/prisma ./
 COPY --from=build /app/build ./build
 
 RUN npm install --global pnpm
-RUN pnpm install prisma
+RUN pnpm install --filter "prisma"
 
 ENV DATABASE_URL=
 ENV AUTH_SECRET=
