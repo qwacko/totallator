@@ -15,9 +15,11 @@ const Home: NextPage = () => {
       <div>Content Goes Here</div>
       <Table horizontalSpacing="xs" verticalSpacing="xs">
         <thead>
-          <td>Col 1</td>
-          <td>Col 2</td>
-          <td>Col 3</td>
+          <tr>
+            <th>Col 3</th>
+            <th>Col 2</th>
+            <th>Col 3</th>
+          </tr>
         </thead>
         <tbody>
           <tr>
