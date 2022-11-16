@@ -1,5 +1,3 @@
-NEXT Make It So An Account Grouping Can Be Seeded
-NEXT Ability to bulk import through API (Partially already present), however this also needs to allow for bill / budget etc... to be selected based on title.
 
 LATER Readd Favicon
 LATER Add Logo / Branding
