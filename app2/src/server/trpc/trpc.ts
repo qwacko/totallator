@@ -37,3 +37,14 @@ const isAuthed = t.middleware(({ ctx, next }) => {
  * Protected procedure
  **/
 export const protectedProcedure = t.procedure.use(isAuthed);
+
+const isNotAuthed = t.middleware(({ ctx, next }) => {
+  if (!ctx.session || !ctx.session.user) {
+    return next({ ctx: { session: undefined } });
+  }
+  throw new TRPCError({
+    code: "UNAUTHORIZED",
+    message: "Only logged out users can do this",
+  });
+});
+export const unprotectedProcedure = t.procedure.use(isNotAuthed);

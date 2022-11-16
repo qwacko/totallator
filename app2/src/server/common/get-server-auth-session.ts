@@ -1,14 +1,51 @@
-import { type GetServerSidePropsContext } from "next";
-import { unstable_getServerSession } from "next-auth";
-import { authOptions } from "../../pages/api/auth/[...nextauth]";
+// Wrapper for unstable_getServerSession https://next-auth.js.org/configuration/nextjs
 
-/**
- * Wrapper for unstable_getServerSession https://next-auth.js.org/configuration/nextjs
- * See example usage in trpc createContext or the restricted API route
- */
+import type { GetServerSidePropsContext } from "next";
+import { unstable_getServerSession } from "next-auth";
+import { authOptions as nextAuthOptions } from "src/pages/api/auth/[...nextauth]";
+import type { GetServerSideProps } from "next";
+
+// Next API route example - /pages/api/restricted.ts
 export const getServerAuthSession = async (ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
 }) => {
-  return await unstable_getServerSession(ctx.req, ctx.res, authOptions);
+  return await unstable_getServerSession(ctx.req, ctx.res, nextAuthOptions);
+};
+export const getServerSidePropsPrivate: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/user/signin",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      session,
+    },
+  };
+};
+
+export const getServerSidePropsNotLoggedIn: GetServerSideProps = async (
+  ctx
+) => {
+  const session = await getServerAuthSession(ctx);
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };

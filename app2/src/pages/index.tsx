@@ -1,10 +1,21 @@
-import { Autocomplete, Loader, Select, Table, TextInput } from "@mantine/core";
+import { Table, TextInput } from "@mantine/core";
 import { type NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
+import { UserDisplay } from "src/components/user/UserDisplay";
+import { UserDarkMode } from "src/components/user/UserDarkMode";
 
 const Home: NextPage = () => {
+  const router = useRouter();
+  const { status } = useSession();
   const [selected, setSelected] = useState(false);
+
+  if (status === "unauthenticated") {
+    router.push("/user/signin");
+  }
+
   return (
     <>
       <Head>
@@ -13,6 +24,8 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div>Content Goes Here</div>
+      <UserDisplay />
+      <UserDarkMode />
       <Table horizontalSpacing="xs" verticalSpacing="xs">
         <thead>
           <tr>

@@ -2,28 +2,41 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 
-import { MantineProvider } from "@mantine/core";
+import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 
 import { trpc } from "../utils/trpc";
 
 import "../styles/globals.css";
+import { useState } from "react";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const [colorScheme, setColorScheme] = useState<"dark" | "light">("light");
+
+  const toggleColorScheme = () => {
+    console.log("Toggling Color Scheme");
+    setColorScheme(colorScheme === "dark" ? "light" : "dark");
+  };
+
   return (
     <SessionProvider session={session}>
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        theme={{
-          /** Put your mantine theme override here */
-          colorScheme: "dark",
-        }}
+      <ColorSchemeProvider
+        colorScheme={colorScheme}
+        toggleColorScheme={toggleColorScheme}
       >
-        <Component {...pageProps} />
-      </MantineProvider>
+        <MantineProvider
+          withGlobalStyles
+          withNormalizeCSS
+          theme={{
+            /** Put your mantine theme override here */
+            colorScheme,
+          }}
+        >
+          <Component {...pageProps} />
+        </MantineProvider>
+      </ColorSchemeProvider>
     </SessionProvider>
   );
 };
