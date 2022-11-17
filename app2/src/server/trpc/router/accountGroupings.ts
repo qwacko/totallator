@@ -11,14 +11,10 @@ export const accountGroupingRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
     const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-    console.log("AG Get - User", user);
-
     const data = await ctx.prisma.accountGrouping.findMany({
       //   where: user.admin ? { viewUsers: { some: { id: user.id } } } : {},
       include: { viewUsers: true, adminUsers: true },
     });
-
-    console.log("AG Get - Data", data);
 
     return data.map((item) => {
       const adminUserIds = item.adminUsers.map((user) => user.id);
@@ -127,11 +123,19 @@ export const accountGroupingRouter = router({
         user,
       });
 
+      const targetUser = await ctx.prisma.user.findFirst({
+        where: { id: input.userId, username: input.username },
+      });
+
+      if (!targetUser) {
+        throw new TRPCError({ message: "User Not Found", code: "NOT_FOUND" });
+      }
+
       await ctx.prisma.accountGrouping.update({
         where: { id: input.accountGroupingId },
         data: {
           viewUsers: {
-            connect: { id: input.userId, username: input.username },
+            connect: { id: targetUser.id },
           },
         },
       });

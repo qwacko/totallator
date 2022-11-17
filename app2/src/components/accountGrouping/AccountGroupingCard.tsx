@@ -1,16 +1,8 @@
-import {
-  Card,
-  Group,
-  Stack,
-  Title,
-  Text,
-  Center,
-  Container,
-  Button,
-} from "@mantine/core";
-import { IconEdit, IconEye, IconTrash } from "@tabler/icons";
+import { Card, Group, Stack, Title, Text, Center } from "@mantine/core";
 import type { AppRouterOutputs } from "src/server/trpc/router/_app";
 import { AccountGroupingEditPopup } from "./AccountGroupingEditForm";
+import { AccountGroupingAddUserPopup } from "./AcountGroupingAddUsrer";
+import { DisplayAGUser } from "./DisplayAGUser";
 
 export type AccountGroupingReturnSingle =
   AppRouterOutputs["accountGroupings"]["get"][0];
@@ -33,7 +25,15 @@ export const AccountGroupingCard = ({
         <Center>
           <Group align="center">
             <Title order={5}>{data.title}</Title>
-            {data.userIsAdmin && <AccountGroupingEditPopup data={data} />}
+            {data.userIsAdmin && (
+              <>
+                <AccountGroupingEditPopup data={data} />
+                <AccountGroupingAddUserPopup
+                  accountGroupingId={data.id}
+                  title={data.title}
+                />
+              </>
+            )}
           </Group>
         </Center>
         <Center>
@@ -45,52 +45,11 @@ export const AccountGroupingCard = ({
               key={user.id}
               user={user}
               isAdmin={data.userIsAdmin}
+              accountGroupingId={data.id}
             />
           ))}
         </Stack>
       </Stack>
     </Card>
-  );
-};
-
-export const DisplayAGUser = ({
-  user,
-  isAdmin,
-}: {
-  user: AccountGroupingReturnUser;
-  isAdmin: boolean;
-}) => {
-  return (
-    <Group>
-      <Text size="sm">{user.name}</Text>
-      <Container fluid />
-      <Group>
-        <Button.Group>
-          <Button
-            size="xs"
-            variant={user.admin ? "filled" : "light"}
-            disabled={!user.admin && (!isAdmin || user.isUser)}
-          >
-            <IconEdit size={15} />
-          </Button>
-          <Button
-            size="xs"
-            variant="light"
-            disabled={user.admin && (!isAdmin || user.isUser)}
-            loaderPosition="center"
-          >
-            <IconEye size={15} />
-          </Button>
-          <Button
-            size="xs"
-            variant="light"
-            color="red"
-            disabled={!isAdmin || user.isUser}
-          >
-            <IconTrash size={15} />
-          </Button>
-        </Button.Group>
-      </Group>
-    </Group>
   );
 };

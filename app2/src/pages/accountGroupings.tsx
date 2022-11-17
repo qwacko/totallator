@@ -30,8 +30,8 @@ const AccountGroupingsPage = () => {
       <Center>
         <Group>
           <Title>Account Groupings</Title>
-          <Button onClick={open} size="sm">
-            <IconPlus />
+          <Button onClick={open} size="sm" compact variant="light">
+            <IconPlus size={15} />
           </Button>
           <Modal
             opened={opened}

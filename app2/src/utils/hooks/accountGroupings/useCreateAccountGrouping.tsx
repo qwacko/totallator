@@ -3,7 +3,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import { notifyTemplate } from "../notifyTemplate";
 import {
   createAccountGroupingValidation,
-  createAccountGroupingValidationType,
+  type createAccountGroupingValidationType,
 } from "src/utils/validation/accountGrouping/createAccountGroupingValidation";
 
 const id = "useCreateAccountGrouping";

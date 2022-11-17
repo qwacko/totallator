@@ -1,4 +1,4 @@
-import { PrismaClient, User } from "@prisma/client";
+import type { PrismaClient, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
 export const checkAccountGroupingAccess = async ({
@@ -29,4 +29,14 @@ export const checkAccountGroupingAccess = async ({
       code: "BAD_REQUEST",
     });
   }
+};
+
+export const accountGroupingFilter = (userId: string, admin = true) => {
+  if (admin) {
+    return {
+      accountGrouping: { adminUsers: { some: { id: userId } } },
+    } as const;
+  }
+
+  return { accountGrouping: { viewUsers: { some: { id: userId } } } } as const;
 };
