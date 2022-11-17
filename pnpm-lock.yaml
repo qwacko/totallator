@@ -160,6 +160,7 @@ importers:
       '@trpc/react-query': 10.0.0-rc.4
       '@trpc/server': 10.0.0-rc.4
       '@types/bcrypt': ^5.0.0
+      '@types/lodash': ^4.14.182
       '@types/node': ^18.0.0
       '@types/react': ^18.0.14
       '@types/react-dom': ^18.0.5
@@ -170,6 +171,7 @@ importers:
       dayjs: ^1.11.6
       eslint: ^8.26.0
       eslint-config-next: 13.0.2
+      lodash: ^4.17.21
       next: 13.0.2
       next-auth: ^4.15.1
       prisma: ^4.5.0
@@ -202,6 +204,7 @@ importers:
       bcrypt: 5.1.0
       date-fns: 2.29.3
       dayjs: 1.11.6
+      lodash: 4.17.21
       next: 13.0.2_mqvh5p7ejg4taogoj6tpk3gd5a
       next-auth: 4.16.4_pknogjuzx4bv7zxtatcb2ahtsq
       react: 18.2.0
@@ -210,6 +213,7 @@ importers:
       zod: 3.19.1
     devDependencies:
       '@types/bcrypt': 5.0.0
+      '@types/lodash': 4.14.186
       '@types/node': 18.8.2
       '@types/react': 18.0.21
       '@types/react-dom': 18.0.9

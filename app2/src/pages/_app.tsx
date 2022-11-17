@@ -3,10 +3,10 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
+import { NotificationsProvider } from "@mantine/notifications";
 
 import { trpc } from "../utils/trpc";
 
-import "../styles/globals.css";
 import { useState } from "react";
 
 const MyApp: AppType<{ session: Session | null }> = ({
@@ -34,7 +34,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
             colorScheme,
           }}
         >
-          <Component {...pageProps} />
+          <NotificationsProvider>
+            <Component {...pageProps} />
+          </NotificationsProvider>
         </MantineProvider>
       </ColorSchemeProvider>
     </SessionProvider>
