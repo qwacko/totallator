@@ -12,8 +12,11 @@ const Home: NextPage = () => {
   const { status } = useSession();
   const [selected, setSelected] = useState(false);
 
-  if (status === "unauthenticated") {
-    router.push("/user/signin");
+  console.log("Index Page Session Status", status);
+
+  if (typeof window !== undefined && status === "unauthenticated") {
+    // router.push("/user/signin");
+    console.log("User Isn't Authenticated");
   }
 
   return (
