@@ -41,6 +41,7 @@ export const AccountGroupingEditForm = ({
             { value: "Disabled", label: "Disabled" },
             { value: "Deleted", label: "Deleted" },
           ]}
+          color="blue"
         />
         <Group>
           <Container fluid />
