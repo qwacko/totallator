@@ -2,7 +2,7 @@ import { z } from "zod";
 import { PrismaStatusEnumValidation } from "src/server/trpc/router/PrismaStatusEnumValidation";
 
 export const updateBillDataValidation = z.object({
-  title: z.string().optional(),
+  title: z.string().min(2).optional(),
   status: PrismaStatusEnumValidation.optional(),
 });
 
