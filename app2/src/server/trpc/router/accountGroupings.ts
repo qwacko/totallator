@@ -1,5 +1,4 @@
 import { router, protectedProcedure } from "../trpc";
-import { pick } from "lodash";
 import { z } from "zod";
 import { basicStatusToDB } from "src/utils/validation/basicStatusToDB";
 import { getUserInfo } from "./getUserInfo";
@@ -28,25 +27,32 @@ export const accountGroupingRouter = router({
       );
       const users = [
         ...item.adminUsers.map((item) => ({
-          ...pick(item, ["id", "name", "username"]),
+          id: item.id,
+          name: item.name,
+          username: item.username,
+          isUser: item.id === user.id,
           admin: true,
         })),
         ...filteredViewUsers.map((item) => ({
-          ...pick(item, ["id", "name", "username"]),
+          id: item.id,
+          name: item.name,
+          username: item.username,
+          isUser: item.id === user.id,
           admin: false,
         })),
       ];
-      const pickedItems = pick(item, [
-        "id",
-        "active",
-        "status",
-        "allowUpdate",
-        "createdAt",
-        "updatedAt",
-        "deleted",
-        "disabled",
-        "title",
-      ]);
+
+      const pickedItems = {
+        id: item.id,
+        active: item.active,
+        status: item.status,
+        allowUpdate: item.allowUpdate,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        deleted: item.deleted,
+        disabled: item.disabled,
+        title: item.title,
+      };
       const userIsAdmin = item.adminUsers
         .map((item) => item.id)
         .includes(user.id);

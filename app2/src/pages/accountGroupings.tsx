@@ -14,11 +14,12 @@ import { IconPlus } from "@tabler/icons";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useDisclosure } from "@mantine/hooks";
 import { useCreateAccountGrouping } from "src/utils/hooks/accountGroupings/useCreateAccountGrouping";
+import { AccountGroupingCard } from "src/components/accountGrouping/AccountGroupingCard";
 
 const AccountGroupingsPage = () => {
   const { data: accountGroupings, isLoading } = useAccountGroupings();
 
-  const [opened, { close, open, toggle }] = useDisclosure(false);
+  const [opened, { close, open }] = useDisclosure(false);
 
   const createAccountGrouping = useCreateAccountGrouping({
     onMutate: close,
@@ -61,12 +62,12 @@ const AccountGroupingsPage = () => {
           <Text>Loading Account Groupings</Text>
         </Group>
       )}
-      <Grid>
+      <Grid p="md">
         {accountGroupings &&
           accountGroupings.map((ag) => {
             return (
-              <Grid.Col key={ag.id} span={4}>
-                {ag.title}
+              <Grid.Col key={ag.id} xl={3} lg={4} sm={6}>
+                <AccountGroupingCard data={ag} />
               </Grid.Col>
             );
           })}

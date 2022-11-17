@@ -73,7 +73,7 @@ model VerificationToken {
 }
 
 model AccountGrouping {
-  id    String @id @unique @default(uuid())
+  id    String @id @unique @default(cuid())
   title String
 
   //BasicStatus
@@ -114,7 +114,7 @@ enum PrismaAccountEnum {
 }
 
 model TransactionAccount {
-  id                   String            @id @unique @default(uuid())
+  id                   String            @id @unique @default(cuid())
   title                String
   type                 PrismaAccountEnum @default(Expense)
   isCash               Boolean           @default(true)
@@ -147,7 +147,7 @@ model TransactionAccount {
 }
 
 model JournalEntry {
-  id          String   @id @unique @default(uuid())
+  id          String   @id @unique @default(cuid())
   date        DateTime
   description String
   linked      Boolean  @default(true)
@@ -183,7 +183,7 @@ model JournalEntry {
 }
 
 model Tag {
-  id     String @id @unique @default(uuid())
+  id     String @id @unique @default(cuid())
   title  String
   group  String
   single String
@@ -208,7 +208,7 @@ model Tag {
 }
 
 model Category {
-  id     String @id @unique @default(uuid())
+  id     String @id @unique @default(cuid())
   title  String
   group  String
   single String
@@ -233,7 +233,7 @@ model Category {
 }
 
 model Bill {
-  id    String @id @unique @default(uuid())
+  id    String @id @unique @default(cuid())
   title String
 
   //Account Grouping
@@ -256,7 +256,7 @@ model Bill {
 }
 
 model Budget {
-  id    String @id @unique @default(uuid())
+  id    String @id @unique @default(cuid())
   title String
 
   //Account Grouping
