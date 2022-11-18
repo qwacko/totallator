@@ -1,5 +1,5 @@
 import { Button, Menu } from "@mantine/core";
-import { IconCheck, IconMenu } from "@tabler/icons";
+import { IconCheck, IconMenu2 } from "@tabler/icons";
 
 export const StatusFilterMenu = <
   T extends {
@@ -22,7 +22,7 @@ export const StatusFilterMenu = <
     <Menu>
       <Menu.Target>
         <Button compact variant={inActive ? "white" : "light"}>
-          <IconMenu size={15} />
+          <IconMenu2 size={15} />
         </Button>
       </Menu.Target>
       <Menu.Dropdown>

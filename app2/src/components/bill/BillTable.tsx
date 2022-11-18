@@ -1,30 +1,20 @@
-import {
-  Button,
-  Group,
-  Loader,
-  Menu,
-  Select,
-  Table,
-  Text,
-  TextInput,
-} from "@mantine/core";
-import { MenuTarget } from "@mantine/core/lib/Menu/MenuTarget/MenuTarget";
-import {
-  IconArrowsSort,
-  IconMenu2,
-  IconSortAscending2,
-  IconSortAZ,
-} from "@tabler/icons";
+import { Group, Loader, Select, Table, Text, TextInput } from "@mantine/core";
 import { useState } from "react";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
-import { type billsFilter, useBills } from "src/utils/hooks/bills/useBills";
+import {
+  type billsFilter,
+  useBills,
+  type billsSort,
+} from "src/utils/hooks/bills/useBills";
 import { useUpdateBill } from "src/utils/hooks/bills/useUpdateBIll";
+import { SortButton } from "../table/SortButton";
 import { StatusFilterMenu } from "../table/StatusFilterMenu";
+import { TextFilterMenu } from "../table/TextFilterMenu";
 
 export const BillTable = () => {
   const [filter, setFilter] = useState<billsFilter>({});
-  const { bills, isLoading } = useBills({ filter: filter });
-  const [textFilter, setTextFilter] = useState<string | undefined>();
+  const [sort, setSort] = useState<billsSort | undefined>();
+  const { bills, isLoading } = useBills({ filter, sort });
 
   if (!bills || isLoading) {
     return (
@@ -43,40 +33,19 @@ export const BillTable = () => {
           <th>
             <Group spacing={10}>
               <Text>Title</Text>
-              <Menu closeOnItemClick={false} closeOnClickOutside={true}>
-                <Menu.Target>
-                  <Button variant="white">
-                    <IconMenu2 size={15} />
-                  </Button>
-                </Menu.Target>
-                <Menu.Dropdown>
-                  <Menu.Item component="div">
-                    <TextInput
-                      value={textFilter}
-                      onBlur={() =>
-                        setFilter({ ...filter, titleIncludes: textFilter })
-                      }
-                      onChange={(e) => setTextFilter(e.currentTarget.value)}
-                    />
-                  </Menu.Item>
-                  <Menu.Item
-                    onClick={() =>
-                      setFilter({ ...filter, titleIncludes: undefined })
-                    }
-                  >
-                    Reset
-                  </Menu.Item>
-                </Menu.Dropdown>
-              </Menu>
-              <Button variant="white">
-                <IconArrowsSort size={15} />
-              </Button>
+              <TextFilterMenu
+                filter={filter}
+                setFilter={setFilter}
+                targetKey="titleIncludes"
+              />
+              <SortButton sort={sort} setSort={setSort} targetKey="title" />
             </Group>
           </th>
           <th>
             <Group>
               <Text>Status</Text>
               <StatusFilterMenu filter={filter} setFilter={setFilter} />
+              <SortButton sort={sort} setSort={setSort} targetKey="status" />
             </Group>
           </th>
         </tr>

@@ -4,11 +4,13 @@ import { useDisclosure } from "@mantine/hooks";
 import { useCreateBill } from "src/utils/hooks/bills/useCreateBill";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 
-export const CreateBillForm = () => {
+export const CreateBillForm = ({ onClose }: { onClose?: () => void }) => {
   const { data: accountGroupings } = useAccountGroupings();
 
   const createBill = useCreateBill({
-    onMutate: close,
+    onMutate: () => {
+      onClose && onClose();
+    },
   });
 
   return (
@@ -55,7 +57,7 @@ export const CreateBillPopup = () => {
         <IconPlus size={15} />
       </Button>
       <Modal opened={opened} onClose={close} title="Create Bill">
-        <CreateBillForm />
+        <CreateBillForm onClose={close} />
       </Modal>
     </>
   );

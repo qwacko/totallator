@@ -1,3 +1,4 @@
+import type { SortType } from "src/components/table/SortButton";
 import { trpc } from "src/utils/trpc";
 
 export type billsFilter = {
@@ -7,7 +8,12 @@ export type billsFilter = {
   titleIncludes?: string;
 };
 
-export const useBills = ({ filter = {} }: { filter?: billsFilter } = {}) => {
+export type billsSort = SortType<"title" | "status">;
+
+export const useBills = ({
+  filter = {},
+  sort = undefined,
+}: { filter?: billsFilter; sort?: billsSort } = {}) => {
   const { data: allBills, isLoading } = trpc.bills.get.useQuery();
 
   const filteredBills = !allBills
@@ -20,7 +26,7 @@ export const useBills = ({ filter = {} }: { filter?: billsFilter } = {}) => {
         if (filter.excludeActive && bill.active) matched = false;
         if (filter.titleIncludes) {
           if (
-            bill.title
+            !bill.title
               .toLocaleLowerCase()
               .includes(filter.titleIncludes.toLocaleLowerCase())
           ) {
@@ -31,7 +37,28 @@ export const useBills = ({ filter = {} }: { filter?: billsFilter } = {}) => {
         return matched;
       });
 
-  const bills = filteredBills;
+  const bills = filteredBills.sort((a, b) => {
+    if (sort) {
+      console.log("Sorting", sort);
+      const c = sort.order === "desc" ? b : a;
+      const d = sort.order === "desc" ? a : b;
+
+      if (sort.key === "status") {
+        return c.status
+          .toLocaleLowerCase()
+          .localeCompare(d.status.toLocaleLowerCase());
+      }
+
+      if (sort.key === "title") {
+        return c.title
+          .toLocaleLowerCase()
+          .localeCompare(d.title.toLocaleLowerCase());
+      }
+    }
+    return a.title
+      .toLocaleLowerCase()
+      .localeCompare(b.title.toLocaleLowerCase());
+  });
 
   return { allBills, isLoading, bills };
 };
