@@ -1,10 +1,5 @@
 import { Button } from "@mantine/core";
-import {
-  IconArrowDown,
-  IconArrowsSort,
-  IconArrowsUpDown,
-  IconArrowUp,
-} from "@tabler/icons";
+import { IconArrowDown, IconArrowsSort, IconArrowUp } from "@tabler/icons";
 
 export type SortOrders = "asc" | "desc";
 export type SortType<T extends string> = { key: T; order?: "asc" | "desc" };
@@ -35,7 +30,7 @@ export const SortButton = <T extends string>({
     <Button variant={order ? "light" : "white"} compact onClick={toggleSort}>
       {order === "asc" && <IconArrowUp size={15} />}
       {order === "desc" && <IconArrowDown size={15} />}
-      {order === undefined && <IconArrowsUpDown size={15} />}
+      {order === undefined && <IconArrowsSort size={15} />}
     </Button>
   );
 };
