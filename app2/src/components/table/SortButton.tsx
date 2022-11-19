@@ -27,7 +27,7 @@ export const SortButton = <T extends string>({
   };
 
   return (
-    <Button variant={order ? "light" : "white"} compact onClick={toggleSort}>
+    <Button variant={order ? "outline" : "subtle"} compact onClick={toggleSort}>
       {order === "asc" && <IconArrowUp size={15} />}
       {order === "desc" && <IconArrowDown size={15} />}
       {order === undefined && <IconArrowsSort size={15} />}

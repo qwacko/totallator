@@ -1,34 +1,34 @@
 import { Center, Group, Loader, Stack, Table, Text } from "@mantine/core";
 import { useState } from "react";
 import {
-  type billsFilter,
-  useBills,
-  type billsSort,
-} from "src/utils/hooks/bills/useBills";
+  type budgetsFilter,
+  useBudgets,
+  type budgetsSort,
+} from "src/utils/hooks/budgets/useBudgets";
 import { SortButton } from "../table/SortButton";
 import { StatusFilterMenu } from "../table/StatusFilterMenu";
 import { TextFilterMenu } from "../table/TextFilterMenu";
 import { usePagination, PaginationDisplay } from "../table/usePagination";
-import { BillTableRow } from "./BillTableRow";
+import { BudgetTableRow } from "./BudgetTableRow";
 
-export const BillTable = () => {
-  const [filter, setFilter] = useState<billsFilter>({});
-  const [sort, setSort] = useState<billsSort | undefined>();
-  const { bills, isLoading } = useBills({ filter, sort });
-  const pagination = usePagination({ items: bills });
+export const BudgetTable = () => {
+  const [filter, setFilter] = useState<budgetsFilter>({});
+  const [sort, setSort] = useState<budgetsSort | undefined>();
+  const { budgets, isLoading } = useBudgets({ filter, sort });
+  const pagination = usePagination({ items: budgets });
 
-  if (!bills || isLoading) {
+  if (!budgets || isLoading) {
     return (
       <Group>
         <Loader />
-        <Text>Loading Bills</Text>
+        <Text>Loading Budgets</Text>
       </Group>
     );
   }
 
   return (
     <Stack>
-      <Table horizontalSpacing={2} verticalSpacing={2}>
+      <Table>
         <thead>
           <tr>
             <th>Account Grouping</th>
@@ -53,8 +53,8 @@ export const BillTable = () => {
           </tr>
         </thead>
         <tbody>
-          {pagination.filteredItems.map((bill) => {
-            return <BillTableRow key={bill.id} id={bill.id} />;
+          {pagination.filteredItems.map((budget) => {
+            return <BudgetTableRow key={budget.id} id={budget.id} />;
           })}
         </tbody>
       </Table>

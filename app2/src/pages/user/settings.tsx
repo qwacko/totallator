@@ -1,15 +1,16 @@
 import { Card, Stack } from "@mantine/core";
-import { UserDarkMode } from "src/components/user/UserDarkMode";
+import { AppLayout } from "src/components/layout/App";
 import { UserSettingsForm } from "src/components/user/UserSettingsForm";
 
 const UserSettings = () => {
   return (
-    <Stack>
-      <UserDarkMode />
-      <Card>
-        <UserSettingsForm />
-      </Card>
-    </Stack>
+    <AppLayout>
+      <Stack p="lg">
+        <Card p="lg">
+          <UserSettingsForm />
+        </Card>
+      </Stack>
+    </AppLayout>
   );
 };
 

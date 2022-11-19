@@ -21,7 +21,7 @@ export const StatusFilterMenu = <
   return (
     <Menu>
       <Menu.Target>
-        <Button compact variant={inActive ? "white" : "light"}>
+        <Button compact variant={inActive ? "subtle" : "outline"}>
           <IconMenu2 size={15} />
         </Button>
       </Menu.Target>

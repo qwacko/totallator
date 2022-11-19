@@ -1,27 +1,23 @@
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
-import { useUpdateBill } from "src/utils/hooks/bills/useUpdateBIll";
+import { useUpdateBudget } from "src/utils/hooks/budgets/useUpdateBudget";
 import { AccountGroupingCell } from "../table/Cells/AccountGroupingCell";
 import { StatusSelectCell } from "../table/Cells/StatusSelectCell";
 import { TextInputCell } from "../table/Cells/TextInputCell";
 
-export const BillTableRow = ({ id }: { id: string }) => {
-  const { bill, form, runMutate } = useUpdateBill({ id });
+export const BudgetTableRow = ({ id }: { id: string }) => {
+  const { budget, form, runMutate } = useUpdateBudget({ id });
   const { data: accountGroupings } = useAccountGroupings();
 
-  if (!bill) {
+  if (!budget) {
     return <></>;
   }
 
   const accountGrouping = accountGroupings?.find(
-    (item) => item.id === bill.accountGroupingId
+    (item) => item.id === budget.accountGroupingId
   );
 
-  const props = form.getInputProps("title");
-
-  console.log("props", props);
-
   return (
-    <tr key={bill.id}>
+    <tr key={budget.id}>
       <AccountGroupingCell accountGrouping={accountGrouping} editable={false} />
       <TextInputCell
         {...form.getInputProps("title")}

@@ -30,7 +30,7 @@ export const TextFilterMenu = <T extends Record<string, unknown>>({
     <Menu onOpen={openInternal} onClose={close} opened={opened}>
       <Menu.Target>
         <Button
-          variant={currentValue ? "light" : "white"}
+          variant={currentValue ? "light" : "subtle"}
           onClick={openInternal}
           compact
         >

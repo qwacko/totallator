@@ -16,7 +16,9 @@ export const UserDisplay = () => {
   return (
     <Group>
       <Text>{user.name}</Text>
-      <Button onClick={() => signOut()}>Logout</Button>
+      <Button variant="outline" size="xs" onClick={() => signOut()}>
+        Logout
+      </Button>
     </Group>
   );
 };
