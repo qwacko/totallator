@@ -1,23 +1,23 @@
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
-import { useUpdateTag } from "src/utils/hooks/tags/useUpdateTag";
+import { useUpdateCategory } from "src/utils/hooks/categories/useUpdateCategory";
 import { AccountGroupingCell } from "../table/Cells/AccountGroupingCell";
 import { StatusSelectCell } from "../table/Cells/StatusSelectCell";
 import { TextInputCell } from "../table/Cells/TextInputCell";
 
-export const TagTableRow = ({ id }: { id: string }) => {
-  const { tag, formTitle, runMutateTitle } = useUpdateTag({ id });
+export const CategoryTableRow = ({ id }: { id: string }) => {
+  const { category, formTitle, runMutateTitle } = useUpdateCategory({ id });
   const { data: accountGroupings } = useAccountGroupings();
 
-  if (!tag) {
+  if (!category) {
     return <></>;
   }
 
   const accountGrouping = accountGroupings?.find(
-    (item) => item.id === tag.accountGroupingId
+    (item) => item.id === category.accountGroupingId
   );
 
   return (
-    <tr key={tag.id}>
+    <tr key={category.id}>
       <AccountGroupingCell accountGrouping={accountGrouping} editable={false} />
       <TextInputCell
         {...formTitle.getInputProps("title")}

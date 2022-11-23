@@ -1,27 +1,27 @@
 import { Center, Group, Loader, Stack, Table, Text } from "@mantine/core";
 import { useState } from "react";
 import {
-  type tagsFilter,
-  type tagsSort,
-  useTags,
-} from "src/utils/hooks/tags/useTags";
+  type categoriesSort,
+  type catgoriesFilter,
+  useCategories,
+} from "src/utils/hooks/categories/useCategories";
 import { SortButton } from "../table/SortButton";
 import { StatusFilterMenu } from "../table/StatusFilterMenu";
 import { TextFilterMenu } from "../table/TextFilterMenu";
 import { usePagination, PaginationDisplay } from "../table/usePagination";
-import { TagTableRow } from "./TagTableRow";
+import { CategoryTableRow } from "./CategoryTableRow";
 
-export const TagTable = () => {
-  const [filter, setFilter] = useState<tagsFilter>({});
-  const [sort, setSort] = useState<tagsSort | undefined>();
-  const { tags, isLoading } = useTags({ filter, sort });
-  const pagination = usePagination({ items: tags });
+export const CategoryTable = () => {
+  const [filter, setFilter] = useState<catgoriesFilter>({});
+  const [sort, setSort] = useState<categoriesSort | undefined>();
+  const { categories, isLoading } = useCategories({ filter, sort });
+  const pagination = usePagination({ items: categories });
 
-  if (!tags || isLoading) {
+  if (!categories || isLoading) {
     return (
       <Group>
         <Loader />
-        <Text>Loading Tags</Text>
+        <Text>Loading Categories</Text>
       </Group>
     );
   }
@@ -53,8 +53,8 @@ export const TagTable = () => {
           </tr>
         </thead>
         <tbody>
-          {pagination.filteredItems.map((tag) => {
-            return <TagTableRow key={tag.id} id={tag.id} />;
+          {pagination.filteredItems.map((category) => {
+            return <CategoryTableRow key={category.id} id={category.id} />;
           })}
         </tbody>
       </Table>

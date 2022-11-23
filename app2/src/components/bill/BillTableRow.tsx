@@ -16,10 +16,6 @@ export const BillTableRow = ({ id }: { id: string }) => {
     (item) => item.id === bill.accountGroupingId
   );
 
-  const props = form.getInputProps("title");
-
-  console.log("props", props);
-
   return (
     <tr key={bill.id}>
       <AccountGroupingCell accountGrouping={accountGrouping} editable={false} />

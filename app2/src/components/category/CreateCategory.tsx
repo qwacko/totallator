@@ -2,12 +2,12 @@ import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { IconPlus } from "@tabler/icons";
 import { useDisclosure } from "@mantine/hooks";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
-import { useCreateTag } from "src/utils/hooks/tags/useCreateTag";
+import { useCreateCategory } from "src/utils/hooks/categories/useCreateCategory";
 
-export const CreateTagForm = ({ onClose }: { onClose?: () => void }) => {
+export const CreateCategoryForm = ({ onClose }: { onClose?: () => void }) => {
   const { data: accountGroupings } = useAccountGroupings();
 
-  const createTag = useCreateTag({
+  const createCategory = useCreateCategory({
     onMutate: () => {
       onClose && onClose();
     },
@@ -15,8 +15,8 @@ export const CreateTagForm = ({ onClose }: { onClose?: () => void }) => {
 
   return (
     <form
-      onSubmit={createTag.form.onSubmit((values) =>
-        createTag.mutate.mutate(values)
+      onSubmit={createCategory.form.onSubmit((values) =>
+        createCategory.mutate.mutate(values)
       )}
     >
       <Stack>
@@ -32,15 +32,15 @@ export const CreateTagForm = ({ onClose }: { onClose?: () => void }) => {
                 }))
               : []
           }
-          {...createTag.form.getInputProps("accountGroupingId")}
+          {...createCategory.form.getInputProps("accountGroupingId")}
         />
         <TextInput
-          {...createTag.form.getInputProps("group")}
+          {...createCategory.form.getInputProps("group")}
           required
           label="Group"
         />
         <TextInput
-          {...createTag.form.getInputProps("single")}
+          {...createCategory.form.getInputProps("single")}
           required
           label="Single"
         />
@@ -53,7 +53,7 @@ export const CreateTagForm = ({ onClose }: { onClose?: () => void }) => {
   );
 };
 
-export const CreateTagPopup = () => {
+export const CreateCategoryPopup = () => {
   const [opened, { close, open }] = useDisclosure(false);
 
   return (
@@ -61,8 +61,8 @@ export const CreateTagPopup = () => {
       <Button onClick={open} size="sm" compact variant="light">
         <IconPlus size={15} />
       </Button>
-      <Modal opened={opened} onClose={close} title="Create Tag">
-        <CreateTagForm onClose={close} />
+      <Modal opened={opened} onClose={close} title="Create Category">
+        <CreateCategoryForm onClose={close} />
       </Modal>
     </>
   );
