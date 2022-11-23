@@ -20,6 +20,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
           <Tabs.List>
             <Tabs.Tab value="/budgets">Budgets</Tabs.Tab>
             <Tabs.Tab value="/bills">Bills</Tabs.Tab>
+            <Tabs.Tab value="/tags">Tags</Tabs.Tab>
             <Tabs.Tab value="/user/settings">User</Tabs.Tab>
           </Tabs.List>
         </Tabs>

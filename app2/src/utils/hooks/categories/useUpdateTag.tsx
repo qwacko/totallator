@@ -10,7 +10,11 @@ const id = "useUpdateTag";
 const notifications = notifyTemplate(id, "Tag", "Update");
 
 export const useUpdateTag = ({ id }: { id: string }) => {
-  const form = useForm<updateTagDataValidationType>({
+  const formGroupSingle = useForm<updateTagDataValidationType>({
+    validate: zodResolver(updateTagDataValidation),
+  });
+
+  const formTitle = useForm<updateTagDataValidationType>({
     validate: zodResolver(updateTagDataValidation),
   });
 
@@ -20,8 +24,12 @@ export const useUpdateTag = ({ id }: { id: string }) => {
     select: (data) => data.find((item) => item.id === id),
     onSuccess: (data) => {
       if (data) {
-        form.setValues({
+        formTitle.setValues({
           title: data.title,
+          status: data.status,
+        });
+
+        formGroupSingle.setValues({
           group: data.group,
           single: data.single,
           status: data.status,
@@ -32,20 +40,27 @@ export const useUpdateTag = ({ id }: { id: string }) => {
 
   const resetForm = () => {
     if (data) {
-      form.setValues({
+      formGroupSingle.setValues({
         group: data.group,
         single: data.single,
+        status: data.status,
+      });
+      formTitle.setValues({
         status: data.status,
         title: data.title,
       });
     }
   };
 
-  const hasChanged = !(
-    form.values.status === data?.status &&
-    form.values.group === data?.group &&
-    form.values.single === data?.single &&
-    form.values.title === data?.title
+  const groupSingleHasChanged = !(
+    formGroupSingle.values.status === data?.status &&
+    formGroupSingle.values.group === data?.group &&
+    formGroupSingle.values.single === data?.single
+  );
+
+  const titleHasChanged = !(
+    formTitle.values.status === data?.status &&
+    formTitle.values.title === data?.title
   );
 
   const { mutate, isLoading: isMutating } = trpc.tags.update.useMutation({
@@ -74,11 +89,22 @@ export const useUpdateTag = ({ id }: { id: string }) => {
     },
   });
 
-  const runMutate = () => {
-    if (hasChanged) {
-      const validated = form.validate();
+  const runMutateTitle = () => {
+    if (titleHasChanged) {
+      const validated = formTitle.validate();
       if (!validated.hasErrors) {
-        mutate({ id, data: form.values });
+        mutate({ id, data: formTitle.values });
+      } else {
+        resetForm();
+      }
+    }
+  };
+
+  const runMutateGroupSingle = () => {
+    if (groupSingleHasChanged) {
+      const validated = formGroupSingle.validate();
+      if (!validated.hasErrors) {
+        mutate({ id, data: formGroupSingle.values });
       } else {
         resetForm();
       }
@@ -90,9 +116,12 @@ export const useUpdateTag = ({ id }: { id: string }) => {
     isLoading,
     isMutating,
     mutate,
-    form,
-    hasChanged,
-    runMutate,
+    formTitle,
+    formGroupSingle,
+    titleHasChanged,
+    groupSingleHasChanged,
+    runMutateTitle,
+    runMutateGroupSingle,
     resetForm,
   };
 };
