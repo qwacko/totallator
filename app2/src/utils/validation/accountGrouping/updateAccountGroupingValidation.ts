@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PrismaStatusEnumValidation } from "src/server/trpc/router/PrismaStatusEnumValidation";
+import { PrismaStatusEnumValidation } from "src/utils/validation/PrismaStatusEnumValidation";
 
 export const updateAccountGroupingDataValidation = z.object({
   title: z.string().optional(),

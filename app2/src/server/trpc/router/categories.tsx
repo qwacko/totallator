@@ -8,15 +8,19 @@ import {
   accountGroupingFilter,
   checkAccountGroupingAccess,
 } from "./helpers/checkAccountGroupingAccess";
-import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
-import { updateBillValidation } from "src/utils/validation/bill/updateBillValidation";
 import { TRPCError } from "@trpc/server";
+import {
+  createGroupSingleTitle,
+  updateGroupSingleTitle,
+} from "./helpers/groupSingleHandling";
+import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
+import { updateCategoryValidation } from "src/utils/validation/category/updateCategoryValidation";
 
-export const billRouter = router({
+export const categoryRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
     const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-    const bills = await ctx.prisma.bill.findMany({
+    const categories = await ctx.prisma.category.findMany({
       where: {
         accountGrouping: { viewUsers: { some: { id: user.id } } },
       },
@@ -25,17 +29,17 @@ export const billRouter = router({
       },
     });
 
-    return bills.map((bill) => {
-      const { accountGrouping, ...pickedBill } = bill;
+    return categories.map((category) => {
+      const { accountGrouping, ...pickedCategory } = category;
       const userIsAdmin =
         user.admin ||
         accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
 
-      return { ...pickedBill, userIsAdmin };
+      return { ...pickedCategory, userIsAdmin };
     });
   }),
   create: protectedProcedure
-    .input(createBillValidation)
+    .input(createCategoryValidation)
     .mutation(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
@@ -46,34 +50,49 @@ export const billRouter = router({
         adminRequired: true,
       });
 
-      await ctx.prisma.bill.create({
-        data: { ...input, ...basicStatusToDBRequired("Active") },
+      await ctx.prisma.category.create({
+        data: {
+          accountGroupingId: input.accountGroupingId,
+          ...createGroupSingleTitle({
+            group: input.group,
+            single: input.single,
+          }),
+          ...basicStatusToDBRequired("Active"),
+        },
       });
 
       return true;
     }),
   update: protectedProcedure
-    .input(updateBillValidation)
+    .input(updateCategoryValidation)
     .mutation(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-      const targetBill = await ctx.prisma.bill.findFirst({
+      const targetCategory = await ctx.prisma.category.findFirst({
         where: {
           id: input.id,
           ...accountGroupingFilter(user.id),
         },
       });
 
-      if (!targetBill) {
+      if (!targetCategory) {
         throw new TRPCError({
-          message: "Cannot find bill or user doesn't have admin accces",
+          message: "Cannot find category or user doesn't have admin accces",
           code: "FORBIDDEN",
         });
       }
 
-      await ctx.prisma.bill.update({
-        where: { id: targetBill.id },
-        data: { ...input.data, ...basicStatusToDB(input.data.status) },
+      await ctx.prisma.category.update({
+        where: { id: targetCategory.id },
+        data: {
+          ...updateGroupSingleTitle({
+            group: input.data.group,
+            single: input.data.single,
+            title: input.data.title,
+            existing: targetCategory,
+          }),
+          ...basicStatusToDB(input.data.status),
+        },
       });
 
       return true;

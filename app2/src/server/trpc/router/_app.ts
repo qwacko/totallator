@@ -3,6 +3,8 @@ import { router } from "../trpc";
 import { accountGroupingRouter } from "./accountGroupings";
 import { billRouter } from "./bills";
 import { budgetRouter } from "./budgets";
+import { categoryRouter } from "./categories";
+import { tagRouter } from "./tags";
 import { userRouter } from "./user";
 
 export const appRouter = router({
@@ -10,6 +12,8 @@ export const appRouter = router({
   accountGroupings: accountGroupingRouter,
   bills: billRouter,
   budgets: budgetRouter,
+  tags: tagRouter,
+  categories: categoryRouter,
 });
 
 // export type definition of API

@@ -6,7 +6,7 @@ import {
 } from "src/utils/validation/bill/updateBillValidation";
 import { notifyTemplate } from "../notifyTemplate";
 
-const id = "useCreateBill";
+const id = "useUpdateBill";
 const notifications = notifyTemplate(id, "Bill", "Update");
 
 export const useUpdateBill = ({ id }: { id: string }) => {
