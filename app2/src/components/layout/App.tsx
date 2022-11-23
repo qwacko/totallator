@@ -7,8 +7,6 @@ import { UserDisplay } from "../user/UserDisplay";
 export const AppLayout = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
-  console.log("Router Info", router);
-
   return (
     <Stack>
       <Group p="sm">

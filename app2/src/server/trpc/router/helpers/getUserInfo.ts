@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@prisma/client";
 
 export const getUserInfo = async (
   userId: string,

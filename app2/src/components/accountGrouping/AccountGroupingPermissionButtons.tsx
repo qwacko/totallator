@@ -1,7 +1,7 @@
 import { Button } from "@mantine/core";
 import { IconEdit, IconEye, IconTrash } from "@tabler/icons";
 import { trpc } from "src/utils/trpc";
-import { AccountGroupingReturnUser } from "./AccountGroupingCard";
+import type { AccountGroupingReturnUser } from "./AccountGroupingCard";
 
 export const AccountGroupingPermissionButtons = ({
   user,

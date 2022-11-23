@@ -1,6 +1,6 @@
 import { Group, Text, Container } from "@mantine/core";
 import { AccountGroupingPermissionButtons } from "./AccountGroupingPermissionButtons";
-import { AccountGroupingReturnUser } from "./AccountGroupingCard";
+import type { AccountGroupingReturnUser } from "./AccountGroupingCard";
 
 export const DisplayAGUser = ({
   user,

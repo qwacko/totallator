@@ -3,12 +3,10 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import { UserDisplay } from "src/components/user/UserDisplay";
 import { UserDarkMode } from "src/components/user/UserDarkMode";
 
 const Home: NextPage = () => {
-  const router = useRouter();
   const { status } = useSession();
   const [selected, setSelected] = useState(false);
 
