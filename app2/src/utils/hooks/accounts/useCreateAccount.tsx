@@ -9,7 +9,7 @@ import {
 const id = "useCreateAccount";
 const notifications = notifyTemplate(id, "Account", "Create");
 
-export function useCreateBill({ onMutate }: { onMutate?: () => void }) {
+export function useCreateAccount({ onMutate }: { onMutate?: () => void }) {
   const form = useForm<createAccountValidationType>({
     validate: zodResolver(createAccountValidation),
   });

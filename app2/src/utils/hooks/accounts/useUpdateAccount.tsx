@@ -9,7 +9,7 @@ import { notifyTemplate } from "../notifyTemplate";
 const id = "useUpdateAccount";
 const notifications = notifyTemplate(id, "Account", "Update");
 
-export const useUpdateBill = ({ id }: { id: string }) => {
+export const useUpdateAccount = ({ id }: { id: string }) => {
   const form = useForm<updateAccountDataValidationType>({
     validate: zodResolver(updateAccountDataValidation),
   });

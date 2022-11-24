@@ -11,6 +11,10 @@ import {
 import { TRPCError } from "@trpc/server";
 import { createAccountValidation } from "src/utils/validation/account/createAccountValidation";
 import { updateAccountValidation } from "src/utils/validation/account/updateAccountValidation";
+import {
+  createAccountGroupTitle,
+  updateAccountGroupTitle,
+} from "./helpers/accountTitleGroupHandling";
 
 export const accountRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -46,8 +50,20 @@ export const accountRouter = router({
         adminRequired: true,
       });
 
+      const { title, accountGroup, accountGroup2, accountGroup3, ...other } =
+        input;
+
       await ctx.prisma.transactionAccount.create({
-        data: { ...input, ...basicStatusToDBRequired("Active") },
+        data: {
+          ...other,
+          ...basicStatusToDBRequired("Active"),
+          ...createAccountGroupTitle({
+            title,
+            accountGroup,
+            accountGroup2,
+            accountGroup3,
+          }),
+        },
       });
 
       return true;
@@ -57,7 +73,7 @@ export const accountRouter = router({
     .mutation(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-      const targetAccount = await ctx.prisma.bill.findFirst({
+      const targetAccount = await ctx.prisma.transactionAccount.findFirst({
         where: {
           id: input.id,
           ...accountGroupingFilter(user.id),
@@ -71,9 +87,28 @@ export const accountRouter = router({
         });
       }
 
+      const {
+        title,
+        accountGroup,
+        accountGroup2,
+        accountGroup3,
+        status,
+        ...other
+      } = input.data;
+
       await ctx.prisma.transactionAccount.update({
         where: { id: targetAccount.id },
-        data: { ...input.data, ...basicStatusToDB(input.data.status) },
+        data: {
+          ...other,
+          ...basicStatusToDB(status),
+          ...updateAccountGroupTitle({
+            title,
+            accountGroup,
+            accountGroup2,
+            accountGroup3,
+            existing: targetAccount,
+          }),
+        },
       });
 
       return true;

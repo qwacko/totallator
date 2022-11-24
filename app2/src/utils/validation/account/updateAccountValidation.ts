@@ -4,9 +4,9 @@ import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidat
 
 export const updateAccountDataValidation = z.object({
   title: z.string().min(2).optional(),
-  accountGroup: z.string().min(2).optional(),
-  accountGroup2: z.string().min(2).optional(),
-  accountGroup3: z.string().min(2).optional(),
+  accountGroup: z.string().min(2).nullable().optional(),
+  accountGroup2: z.string().min(2).nullable().optional(),
+  accountGroup3: z.string().min(2).nullable().optional(),
   isCash: z.boolean().default(true).optional(),
   isNetWorth: z.boolean().default(true).optional(),
   type: PrismaAccountTypeEnumValidation.optional(),
