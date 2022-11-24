@@ -1,6 +1,7 @@
 import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import { router } from "../trpc";
 import { accountGroupingRouter } from "./accountGroupings";
+import { accountRouter } from "./accounts";
 import { billRouter } from "./bills";
 import { budgetRouter } from "./budgets";
 import { categoryRouter } from "./categories";
@@ -14,6 +15,7 @@ export const appRouter = router({
   budgets: budgetRouter,
   tags: tagRouter,
   categories: categoryRouter,
+  accounts: accountRouter,
 });
 
 // export type definition of API
