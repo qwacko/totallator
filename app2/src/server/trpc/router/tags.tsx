@@ -15,6 +15,7 @@ import {
   createGroupSingleTitle,
   updateGroupSingleTitle,
 } from "./helpers/groupSingleHandling";
+import { z } from "zod";
 
 export const tagRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -93,6 +94,37 @@ export const tagRouter = router({
           }),
           ...basicStatusToDB(input.data.status),
         },
+      });
+
+      return true;
+    }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const targetTag = await ctx.prisma.tag.findFirst({
+        where: {
+          id: input.id,
+          ...accountGroupingFilter(user.id),
+        },
+        include: { _count: { select: { journalEntries: true } } },
+      });
+
+      if (!targetTag) {
+        throw new TRPCError({
+          message: "Cannot find tag or user doesn't have admin accces",
+          code: "FORBIDDEN",
+        });
+      }
+      if (targetTag._count.journalEntries > 0) {
+        throw new TRPCError({
+          message: "Cannot remove tag that has journal entries associated",
+          code: "FORBIDDEN",
+        });
+      }
+      await ctx.prisma.tag.delete({
+        where: { id: targetTag.id },
       });
 
       return true;

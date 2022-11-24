@@ -15,6 +15,7 @@ import {
   createAccountGroupTitle,
   updateAccountGroupTitle,
 } from "./helpers/accountTitleGroupHandling";
+import { z } from "zod";
 
 export const accountRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -111,6 +112,68 @@ export const accountRouter = router({
             accountGroupCombined,
           }),
         },
+      });
+
+      return true;
+    }),
+  clone: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const targetAccount = await ctx.prisma.transactionAccount.findFirst({
+        where: {
+          id: input.id,
+          ...accountGroupingFilter(user.id),
+        },
+      });
+
+      if (!targetAccount) {
+        throw new TRPCError({
+          message: "Cannot find account or user doesn't have admin accces",
+          code: "FORBIDDEN",
+        });
+      }
+
+      const { createdAt, updatedAt, id, ...targetAccountProps } = targetAccount;
+
+      await ctx.prisma.transactionAccount.create({
+        data: {
+          ...targetAccountProps,
+          title: `${targetAccountProps.title} (Clone)`,
+          accountTitleCombined: `${targetAccountProps.accountTitleCombined} (Clone)`,
+        },
+      });
+
+      return true;
+    }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const targetAccount = await ctx.prisma.transactionAccount.findFirst({
+        where: {
+          id: input.id,
+          ...accountGroupingFilter(user.id),
+        },
+        include: { _count: { select: { journalEntries: true } } },
+      });
+
+      if (!targetAccount) {
+        throw new TRPCError({
+          message: "Cannot find account or user doesn't have admin accces",
+          code: "FORBIDDEN",
+        });
+      }
+      if (targetAccount._count.journalEntries > 0) {
+        throw new TRPCError({
+          message: "Cannot remove account that has journal entries associated",
+          code: "FORBIDDEN",
+        });
+      }
+      await ctx.prisma.transactionAccount.delete({
+        where: { id: targetAccount.id },
       });
 
       return true;

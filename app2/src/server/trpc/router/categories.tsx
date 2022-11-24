@@ -15,6 +15,7 @@ import {
 } from "./helpers/groupSingleHandling";
 import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
 import { updateCategoryValidation } from "src/utils/validation/category/updateCategoryValidation";
+import { z } from "zod";
 
 export const categoryRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -97,4 +98,35 @@ export const categoryRouter = router({
 
       return true;
     }),
+    delete: protectedProcedure
+      .input(z.object({ id: z.string().cuid() }))
+      .mutation(async ({ ctx, input }) => {
+        const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+  
+        const targetCategory = await ctx.prisma.category.findFirst({
+          where: {
+            id: input.id,
+            ...accountGroupingFilter(user.id),
+          },
+          include: { _count: { select: { journalEntries: true } } },
+        });
+  
+        if (!targetCategory) {
+          throw new TRPCError({
+            message: "Cannot find category or user doesn't have admin accces",
+            code: "FORBIDDEN",
+          });
+        }
+        if (targetCategory._count.journalEntries > 0) {
+          throw new TRPCError({
+            message: "Cannot remove category that has journal entries associated",
+            code: "FORBIDDEN",
+          });
+        }
+        await ctx.prisma.category.delete({
+          where: { id: targetCategory.id },
+        });
+  
+        return true;
+      }),
 });

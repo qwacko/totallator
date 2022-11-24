@@ -11,6 +11,7 @@ import {
 import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
 import { updateBillValidation } from "src/utils/validation/bill/updateBillValidation";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 export const billRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -74,6 +75,37 @@ export const billRouter = router({
       await ctx.prisma.bill.update({
         where: { id: targetBill.id },
         data: { ...input.data, ...basicStatusToDB(input.data.status) },
+      });
+
+      return true;
+    }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const targetBill = await ctx.prisma.bill.findFirst({
+        where: {
+          id: input.id,
+          ...accountGroupingFilter(user.id),
+        },
+        include: { _count: { select: { journalEntries: true } } },
+      });
+
+      if (!targetBill) {
+        throw new TRPCError({
+          message: "Cannot find bill or user doesn't have admin accces",
+          code: "FORBIDDEN",
+        });
+      }
+      if (targetBill._count.journalEntries > 0) {
+        throw new TRPCError({
+          message: "Cannot remove bill that has journal entries associated",
+          code: "FORBIDDEN",
+        });
+      }
+      await ctx.prisma.bill.delete({
+        where: { id: targetBill.id },
       });
 
       return true;

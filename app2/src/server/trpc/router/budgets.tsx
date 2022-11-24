@@ -11,6 +11,7 @@ import {
 import { createBudgetValidation } from "src/utils/validation/budget/createBudgetValidation";
 import { updateBudgetValidation } from "src/utils/validation/budget/updateBudgetValidation";
 import { TRPCError } from "@trpc/server";
+import { z } from "zod";
 
 export const budgetRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -74,6 +75,38 @@ export const budgetRouter = router({
       await ctx.prisma.budget.update({
         where: { id: targetBudget.id },
         data: { ...input.data, ...basicStatusToDB(input.data.status) },
+      });
+
+      return true;
+    }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const targetBudget = await ctx.prisma.budget.findFirst({
+        where: {
+          id: input.id,
+          ...accountGroupingFilter(user.id),
+        },
+        include: { _count: { select: { journalEntries: true } } },
+      });
+
+      if (!targetBudget) {
+        throw new TRPCError({
+          message: "Cannot find budget or user doesn't have admin accces",
+          code: "FORBIDDEN",
+        });
+      }
+      if (targetBudget._count.journalEntries > 0) {
+        throw new TRPCError({
+          message: "Cannot remove budget that has journal entries associated",
+          code: "FORBIDDEN",
+        });
+      }
+
+      await ctx.prisma.budget.delete({
+        where: { id: targetBudget.id },
       });
 
       return true;
