@@ -30,9 +30,15 @@ const columnHelper = createColumnHelper<AccountsReturnType>();
 const columns = [
   columnHelper.accessor("title", {
     header: "Title",
-    // cell: (props) => {
-    //   return <AccountTableCell id={props.row.id} column="title" />;
-    // },
+    cell: (props) => {
+      return (
+        <AccountTableCell
+          id={props.row.id}
+          column="title"
+          data={props.row.original}
+        />
+      );
+    },
   }),
   columnHelper.accessor("accountGroupCombined", {
     header: "Title",
@@ -42,11 +48,15 @@ const columns = [
     sortUndefined: -1,
     enableColumnFilter: true,
     filterFn: "includesString",
-    // cell: (props) => {
-    //   return (
-    //     <AccountTableCell id={props.row.id} column="accountGroupCombined" />
-    //   );
-    // },
+    cell: (props) => {
+      return (
+        <AccountTableCell
+          id={props.row.id}
+          column="accountGroupCombined"
+          data={props.row.original}
+        />
+      );
+    },
   }),
 ];
 export const AccountTable = () => {
@@ -67,6 +77,7 @@ export const AccountTable = () => {
       pagination: { pageSize: 1 },
       sorting: [{ id: "title", desc: false }],
     },
+    autoResetPageIndex: false,
   });
 
   if (!data.data || data.isLoading) {

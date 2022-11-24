@@ -1,4 +1,5 @@
 import { useForm, zodResolver } from "@mantine/form";
+import { useEffect } from "react";
 import { AppRouter, AppRouterOutputs } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
@@ -12,51 +13,36 @@ const notifications = notifyTemplate(id, "Account", "Update");
 
 type keysType = keyof updateAccountDataValidationType;
 
+const query = undefined;
+
 export const useUpdateAccount = ({
   id,
   keys,
+  data,
 }: {
   id: string;
   keys: keysType[];
+  data: AppRouterOutputs["accounts"]["get"][0];
 }) => {
   const form = useForm<updateAccountDataValidationType>({
     validate: zodResolver(updateAccountDataValidation),
   });
 
   const utils = trpc.useContext();
-  const pickItems = (pickData: AppRouterOutputs["accounts"]["get"][0]) => {
-    return keys.reduce(
-      (prev, current) => ({ ...prev, [current]: pickData[current] }),
-      {}
-    );
-  };
-
-  const { data, isLoading } = trpc.accounts.get.useQuery(undefined, {
-    select: (data) => data.find((item) => item.id === id),
-    onSuccess: (newData) => {
-      if (newData) {
-        form.setValues(pickItems(newData));
-      }
-    },
-  });
-
-  const resetForm = () => {
-    if (data) {
-      form.setValues(pickItems(data));
-    }
-  };
-
   const { mutate, isLoading: isMutating } = trpc.accounts.update.useMutation({
     onError: (e) => {
+      console.log("On Error");
       utils.accounts.invalidate();
       notifications.onError(e);
       resetForm();
     },
     onSuccess: () => {
+      console.log("On Success");
       utils.accounts.invalidate();
       notifications.onSuccess();
     },
     onMutate: (data) => {
+      console.log("On Mutate");
       notifications.onLoading();
       const currentAccounts = utils.accounts.get.getData();
       if (currentAccounts) {
@@ -72,8 +58,28 @@ export const useUpdateAccount = ({
     },
   });
 
+  const pickItems = (pickData: AppRouterOutputs["accounts"]["get"][0]) => {
+    return keys.reduce(
+      (prev, current) => ({ ...prev, [current]: pickData[current] }),
+      {}
+    );
+  };
+
+  const resetForm = () => {
+    if (data) {
+      form.setValues(pickItems(data));
+    }
+  };
+
+  useEffect(() => {
+    resetForm();
+  }, [data]);
+
   const runMutate = () => {
-    const hasChanged = false;
+    console.log("Running Mutation");
+    const hasChanged =
+      JSON.stringify(pickItems(data)) !==
+      JSON.stringify(pickItems(form.values));
     if (hasChanged) {
       const validated = form.validate();
       if (!validated.hasErrors) {
@@ -85,8 +91,6 @@ export const useUpdateAccount = ({
   };
 
   return {
-    account: data,
-    isLoading,
     isMutating,
     mutate,
     form,
