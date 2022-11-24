@@ -1,4 +1,4 @@
-import { TextInput, Text } from "@mantine/core";
+import { TextInput } from "@mantine/core";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useUpdateAccount } from "src/utils/hooks/accounts/useUpdateAccount";
 

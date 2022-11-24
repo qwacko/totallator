@@ -1,23 +1,16 @@
-import { Center, Group, Loader, Stack, Table, Text } from "@mantine/core";
+import { Button, Group, Loader, Stack, Table, Text } from "@mantine/core";
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+
 import type { AppRouterOutputs } from "src/server/trpc/router/_app";
-import {
-  type accountsFilter,
-  type accountsSort,
-  useAccounts,
-} from "src/utils/hooks/accounts/useAccounts";
-import { SortButton } from "../table/SortButton";
-import { StatusFilterMenu } from "../table/StatusFilterMenu";
-import { TextFilterMenu } from "../table/TextFilterMenu";
-import { usePagination, PaginationDisplay } from "../table/usePagination";
+import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
 import { AccountTableCell } from "./AccountTableCell";
-import { AccountTableRow } from "./AccountTableRow";
 
 type AccountsReturnType = AppRouterOutputs["accounts"]["get"][0];
 
@@ -31,6 +24,12 @@ const columns = [
   }),
   columnHelper.accessor("accountGroupCombined", {
     header: "Title",
+    enableSorting: true,
+    sortingFn: "text",
+    enableMultiSort: true,
+    sortUndefined: -1,
+    enableColumnFilter: true,
+    filterFn: "includesString",
     cell: (props) => {
       return (
         <AccountTableCell id={props.row.id} column="accountGroupCombined" />
@@ -46,6 +45,16 @@ export const AccountTable = () => {
     data: allAccounts || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
+    enableSorting: true,
+    enableMultiSort: true,
+    enableColumnFilters: true,
+    enableFilters: true,
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: { pageSize: 1 },
+      sorting: [{ id: "title", desc: false }],
+    },
   });
 
   if (!allAccounts || isLoading) {
@@ -59,6 +68,16 @@ export const AccountTable = () => {
 
   return (
     <Stack>
+      <Button
+        onClick={() =>
+          table.setSorting((data) => {
+            if (data.length === 0) {
+              return [{ desc: true, id: "accountGroupCombined" }];
+            }
+            return data.map((item) => ({ ...item, desc: !item.desc }));
+          })
+        }
+      />
       <Table horizontalSpacing={2} verticalSpacing={2}>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
