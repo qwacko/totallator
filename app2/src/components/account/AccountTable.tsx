@@ -1,4 +1,14 @@
-import { Button, Group, Loader, Stack, Table, Text } from "@mantine/core";
+import {
+  Button,
+  Center,
+  Group,
+  Loader,
+  Pagination,
+  Select,
+  Stack,
+  Table,
+  Text,
+} from "@mantine/core";
 import {
   createColumnHelper,
   flexRender,
@@ -7,9 +17,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { useEffect } from "react";
 
 import type { AppRouterOutputs } from "src/server/trpc/router/_app";
 import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
+import { SortButtonReactTable } from "../table/SortButtonReactTable";
 import { AccountTableCell } from "./AccountTableCell";
 
 type AccountsReturnType = AppRouterOutputs["accounts"]["get"][0];
@@ -18,9 +30,9 @@ const columnHelper = createColumnHelper<AccountsReturnType>();
 const columns = [
   columnHelper.accessor("title", {
     header: "Title",
-    cell: (props) => {
-      return <AccountTableCell id={props.row.id} column="title" />;
-    },
+    // cell: (props) => {
+    //   return <AccountTableCell id={props.row.id} column="title" />;
+    // },
   }),
   columnHelper.accessor("accountGroupCombined", {
     header: "Title",
@@ -30,19 +42,19 @@ const columns = [
     sortUndefined: -1,
     enableColumnFilter: true,
     filterFn: "includesString",
-    cell: (props) => {
-      return (
-        <AccountTableCell id={props.row.id} column="accountGroupCombined" />
-      );
-    },
+    // cell: (props) => {
+    //   return (
+    //     <AccountTableCell id={props.row.id} column="accountGroupCombined" />
+    //   );
+    // },
   }),
 ];
 export const AccountTable = () => {
-  const { allAccounts, isLoading } = useAccounts();
-  console.log("ALlAccounts", allAccounts);
+  const data = useAccounts();
+
   const table = useReactTable({
+    data: data.data ? data.data : [],
     getRowId: (data) => data.id,
-    data: allAccounts || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     enableSorting: true,
@@ -57,7 +69,7 @@ export const AccountTable = () => {
     },
   });
 
-  if (!allAccounts || isLoading) {
+  if (!data.data || data.isLoading) {
     return (
       <Group>
         <Loader />
@@ -66,30 +78,30 @@ export const AccountTable = () => {
     );
   }
 
+  const paginationInfo = table.getState().pagination;
+
   return (
     <Stack>
-      <Button
-        onClick={() =>
-          table.setSorting((data) => {
-            if (data.length === 0) {
-              return [{ desc: true, id: "accountGroupCombined" }];
-            }
-            return data.map((item) => ({ ...item, desc: !item.desc }));
-          })
-        }
-      />
       <Table horizontalSpacing={2} verticalSpacing={2}>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                  <Group>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                    <SortButtonReactTable
+                      sort={table.getState().sorting}
+                      setSort={table.setSorting}
+                      targetKey={header.column.id}
+                      sortable={header.column.getCanSort()}
+                    />
+                  </Group>
                 </th>
               ))}
             </tr>
@@ -123,6 +135,24 @@ export const AccountTable = () => {
           ))}
         </tfoot>
       </Table>
+      <Center>
+        <Group>
+          <Pagination
+            page={paginationInfo.pageIndex + 1}
+            total={table.getPageCount()}
+            onChange={(newValue) => table.setPageIndex(() => newValue - 1)}
+          />
+          <Select
+            value={paginationInfo.pageSize.toString()}
+            data={[
+              { label: "1 Row", value: "1" },
+              { label: "10 Rows", value: "10" },
+              { label: "20 Rows", value: "20" },
+            ]}
+            onChange={(newValue) => table.setPageSize(Number(newValue))}
+          />
+        </Group>
+      </Center>
     </Stack>
   );
 };

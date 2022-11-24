@@ -11,7 +11,10 @@ export const AccountTableCell = ({
   id: string;
   column: AccountRowColumns;
 }) => {
-  const { formCombined, account, runMutate } = useUpdateAccount({ id });
+  const { form, account, runMutate } = useUpdateAccount({
+    id,
+    keys: [column],
+  });
   const { data: accountGroupings } = useAccountGroupings();
 
   const accountGrouping = accountGroupings?.find(
@@ -22,23 +25,27 @@ export const AccountTableCell = ({
 
   if (column === "title") {
     return (
-      <TextInput
-        {...formCombined.getInputProps("title")}
-        type="text"
-        onBlur={runMutate}
-        disabled={!isAdmin}
-      />
+      <form>
+        <TextInput
+          {...form.getInputProps("title")}
+          type="text"
+          onBlur={runMutate}
+          disabled={!isAdmin}
+        />
+      </form>
     );
   }
   if (column === "accountGroupCombined") {
     if (isAssetLiability)
       return (
-        <TextInput
-          {...formCombined.getInputProps("accountGroupCombined")}
-          type="text"
-          onBlur={runMutate}
-          disabled={!isAdmin}
-        />
+        <form>
+          <TextInput
+            {...form.getInputProps("accountGroupCombined")}
+            type="text"
+            onBlur={runMutate}
+            disabled={!isAdmin}
+          />
+        </form>
       );
     return <></>;
   }
