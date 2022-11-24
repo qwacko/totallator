@@ -61,27 +61,22 @@ export const CreateAccountForm = ({ onClose }: { onClose?: () => void }) => {
             <>
               <TextInput
                 {...createAccount.form.getInputProps("accountGroup")}
-                required
                 label="Account Group"
               />
               <TextInput
                 {...createAccount.form.getInputProps("accountGroup2")}
-                required
                 label="Account Group 2"
               />
               <TextInput
                 {...createAccount.form.getInputProps("accountGroup3")}
-                required
                 label="Account Group 3"
               />
               <Checkbox
                 {...createAccount.form.getInputProps("isCash")}
-                required
                 label="Is Cash"
               />
               <Checkbox
                 {...createAccount.form.getInputProps("isNetWorth")}
-                required
                 label="Is Net Worth"
               />
             </>

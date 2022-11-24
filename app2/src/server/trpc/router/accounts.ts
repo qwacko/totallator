@@ -93,6 +93,7 @@ export const accountRouter = router({
         accountGroup2,
         accountGroup3,
         status,
+        accountGroupCombined,
         ...other
       } = input.data;
 
@@ -107,6 +108,7 @@ export const accountRouter = router({
             accountGroup2,
             accountGroup3,
             existing: targetAccount,
+            accountGroupCombined,
           }),
         },
       });

@@ -5,7 +5,7 @@ import { StatusSelectCell } from "../table/Cells/StatusSelectCell";
 import { TextInputCell } from "../table/Cells/TextInputCell";
 
 export const AccountTableRow = ({ id }: { id: string }) => {
-  const { account, form, runMutate } = useUpdateAccount({ id });
+  const { account, formCombined, runMutateCombined } = useUpdateAccount({ id });
   const { data: accountGroupings } = useAccountGroupings();
 
   if (!account) {
@@ -16,17 +16,27 @@ export const AccountTableRow = ({ id }: { id: string }) => {
     (item) => item.id === account.accountGroupingId
   );
 
+  const isAssetLiability = ["Asset", "Liability"].includes(
+    formCombined.values.type || ""
+  );
+
   return (
     <tr key={account.id}>
       <AccountGroupingCell accountGrouping={accountGrouping} editable={false} />
       <TextInputCell
-        {...form.getInputProps("title")}
-        onBlur={runMutate}
+        {...formCombined.getInputProps("title")}
+        onBlur={runMutateCombined}
         accountGrouping={accountGrouping}
       />
+      <TextInputCell
+        {...formCombined.getInputProps("accountGroupCombined")}
+        onBlur={runMutateCombined}
+        accountGrouping={accountGrouping}
+        showBlank={!isAssetLiability}
+      />
       <StatusSelectCell
-        {...form.getInputProps("status")}
-        onBlur={runMutate}
+        {...formCombined.getInputProps("status")}
+        onBlur={runMutateCombined}
         accountGrouping={accountGrouping}
       />
     </tr>

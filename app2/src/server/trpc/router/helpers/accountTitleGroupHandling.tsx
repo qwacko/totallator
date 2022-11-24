@@ -14,10 +14,15 @@ export const createAccountGroupTitle = ({
     accountGroup,
     accountGroup2,
     accountGroup3,
-    accountGroupCombined: `${accountGroup}/${accountGroup2}/${accountGroup3}`,
-    accountTitleCombined: `${accountGroup}/${accountGroup2}/${accountGroup3}/${title}`,
+    accountGroupCombined: [accountGroup, accountGroup2, accountGroup3]
+      .filter((item) => item)
+      .join("/"),
+    accountTitleCombined: [accountGroup, accountGroup2, accountGroup3, title]
+      .filter((item) => item)
+      .join("/"),
   };
 };
+
 export const updateAccountGroupTitle = <
   T extends {
     title: string;
@@ -29,6 +34,7 @@ export const updateAccountGroupTitle = <
   accountGroup,
   accountGroup2,
   accountGroup3,
+  accountGroupCombined,
   title,
   existing,
 }: {
@@ -36,20 +42,42 @@ export const updateAccountGroupTitle = <
   accountGroup: string | undefined | null;
   accountGroup2: string | undefined | null;
   accountGroup3: string | undefined | null;
+  accountGroupCombined: string | undefined;
   existing: T;
 }) => {
-  const useGroup =
-    accountGroup === null ? null : accountGroup || existing.accountGroup;
-  const useGroup2 =
-    accountGroup2 === null ? null : accountGroup2 || existing.accountGroup2;
-  const useGroup3 =
-    accountGroup3 === null ? null : accountGroup3 || existing.accountGroup3;
+  let useGroup = existing.accountGroup;
+  let useGroup2 = existing.accountGroup2;
+  let useGroup3 = existing.accountGroup3;
+
+  console.log("AccountGroupCOmbined", accountGroupCombined);
+
+  if (accountGroupCombined === null || accountGroupCombined === "") {
+    useGroup = null;
+    useGroup2 = null;
+    useGroup3 = null;
+  } else if (accountGroupCombined) {
+    const [g1, g2, g3] = accountGroupCombined.split("/");
+
+    useGroup = g1 ? g1 : null;
+    useGroup2 = g2 ? g2 : null;
+    useGroup3 = g3 ? g3 : null;
+    console.log("g1", g1);
+  } else {
+    useGroup = accountGroup === null ? null : accountGroup || useGroup;
+    useGroup2 = accountGroup2 === null ? null : accountGroup2 || useGroup2;
+    useGroup3 = accountGroup3 === null ? null : accountGroup3 || useGroup3;
+  }
+
+  console.log("useGroup", useGroup);
+  console.log("useGroup2", useGroup2);
+  console.log("useGroup3", useGroup3);
+
   const useTitle = title || existing.title;
 
-  const accountGroupCombined = [useGroup, useGroup2, useGroup3, useTitle]
+  const useAccountGroupCombined = [useGroup, useGroup2, useGroup3]
     .filter((item) => item)
     .join("/");
-  const accountTitleCombined = [useGroup, useGroup2, useGroup3]
+  const accountTitleCombined = [useGroup, useGroup2, useGroup3, useTitle]
     .filter((item) => item)
     .join("/");
 
@@ -58,7 +86,7 @@ export const updateAccountGroupTitle = <
     accountGroup: useGroup,
     accountGroup2: useGroup2,
     accountGroup3: useGroup3,
-    accountGroupCombined,
+    accountGroupCombined: useAccountGroupCombined,
     accountTitleCombined,
   };
 };
