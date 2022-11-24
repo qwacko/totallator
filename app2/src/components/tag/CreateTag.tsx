@@ -1,8 +1,10 @@
-import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
+import { Button, Group, Modal, Select, Stack } from "@mantine/core";
 import { IconPlus } from "@tabler/icons";
 import { useDisclosure } from "@mantine/hooks";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useCreateTag } from "src/utils/hooks/tags/useCreateTag";
+import { TagGroupSelection } from "./TagGroupSelection";
+import { TagSingleSelection } from "./TagSingleSelection";
 
 export const CreateTagForm = ({ onClose }: { onClose?: () => void }) => {
   const { data: accountGroupings } = useAccountGroupings();
@@ -12,6 +14,8 @@ export const CreateTagForm = ({ onClose }: { onClose?: () => void }) => {
       onClose && onClose();
     },
   });
+
+  const enable = Boolean(createTag.form.values["accountGroupingId"]);
 
   return (
     <form
@@ -34,19 +38,25 @@ export const CreateTagForm = ({ onClose }: { onClose?: () => void }) => {
           }
           {...createTag.form.getInputProps("accountGroupingId")}
         />
-        <TextInput
+        <TagGroupSelection
           {...createTag.form.getInputProps("group")}
           required
           label="Group"
+          accountGroupingId={createTag.form.values["accountGroupingId"]}
+          disabled={!enable}
         />
-        <TextInput
+        <TagSingleSelection
           {...createTag.form.getInputProps("single")}
           required
           label="Single"
+          accountGroupingId={createTag.form.values["accountGroupingId"]}
+          disabled={!enable}
         />
 
         <Group position="right">
-          <Button type="submit">Create</Button>
+          <Button type="submit" disabled={!enable}>
+            Create
+          </Button>
         </Group>
       </Stack>
     </form>

@@ -1,8 +1,10 @@
-import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
+import { Button, Group, Modal, Select, Stack } from "@mantine/core";
 import { IconPlus } from "@tabler/icons";
 import { useDisclosure } from "@mantine/hooks";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useCreateCategory } from "src/utils/hooks/categories/useCreateCategory";
+import { CategoryGroupSelection } from "./CategoryGroupSelection";
+import { CategorySingleSelection } from "./CategorySingleSelection";
 
 export const CreateCategoryForm = ({ onClose }: { onClose?: () => void }) => {
   const { data: accountGroupings } = useAccountGroupings();
@@ -12,6 +14,8 @@ export const CreateCategoryForm = ({ onClose }: { onClose?: () => void }) => {
       onClose && onClose();
     },
   });
+
+  const enable = Boolean(createCategory.form.values["accountGroupingId"]);
 
   return (
     <form
@@ -34,19 +38,25 @@ export const CreateCategoryForm = ({ onClose }: { onClose?: () => void }) => {
           }
           {...createCategory.form.getInputProps("accountGroupingId")}
         />
-        <TextInput
+        <CategoryGroupSelection
           {...createCategory.form.getInputProps("group")}
           required
           label="Group"
+          accountGroupingId={createCategory.form.values["accountGroupingId"]}
+          disabled={!enable}
         />
-        <TextInput
+        <CategorySingleSelection
           {...createCategory.form.getInputProps("single")}
           required
           label="Single"
+          accountGroupingId={createCategory.form.values["accountGroupingId"]}
+          disabled={!enable}
         />
 
         <Group position="right">
-          <Button type="submit">Create</Button>
+          <Button type="submit" disabled={!enable}>
+            Create
+          </Button>
         </Group>
       </Stack>
     </form>
