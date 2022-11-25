@@ -1,5 +1,4 @@
 import {
-  Button,
   Center,
   Group,
   Loader,
@@ -9,10 +8,7 @@ import {
   Table,
   Text,
 } from "@mantine/core";
-import { PrismaAccountEnum } from "@prisma/client";
 import {
-  createColumnHelper,
-  FilterFn,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -20,100 +16,17 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useEffect } from "react";
 
-import type { AppRouterOutputs } from "src/server/trpc/router/_app";
 import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
-import { FilterText } from "../table/FilterText";
-import { SortButtonReactTable } from "../table/SortButtonReactTable";
-import { AccountFilter } from "./AccountFilter";
-import { AccountFilterAccountType } from "./AccountFilterAccountType";
-import { AccountTableCell } from "./AccountTableCell";
+import { accountColumns } from "./accountColumns";
 
-type AccountsReturnType = AppRouterOutputs["accounts"]["get"][0];
-
-const accountTypeFilter: FilterFn<AccountsReturnType> = (
-  row,
-  columnId,
-  value,
-  addMeta
-) => {
-  const filter = value as
-    | PrismaAccountEnum[]
-    | PrismaAccountEnum
-    | undefined
-    | null;
-  const accountType = row.original.type;
-
-  if (filter && typeof filter === "object") {
-    if (filter.length > 0) {
-      return filter.includes(accountType);
-    }
-    return true;
-  }
-  if (filter) {
-    return accountType === filter;
-  }
-  return true;
-};
-
-const columnHelper = createColumnHelper<AccountsReturnType>();
-const columns = [
-  columnHelper.accessor("title", {
-    header: "Title",
-    cell: (props) => {
-      return (
-        <AccountTableCell
-          id={props.row.id}
-          column="title"
-          data={props.row.original}
-        />
-      );
-    },
-    enableColumnFilter: true,
-    filterFn: "includesString",
-  }),
-  columnHelper.accessor("type", {
-    header: "Type",
-
-    cell: (props) => {
-      return (
-        <AccountTableCell
-          id={props.row.id}
-          column="type"
-          data={props.row.original}
-        />
-      );
-    },
-    enableColumnFilter: true,
-    filterFn: accountTypeFilter,
-  }),
-  columnHelper.accessor("accountGroupCombined", {
-    header: "Account Grouping",
-    enableSorting: true,
-    sortingFn: "text",
-    enableMultiSort: true,
-    sortUndefined: -1,
-    enableColumnFilter: true,
-    filterFn: "includesString",
-    cell: (props) => {
-      return (
-        <AccountTableCell
-          id={props.row.id}
-          column="accountGroupCombined"
-          data={props.row.original}
-        />
-      );
-    },
-  }),
-];
 export const AccountTable = () => {
   const data = useAccounts();
 
   const table = useReactTable({
     data: data.data ? data.data : [],
     getRowId: (data) => data.id,
-    columns,
+    columns: accountColumns,
     getCoreRowModel: getCoreRowModel(),
     enableSorting: true,
     enableMultiSort: true,
@@ -123,8 +36,15 @@ export const AccountTable = () => {
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
-      pagination: { pageSize: 1 },
+      pagination: { pageSize: 20 },
       sorting: [{ id: "title", desc: false }],
+      columnVisibility: {
+        accountGroup: false,
+        accountGroup2: false,
+        accountGroup3: false,
+        createdAt: false,
+        updatedAt: false,
+      },
     },
     autoResetPageIndex: false,
   });
@@ -150,27 +70,12 @@ export const AccountTable = () => {
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th key={header.id}>
-                  {header.isPlaceholder ? null : (
-                    <Stack>
-                      <Group>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                        <SortButtonReactTable
-                          sort={table.getState().sorting}
-                          setSort={table.setSorting}
-                          targetKey={header.column.id}
-                          sortable={header.column.getCanSort()}
-                        />
-                      </Group>
-                      <AccountFilter
-                        targetKey={header.column.id}
-                        filter={header.column.getFilterValue()}
-                        setFilter={header.column.setFilterValue}
-                      />
-                    </Stack>
-                  )}
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                 </th>
               ))}
             </tr>

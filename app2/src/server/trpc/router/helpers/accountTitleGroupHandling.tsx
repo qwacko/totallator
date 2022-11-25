@@ -49,8 +49,6 @@ export const updateAccountGroupTitle = <
   let useGroup2 = existing.accountGroup2;
   let useGroup3 = existing.accountGroup3;
 
-  console.log("AccountGroupCOmbined", accountGroupCombined);
-
   if (accountGroupCombined === null || accountGroupCombined === "") {
     useGroup = null;
     useGroup2 = null;

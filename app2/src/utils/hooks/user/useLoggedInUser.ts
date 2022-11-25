@@ -2,6 +2,10 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { trpc } from "src/utils/trpc";
+import {
+  dateFormatter,
+  dayjsFormatter,
+} from "src/utils/validation/user/dateFormats";
 import { useUpdateUser } from "./useUpdateUser";
 
 export const useLoggedInUser = () => {
@@ -19,9 +23,19 @@ export const useLoggedInUser = () => {
     router.push("/user/signin");
   };
 
+  const dateFormat = data?.dateFormat
+    ? dateFormatter(data.dateFormat)
+    : "yyyyMMdd";
+
+  const dayjsFormat = data?.dateFormat
+    ? dayjsFormatter(data.dateFormat)
+    : "yyyyMMdd";
+
   return {
     status,
     user: data,
+    dateFormat,
+    dayjsFormat,
     isLoading,
     updateUser,
     isUpdatingUser,

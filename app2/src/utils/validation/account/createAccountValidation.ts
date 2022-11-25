@@ -9,6 +9,8 @@ export const createAccountValidation = z.object({
   accountGroupingId: z.string().cuid(),
   isCash: z.boolean().default(true).optional(),
   isNetWorth: z.boolean().default(true).optional(),
+  startDate: z.date().optional(),
+  endDate: z.date().optional(),
   type: PrismaAccountTypeEnumValidation.default("Expense").optional(),
 });
 

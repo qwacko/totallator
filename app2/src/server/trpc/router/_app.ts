@@ -24,3 +24,17 @@ export type AppRouterOutputs = inferRouterOutputs<AppRouter>;
 export type AppRouterInputs = inferRouterInputs<AppRouter>;
 export type AccountGroupingReturnType =
   AppRouterOutputs["accountGroupings"]["get"][0];
+
+//Key Return Types
+export type AccountsReturnType = AppRouterOutputs["accounts"]["get"][0];
+export type BillsReturnType = AppRouterOutputs["bills"]["get"][0];
+export type BudgetsReturnType = AppRouterOutputs["budgets"]["get"][0];
+export type CategoriesReturnType = AppRouterOutputs["categories"]["get"][0];
+export type TagsReturnType = AppRouterOutputs["tags"]["get"][0];
+
+export type AllReturnTypes =
+  | AccountsReturnType
+  | BillsReturnType
+  | BudgetsReturnType
+  | CategoriesReturnType
+  | TagsReturnType;

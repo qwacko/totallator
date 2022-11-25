@@ -11,6 +11,8 @@ export const updateAccountDataValidation = z
     accountGroupCombined: z.string().nullable().optional(),
     isCash: z.boolean().default(true).optional(),
     isNetWorth: z.boolean().default(true).optional(),
+    startDate: z.date().nullable().optional(),
+    endDate: z.date().nullable().optional(),
     type: PrismaAccountTypeEnumValidation.optional(),
     status: PrismaStatusEnumValidation.optional(),
   })

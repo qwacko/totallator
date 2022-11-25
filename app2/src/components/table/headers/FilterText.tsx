@@ -1,10 +1,5 @@
 import { TextInput } from "@mantine/core";
 import { IconX } from "@tabler/icons";
-import {
-  ColumnFiltersState,
-  FiltersTableState,
-  Updater,
-} from "@tanstack/react-table";
 
 export const FilterText = ({
   filter,
@@ -28,6 +23,7 @@ export const FilterText = ({
           <></>
         )
       }
+      size="xs"
     />
   );
 };

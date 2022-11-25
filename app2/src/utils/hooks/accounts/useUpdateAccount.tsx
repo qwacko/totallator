@@ -1,6 +1,6 @@
 import { useForm, zodResolver } from "@mantine/form";
 import { useEffect } from "react";
-import { AppRouter, AppRouterOutputs } from "src/server/trpc/router/_app";
+import { type AppRouterOutputs } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
   updateAccountDataValidation,
@@ -12,8 +12,6 @@ const id = "useUpdateAccount";
 const notifications = notifyTemplate(id, "Account", "Update");
 
 type keysType = keyof updateAccountDataValidationType;
-
-const query = undefined;
 
 export const useUpdateAccount = ({
   id,
@@ -74,6 +72,7 @@ export const useUpdateAccount = ({
 
   useEffect(() => {
     resetForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   const runMutate = () => {

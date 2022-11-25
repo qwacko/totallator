@@ -1,11 +1,5 @@
-import { MultiSelect, TextInput } from "@mantine/core";
-import { PrismaAccountEnum } from "@prisma/client";
-import { IconX } from "@tabler/icons";
-import {
-  ColumnFiltersState,
-  FiltersTableState,
-  Updater,
-} from "@tanstack/react-table";
+import { MultiSelect } from "@mantine/core";
+import type { PrismaAccountEnum } from "@prisma/client";
 
 const options: PrismaAccountEnum[] = [
   "Asset",
@@ -14,7 +8,7 @@ const options: PrismaAccountEnum[] = [
   "Liability",
 ];
 
-export const AccountFilterAccountType = ({
+export const FilterAccountType = ({
   filter,
   setFilter,
 }: {
@@ -31,6 +25,7 @@ export const AccountFilterAccountType = ({
         data={options}
         placeholder="Filter Account Type..."
         clearable
+        size="xs"
       />
     );
   }

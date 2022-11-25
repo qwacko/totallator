@@ -17,6 +17,21 @@ import {
 } from "./helpers/accountTitleGroupHandling";
 import { z } from "zod";
 
+const defaultIncExp = (title: string) => {
+  return {
+    title: title,
+    accountGroup: null,
+    accountGroup2: null,
+    accountGroup3: null,
+    accountGroupCombined: null,
+    accountTitleCombined: title,
+    startDate: null,
+    endDate: null,
+    isCash: true,
+    isNetWorth: true,
+  };
+};
+
 export const accountRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
     const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
@@ -32,11 +47,15 @@ export const accountRouter = router({
 
     return accounts.map((account) => {
       const { accountGrouping, ...pickedAccount } = account;
+
       const userIsAdmin =
         user.admin ||
         accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
 
-      return { ...pickedAccount, userIsAdmin };
+      return {
+        ...pickedAccount,
+        userIsAdmin,
+      };
     });
   }),
   create: protectedProcedure
@@ -54,18 +73,28 @@ export const accountRouter = router({
       const { title, accountGroup, accountGroup2, accountGroup3, ...other } =
         input;
 
-      await ctx.prisma.transactionAccount.create({
-        data: {
-          ...other,
-          ...basicStatusToDBRequired("Active"),
-          ...createAccountGroupTitle({
-            title,
-            accountGroup,
-            accountGroup2,
-            accountGroup3,
-          }),
-        },
-      });
+      if (input.type === "Income" || input.type === "Expense") {
+        await ctx.prisma.transactionAccount.create({
+          data: {
+            ...other,
+            ...basicStatusToDBRequired("Active"),
+            ...defaultIncExp(input.title),
+          },
+        });
+      } else {
+        await ctx.prisma.transactionAccount.create({
+          data: {
+            ...other,
+            ...basicStatusToDBRequired("Active"),
+            ...createAccountGroupTitle({
+              title,
+              accountGroup,
+              accountGroup2,
+              accountGroup3,
+            }),
+          },
+        });
+      }
 
       return true;
     }),
@@ -98,21 +127,36 @@ export const accountRouter = router({
         ...other
       } = input.data;
 
-      await ctx.prisma.transactionAccount.update({
-        where: { id: targetAccount.id },
-        data: {
-          ...other,
-          ...basicStatusToDB(status),
-          ...updateAccountGroupTitle({
-            title,
-            accountGroup,
-            accountGroup2,
-            accountGroup3,
-            existing: targetAccount,
-            accountGroupCombined,
-          }),
-        },
-      });
+      const isIncExp = other.type
+        ? other.type === "Expense" || other.type === "Income"
+        : targetAccount.type === "Expense" || targetAccount.type === "Income";
+
+      if (isIncExp) {
+        await ctx.prisma.transactionAccount.update({
+          where: { id: targetAccount.id },
+          data: {
+            ...other,
+            ...basicStatusToDB(status),
+            ...defaultIncExp(title || targetAccount.title),
+          },
+        });
+      } else {
+        await ctx.prisma.transactionAccount.update({
+          where: { id: targetAccount.id },
+          data: {
+            ...other,
+            ...basicStatusToDB(status),
+            ...updateAccountGroupTitle({
+              title,
+              accountGroup,
+              accountGroup2,
+              accountGroup3,
+              existing: targetAccount,
+              accountGroupCombined: accountGroupCombined || undefined,
+            }),
+          },
+        });
+      }
 
       return true;
     }),
