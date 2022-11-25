@@ -1,17 +1,18 @@
 import { useForm, zodResolver } from "@mantine/form";
-import { useEffect } from "react";
-import { type AppRouterOutputs } from "src/server/trpc/router/_app";
+import type { AccountsReturnType } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
   updateAccountDataValidation,
   type updateAccountDataValidationType,
 } from "src/utils/validation/account/updateAccountValidation";
 import { notifyTemplate } from "../notifyTemplate";
+import { useFormHandler } from "./useFormHandler";
 
 const id = "useUpdateAccount";
 const notifications = notifyTemplate(id, "Account", "Update");
 
-type keysType = keyof updateAccountDataValidationType;
+type keysType = keyof updateAccountDataValidationType &
+  keyof AccountsReturnType;
 
 export const useUpdateAccount = ({
   id,
@@ -20,7 +21,7 @@ export const useUpdateAccount = ({
 }: {
   id: string;
   keys: keysType[];
-  data: AppRouterOutputs["accounts"]["get"][0];
+  data: AccountsReturnType;
 }) => {
   const form = useForm<updateAccountDataValidationType>({
     validate: zodResolver(updateAccountDataValidation),
@@ -53,33 +54,14 @@ export const useUpdateAccount = ({
     },
   });
 
-  const pickItems = (
-    pickData:
-      | AppRouterOutputs["accounts"]["get"][0]
-      | updateAccountDataValidationType
-  ) => {
-    return keys.reduce(
-      (prev, current) => ({ ...prev, [current]: pickData[current] }),
-      {}
-    );
-  };
-
-  const resetForm = () => {
-    if (data) {
-      form.setValues(pickItems(data));
-    }
-  };
-
-  useEffect(() => {
-    resetForm();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  const { resetForm, hasChanged } = useFormHandler({
+    data,
+    form,
+    keys,
+  });
 
   const runMutate = () => {
-    const hasChanged =
-      JSON.stringify(pickItems(data)) !==
-      JSON.stringify(pickItems(form.values));
-    if (hasChanged) {
+    if (hasChanged()) {
       const validated = form.validate();
       if (!validated.hasErrors) {
         mutate({ id, data: form.values });

@@ -1,8 +1,8 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { displayAccountCell } from "./AccountTableCell";
-import { accountTypeFilter } from "./accountTypeFilter";
-import { statusFilter } from "../table/headers/statusFilter";
-import { dateFilter } from "../table/headers/dateFilter";
+import { accountTypeFilter } from "../table/filters/accountTypeFilter";
+import { statusFilter } from "../table/filters/statusFilter";
+import { dateFilter } from "../table/filters/dateFilter";
 import type { AccountsReturnType } from "src/server/trpc/router/_app";
 import { displayHeader } from "../table/headers/displayHeader";
 

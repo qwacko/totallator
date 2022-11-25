@@ -1,23 +1,42 @@
-import { Center, Group, Loader, Stack, Table, Text } from "@mantine/core";
-import { useState } from "react";
+import { Group, Loader, Text } from "@mantine/core";
 import {
-  type billsFilter,
-  useBills,
-  type billsSort,
-} from "src/utils/hooks/bills/useBills";
-import { SortButton } from "../table/SortButton";
-import { StatusFilterMenu } from "../table/StatusFilterMenu";
-import { TextFilterMenu } from "../table/TextFilterMenu";
-import { usePagination, PaginationDisplay } from "../table/usePagination";
-import { BillTableRow } from "./BillTableRow";
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useBills } from "src/utils/hooks/bills/useBills";
+import { TableDisplay } from "../table/TableDisplay";
+import { billColumns } from "./billColumns";
 
 export const BillTable = () => {
-  const [filter, setFilter] = useState<billsFilter>({});
-  const [sort, setSort] = useState<billsSort | undefined>();
-  const { bills, isLoading } = useBills({ filter, sort });
-  const pagination = usePagination({ items: bills });
+  const data = useBills();
 
-  if (!bills || isLoading) {
+  const table = useReactTable({
+    data: data.data ? data.data : [],
+    getRowId: (data) => data.id,
+    columns: billColumns,
+    getCoreRowModel: getCoreRowModel(),
+    enableSorting: true,
+    enableMultiSort: true,
+    enableColumnFilters: true,
+    enableFilters: true,
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: { pageSize: 20 },
+      sorting: [{ id: "title", desc: false }],
+      columnVisibility: {
+        createdAt: false,
+        updatedAt: false,
+      },
+    },
+    autoResetPageIndex: false,
+  });
+
+  if (!data.data || data.isLoading) {
     return (
       <Group>
         <Loader />
@@ -25,45 +44,5 @@ export const BillTable = () => {
       </Group>
     );
   }
-
-  return (
-    <Stack>
-      <Table horizontalSpacing={2} verticalSpacing={2}>
-        <thead>
-          <tr>
-            <th>Account Grouping</th>
-            <th>
-              <Group spacing={10}>
-                <Text>Title</Text>
-                <TextFilterMenu
-                  filter={filter}
-                  setFilter={setFilter}
-                  targetKey="titleIncludes"
-                />
-                <SortButton sort={sort} setSort={setSort} targetKey="title" />
-              </Group>
-            </th>
-            <th>
-              <Group>
-                <Text>Status</Text>
-                <StatusFilterMenu filter={filter} setFilter={setFilter} />
-                <SortButton sort={sort} setSort={setSort} targetKey="status" />
-              </Group>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {pagination.filteredItems.map((bill) => {
-            return <BillTableRow key={bill.id} id={bill.id} />;
-          })}
-        </tbody>
-      </Table>
-      {pagination.filteredItems.length === 0 && <Center>No Items Found</Center>}
-      <Center>
-        <Group>
-          <PaginationDisplay data={pagination} />
-        </Group>
-      </Center>
-    </Stack>
-  );
+  return <TableDisplay table={table} />;
 };
