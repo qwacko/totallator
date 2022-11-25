@@ -9,10 +9,13 @@ import {
   Table,
   Text,
 } from "@mantine/core";
+import { PrismaAccountEnum } from "@prisma/client";
 import {
   createColumnHelper,
+  FilterFn,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -21,10 +24,38 @@ import { useEffect } from "react";
 
 import type { AppRouterOutputs } from "src/server/trpc/router/_app";
 import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
+import { FilterText } from "../table/FilterText";
 import { SortButtonReactTable } from "../table/SortButtonReactTable";
+import { AccountFilter } from "./AccountFilter";
+import { AccountFilterAccountType } from "./AccountFilterAccountType";
 import { AccountTableCell } from "./AccountTableCell";
 
 type AccountsReturnType = AppRouterOutputs["accounts"]["get"][0];
+
+const accountTypeFilter: FilterFn<AccountsReturnType> = (
+  row,
+  columnId,
+  value,
+  addMeta
+) => {
+  const filter = value as
+    | PrismaAccountEnum[]
+    | PrismaAccountEnum
+    | undefined
+    | null;
+  const accountType = row.original.type;
+
+  if (filter && typeof filter === "object") {
+    if (filter.length > 0) {
+      return filter.includes(accountType);
+    }
+    return true;
+  }
+  if (filter) {
+    return accountType === filter;
+  }
+  return true;
+};
 
 const columnHelper = createColumnHelper<AccountsReturnType>();
 const columns = [
@@ -39,9 +70,26 @@ const columns = [
         />
       );
     },
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
+  columnHelper.accessor("type", {
+    header: "Type",
+
+    cell: (props) => {
+      return (
+        <AccountTableCell
+          id={props.row.id}
+          column="type"
+          data={props.row.original}
+        />
+      );
+    },
+    enableColumnFilter: true,
+    filterFn: accountTypeFilter,
   }),
   columnHelper.accessor("accountGroupCombined", {
-    header: "Title",
+    header: "Account Grouping",
     enableSorting: true,
     sortingFn: "text",
     enableMultiSort: true,
@@ -72,6 +120,7 @@ export const AccountTable = () => {
     enableColumnFilters: true,
     enableFilters: true,
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: { pageSize: 1 },
@@ -91,6 +140,8 @@ export const AccountTable = () => {
 
   const paginationInfo = table.getState().pagination;
 
+  console.log("Filters", table.getState().columnFilters);
+
   return (
     <Stack>
       <Table horizontalSpacing={2} verticalSpacing={2}>
@@ -99,20 +150,27 @@ export const AccountTable = () => {
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <th key={header.id}>
-                  <Group>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
+                  {header.isPlaceholder ? null : (
+                    <Stack>
+                      <Group>
+                        {flexRender(
                           header.column.columnDef.header,
                           header.getContext()
                         )}
-                    <SortButtonReactTable
-                      sort={table.getState().sorting}
-                      setSort={table.setSorting}
-                      targetKey={header.column.id}
-                      sortable={header.column.getCanSort()}
-                    />
-                  </Group>
+                        <SortButtonReactTable
+                          sort={table.getState().sorting}
+                          setSort={table.setSorting}
+                          targetKey={header.column.id}
+                          sortable={header.column.getCanSort()}
+                        />
+                      </Group>
+                      <AccountFilter
+                        targetKey={header.column.id}
+                        filter={header.column.getFilterValue()}
+                        setFilter={header.column.setFilterValue}
+                      />
+                    </Stack>
+                  )}
                 </th>
               ))}
             </tr>

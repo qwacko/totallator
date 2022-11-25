@@ -1,9 +1,9 @@
-import { TextInput } from "@mantine/core";
+import { Select, TextInput } from "@mantine/core";
 import type { AppRouterOutputs } from "src/server/trpc/router/_app";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useUpdateAccount } from "src/utils/hooks/accounts/useUpdateAccount";
 
-type AccountRowColumns = "title" | "accountGroupCombined";
+export type AccountRowColumns = "title" | "accountGroupCombined" | "type";
 
 export const AccountTableCell = ({
   id,
@@ -40,7 +40,7 @@ export const AccountTableCell = ({
     );
   }
   if (column === "accountGroupCombined") {
-    if (isAssetLiability)
+    if (isAssetLiability) {
       return (
         <form>
           <TextInput
@@ -51,7 +51,22 @@ export const AccountTableCell = ({
           />
         </form>
       );
+    }
     return <></>;
+  }
+  if (column === "type") {
+    console.log("Type Value", form.values.type);
+    return (
+      <form>
+        <Select
+          {...form.getInputProps("type")}
+          data={["Asset", "Liability", "Income", "Expense"]}
+          disabled={!isAdmin}
+          clearable={false}
+          onBlur={runMutate}
+        />
+      </form>
+    );
   }
   return <></>;
 };

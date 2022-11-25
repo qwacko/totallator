@@ -31,18 +31,15 @@ export const useUpdateAccount = ({
   const utils = trpc.useContext();
   const { mutate, isLoading: isMutating } = trpc.accounts.update.useMutation({
     onError: (e) => {
-      console.log("On Error");
       utils.accounts.invalidate();
       notifications.onError(e);
       resetForm();
     },
     onSuccess: () => {
-      console.log("On Success");
       utils.accounts.invalidate();
       notifications.onSuccess();
     },
     onMutate: (data) => {
-      console.log("On Mutate");
       notifications.onLoading();
       const currentAccounts = utils.accounts.get.getData();
       if (currentAccounts) {
@@ -58,7 +55,11 @@ export const useUpdateAccount = ({
     },
   });
 
-  const pickItems = (pickData: AppRouterOutputs["accounts"]["get"][0]) => {
+  const pickItems = (
+    pickData:
+      | AppRouterOutputs["accounts"]["get"][0]
+      | updateAccountDataValidationType
+  ) => {
     return keys.reduce(
       (prev, current) => ({ ...prev, [current]: pickData[current] }),
       {}
@@ -76,7 +77,6 @@ export const useUpdateAccount = ({
   }, [data]);
 
   const runMutate = () => {
-    console.log("Running Mutation");
     const hasChanged =
       JSON.stringify(pickItems(data)) !==
       JSON.stringify(pickItems(form.values));
