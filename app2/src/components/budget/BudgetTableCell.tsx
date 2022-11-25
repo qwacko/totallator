@@ -2,42 +2,42 @@ import { Center, Select, Text, TextInput } from "@mantine/core";
 import type { PrismaStatusEnum } from "@prisma/client";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
-import type { BillsReturnType } from "src/server/trpc/router/_app";
+import type { BudgetsReturnType } from "src/server/trpc/router/_app";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
-import { useUpdateBill } from "src/utils/hooks/bills/useUpdateBIll";
+import { useUpdateBudget } from "src/utils/hooks/budgets/useUpdateBudget";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
-import type { updateBillDataValidationType } from "src/utils/validation/bill/updateBillValidation";
+import type { updateBudgetDataValidationType } from "src/utils/validation/budget/updateBudgetValidation";
 
-export type BillRowColumns =
-  | keyof updateBillDataValidationType
+export type BudgetRowColumns =
+  | keyof updateBudgetDataValidationType
   | "createdAt"
   | "updatedAt";
 
-export const displayBillCell = (
-  props: CellContext<BillsReturnType, unknown>
+export const displayBudgetCell = (
+  props: CellContext<BudgetsReturnType, unknown>
 ) => {
   return (
-    <BillTableCell
+    <BudgetTableCell
       id={props.row.id}
-      column={props.column.id as BillRowColumns}
+      column={props.column.id as BudgetRowColumns}
       data={props.row.original}
     />
   );
 };
 
-export const BillTableCell = ({
+export const BudgetTableCell = ({
   id,
   column,
   data,
 }: {
   id: string;
-  column: BillRowColumns;
-  data: BillsReturnType;
+  column: BudgetRowColumns;
+  data: BudgetsReturnType;
 }) => {
   const columnUse =
     column === "createdAt" || column === "updatedAt" ? "title" : column;
 
-  const { form, runMutate, mutate } = useUpdateBill({
+  const { form, runMutate, mutate } = useUpdateBudget({
     id,
     keys: [columnUse],
     data,

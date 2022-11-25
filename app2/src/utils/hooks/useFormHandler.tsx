@@ -8,10 +8,14 @@ export const useFormHandler = <
   data,
   form,
   keys,
+  mutate,
+  id,
 }: {
   data: T;
   form: UseFormReturnType<U>;
   keys: (keyof T & keyof U)[];
+  mutate: (data: { id: string; data: U }) => void;
+  id: string;
 }) => {
   const pickData = () => {
     return keys.reduce(
@@ -36,9 +40,20 @@ export const useFormHandler = <
     }
   };
 
+  const runMutate = () => {
+    if (hasChanged()) {
+      const validated = form.validate();
+      if (!validated.hasErrors) {
+        mutate({ id, data: form.values });
+      } else {
+        resetForm();
+      }
+    }
+  };
+
   useEffect(() => {
     resetForm();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
-  return { resetForm, hasChanged };
+  return { resetForm, hasChanged, runMutate };
 };

@@ -1,68 +1,32 @@
 import { useForm, zodResolver } from "@mantine/form";
+import type { TagsReturnType } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
   updateTagDataValidation,
   type updateTagDataValidationType,
 } from "src/utils/validation/tag/updateTagValidation";
 import { notifyTemplate } from "../notifyTemplate";
+import { useFormHandler } from "../useFormHandler";
 
 const id = "useUpdateTag";
 const notifications = notifyTemplate(id, "Tag", "Update");
 
-export const useUpdateTag = ({ id }: { id: string }) => {
-  const formGroupSingle = useForm<updateTagDataValidationType>({
-    validate: zodResolver(updateTagDataValidation),
-  });
+type keysType = keyof updateTagDataValidationType;
 
-  const formTitle = useForm<updateTagDataValidationType>({
+export const useUpdateTag = ({
+  id,
+  keys,
+  data,
+}: {
+  id: string;
+  keys: keysType[];
+  data: TagsReturnType;
+}) => {
+  const form = useForm<updateTagDataValidationType>({
     validate: zodResolver(updateTagDataValidation),
   });
 
   const utils = trpc.useContext();
-
-  const { data, isLoading } = trpc.tags.get.useQuery(undefined, {
-    select: (data) => data.find((item) => item.id === id),
-    onSuccess: (data) => {
-      if (data) {
-        formTitle.setValues({
-          title: data.title,
-          status: data.status,
-        });
-
-        formGroupSingle.setValues({
-          group: data.group,
-          single: data.single,
-          status: data.status,
-        });
-      }
-    },
-  });
-
-  const resetForm = () => {
-    if (data) {
-      formGroupSingle.setValues({
-        group: data.group,
-        single: data.single,
-        status: data.status,
-      });
-      formTitle.setValues({
-        status: data.status,
-        title: data.title,
-      });
-    }
-  };
-
-  const groupSingleHasChanged = !(
-    formGroupSingle.values.status === data?.status &&
-    formGroupSingle.values.group === data?.group &&
-    formGroupSingle.values.single === data?.single
-  );
-
-  const titleHasChanged = !(
-    formTitle.values.status === data?.status &&
-    formTitle.values.title === data?.title
-  );
-
   const { mutate, isLoading: isMutating } = trpc.tags.update.useMutation({
     onError: (e) => {
       utils.tags.invalidate();
@@ -88,40 +52,20 @@ export const useUpdateTag = ({ id }: { id: string }) => {
       }
     },
   });
-
-  const runMutateTitle = () => {
-    if (titleHasChanged) {
-      const validated = formTitle.validate();
-      if (!validated.hasErrors) {
-        mutate({ id, data: formTitle.values });
-      } else {
-        resetForm();
-      }
-    }
-  };
-
-  const runMutateGroupSingle = () => {
-    if (groupSingleHasChanged) {
-      const validated = formGroupSingle.validate();
-      if (!validated.hasErrors) {
-        mutate({ id, data: formGroupSingle.values });
-      } else {
-        resetForm();
-      }
-    }
-  };
+  const { resetForm, runMutate } = useFormHandler({
+    data,
+    form,
+    keys,
+    id,
+    mutate,
+  });
 
   return {
     tag: data,
-    isLoading,
     isMutating,
     mutate,
-    formTitle,
-    formGroupSingle,
-    titleHasChanged,
-    groupSingleHasChanged,
-    runMutateTitle,
-    runMutateGroupSingle,
+    form,
+    runMutate,
     resetForm,
   };
 };

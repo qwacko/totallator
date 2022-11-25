@@ -1,40 +1,32 @@
 import { useForm, zodResolver } from "@mantine/form";
+import type { BillsReturnType } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
   updateBillDataValidation,
   type updateBillDataValidationType,
 } from "src/utils/validation/bill/updateBillValidation";
+import { useFormHandler } from "../useFormHandler";
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useUpdateBill";
 const notifications = notifyTemplate(id, "Bill", "Update");
 
-export const useUpdateBill = ({ id }: { id: string }) => {
+type keysType = keyof updateBillDataValidationType;
+
+export const useUpdateBill = ({
+  id,
+  keys,
+  data,
+}: {
+  id: string;
+  keys: keysType[];
+  data: BillsReturnType;
+}) => {
   const form = useForm<updateBillDataValidationType>({
     validate: zodResolver(updateBillDataValidation),
   });
 
   const utils = trpc.useContext();
-
-  const { data, isLoading } = trpc.bills.get.useQuery(undefined, {
-    select: (data) => data.find((item) => item.id === id),
-    onSuccess: (data) => {
-      if (data) {
-        form.setValues({ title: data.title, status: data.status });
-      }
-    },
-  });
-
-  const resetForm = () => {
-    if (data) {
-      form.setValues({ title: data.title, status: data.status });
-    }
-  };
-
-  const hasChanged = !(
-    form.values.status === data?.status && form.values.title === data?.title
-  );
-
   const { mutate, isLoading: isMutating } = trpc.bills.update.useMutation({
     onError: (e) => {
       utils.bills.invalidate();
@@ -61,24 +53,19 @@ export const useUpdateBill = ({ id }: { id: string }) => {
     },
   });
 
-  const runMutate = () => {
-    if (hasChanged) {
-      const validated = form.validate();
-      if (!validated.hasErrors) {
-        mutate({ id, data: form.values });
-      } else {
-        resetForm();
-      }
-    }
-  };
+  const { resetForm, runMutate } = useFormHandler({
+    data,
+    form,
+    keys,
+    id,
+    mutate,
+  });
 
   return {
     bill: data,
-    isLoading,
     isMutating,
     mutate,
     form,
-    hasChanged,
     runMutate,
     resetForm,
   };

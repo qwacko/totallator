@@ -6,7 +6,7 @@ import {
   type updateAccountDataValidationType,
 } from "src/utils/validation/account/updateAccountValidation";
 import { notifyTemplate } from "../notifyTemplate";
-import { useFormHandler } from "./useFormHandler";
+import { useFormHandler } from "../useFormHandler";
 
 const id = "useUpdateAccount";
 const notifications = notifyTemplate(id, "Account", "Update");
@@ -54,22 +54,13 @@ export const useUpdateAccount = ({
     },
   });
 
-  const { resetForm, hasChanged } = useFormHandler({
+  const { resetForm, runMutate } = useFormHandler({
     data,
     form,
     keys,
+    id,
+    mutate,
   });
-
-  const runMutate = () => {
-    if (hasChanged()) {
-      const validated = form.validate();
-      if (!validated.hasErrors) {
-        mutate({ id, data: form.values });
-      } else {
-        resetForm();
-      }
-    }
-  };
 
   return {
     isMutating,

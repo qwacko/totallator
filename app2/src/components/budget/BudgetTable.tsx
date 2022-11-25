@@ -1,23 +1,42 @@
-import { Center, Group, Loader, Stack, Table, Text } from "@mantine/core";
-import { useState } from "react";
+import { Group, Loader, Text } from "@mantine/core";
 import {
-  type budgetsFilter,
-  useBudgets,
-  type budgetsSort,
-} from "src/utils/hooks/budgets/useBudgets";
-import { SortButton } from "../table/SortButton";
-import { StatusFilterMenu } from "../table/StatusFilterMenu";
-import { TextFilterMenu } from "../table/TextFilterMenu";
-import { usePagination, PaginationDisplay } from "../table/usePagination";
-import { BudgetTableRow } from "./BudgetTableRow";
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useBudgets } from "src/utils/hooks/budgets/useBudgets";
+import { TableDisplay } from "../table/TableDisplay";
+import { budgetColumns } from "./budgetColumns";
 
 export const BudgetTable = () => {
-  const [filter, setFilter] = useState<budgetsFilter>({});
-  const [sort, setSort] = useState<budgetsSort | undefined>();
-  const { budgets, isLoading } = useBudgets({ filter, sort });
-  const pagination = usePagination({ items: budgets });
+  const data = useBudgets();
 
-  if (!budgets || isLoading) {
+  const table = useReactTable({
+    data: data.data ? data.data : [],
+    getRowId: (data) => data.id,
+    columns: budgetColumns,
+    getCoreRowModel: getCoreRowModel(),
+    enableSorting: true,
+    enableMultiSort: true,
+    enableColumnFilters: true,
+    enableFilters: true,
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: { pageSize: 20 },
+      sorting: [{ id: "title", desc: false }],
+      columnVisibility: {
+        createdAt: false,
+        updatedAt: false,
+      },
+    },
+    autoResetPageIndex: false,
+  });
+
+  if (!data.data || data.isLoading) {
     return (
       <Group>
         <Loader />
@@ -25,45 +44,5 @@ export const BudgetTable = () => {
       </Group>
     );
   }
-
-  return (
-    <Stack>
-      <Table>
-        <thead>
-          <tr>
-            <th>Account Grouping</th>
-            <th>
-              <Group spacing={10}>
-                <Text>Title</Text>
-                <TextFilterMenu
-                  filter={filter}
-                  setFilter={setFilter}
-                  targetKey="titleIncludes"
-                />
-                <SortButton sort={sort} setSort={setSort} targetKey="title" />
-              </Group>
-            </th>
-            <th>
-              <Group>
-                <Text>Status</Text>
-                <StatusFilterMenu filter={filter} setFilter={setFilter} />
-                <SortButton sort={sort} setSort={setSort} targetKey="status" />
-              </Group>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {pagination.filteredItems.map((budget) => {
-            return <BudgetTableRow key={budget.id} id={budget.id} />;
-          })}
-        </tbody>
-      </Table>
-      {pagination.filteredItems.length === 0 && <Center>No Items Found</Center>}
-      <Center>
-        <Group>
-          <PaginationDisplay data={pagination} />
-        </Group>
-      </Center>
-    </Stack>
-  );
+  return <TableDisplay table={table} />;
 };
