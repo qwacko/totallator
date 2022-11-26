@@ -42,6 +42,7 @@ export const accountRouter = router({
       },
       include: {
         accountGrouping: { include: { viewUsers: true, adminUsers: true } },
+        _count: { select: { journalEntries: true } },
       },
     });
 

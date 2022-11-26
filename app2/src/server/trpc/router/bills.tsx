@@ -23,6 +23,7 @@ export const billRouter = router({
       },
       include: {
         accountGrouping: { include: { viewUsers: true, adminUsers: true } },
+        _count: { select: { journalEntries: true } },
       },
     });
 
@@ -75,6 +76,36 @@ export const billRouter = router({
       await ctx.prisma.bill.update({
         where: { id: targetBill.id },
         data: { ...input.data, ...basicStatusToDB(input.data.status) },
+      });
+
+      return true;
+    }),
+  clone: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const targetBill = await ctx.prisma.bill.findFirst({
+        where: {
+          id: input.id,
+          ...accountGroupingFilter(user.id),
+        },
+      });
+
+      if (!targetBill) {
+        throw new TRPCError({
+          message: "Cannot find bill or user doesn't have admin accces",
+          code: "FORBIDDEN",
+        });
+      }
+
+      const { createdAt, updatedAt, id, ...targetBillProps } = targetBill;
+
+      await ctx.prisma.bill.create({
+        data: {
+          ...targetBillProps,
+          title: `${targetBillProps.title} (Clone)`,
+        },
       });
 
       return true;

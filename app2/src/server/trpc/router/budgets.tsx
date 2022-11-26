@@ -23,6 +23,7 @@ export const budgetRouter = router({
       },
       include: {
         accountGrouping: { include: { viewUsers: true, adminUsers: true } },
+        _count: { select: { journalEntries: true } },
       },
     });
 
@@ -75,6 +76,36 @@ export const budgetRouter = router({
       await ctx.prisma.budget.update({
         where: { id: targetBudget.id },
         data: { ...input.data, ...basicStatusToDB(input.data.status) },
+      });
+
+      return true;
+    }),
+  clone: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const targetBudget = await ctx.prisma.budget.findFirst({
+        where: {
+          id: input.id,
+          ...accountGroupingFilter(user.id),
+        },
+      });
+
+      if (!targetBudget) {
+        throw new TRPCError({
+          message: "Cannot find budget or user doesn't have admin accces",
+          code: "FORBIDDEN",
+        });
+      }
+
+      const { createdAt, updatedAt, id, ...targetBudgetProps } = targetBudget;
+
+      await ctx.prisma.budget.create({
+        data: {
+          ...targetBudgetProps,
+          title: `${targetBudgetProps.title} (Clone)`,
+        },
       });
 
       return true;

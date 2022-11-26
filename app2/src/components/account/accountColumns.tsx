@@ -9,6 +9,12 @@ import { displayHeader } from "../table/headers/displayHeader";
 const columnHelper = createColumnHelper<AccountsReturnType>();
 
 export const accountColumns = [
+  columnHelper.display({
+    id: "commands",
+    header: displayHeader("Commands"),
+    cell: displayAccountCell,
+    enableColumnFilter: false,
+  }),
   columnHelper.accessor("title", {
     header: displayHeader("Title", "string"),
     cell: displayAccountCell,

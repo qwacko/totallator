@@ -27,6 +27,7 @@ export const categoryRouter = router({
       },
       include: {
         accountGrouping: { include: { viewUsers: true, adminUsers: true } },
+        _count: { select: { journalEntries: true } },
       },
     });
 
@@ -98,35 +99,67 @@ export const categoryRouter = router({
 
       return true;
     }),
-    delete: protectedProcedure
-      .input(z.object({ id: z.string().cuid() }))
-      .mutation(async ({ ctx, input }) => {
-        const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
-  
-        const targetCategory = await ctx.prisma.category.findFirst({
-          where: {
-            id: input.id,
-            ...accountGroupingFilter(user.id),
-          },
-          include: { _count: { select: { journalEntries: true } } },
+  clone: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const targetCategory = await ctx.prisma.category.findFirst({
+        where: {
+          id: input.id,
+          ...accountGroupingFilter(user.id),
+        },
+      });
+
+      if (!targetCategory) {
+        throw new TRPCError({
+          message: "Cannot find category or user doesn't have admin accces",
+          code: "FORBIDDEN",
         });
-  
-        if (!targetCategory) {
-          throw new TRPCError({
-            message: "Cannot find category or user doesn't have admin accces",
-            code: "FORBIDDEN",
-          });
-        }
-        if (targetCategory._count.journalEntries > 0) {
-          throw new TRPCError({
-            message: "Cannot remove category that has journal entries associated",
-            code: "FORBIDDEN",
-          });
-        }
-        await ctx.prisma.category.delete({
-          where: { id: targetCategory.id },
+      }
+
+      const { createdAt, updatedAt, id, ...targetCategoryProps } =
+        targetCategory;
+
+      await ctx.prisma.category.create({
+        data: {
+          ...targetCategoryProps,
+          single: `${targetCategoryProps.single} (Clone)`,
+          title: `${targetCategoryProps.title} (Clone)`,
+        },
+      });
+
+      return true;
+    }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const targetCategory = await ctx.prisma.category.findFirst({
+        where: {
+          id: input.id,
+          ...accountGroupingFilter(user.id),
+        },
+        include: { _count: { select: { journalEntries: true } } },
+      });
+
+      if (!targetCategory) {
+        throw new TRPCError({
+          message: "Cannot find category or user doesn't have admin accces",
+          code: "FORBIDDEN",
         });
-  
-        return true;
-      }),
+      }
+      if (targetCategory._count.journalEntries > 0) {
+        throw new TRPCError({
+          message: "Cannot remove category that has journal entries associated",
+          code: "FORBIDDEN",
+        });
+      }
+      await ctx.prisma.category.delete({
+        where: { id: targetCategory.id },
+      });
+
+      return true;
+    }),
 });

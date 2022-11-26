@@ -3,19 +3,18 @@ import { DatePicker } from "@mantine/dates";
 import type { PrismaAccountEnum, PrismaStatusEnum } from "@prisma/client";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
-import type {
-  AccountsReturnType,
-  AppRouterOutputs,
-} from "src/server/trpc/router/_app";
+import type { AccountsReturnType } from "src/server/trpc/router/_app";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useUpdateAccount } from "src/utils/hooks/accounts/useUpdateAccount";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateAccountDataValidationType } from "src/utils/validation/account/updateAccountValidation";
+import { AccountCommandButtons } from "./AccountCommandButtons";
 
 export type AccountRowColumns =
   | keyof updateAccountDataValidationType
   | "createdAt"
-  | "updatedAt";
+  | "updatedAt"
+  | "commands";
 
 export const displayAccountCell = (
   props: CellContext<AccountsReturnType, unknown>
@@ -36,11 +35,12 @@ export const AccountTableCell = ({
 }: {
   id: string;
   column: AccountRowColumns;
-  data: AppRouterOutputs["accounts"]["get"][0];
+  data: AccountsReturnType;
 }) => {
   const columnUse =
-    column === "createdAt" || column === "updatedAt" ? "title" : column;
-
+    column === "createdAt" || column === "updatedAt" || column === "commands"
+      ? "title"
+      : column;
   const { form, runMutate, mutate } = useUpdateAccount({
     id,
     keys: [columnUse],
@@ -55,6 +55,9 @@ export const AccountTableCell = ({
   const isAdmin = accountGrouping?.userIsAdmin;
   const isAssetLiability = ["Asset", "Liability"].includes(data?.type || "");
 
+  if (column === "commands") {
+    return <AccountCommandButtons data={data} />;
+  }
   if (column === "title") {
     return (
       <form>

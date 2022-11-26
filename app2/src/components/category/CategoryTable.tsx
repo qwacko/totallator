@@ -1,23 +1,44 @@
-import { Center, Group, Loader, Stack, Table, Text } from "@mantine/core";
-import { useState } from "react";
+import { Group, Loader, Text } from "@mantine/core";
 import {
-  type categoriesSort,
-  type catgoriesFilter,
-  useCategories,
-} from "src/utils/hooks/categories/useCategories";
-import { SortButton } from "../table/SortButton";
-import { StatusFilterMenu } from "../table/StatusFilterMenu";
-import { TextFilterMenu } from "../table/TextFilterMenu";
-import { usePagination, PaginationDisplay } from "../table/usePagination";
-import { CategoryTableRow } from "./CategoryTableRow";
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useCategories } from "src/utils/hooks/categories/useCategories";
+import { TableDisplay } from "../table/TableDisplay";
+import { categoryColumns } from "./categoryColumns";
 
 export const CategoryTable = () => {
-  const [filter, setFilter] = useState<catgoriesFilter>({});
-  const [sort, setSort] = useState<categoriesSort | undefined>();
-  const { categories, isLoading } = useCategories({ filter, sort });
-  const pagination = usePagination({ items: categories });
+  const data = useCategories();
 
-  if (!categories || isLoading) {
+  const table = useReactTable({
+    data: data.data ? data.data : [],
+    getRowId: (data) => data.id,
+    columns: categoryColumns,
+    getCoreRowModel: getCoreRowModel(),
+    enableSorting: true,
+    enableMultiSort: true,
+    enableColumnFilters: true,
+    enableFilters: true,
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: { pageSize: 20 },
+      sorting: [{ id: "title", desc: false }],
+      columnVisibility: {
+        group: false,
+        single: false,
+        createdAt: false,
+        updatedAt: false,
+      },
+    },
+    autoResetPageIndex: false,
+  });
+
+  if (!data.data || data.isLoading) {
     return (
       <Group>
         <Loader />
@@ -25,45 +46,5 @@ export const CategoryTable = () => {
       </Group>
     );
   }
-
-  return (
-    <Stack>
-      <Table horizontalSpacing={2} verticalSpacing={2}>
-        <thead>
-          <tr>
-            <th>Account Grouping</th>
-            <th>
-              <Group spacing={10}>
-                <Text>Title</Text>
-                <TextFilterMenu
-                  filter={filter}
-                  setFilter={setFilter}
-                  targetKey="titleIncludes"
-                />
-                <SortButton sort={sort} setSort={setSort} targetKey="title" />
-              </Group>
-            </th>
-            <th>
-              <Group>
-                <Text>Status</Text>
-                <StatusFilterMenu filter={filter} setFilter={setFilter} />
-                <SortButton sort={sort} setSort={setSort} targetKey="status" />
-              </Group>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {pagination.filteredItems.map((category) => {
-            return <CategoryTableRow key={category.id} id={category.id} />;
-          })}
-        </tbody>
-      </Table>
-      {pagination.filteredItems.length === 0 && <Center>No Items Found</Center>}
-      <Center>
-        <Group>
-          <PaginationDisplay data={pagination} />
-        </Group>
-      </Center>
-    </Stack>
-  );
+  return <TableDisplay table={table} />;
 };

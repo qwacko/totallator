@@ -1,28 +1,40 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { displayBillCell } from "./BIllTableCell";
+import { displayTagCell } from "./TagTableCell";
 import { statusFilter } from "../table/filters/statusFilter";
 import { dateFilter } from "../table/filters/dateFilter";
-import type { BillsReturnType } from "src/server/trpc/router/_app";
+import type { TagsReturnType } from "src/server/trpc/router/_app";
 import { displayHeader } from "../table/headers/displayHeader";
 
-const columnHelper = createColumnHelper<BillsReturnType>();
+const columnHelper = createColumnHelper<TagsReturnType>();
 
-export const billColumns = [
+export const tagColumns = [
   columnHelper.display({
     id: "commands",
     header: displayHeader("Commands"),
-    cell: displayBillCell,
+    cell: displayTagCell,
     enableColumnFilter: false,
   }),
   columnHelper.accessor("title", {
     header: displayHeader("Title", "string"),
-    cell: displayBillCell,
+    cell: displayTagCell,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
+  columnHelper.accessor("group", {
+    header: displayHeader("Group", "string"),
+    cell: displayTagCell,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
+  columnHelper.accessor("single", {
+    header: displayHeader("Single", "string"),
+    cell: displayTagCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("status", {
     header: displayHeader("Status", "status"),
-    cell: displayBillCell,
+    cell: displayTagCell,
     enableColumnFilter: true,
     filterFn: statusFilter("status"),
   }),
@@ -30,12 +42,12 @@ export const billColumns = [
     header: displayHeader("Crated At", "date"),
     enableColumnFilter: true,
     filterFn: dateFilter("createdAt"),
-    cell: displayBillCell,
+    cell: displayTagCell,
   }),
   columnHelper.accessor("updatedAt", {
     header: displayHeader("Updated At", "date"),
     enableColumnFilter: true,
     filterFn: dateFilter("updatedAt"),
-    cell: displayBillCell,
+    cell: displayTagCell,
   }),
 ];

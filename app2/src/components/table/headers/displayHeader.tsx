@@ -5,7 +5,7 @@ import type { AllReturnTypes } from "src/server/trpc/router/_app";
 
 export const displayHeader = <T extends AllReturnTypes>(
   title: string,
-  filterType: FilterTypes
+  filterType?: FilterTypes
 ) => {
   const Header = (props: HeaderContext<T, unknown>) => {
     return (

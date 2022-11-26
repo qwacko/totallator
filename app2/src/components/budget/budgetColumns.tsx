@@ -8,6 +8,12 @@ import { displayHeader } from "../table/headers/displayHeader";
 const columnHelper = createColumnHelper<BudgetsReturnType>();
 
 export const budgetColumns = [
+  columnHelper.display({
+    id: "commands",
+    header: displayHeader("Commands"),
+    cell: displayBudgetCell,
+    enableColumnFilter: false,
+  }),
   columnHelper.accessor("title", {
     header: displayHeader("Title", "string"),
     cell: displayBudgetCell,

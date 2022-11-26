@@ -27,6 +27,7 @@ export const tagRouter = router({
       },
       include: {
         accountGrouping: { include: { viewUsers: true, adminUsers: true } },
+        _count: { select: { journalEntries: true } },
       },
     });
 
@@ -93,6 +94,37 @@ export const tagRouter = router({
             existing: targetTag,
           }),
           ...basicStatusToDB(input.data.status),
+        },
+      });
+
+      return true;
+    }),
+  clone: protectedProcedure
+    .input(z.object({ id: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const targetTag = await ctx.prisma.tag.findFirst({
+        where: {
+          id: input.id,
+          ...accountGroupingFilter(user.id),
+        },
+      });
+
+      if (!targetTag) {
+        throw new TRPCError({
+          message: "Cannot find tag or user doesn't have admin accces",
+          code: "FORBIDDEN",
+        });
+      }
+
+      const { createdAt, updatedAt, id, ...targetTagProps } = targetTag;
+
+      await ctx.prisma.tag.create({
+        data: {
+          ...targetTagProps,
+          single: `${targetTagProps.single} (Clone)`,
+          title: `${targetTagProps.title} (Clone)`,
         },
       });
 

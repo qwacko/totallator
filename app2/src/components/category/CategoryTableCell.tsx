@@ -2,46 +2,46 @@ import { Center, Select, Text, TextInput } from "@mantine/core";
 import type { PrismaStatusEnum } from "@prisma/client";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
-import type { BudgetsReturnType } from "src/server/trpc/router/_app";
+import type { CategoriesReturnType } from "src/server/trpc/router/_app";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
-import { useUpdateBudget } from "src/utils/hooks/budgets/useUpdateBudget";
+import { useUpdateCategory } from "src/utils/hooks/categories/useUpdateCategory";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
-import type { updateBudgetDataValidationType } from "src/utils/validation/budget/updateBudgetValidation";
-import { BudgetCommandButtons } from "./BudgetCommandButtons";
+import type { updateCategoryDataValidationType } from "src/utils/validation/category/updateCategoryValidation";
+import { CategoryCommandButtons } from "./CategoryCommandButtons";
 
-export type BudgetRowColumns =
-  | keyof updateBudgetDataValidationType
+export type CategoryRowColumns =
+  | keyof updateCategoryDataValidationType
   | "createdAt"
   | "updatedAt"
   | "commands";
 
-export const displayBudgetCell = (
-  props: CellContext<BudgetsReturnType, unknown>
+export const displayCategoryCell = (
+  props: CellContext<CategoriesReturnType, unknown>
 ) => {
   return (
-    <BudgetTableCell
+    <CategoryTableCell
       id={props.row.id}
-      column={props.column.id as BudgetRowColumns}
+      column={props.column.id as CategoryRowColumns}
       data={props.row.original}
     />
   );
 };
 
-export const BudgetTableCell = ({
+export const CategoryTableCell = ({
   id,
   column,
   data,
 }: {
   id: string;
-  column: BudgetRowColumns;
-  data: BudgetsReturnType;
+  column: CategoryRowColumns;
+  data: CategoriesReturnType;
 }) => {
   const columnUse =
     column === "createdAt" || column === "updatedAt" || column === "commands"
       ? "title"
       : column;
 
-  const { form, runMutate, mutate } = useUpdateBudget({
+  const { form, runMutate, mutate } = useUpdateCategory({
     id,
     keys: [columnUse],
     data,
@@ -55,13 +55,13 @@ export const BudgetTableCell = ({
   const isAdmin = accountGrouping?.userIsAdmin;
 
   if (column === "commands") {
-    return <BudgetCommandButtons data={data} />;
+    return <CategoryCommandButtons data={data} />;
   }
-  if (column === "title") {
+  if (column === "title" || column === "group" || column === "single") {
     return (
       <form>
         <TextInput
-          {...form.getInputProps("title")}
+          {...form.getInputProps(column)}
           type="text"
           onBlur={runMutate}
           disabled={!isAdmin}

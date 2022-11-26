@@ -5,11 +5,11 @@ export const CategoryGroupSelection = (
   input: AutocompleteProps & { accountGroupingId: string }
 ) => {
   const { accountGroupingId, ...autocompleteInput } = input;
-  const tags = useCategories();
+  const categories = useCategories();
   const groups = [
     ...new Set(
-      tags.allCategories
-        ? tags.allCategories
+      categories.data
+        ? categories.data
             .filter(
               (category) => category.accountGroupingId === accountGroupingId
             )

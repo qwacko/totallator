@@ -7,11 +7,13 @@ import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccount
 import { useUpdateBill } from "src/utils/hooks/bills/useUpdateBIll";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateBillDataValidationType } from "src/utils/validation/bill/updateBillValidation";
+import { BillCommandButtons } from "./BillCommandButtons";
 
 export type BillRowColumns =
   | keyof updateBillDataValidationType
   | "createdAt"
-  | "updatedAt";
+  | "updatedAt"
+  | "commands";
 
 export const displayBillCell = (
   props: CellContext<BillsReturnType, unknown>
@@ -35,7 +37,9 @@ export const BillTableCell = ({
   data: BillsReturnType;
 }) => {
   const columnUse =
-    column === "createdAt" || column === "updatedAt" ? "title" : column;
+    column === "createdAt" || column === "updatedAt" || column === "commands"
+      ? "title"
+      : column;
 
   const { form, runMutate, mutate } = useUpdateBill({
     id,
@@ -50,6 +54,9 @@ export const BillTableCell = ({
   );
   const isAdmin = accountGrouping?.userIsAdmin;
 
+  if (column === "commands") {
+    return <BillCommandButtons data={data} />;
+  }
   if (column === "title") {
     return (
       <form>

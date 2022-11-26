@@ -12,10 +12,10 @@ export const TableHeader = <T extends Record<string, unknown>>({
   header: Header<T, unknown>;
   table: TableType<T>;
   title: string;
-  filterType: FilterTypes;
+  filterType?: FilterTypes;
 }) => {
   return (
-    <Stack>
+    <Stack align="center">
       <Group>
         <Title order={6}>{title}</Title>
         <SortButtonReactTable
@@ -25,11 +25,13 @@ export const TableHeader = <T extends Record<string, unknown>>({
           sortable={header.column.getCanSort()}
         />
       </Group>
-      <TableFilterInput
-        filter={header.column.getFilterValue()}
-        setFilter={header.column.setFilterValue}
-        type={filterType}
-      />
+      {filterType && (
+        <TableFilterInput
+          filter={header.column.getFilterValue()}
+          setFilter={header.column.setFilterValue}
+          type={filterType}
+        />
+      )}
     </Stack>
   );
 };
