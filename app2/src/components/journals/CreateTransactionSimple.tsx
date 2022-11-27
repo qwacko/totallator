@@ -15,6 +15,10 @@ import { useCreateTransactionSimple } from "src/utils/hooks/journals/useCreateTr
 import { DatePicker } from "@mantine/dates";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import { AccountSelection } from "../account/AccountSelection";
+import { TagSelection } from "../tag/TagSelection";
+import { CategorySelection } from "../category/CategorySelection";
+import { BudgetSelection } from "../budget/BudgetSelection";
+import { BillSelection } from "../bill/BillSelection";
 
 const size: MantineSize = "xs";
 
@@ -86,6 +90,35 @@ export const CreateTransactionSimpleForm = ({
             <AccountSelection
               {...createTrans.form.getInputProps("toAccountId")}
               label="To Account"
+              searchable
+              accountGroupingId={createTrans.form.values.accountGroupingId}
+              size={size}
+            />
+            <TagSelection
+              {...createTrans.form.getInputProps("tagId")}
+              label="Tag"
+              searchable
+              accountGroupingId={createTrans.form.values.accountGroupingId}
+              size={size}
+            />
+
+            <CategorySelection
+              {...createTrans.form.getInputProps("categoryId")}
+              label="Category"
+              searchable
+              accountGroupingId={createTrans.form.values.accountGroupingId}
+              size={size}
+            />
+            <BudgetSelection
+              {...createTrans.form.getInputProps("budgetId")}
+              label="Budget"
+              searchable
+              accountGroupingId={createTrans.form.values.accountGroupingId}
+              size={size}
+            />
+            <BillSelection
+              {...createTrans.form.getInputProps("billId")}
+              label="Bill"
               searchable
               accountGroupingId={createTrans.form.values.accountGroupingId}
               size={size}
