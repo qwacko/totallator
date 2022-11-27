@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions", "fullTextSearch", "metrics"]
 }
 
 datasource db {
@@ -146,6 +147,12 @@ model TransactionAccount {
   updatedAt DateTime @updatedAt
 }
 
+model Transaction {
+  id String @id @unique @default(cuid())
+
+  journalEntries JournalEntry[]
+}
+
 model JournalEntry {
   id          String   @id @unique @default(cuid())
   date        DateTime
@@ -157,21 +164,18 @@ model JournalEntry {
   amount      Float    @default(0)
 
   //Relationships
-  account    TransactionAccount @relation(fields: [accountId], references: [id])
-  accountId  String
-  tag        Tag?               @relation(fields: [tagId], references: [id])
-  tagId      String?
-  category   Category?          @relation(fields: [categoryId], references: [id])
-  categoryId String?
-  bill       Bill?              @relation(fields: [billId], references: [id])
-  billId     String?
-  budget     Budget?            @relation(fields: [budgetId], references: [id])
-  budgetId   String?
-
-  //Primary Relationship
-  primaryJournal   JournalEntry   @relation(name: "primaryJE", fields: [primaryJournalId], references: [id])
-  primaryJournalId String
-  journalEntries   JournalEntry[] @relation(name: "primaryJE")
+  account       TransactionAccount @relation(fields: [accountId], references: [id])
+  accountId     String
+  tag           Tag?               @relation(fields: [tagId], references: [id])
+  tagId         String?
+  category      Category?          @relation(fields: [categoryId], references: [id])
+  categoryId    String?
+  bill          Bill?              @relation(fields: [billId], references: [id])
+  billId        String?
+  budget        Budget?            @relation(fields: [budgetId], references: [id])
+  budgetId      String?
+  transaction   Transaction        @relation(fields: [transactionId], references: [id])
+  transactionId String
 
   //Account Grouping
   accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id])

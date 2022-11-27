@@ -18,3 +18,5 @@ export const getUserInfo = async (
 
   return returnUser;
 };
+
+export type UserInfo = Awaited<ReturnType<typeof getUserInfo>>;

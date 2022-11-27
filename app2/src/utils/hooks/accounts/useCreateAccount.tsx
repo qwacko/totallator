@@ -3,7 +3,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import { notifyTemplate } from "../notifyTemplate";
 import {
   createAccountValidation,
-  createAccountValidationType,
+  type createAccountValidationType,
 } from "src/utils/validation/account/createAccountValidation";
 
 const id = "useCreateAccount";
@@ -45,6 +45,7 @@ export function useCreateAccount({ onMutate }: { onMutate?: () => void }) {
             type: data.type || "Expense",
             startDate: null,
             endDate: null,
+            _count: { journalEntries: 0 },
           },
         ]);
       }

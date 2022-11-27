@@ -1,4 +1,4 @@
-import type { PrismaClient, User } from "@prisma/client";
+import type { Prisma, PrismaClient, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 
 export const checkAccountGroupingAccess = async ({
@@ -8,7 +8,7 @@ export const checkAccountGroupingAccess = async ({
   adminRequired = true,
 }: {
   accountGroupingId: string;
-  prisma: PrismaClient;
+  prisma: PrismaClient | Prisma.TransactionClient;
   user: User;
   adminRequired?: boolean;
 }) => {

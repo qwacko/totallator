@@ -35,6 +35,7 @@ export function useCreateBudget({ onMutate }: { onMutate?: () => void }) {
             updatedAt: new Date(),
             deleted: false,
             disabled: false,
+            _count: { journalEntries: 0 },
           },
         ]);
       }

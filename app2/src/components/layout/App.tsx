@@ -16,6 +16,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
           variant="pills"
         >
           <Tabs.List>
+            <Tabs.Tab value="/journals">Journals</Tabs.Tab>
             <Tabs.Tab value="/accountGroupings">Account Grouping</Tabs.Tab>
             <Tabs.Tab value="/accounts">Accounts</Tabs.Tab>
             <Tabs.Tab value="/budgets">Budgets</Tabs.Tab>

@@ -168,6 +168,7 @@ importers:
       '@typescript-eslint/eslint-plugin': ^5.33.0
       '@typescript-eslint/parser': ^5.33.0
       bcrypt: ^5.1.0
+      cuid: ^2.1.8
       date-fns: ^2.29.1
       dayjs: ^1.11.6
       eslint: ^8.26.0
@@ -204,6 +205,7 @@ importers:
       '@trpc/react-query': 10.0.0-rc.4_q2ykz5ry7uzzhix6pf4rsmetbu
       '@trpc/server': 10.0.0-rc.4
       bcrypt: 5.1.0
+      cuid: 2.1.8
       date-fns: 2.29.3
       dayjs: 1.11.6
       lodash: 4.17.21
@@ -7231,6 +7233,10 @@ packages:
 
   /csstype/3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
+
+  /cuid/2.1.8:
+    resolution: {integrity: sha512-xiEMER6E7TlTPnDxrM4eRiC6TRgjNX9xzEZ5U/Se2YJKr7Mq4pJn/2XEHjl3STcSh96GmkHPcBXLES8M29wyyg==}
+    dev: false
 
   /d/1.0.1:
     resolution: {integrity: sha512-m62ShEObQ39CfralilEQRjH6oAMtNCV1xJyEx5LpRYUVN+EviphDgUc/F3hnYbADmkiNs67Y+3ylmlG7Lnu+FA==}
