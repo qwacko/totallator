@@ -6,17 +6,23 @@ export const CategorySingleSelection = (
 ) => {
   const { accountGroupingId, ...autocompleteInput } = input;
   const categories = useCategories();
-  const groups = [
-    ...new Set(
-      categories.data
-        ? categories.data
-            .filter(
-              (category) => category.accountGroupingId === accountGroupingId
-            )
-            .map((category) => category.single)
-        : []
-    ),
-  ].sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase()));
+  const groups = useMemo(
+    () =>
+      [
+        ...new Set(
+          categories.data
+            ? categories.data
+                .filter(
+                  (category) => category.accountGroupingId === accountGroupingId
+                )
+                .map((category) => category.single)
+            : []
+        ),
+      ].sort((a, b) =>
+        a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())
+      ),
+    [categories, accountGroupingId]
+  );
 
   return <Autocomplete {...autocompleteInput} data={groups} />;
 };
