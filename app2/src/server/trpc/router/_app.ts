@@ -40,5 +40,4 @@ export type AllReturnTypes =
   | BillsReturnType
   | BudgetsReturnType
   | CategoriesReturnType
-  | TagsReturnType
-  | JournalsReturnType;
+  | TagsReturnType;

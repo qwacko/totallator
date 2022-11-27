@@ -1,6 +1,6 @@
 import { Center, Group, Stack, Title } from "@mantine/core";
-import { CategoryTable } from "src/components/category/CategoryTable";
 import { CreateTransactionSimplePopup } from "src/components/journals/CreateTransactionSimple";
+import { JournalTable } from "src/components/journals/JournalTable";
 import { AppLayout } from "src/components/layout/App";
 
 const JournalsPage = () => {
@@ -13,7 +13,7 @@ const JournalsPage = () => {
             <CreateTransactionSimplePopup />
           </Group>
         </Center>
-        <CategoryTable />
+        <JournalTable />
       </Stack>
     </AppLayout>
   );

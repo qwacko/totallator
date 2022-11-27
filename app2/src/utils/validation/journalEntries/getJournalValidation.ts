@@ -6,17 +6,19 @@ const stringFilter = z
     contains: z.string().optional(),
     mode: z
       .enum(["insensitive", "default"] as const)
-      .default("insensitive")
-      .optional(),
+      .optional()
+      .default("insensitive"),
   })
   .optional();
 const booleanFilter = z
   .object({ equals: z.boolean().optional(), not: z.boolean().optional() })
   .optional();
-const dateFilter = z.object({
-  gte: z.date().optional(),
-  lte: z.date().optional(),
-});
+const dateFilter = z
+  .object({
+    gte: z.date().optional(),
+    lte: z.date().optional(),
+  })
+  .optional();
 
 const numberFilter = z
   .object({ gte: z.number().optional(), lte: z.number().optional() })
@@ -49,10 +51,12 @@ const journalFilter = z.object({
   createdAt: dateFilter,
 });
 
+export type JournalFilterValidation = z.infer<typeof journalFilter>;
+
 const sort = z
   .array(
     z.object({
-      key: z.enum(["date", "description"]),
+      key: z.enum(["date", "description", "updatedAt", "createdAt", "amount"]),
       direction: z.enum(["asc", "desc"]),
     })
   )
@@ -66,7 +70,8 @@ export const getJournalValidation = z.object({
       pageNo: z.number(),
       pageSize: z.number(),
     })
-    .optional(),
+    .optional()
+    .default({ pageNo: 0, pageSize: 10 }),
   filters: z.array(journalFilter).optional(),
   sort,
 });

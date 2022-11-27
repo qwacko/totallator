@@ -25,6 +25,15 @@ const sortToOrderBy = (
     if (sort.key === "description") {
       return { description: sort.direction };
     }
+    if (sort.key === "createdAt") {
+      return { createdAt: sort.direction };
+    }
+    if (sort.key === "updatedAt") {
+      return { updatedAt: sort.direction };
+    }
+    if (sort.key === "amount") {
+      return { amount: sort.direction };
+    }
 
     return {};
   });
@@ -35,6 +44,16 @@ export const journalsRouter = router({
     .input(getJournalValidation)
     .query(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      //Sorting
+      const orderBy = sortToOrderBy(input.sort);
+
+      //Pagination
+      const take = input.pagination.pageSize;
+      const skip = input.pagination.pageNo * input.pagination?.pageSize;
+
+      //Filters
+      console.log("Filters", input.filters);
 
       const journals = await ctx.prisma.journalEntry.findMany({
         where: {
@@ -49,7 +68,9 @@ export const journalsRouter = router({
           accountGrouping: { include: { viewUsers: true, adminUsers: true } },
           transaction: { select: { journalEntries: true } },
         },
-        orderBy: sortToOrderBy(input.sort),
+        orderBy,
+        take,
+        skip,
       });
 
       return journals.map((journal) => {

@@ -1,6 +1,15 @@
-import { useMemo } from "react";
+import type {
+  ColumnFiltersState,
+  PaginationState,
+  SortingState,
+} from "@tanstack/react-table";
+import { useMemo, useState } from "react";
+import { removeUndefined } from "src/utils/arrayHelpers";
 import { trpc } from "src/utils/trpc";
-import type { GetJournalValidation } from "src/utils/validation/journalEntries/getJournalValidation";
+import type {
+  JournalFilterValidation,
+  JournalSortValidation,
+} from "src/utils/validation/journalEntries/getJournalValidation";
 import { useAccountGroupings } from "../accountGroupings/useAccountGroupings";
 import { useAccounts } from "../accounts/useAccounts";
 import { useBills } from "../bills/useBills";
@@ -8,8 +17,67 @@ import { useBudgets } from "../budgets/useBudgets";
 import { useCategories } from "../categories/useCategories";
 import { useTags } from "../tags/useTags";
 
-export const useJournals = (input: GetJournalValidation) => {
-  const data = trpc.journals.get.useQuery(input);
+const sortingStateToPrismaSort = (
+  input: SortingState
+): JournalSortValidation => {
+  const fixedSort: JournalSortValidation = [
+    { key: "amount", direction: "desc" },
+    { key: "updatedAt", direction: "desc" },
+  ];
+
+  const sorting: JournalSortValidation = removeUndefined(
+    input.map((item) => {
+      if (
+        item.id === "updatedAt" ||
+        item.id === "date" ||
+        item.id === "description" ||
+        item.id === "createdAt" ||
+        item.id === "amount"
+      ) {
+        return { key: item.id, direction: item.desc ? "desc" : "asc" };
+      }
+
+      return undefined;
+    })
+  );
+
+  return [...sorting, ...fixedSort];
+};
+
+const filtersToPrismaFilters = ({
+  filters,
+}: {
+  filters: ColumnFiltersState;
+}): JournalFilterValidation[] | undefined => {
+  const processedFilters: JournalFilterValidation[] = removeUndefined(
+    filters.map((item): JournalFilterValidation | undefined => {
+      if (item.id === "description") {
+        return { description: { contains: item.value as string } };
+      }
+      return undefined;
+    })
+  );
+  return processedFilters;
+};
+
+export const useJournals = () => {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const [filters, setFilters] = useState<ColumnFiltersState>([]);
+
+  const sortingToUse = sortingStateToPrismaSort(sorting);
+  const filtersToUse = filtersToPrismaFilters({ filters });
+
+  console.log("Filter To Use", filtersToUse);
+
+  const data = trpc.journals.get.useQuery({
+    sort: sortingToUse,
+    pagination: { pageNo: pagination.pageIndex, pageSize: pagination.pageSize },
+    filters: filtersToUse,
+  });
   const billData = useBills();
   const budgetData = useBudgets();
   const tagData = useTags();
@@ -54,5 +122,22 @@ export const useJournals = (input: GetJournalValidation) => {
     accountGroupingData.data,
   ]);
 
-  return { ...data, mergedData };
+  const pageCount = 5;
+
+  return {
+    data: { ...data, mergedData },
+    tableState: {
+      sorting,
+      setSorting,
+      filters,
+      setFilters,
+      pagination,
+      setPagination,
+      pageCount,
+    },
+  };
 };
+
+export type JournalsMergedType = ReturnType<
+  typeof useJournals
+>["data"]["mergedData"][0];

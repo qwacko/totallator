@@ -1,8 +1,9 @@
 import { Center, Group, Pagination, Select, Stack, Table } from "@mantine/core";
 import { flexRender, type Table as TableType } from "@tanstack/react-table";
 import type { AllReturnTypes } from "src/server/trpc/router/_app";
+import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 
-export const TableDisplay = <T extends AllReturnTypes>({
+export const TableDisplay = <T extends AllReturnTypes | JournalsMergedType>({
   table,
 }: {
   table: TableType<T>;

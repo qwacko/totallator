@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import type { Prisma, PrismaClient } from "@prisma/client";
+import { makeToSet } from "../../../../utils/arrayHelpers";
 
 const checkItem = ({
   accountGroupingIds,
@@ -31,22 +32,6 @@ const checkItem = ({
       message: `Account Grouping of ${errorTitle} doesn't match Transaction`,
     });
   }
-};
-
-const notUndefinedGuard = <T>(item: T | undefined): item is T => {
-  return !!item;
-};
-
-const removeUndefined = <T>(item: (T | undefined)[]) => {
-  return item.filter(notUndefinedGuard);
-};
-
-const removeUndefinedAndDuplicates = <T>(input: (T | undefined)[]) => {
-  return [...new Set(removeUndefined(input))];
-};
-
-const makeToSet = (input: (string | undefined)[] | undefined) => {
-  return input ? removeUndefinedAndDuplicates(input) : [];
 };
 
 export const checkLinkedItems = async ({
