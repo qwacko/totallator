@@ -1,44 +1,17 @@
-import type { Prisma } from "@prisma/client";
 import {
   createSimpleTransactionValidation,
   createTransactionValidation,
 } from "src/utils/validation/journalEntries/createJournalValidation";
-import {
-  getJournalValidation,
-  type JournalSortValidation,
-} from "src/utils/validation/journalEntries/getJournalValidation";
+import { getJournalValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 import { router, protectedProcedure } from "../trpc";
 import { createTransaction } from "./helpers/journals/createTransaction";
 import { getUserInfo } from "./helpers/getUserInfo";
 import { journalsWithStats } from "./helpers/journals/journalsWithStats";
-
-const sortToOrderBy = (
-  input: JournalSortValidation
-): Prisma.JournalEntryOrderByWithAggregationInput[] | undefined => {
-  if (!input) {
-    return undefined;
-  }
-
-  return input.map((sort) => {
-    if (sort.key === "date") {
-      return { date: sort.direction };
-    }
-    if (sort.key === "description") {
-      return { description: sort.direction };
-    }
-    if (sort.key === "createdAt") {
-      return { createdAt: sort.direction };
-    }
-    if (sort.key === "updatedAt") {
-      return { updatedAt: sort.direction };
-    }
-    if (sort.key === "amount") {
-      return { amount: sort.direction };
-    }
-
-    return {};
-  });
-};
+import { updateJournalInput } from "src/utils/validation/journalEntries/updateJournalValidation";
+import { TRPCError } from "@trpc/server";
+import { checkTransactions } from "./helpers/journals/checkTransactions";
+import { updateSingleJournal } from "./helpers/journals/updateSingleJournal";
+import { sortToOrderBy } from "./helpers/journals/sortToOrderBy";
 
 export const journalsRouter = router({
   get: protectedProcedure
@@ -51,7 +24,7 @@ export const journalsRouter = router({
 
       //Pagination
       const take = input.pagination.pageSize;
-      const skip = input.pagination.pageNo * input.pagination?.pageSize;
+      const skip = input.pagination.pageNo * input.pagination.pageSize;
 
       const { dataWithTotal: journals, count } = await journalsWithStats({
         prisma: ctx.prisma,
@@ -118,5 +91,38 @@ export const journalsRouter = router({
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
       await createTransaction({ user, prisma: ctx.prisma, input });
       return true;
+    }),
+  updateJournals: protectedProcedure
+    .input(updateJournalInput)
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const { data, count } = await journalsWithStats({
+        prisma: ctx.prisma,
+        take: input.maxUpdated + 1,
+        skip: 0,
+        filters: input.filters,
+        userId: user.id,
+      });
+      if (count > input.maxUpdated) {
+        throw new TRPCError({
+          message: `Max number updated journals (${input.maxUpdated} exceeded.`,
+          code: "BAD_REQUEST",
+        });
+      }
+
+      await ctx.prisma.$transaction(async (prisma) => {
+        await Promise.all(
+          data.map(async (journal) =>
+            updateSingleJournal({ prisma, journal, data: input.data })
+          )
+        );
+
+        //Check Transactions
+        await checkTransactions({
+          prisma,
+          transactionIds: data.map((item) => item.transactionId),
+        });
+      });
     }),
 });

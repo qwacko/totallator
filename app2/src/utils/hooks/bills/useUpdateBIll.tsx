@@ -59,6 +59,7 @@ export const useUpdateBill = ({
     keys,
     id,
     mutate,
+    formDataToMutateData: (id, data) => ({ id, data }),
   });
 
   return {

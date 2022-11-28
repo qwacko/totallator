@@ -3,19 +3,25 @@ import { useEffect } from "react";
 
 export const useFormHandler = <
   T extends Record<string, unknown>,
-  U extends Record<string, unknown>
+  U extends Record<string, unknown>,
+  MutateType extends Record<string, unknown>
 >({
   data,
   form,
   keys,
   mutate,
   id,
+  formDataToMutateData,
 }: {
   data: T;
   form: UseFormReturnType<U>;
   keys: (keyof T & keyof U)[];
-  mutate: (data: { id: string; data: U }) => void;
+  mutate: (data: MutateType) => void;
   id: string;
+  formDataToMutateData: (
+    id: string,
+    data: UseFormReturnType<U>["values"]
+  ) => MutateType;
 }) => {
   const pickData = () => {
     return keys.reduce(
@@ -44,7 +50,7 @@ export const useFormHandler = <
     if (hasChanged()) {
       const validated = form.validate();
       if (!validated.hasErrors) {
-        mutate({ id, data: form.values });
+        mutate(formDataToMutateData(id, form.values));
       } else {
         resetForm();
       }

@@ -2,6 +2,7 @@ import { Center, Text, TextInput } from "@mantine/core";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
 import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
+import { useUpdateJournal } from "src/utils/hooks/journals/useUpdateJournal";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 
 export type JournalRowColumns =
@@ -32,15 +33,30 @@ export const JournalTableCell = ({
   column: JournalRowColumns;
   data: JournalsMergedType;
 }) => {
+  const columnUse =
+    column === "createdAt" || column === "updatedAt" || column === "total"
+      ? "description"
+      : column;
   const { dateFormat } = useLoggedInUser();
+  const { form, runMutate } = useUpdateJournal({
+    data,
+    keys: [columnUse],
+    updateCompleted: false,
+  });
 
   const isAdmin = data.userIsAdmin;
 
   if (column === "description") {
     return (
-      <form>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          runMutate();
+        }}
+      >
         <TextInput
-          value={data.description}
+          {...form.getInputProps("description")}
+          onBlur={runMutate}
           type="text"
           disabled={!isAdmin}
           size="xs"

@@ -27,7 +27,7 @@ const numberFilter = z
   .object({ gte: z.number().optional(), lte: z.number().optional() })
   .optional();
 
-const journalFilter = z.object({
+export const journalFilter = z.object({
   //Core Data
   id: idFilter,
   date: dateFilter,

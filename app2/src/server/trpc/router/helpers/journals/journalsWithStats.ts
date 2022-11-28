@@ -10,7 +10,7 @@ export const journalsWithStats = async ({
   userId,
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
-  orderBy: Prisma.JournalEntryOrderByWithAggregationInput[] | undefined;
+  orderBy?: Prisma.JournalEntryOrderByWithAggregationInput[] | undefined;
   take: number;
   skip: number;
   filters: JournalFilterValidation[] | undefined;
