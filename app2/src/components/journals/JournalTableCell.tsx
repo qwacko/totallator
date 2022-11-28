@@ -4,7 +4,12 @@ import { format } from "date-fns";
 import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 
-export type JournalRowColumns = "description" | "createdAt" | "updatedAt";
+export type JournalRowColumns =
+  | "description"
+  | "createdAt"
+  | "updatedAt"
+  | "total"
+  | "amount";
 
 export const displayJournalCell = (
   props: CellContext<JournalsMergedType, unknown>
@@ -42,6 +47,9 @@ export const JournalTableCell = ({
         />
       </form>
     );
+  }
+  if (column === "total" || column === "amount") {
+    return <Text>{data[column]}</Text>;
   }
 
   if (column === "createdAt" || column === "updatedAt") {

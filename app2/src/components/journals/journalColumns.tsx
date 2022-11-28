@@ -13,6 +13,18 @@ export const journalColumns = [
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
+  columnHelper.accessor("amount", {
+    header: displayHeader("Amount", "string"),
+    cell: displayJournalCell,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
+  columnHelper.accessor("total", {
+    header: displayHeader("Total", "string"),
+    cell: displayJournalCell,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
   columnHelper.accessor("createdAt", {
     header: displayHeader("Crated At", "date"),
     enableColumnFilter: true,

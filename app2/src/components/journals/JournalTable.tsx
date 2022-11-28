@@ -8,6 +8,7 @@ export const JournalTable = () => {
   const data = useJournals();
 
   console.log("Filters", data.tableState.filters);
+  console.log("Page Count", data.tableState.pageCount);
 
   const table = useReactTable({
     data: data.data.mergedData ? data.data.mergedData : [],
@@ -41,7 +42,7 @@ export const JournalTable = () => {
 
     //Initial State
     initialState: {
-      pagination: { pageSize: 20 },
+      pagination: { pageSize: 20, pageIndex: 1 },
       sorting: [{ id: "description", desc: false }],
       columnVisibility: {
         createdAt: false,
@@ -49,6 +50,7 @@ export const JournalTable = () => {
       },
     },
     autoResetPageIndex: false,
+    autoResetAll: false,
   });
 
   if (!data.data || data.data.isLoading) {

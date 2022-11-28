@@ -10,6 +10,7 @@ import {
 import { router, protectedProcedure } from "../trpc";
 import { createTransaction } from "./helpers/journals/createTransaction";
 import { getUserInfo } from "./helpers/getUserInfo";
+import { journalsWithStats } from "./helpers/journals/journalsWithStats";
 
 const sortToOrderBy = (
   input: JournalSortValidation
@@ -52,28 +53,16 @@ export const journalsRouter = router({
       const take = input.pagination.pageSize;
       const skip = input.pagination.pageNo * input.pagination?.pageSize;
 
-      //Filters
-      console.log("Filters", input.filters);
-
-      const journals = await ctx.prisma.journalEntry.findMany({
-        where: {
-          AND: [
-            ...(input.filters ? input.filters : []),
-            {
-              accountGrouping: { viewUsers: { some: { id: user.id } } },
-            },
-          ],
-        },
-        include: {
-          accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-          transaction: { select: { journalEntries: true } },
-        },
+      const { dataWithTotal: journals, count } = await journalsWithStats({
+        prisma: ctx.prisma,
         orderBy,
         take,
         skip,
+        filters: input.filters,
+        userId: user.id,
       });
 
-      return journals.map((journal) => {
+      const returnJournals = journals.map((journal) => {
         const { accountGrouping, transaction, ...pickedJournal } = journal;
         const userIsAdmin =
           user.admin ||
@@ -89,6 +78,8 @@ export const journalsRouter = router({
 
         return { ...pickedJournal, otherJournals, userIsAdmin };
       });
+
+      return { data: returnJournals, count };
     }),
   createSimpleTransaction: protectedProcedure
     .input(createSimpleTransactionValidation)

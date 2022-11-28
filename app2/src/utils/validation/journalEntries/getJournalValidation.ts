@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const idFilter = z.object({ in: z.array(z.string().cuid()) }).optional();
+
 const stringFilter = z
   .object({
     contains: z.string().optional(),
@@ -10,9 +11,11 @@ const stringFilter = z
       .default("insensitive"),
   })
   .optional();
+
 const booleanFilter = z
   .object({ equals: z.boolean().optional(), not: z.boolean().optional() })
   .optional();
+
 const dateFilter = z
   .object({
     gte: z.date().optional(),
@@ -51,6 +54,7 @@ const journalFilter = z.object({
   createdAt: dateFilter,
 });
 
+export type JournalFilterValidationInputType = z.input<typeof journalFilter>;
 export type JournalFilterValidation = z.infer<typeof journalFilter>;
 
 const sort = z

@@ -3,62 +3,20 @@ import type {
   PaginationState,
   SortingState,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
-import { removeUndefined } from "src/utils/arrayHelpers";
+import { useState } from "react";
 import { trpc } from "src/utils/trpc";
-import type {
-  JournalFilterValidation,
-  JournalSortValidation,
-} from "src/utils/validation/journalEntries/getJournalValidation";
 import { useAccountGroupings } from "../accountGroupings/useAccountGroupings";
 import { useAccounts } from "../accounts/useAccounts";
 import { useBills } from "../bills/useBills";
 import { useBudgets } from "../budgets/useBudgets";
 import { useCategories } from "../categories/useCategories";
 import { useTags } from "../tags/useTags";
-
-const sortingStateToPrismaSort = (
-  input: SortingState
-): JournalSortValidation => {
-  const fixedSort: JournalSortValidation = [
-    { key: "amount", direction: "desc" },
-    { key: "updatedAt", direction: "desc" },
-  ];
-
-  const sorting: JournalSortValidation = removeUndefined(
-    input.map((item) => {
-      if (
-        item.id === "updatedAt" ||
-        item.id === "date" ||
-        item.id === "description" ||
-        item.id === "createdAt" ||
-        item.id === "amount"
-      ) {
-        return { key: item.id, direction: item.desc ? "desc" : "asc" };
-      }
-
-      return undefined;
-    })
-  );
-
-  return [...sorting, ...fixedSort];
-};
-
-const filtersToPrismaFilters = ({
-  filters,
-}: {
-  filters: ColumnFiltersState;
-}): JournalFilterValidation[] | undefined => {
-  const processedFilters: JournalFilterValidation[] = removeUndefined(
-    filters.map((item): JournalFilterValidation | undefined => {
-      if (item.id === "description") {
-        return { description: { contains: item.value as string } };
-      }
-      return undefined;
-    })
-  );
-  return processedFilters;
-};
+import { filtersToPrismaFilters } from "./helpers/filtersToPrismaFilters";
+import { sortingStateToPrismaSort } from "./helpers/sortingStateToPrismaSort";
+import {
+  type MergedDataType,
+  buildMergedData,
+} from "./helpers/buildMergedData";
 
 export const useJournals = () => {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -67,17 +25,11 @@ export const useJournals = () => {
     pageSize: 10,
   });
   const [filters, setFilters] = useState<ColumnFiltersState>([]);
+  const [rowCount, setRowCount] = useState<number>(0);
 
   const sortingToUse = sortingStateToPrismaSort(sorting);
   const filtersToUse = filtersToPrismaFilters({ filters });
 
-  console.log("Filter To Use", filtersToUse);
-
-  const data = trpc.journals.get.useQuery({
-    sort: sortingToUse,
-    pagination: { pageNo: pagination.pageIndex, pageSize: pagination.pageSize },
-    filters: filtersToUse,
-  });
   const billData = useBills();
   const budgetData = useBudgets();
   const tagData = useTags();
@@ -85,44 +37,36 @@ export const useJournals = () => {
   const accountGroupingData = useAccountGroupings();
   const categoryData = useCategories();
 
-  const mergedData = useMemo(() => {
-    if (data.data) {
-      return data.data.map((journal) => ({
-        ...journal,
-        bill: billData.data
-          ? billData.data.find((item) => item.id === journal.billId)
-          : undefined,
-        budget: budgetData.data
-          ? budgetData.data.find((item) => item.id === journal.budgetId)
-          : undefined,
-        category: categoryData.data
-          ? categoryData.data.find((item) => item.id === journal.categoryId)
-          : undefined,
-        tag: tagData.data
-          ? tagData.data.find((item) => item.id === journal.tagId)
-          : undefined,
-        account: accountData.data
-          ? accountData.data.find((item) => item.id === journal.accountId)
-          : undefined,
-        accountGroupingId: accountGroupingData.data
-          ? accountGroupingData.data.find(
-              (item) => item.id === journal.accountGroupingId
-            )
-          : undefined,
-      }));
-    }
-    return [];
-  }, [
-    data.data,
-    billData.data,
-    budgetData.data,
-    tagData.data,
-    categoryData.data,
-    accountData.data,
-    accountGroupingData.data,
-  ]);
+  const [mergedData, setMergedData] = useState<MergedDataType>([]);
 
-  const pageCount = 5;
+  const data = trpc.journals.get.useQuery(
+    {
+      sort: sortingToUse,
+      pagination: {
+        pageNo: pagination.pageIndex,
+        pageSize: pagination.pageSize,
+      },
+      filters: filtersToUse,
+    },
+    {
+      onSuccess: (data) => {
+        setRowCount(data.count);
+        setMergedData(
+          buildMergedData({
+            input: data.data,
+            bills: billData.data,
+            budgets: budgetData.data,
+            tags: tagData.data,
+            categories: categoryData.data,
+            accounts: accountData.data,
+            accountGroupings: accountGroupingData.data,
+          })
+        );
+      },
+    }
+  );
+
+  const pageCount = Math.max(Math.ceil(rowCount / pagination.pageSize), 1);
 
   return {
     data: { ...data, mergedData },
@@ -138,6 +82,4 @@ export const useJournals = () => {
   };
 };
 
-export type JournalsMergedType = ReturnType<
-  typeof useJournals
->["data"]["mergedData"][0];
+export type JournalsMergedType = MergedDataType[0];

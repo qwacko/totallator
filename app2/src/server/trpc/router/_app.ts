@@ -33,7 +33,7 @@ export type BillsReturnType = AppRouterOutputs["bills"]["get"][0];
 export type BudgetsReturnType = AppRouterOutputs["budgets"]["get"][0];
 export type CategoriesReturnType = AppRouterOutputs["categories"]["get"][0];
 export type TagsReturnType = AppRouterOutputs["tags"]["get"][0];
-export type JournalsReturnType = AppRouterOutputs["journals"]["get"][0];
+export type JournalsReturnType = AppRouterOutputs["journals"]["get"]["data"][0];
 
 export type AllReturnTypes =
   | AccountsReturnType
