@@ -22,10 +22,10 @@ export const updateJournalInputData = z.object({
     .optional(),
 
   //Linked Items
-  billId: z.string().cuid().optional(),
-  budgetId: z.string().cuid().optional(),
-  categoryId: z.string().cuid().optional(),
-  tagId: z.string().cuid().optional(),
+  billId: z.string().cuid().nullable().optional(),
+  budgetId: z.string().cuid().nullable().optional(),
+  categoryId: z.string().cuid().nullable().optional(),
+  tagId: z.string().cuid().nullable().optional(),
 
   //Status
   reconciled: z.boolean().optional(),

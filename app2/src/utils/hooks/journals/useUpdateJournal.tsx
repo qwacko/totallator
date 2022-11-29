@@ -71,17 +71,20 @@ export const useUpdateJournal = ({
     keys,
     id,
     mutate,
-    formDataToMutateData: (id, processedData) => ({
-      data: {
-        ...processedData,
-        otherJournals: processedData.otherJournals
-          ? processedData.otherJournals.filter((item) => item.id !== id)
-          : undefined,
-      },
-      filters: [{ id: { in: [id] } }],
-      maxUpdated: 1,
-      updateCompleteJournals: updateCompleted,
-    }),
+    formDataToMutateData: (id, processedData) => {
+      console.log("Processed Data", processedData);
+      return {
+        data: {
+          ...processedData,
+          otherJournals: processedData.otherJournals
+            ? processedData.otherJournals.filter((item) => item.id !== id)
+            : undefined,
+        },
+        filters: [{ id: { in: [id] } }],
+        maxUpdated: 1,
+        updateCompleteJournals: updateCompleted,
+      };
+    },
   });
 
   return {

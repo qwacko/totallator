@@ -1,4 +1,4 @@
-import { Center, Group, Input, Stack, Text, TextInput } from "@mantine/core";
+import { Center, Group, Stack, Text, TextInput } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -6,8 +6,12 @@ import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 import { useUpdateJournal } from "src/utils/hooks/journals/useUpdateJournal";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import { AccountSelection } from "../account/AccountSelection";
+import { BillSelection } from "../bill/BillSelection";
+import { BudgetSelection } from "../budget/BudgetSelection";
+import { CategorySelection } from "../category/CategorySelection";
 import { useDisplayCurrency } from "../reusable/DisplayCurrency";
 import { InputCurrency } from "../reusable/InputCurrency";
+import { TagSelection } from "../tag/TagSelection";
 
 export type JournalRowColumns =
   | "description"
@@ -17,7 +21,11 @@ export type JournalRowColumns =
   | "amount"
   | "date"
   | "accountId"
-  | "otherJournals";
+  | "otherJournals"
+  | "categoryId"
+  | "tagId"
+  | "billId"
+  | "budgetId";
 
 export const displayJournalCell = (
   props: CellContext<JournalsMergedType, unknown>
@@ -131,6 +139,90 @@ export const JournalTableCell = ({
           onBlur={runMutate}
           size="xs"
           searchable
+        />
+      </form>
+    );
+  }
+
+  if (column === "categoryId") {
+    return (
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          runMutate();
+        }}
+      >
+        <CategorySelection
+          {...form.getInputProps(column)}
+          disabled={!isAdmin}
+          accountGroupingId={data.accountGroupingId}
+          onBlur={runMutate}
+          size="xs"
+          searchable
+          clearable
+        />
+      </form>
+    );
+  }
+
+  if (column === "tagId") {
+    return (
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          runMutate();
+        }}
+      >
+        <TagSelection
+          {...form.getInputProps(column)}
+          disabled={!isAdmin}
+          accountGroupingId={data.accountGroupingId}
+          onBlur={runMutate}
+          size="xs"
+          searchable
+          clearable
+        />
+      </form>
+    );
+  }
+
+  if (column === "billId") {
+    return (
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          runMutate();
+        }}
+      >
+        <BillSelection
+          {...form.getInputProps(column)}
+          disabled={!isAdmin}
+          accountGroupingId={data.accountGroupingId}
+          onBlur={runMutate}
+          size="xs"
+          searchable
+          clearable
+        />
+      </form>
+    );
+  }
+
+  if (column === "budgetId") {
+    return (
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          runMutate();
+        }}
+      >
+        <BudgetSelection
+          {...form.getInputProps(column)}
+          disabled={!isAdmin}
+          accountGroupingId={data.accountGroupingId}
+          onBlur={runMutate}
+          size="xs"
+          searchable
+          clearable
         />
       </form>
     );

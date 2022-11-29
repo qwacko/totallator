@@ -43,6 +43,33 @@ export const journalColumns = [
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
+  columnHelper.accessor("categoryId", {
+    header: displayHeader("Category", "date"),
+    cell: displayJournalCell,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
+
+  columnHelper.accessor("tagId", {
+    header: displayHeader("Tag", "date"),
+    cell: displayJournalCell,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
+
+  columnHelper.accessor("billId", {
+    header: displayHeader("Bill", "date"),
+    cell: displayJournalCell,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
+
+  columnHelper.accessor("budgetId", {
+    header: displayHeader("Budget", "date"),
+    cell: displayJournalCell,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
   columnHelper.accessor("createdAt", {
     header: displayHeader("Crated At", "date"),
     enableColumnFilter: true,

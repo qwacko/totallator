@@ -44,11 +44,11 @@ export const checkLinkedItems = async ({
   client,
 }: {
   accountGroupingId: string;
-  accountIds?: (string | undefined)[];
-  tagIds?: (string | undefined)[];
-  billIds?: (string | undefined)[];
-  budgetIds?: (string | undefined)[];
-  categoryIds?: (string | undefined)[];
+  accountIds?: (string | undefined | null)[];
+  tagIds?: (string | undefined | null)[];
+  billIds?: (string | undefined | null)[];
+  budgetIds?: (string | undefined | null)[];
+  categoryIds?: (string | undefined | null)[];
   client: PrismaClient | Prisma.TransactionClient;
 }) => {
   const useAccountIds = makeToSet(accountIds);
