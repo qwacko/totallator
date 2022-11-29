@@ -7,9 +7,6 @@ import { journalColumns } from "./journalColumns";
 export const JournalTable = () => {
   const data = useJournals();
 
-  console.log("Filters", data.tableState.filters);
-  console.log("Page Count", data.tableState.pageCount);
-
   const table = useReactTable({
     data: data.data.mergedData ? data.data.mergedData : [],
     getRowId: (data) => data.id,

@@ -5,7 +5,7 @@ export type currencyFormatTypes = "EUR" | "GBP" | "JPY" | "USD";
 
 export const currencyFormatValidation = z.enum(currencyFormats);
 
-const currencyFormatter = (currencyFormat: currencyFormatTypes) => {
+export const currencyFormatter = (currencyFormat: currencyFormatTypes) => {
   if (currencyFormat === "USD") {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -31,6 +31,40 @@ const currencyFormatter = (currencyFormat: currencyFormatTypes) => {
     style: "currency",
     currency: "USD",
   });
+};
+
+export const currencyUnformatter = (currencyFormat: currencyFormatTypes) => {
+  return (value: string) => {
+    if (currencyFormat === "USD") {
+      return (
+        Math.floor(parseFloat(value.replace("$", "").replace(",", "")) * 100) /
+        100
+      );
+    }
+    if (currencyFormat === "EUR") {
+      return (
+        Math.floor(
+          parseFloat(
+            value
+              .replace("€", "")
+              .replace(".", "")
+              .replace(",", ".")
+              .replace(" ", "")
+          ) * 100
+        ) / 100
+      );
+    }
+    if (currencyFormat === "GBP") {
+      return (
+        Math.floor(parseFloat(value.replace("£", "").replace(",", "")) * 100) /
+        100
+      );
+    }
+    if (currencyFormat === "JPY") {
+      return Math.floor(parseFloat(value.replace("¥", "").replace(",", "")));
+    }
+    return 0;
+  };
 };
 
 export const currencyFormatsSelectOptions: {

@@ -7,6 +7,24 @@ import { displayJournalCell } from "./JournalTableCell";
 const columnHelper = createColumnHelper<JournalsMergedType>();
 
 export const journalColumns = [
+  columnHelper.accessor("date", {
+    header: displayHeader("Date", "date"),
+    cell: displayJournalCell,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
+  columnHelper.accessor("accountId", {
+    header: displayHeader("Account", "date"),
+    cell: displayJournalCell,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
+  columnHelper.accessor("otherJournals", {
+    header: displayHeader("Payee(s)", "date"),
+    cell: displayJournalCell,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  }),
   columnHelper.accessor("description", {
     header: displayHeader("Description", "string"),
     cell: displayJournalCell,

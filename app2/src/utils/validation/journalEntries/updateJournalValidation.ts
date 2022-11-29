@@ -10,6 +10,17 @@ export const updateJournalInputData = z.object({
   //Account
   accountId: z.string().cuid().optional(),
 
+  //Other Journals
+  otherJournals: z
+    .array(
+      z.object({
+        id: z.string().cuid(),
+        amount: z.number().optional(),
+        accountId: z.string().cuid().optional(),
+      })
+    )
+    .optional(),
+
   //Linked Items
   billId: z.string().cuid().optional(),
   budgetId: z.string().cuid().optional(),

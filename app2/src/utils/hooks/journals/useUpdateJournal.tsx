@@ -49,10 +49,12 @@ export const useUpdateJournals = ({
 };
 
 export const useUpdateJournal = ({
+  id,
   keys,
   data,
   updateCompleted = false,
 }: {
+  id: string;
   keys: keysType[];
   data: JournalsMergedType;
   updateCompleted?: boolean;
@@ -70,8 +72,13 @@ export const useUpdateJournal = ({
     id,
     mutate,
     formDataToMutateData: (id, processedData) => ({
-      data: processedData,
-      filters: [{ id: { in: [data.id] } }],
+      data: {
+        ...processedData,
+        otherJournals: processedData.otherJournals
+          ? processedData.otherJournals.filter((item) => item.id !== id)
+          : undefined,
+      },
+      filters: [{ id: { in: [id] } }],
       maxUpdated: 1,
       updateCompleteJournals: updateCompleted,
     }),

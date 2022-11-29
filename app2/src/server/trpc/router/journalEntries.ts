@@ -12,6 +12,7 @@ import { TRPCError } from "@trpc/server";
 import { checkTransactions } from "./helpers/journals/checkTransactions";
 import { updateSingleJournal } from "./helpers/journals/updateSingleJournal";
 import { sortToOrderBy } from "./helpers/journals/sortToOrderBy";
+import { omit } from "lodash";
 
 export const journalsRouter = router({
   get: protectedProcedure
@@ -44,8 +45,8 @@ export const journalsRouter = router({
         const otherJournals = transaction["journalEntries"].map(
           (otherJournal) => ({
             id: otherJournal.id,
-            accountId: otherJournal.id,
-            this: otherJournal.id === journal.id,
+            accountId: otherJournal.accountId,
+            amount: otherJournal.amount,
           })
         );
 
@@ -104,6 +105,37 @@ export const journalsRouter = router({
         filters: input.filters,
         userId: user.id,
       });
+
+      //Handle Other items
+      const otherIds = input.data.otherJournals
+        ? input.data.otherJournals.map((item) => item.id)
+        : [];
+      const amountInOtherJournals = input.data.otherJournals
+        ? input.data.otherJournals
+            .map((item) => item.amount)
+            .reduce(
+              (prev, current) => (current !== undefined ? true : prev),
+              false
+            )
+        : false;
+      const amountInCoreJournal = input.data.amount !== undefined;
+      const updateOtherAmounts = amountInCoreJournal
+        ? !amountInOtherJournals
+        : amountInOtherJournals;
+
+      console.log("Other Amount Updates", {
+        amountInOtherJournals,
+        amountInCoreJournal,
+        updateOtherAmounts,
+      });
+      const { data: otherData } = await journalsWithStats({
+        prisma: ctx.prisma,
+        take: input.maxUpdated + 1,
+        skip: 0,
+        filters: [{ id: { in: otherIds } }],
+        userId: user.id,
+      });
+
       if (count > input.maxUpdated) {
         throw new TRPCError({
           message: `Max number updated journals (${input.maxUpdated} exceeded.`,
@@ -113,9 +145,34 @@ export const journalsRouter = router({
 
       await ctx.prisma.$transaction(async (prisma) => {
         await Promise.all(
-          data.map(async (journal) =>
-            updateSingleJournal({ prisma, journal, data: input.data })
-          )
+          data.map(async (journal) => {
+            await updateSingleJournal({
+              prisma,
+              journal,
+              data: input.data,
+              dontUpdateOtherAmounts: !updateOtherAmounts,
+            });
+
+            //Update the referenced other journal information
+            await Promise.all(
+              otherData.map(async (journal) => {
+                if (input.data.otherJournals) {
+                  const targetData = input.data.otherJournals.find(
+                    (item) => item.id === journal.id
+                  );
+                  if (targetData) {
+                    const otherJournalData = omit(targetData, ["id"]);
+                    await updateSingleJournal({
+                      prisma,
+                      journal,
+                      data: otherJournalData,
+                      dontUpdateOtherAmounts: !updateOtherAmounts,
+                    });
+                  }
+                }
+              })
+            );
+          })
         );
 
         //Check Transactions

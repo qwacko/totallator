@@ -38,7 +38,7 @@ export const buildMergedData = ({
     account: accounts
       ? accounts.find((item) => item.id === journal.accountId)
       : undefined,
-    accountGroupingId: accountGroupings
+    accountGrouping: accountGroupings
       ? accountGroupings.find((item) => item.id === journal.accountGroupingId)
       : undefined,
   }));

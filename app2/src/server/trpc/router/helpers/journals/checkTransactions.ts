@@ -11,7 +11,7 @@ export const checkTransactions = async ({
 }) => {
   const transactions = await prisma.transaction.findMany({
     where: { id: { in: transactionIds } },
-    include: { journalEntries: true },
+    include: { journalEntries: { include: { account: true } } },
   });
 
   transactions.map((transaction) => {
@@ -39,6 +39,22 @@ export const checkTransactions = async ({
       throw new TRPCError({
         message: "Transaction has too few journals",
         code: "BAD_REQUEST",
+      });
+    }
+
+    //Check at least one account is an asset or liability
+    const hasAssetLiability = transaction.journalEntries.reduce(
+      (prev, current) =>
+        current.account.type === "Asset" || current.account.type === "Liability"
+          ? true
+          : prev,
+      false
+    );
+    if (!hasAssetLiability) {
+      throw new TRPCError({
+        message:
+          "Transaction must have at least one account which is an asset or liability",
+        code: "INTERNAL_SERVER_ERROR",
       });
     }
 

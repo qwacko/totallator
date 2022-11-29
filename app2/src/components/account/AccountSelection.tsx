@@ -4,9 +4,11 @@ import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
 
 export const AccountSelection = ({
   accountGroupingId,
+  showAccountGroup = false,
   ...props
-}: SelectProps & {
+}: Omit<SelectProps, "data"> & {
   accountGroupingId: string;
+  showAccountGroup?: boolean;
 }) => {
   const accounts = useAccounts();
   const filteredAccounts = useMemo(
@@ -15,12 +17,17 @@ export const AccountSelection = ({
         ? accounts.data
             .filter((item) => item.accountGroupingId === accountGroupingId)
             .map((item) => ({
-              label: item.title,
-              group: item.accountGroupCombined || undefined,
+              label: showAccountGroup
+                ? item.accountTitleCombined || item.title
+                : item.title,
+              group:
+                item.type === "Asset" || item.type === "Liability"
+                  ? item.accountGroupCombined || undefined
+                  : item.type,
               value: item.id,
             }))
         : [],
-    [accounts.data, accountGroupingId]
+    [accounts.data, accountGroupingId, showAccountGroup]
   );
 
   return <Select {...props} data={filteredAccounts} />;
