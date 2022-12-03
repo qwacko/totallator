@@ -10,30 +10,30 @@ const columnHelper = createColumnHelper<BillsReturnType>();
 export const billColumns = [
   columnHelper.display({
     id: "commands",
-    header: displayHeader("Commands"),
+    header: displayHeader({ title: "Commands" }),
     cell: displayBillCell,
     enableColumnFilter: false,
   }),
   columnHelper.accessor("title", {
-    header: displayHeader("Title", "string"),
+    header: displayHeader({ title: "Title", filterType: "string" }),
     cell: displayBillCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("status", {
-    header: displayHeader("Status", "status"),
+    header: displayHeader({ title: "Status", filterType: "status" }),
     cell: displayBillCell,
     enableColumnFilter: true,
     filterFn: statusFilter("status"),
   }),
   columnHelper.accessor("createdAt", {
-    header: displayHeader("Crated At", "date"),
+    header: displayHeader({ title: "Created At", filterType: "date" }),
     enableColumnFilter: true,
     filterFn: dateFilter("createdAt"),
     cell: displayBillCell,
   }),
   columnHelper.accessor("updatedAt", {
-    header: displayHeader("Updated At", "date"),
+    header: displayHeader({ title: "Updated At", filterType: "date" }),
     enableColumnFilter: true,
     filterFn: dateFilter("updatedAt"),
     cell: displayBillCell,
