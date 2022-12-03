@@ -30,6 +30,20 @@ const numberFilter = z
   .object({ gte: z.number().optional(), lte: z.number().optional() })
   .optional();
 
+export const transactionFilter = z
+  .object({
+    journalEntries: z
+      .object({
+        some: z
+          .object({
+            accountId: idFilter,
+          })
+          .optional(),
+      })
+      .optional(),
+  })
+  .optional();
+
 export const journalFilter = z.object({
   //Core Data
   id: idFilter,
@@ -51,6 +65,7 @@ export const journalFilter = z.object({
   accountId: idFilter,
   accountGroupingId: idFilter,
   primaryJournalId: idFilter,
+  transaction: transactionFilter,
 
   account: z
     .object({

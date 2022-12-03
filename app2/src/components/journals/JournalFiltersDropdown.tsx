@@ -8,11 +8,16 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconFilter } from "@tabler/icons";
-import { get, set } from "lodash";
+import { cloneDeep, get, set } from "lodash";
 import { useState } from "react";
+import { defaultJournalFilters } from "src/pages/journals";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 import { AccountMultiSelection } from "../account/AccountSelection";
 import { AccountGroupingMultiSelection } from "../accountGrouping/AccountGroupingSelection";
+import { BillMultiSelection } from "../bill/BillSelection";
+import { BudgetMultiSelection } from "../budget/BudgetSelection";
+import { CategoryMultiSelection } from "../category/CategorySelection";
+import { TagMultiSelection } from "../tag/TagSelection";
 
 type FiltersStateType = {
   filters: JournalFilterValidationInputType;
@@ -23,10 +28,11 @@ export const JournalFilterModal = ({
   filters: externalFilters,
   setFilters: setExternalFilters,
 }: FiltersStateType) => {
-  const { filters, opened, close, open, updateFilter } = useJournalFilters({
-    filters: externalFilters,
-    setFilters: setExternalFilters,
-  });
+  const { filters, opened, close, open, updateFilter, resetFilter } =
+    useJournalFilters({
+      filters: externalFilters,
+      setFilters: setExternalFilters,
+    });
 
   return (
     <>
@@ -98,6 +104,68 @@ export const JournalFilterModal = ({
             size="xs"
             label="Accounts"
           />
+          <AccountMultiSelection
+            value={get(filters, "transaction.journalEntries.some.accountId.in")}
+            onChange={(e) =>
+              updateFilter(
+                "transaction.journalEntries.some.accountId.in",
+                e.length === 0 ? undefined : e
+              )
+            }
+            searchable
+            clearable
+            size="xs"
+            label="Payees"
+          />
+          <BillMultiSelection
+            value={get(filters, "billId.in")}
+            onChange={(e) =>
+              updateFilter("billId.in", e.length === 0 ? undefined : e)
+            }
+            searchable
+            clearable
+            size="xs"
+            label="Bills"
+          />
+
+          <BudgetMultiSelection
+            value={get(filters, "budgetId.in")}
+            onChange={(e) =>
+              updateFilter("budgetId.in", e.length === 0 ? undefined : e)
+            }
+            searchable
+            clearable
+            size="xs"
+            label="Budgets"
+          />
+          <CategoryMultiSelection
+            value={get(filters, "categoryId.in")}
+            onChange={(e) =>
+              updateFilter("categoryId.in", e.length === 0 ? undefined : e)
+            }
+            searchable
+            clearable
+            size="xs"
+            label="Categories"
+          />
+          <TagMultiSelection
+            value={get(filters, "tagId.in")}
+            onChange={(e) =>
+              updateFilter("tagId.in", e.length === 0 ? undefined : e)
+            }
+            searchable
+            clearable
+            size="xs"
+            label="Tags"
+          />
+          <Group>
+            <Button variant="outline" onClick={resetFilter}>
+              Reset
+            </Button>
+            <Button variant="outline" onClick={close}>
+              Apply
+            </Button>
+          </Group>
         </Stack>
       </Modal>
 
@@ -133,5 +201,17 @@ const useJournalFilters = ({
     setFilters(newFilter);
   };
 
-  return { filters, setFilters, open, close, opened, updateFilter };
+  const resetFilter = () => {
+    setFilters(cloneDeep(defaultJournalFilters));
+  };
+
+  return {
+    filters,
+    setFilters,
+    open,
+    close,
+    opened,
+    updateFilter,
+    resetFilter,
+  };
 };

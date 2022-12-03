@@ -1,19 +1,27 @@
-import { Select, type SelectProps } from "@mantine/core";
+import {
+  MultiSelect,
+  type MultiSelectProps,
+  Select,
+  type SelectProps,
+} from "@mantine/core";
 import { useMemo } from "react";
 import { useBudgets } from "src/utils/hooks/budgets/useBudgets";
 
-export const BudgetSelection = ({
+const useBudgetsDropdown = ({
   accountGroupingId,
-  ...props
-}: SelectProps & {
-  accountGroupingId: string;
+}: {
+  accountGroupingId?: string;
 }) => {
   const budgets = useBudgets();
   const filteredBudgets = useMemo(
     () =>
       budgets.data
         ? budgets.data
-            .filter((item) => item.accountGroupingId === accountGroupingId)
+            .filter((item) =>
+              accountGroupingId
+                ? item.accountGroupingId === accountGroupingId
+                : true
+            )
             .map((item) => ({
               label: item.title,
               value: item.id,
@@ -22,5 +30,27 @@ export const BudgetSelection = ({
     [budgets.data, accountGroupingId]
   );
 
-  return <Select {...props} data={filteredBudgets} />;
+  return filteredBudgets;
+};
+
+export const BudgetSelection = ({
+  accountGroupingId,
+  ...props
+}: Omit<SelectProps, "data"> & {
+  accountGroupingId?: string;
+}) => {
+  const filteredBills = useBudgetsDropdown({ accountGroupingId });
+
+  return <Select {...props} data={filteredBills} />;
+};
+
+export const BudgetMultiSelection = ({
+  accountGroupingId,
+  ...props
+}: Omit<MultiSelectProps, "data"> & {
+  accountGroupingId?: string;
+}) => {
+  const filteredBills = useBudgetsDropdown({ accountGroupingId });
+
+  return <MultiSelect {...props} data={filteredBills} />;
 };

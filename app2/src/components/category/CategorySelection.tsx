@@ -1,13 +1,17 @@
-import { Select, type SelectProps } from "@mantine/core";
+import {
+  MultiSelect,
+  type MultiSelectProps,
+  Select,
+  type SelectProps,
+} from "@mantine/core";
 import { useMemo } from "react";
 import { useCategories } from "src/utils/hooks/categories/useCategories";
 
-export const CategorySelection = ({
+const useCategoryDropdown = ({
   accountGroupingId,
-  showCombined = true,
-  ...props
-}: SelectProps & {
-  accountGroupingId: string;
+  showCombined,
+}: {
+  accountGroupingId?: string;
   showCombined: boolean;
 }) => {
   const categories = useCategories();
@@ -15,7 +19,11 @@ export const CategorySelection = ({
     () =>
       categories.data
         ? categories.data
-            .filter((item) => item.accountGroupingId === accountGroupingId)
+            .filter((item) =>
+              accountGroupingId
+                ? item.accountGroupingId === accountGroupingId
+                : true
+            )
             .map((item) =>
               showCombined
                 ? {
@@ -27,6 +35,35 @@ export const CategorySelection = ({
         : [],
     [categories.data, accountGroupingId, showCombined]
   );
+  return filteredCategories;
+};
 
+export const CategorySelection = ({
+  accountGroupingId,
+  showCombined = true,
+  ...props
+}: Omit<SelectProps, "data"> & {
+  accountGroupingId?: string;
+  showCombined?: boolean;
+}) => {
+  const filteredCategories = useCategoryDropdown({
+    accountGroupingId,
+    showCombined,
+  });
   return <Select {...props} data={filteredCategories} />;
+};
+
+export const CategoryMultiSelection = ({
+  accountGroupingId,
+  showCombined = true,
+  ...props
+}: Omit<MultiSelectProps, "data"> & {
+  accountGroupingId?: string;
+  showCombined?: boolean;
+}) => {
+  const filteredCategories = useCategoryDropdown({
+    accountGroupingId,
+    showCombined,
+  });
+  return <MultiSelect {...props} data={filteredCategories} />;
 };
