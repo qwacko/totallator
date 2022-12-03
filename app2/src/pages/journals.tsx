@@ -1,7 +1,7 @@
 import { Center, Group, Stack, Title } from "@mantine/core";
 import { useState } from "react";
 import { CreateTransactionSimplePopup } from "src/components/journals/CreateTransactionSimple";
-import { FilterMenuModal } from "src/components/journals/JournalFiltersDropdown";
+import { JournalFilterModal } from "src/components/journals/JournalFiltersDropdown";
 import { JournalTable } from "src/components/journals/JournalTable";
 import { AppLayout } from "src/components/layout/App";
 import { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
@@ -18,7 +18,7 @@ const JournalsPage = () => {
           <Group>
             <Title>Journals</Title>
             <CreateTransactionSimplePopup />
-            <FilterMenuModal filters={filters} setFilters={setFilters} />
+            <JournalFilterModal filters={filters} setFilters={setFilters} />
           </Group>
         </Center>
         <JournalTable filters={[filters]} />

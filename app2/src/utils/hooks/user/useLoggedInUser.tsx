@@ -1,6 +1,7 @@
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
+import { type AppRouterOutputs } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
   dateFormatter,
@@ -8,18 +9,25 @@ import {
 } from "src/utils/validation/user/dateFormats";
 import { useUpdateUser } from "./useUpdateUser";
 
-export const useLoggedInUser = () => {
-  const router = useRouter();
-  const { data, isLoading, refetch } = trpc.user.get.useQuery(undefined, {
-    networkMode: "online",
-    refetchOnWindowFocus: false,
-  });
-  const { updateUser, isUpdatingUser } = useUpdateUser();
+type UserType = AppRouterOutputs["user"]["get"];
+
+export const UserContext = React.createContext<UserType | undefined>(undefined);
+
+export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+  const { data: user, refetch } = trpc.user.get.useQuery();
   const { status } = useSession();
 
   useEffect(() => {
     refetch();
   }, [status, refetch]);
+
+  return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
+};
+
+export const useLoggedInUser = () => {
+  const router = useRouter();
+  const data = useContext(UserContext);
+  const { updateUser, isUpdatingUser } = useUpdateUser();
 
   const userSignOut = () => {
     signOut();
@@ -35,11 +43,10 @@ export const useLoggedInUser = () => {
     : "yyyyMMdd";
 
   return {
-    status,
     user: data,
     dateFormat,
     dayjsFormat,
-    isLoading,
+    isLoading: data === undefined,
     updateUser,
     isUpdatingUser,
     signOut: userSignOut,

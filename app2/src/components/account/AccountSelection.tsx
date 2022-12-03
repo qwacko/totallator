@@ -1,6 +1,6 @@
 import {
   MultiSelect,
-  MultiSelectProps,
+  type MultiSelectProps,
   Select,
   type SelectProps,
 } from "@mantine/core";
@@ -48,7 +48,6 @@ export const AccountSelection = ({
 }: Omit<SelectProps, "data"> & {
   accountGroupingId?: string;
   showAccountGroup?: boolean;
-  multiSelect?: boolean;
 }) => {
   const { filteredAccounts } = useAccountsDropdown({
     accountGroupingId,
@@ -65,7 +64,6 @@ export const AccountMultiSelection = ({
 }: Omit<MultiSelectProps, "data"> & {
   accountGroupingId?: string;
   showAccountGroup?: boolean;
-  multiSelect?: boolean;
 }) => {
   const { filteredAccounts } = useAccountsDropdown({
     accountGroupingId,

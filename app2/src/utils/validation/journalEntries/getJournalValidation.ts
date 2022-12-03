@@ -1,7 +1,9 @@
 import { z } from "zod";
 import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidation";
 
-const idFilter = z.object({ in: z.array(z.string().cuid()) }).optional();
+const idFilter = z
+  .object({ in: z.array(z.string().cuid()).optional() })
+  .optional();
 
 const stringFilter = z
   .object({

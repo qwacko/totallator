@@ -2,47 +2,31 @@ import {
   Button,
   Checkbox,
   Group,
-  Indicator,
-  Menu,
   Modal,
   MultiSelect,
   Stack,
-  Text,
-  Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import {
-  IconArrowsLeftRight,
-  IconCheck,
-  IconFilter,
-  IconMessageCircle,
-  IconPhoto,
-  IconSearch,
-  IconSettings,
-  IconTrash,
-} from "@tabler/icons";
-import { equal } from "assert";
-import { filter, get, isEqual, merge, set } from "lodash";
-import { useEffect, useState } from "react";
+import { IconFilter } from "@tabler/icons";
+import { get, set } from "lodash";
+import { useState } from "react";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
-import {
-  AccountMultiSelection,
-  AccountSelection,
-} from "../account/AccountSelection";
-import { accountTypeFilter } from "../table/filters/accountTypeFilter";
+import { AccountMultiSelection } from "../account/AccountSelection";
+import { AccountGroupingMultiSelection } from "../accountGrouping/AccountGroupingSelection";
 
 type FiltersStateType = {
   filters: JournalFilterValidationInputType;
   setFilters: (data: JournalFilterValidationInputType) => void;
 };
 
-export const FilterMenuModal = ({
+export const JournalFilterModal = ({
   filters: externalFilters,
   setFilters: setExternalFilters,
 }: FiltersStateType) => {
-  const { filters, setFilters, opened, close, open, updateFilter } = useFilters(
-    { filters: externalFilters, setFilters: setExternalFilters }
-  );
+  const { filters, opened, close, open, updateFilter } = useJournalFilters({
+    filters: externalFilters,
+    setFilters: setExternalFilters,
+  });
 
   return (
     <>
@@ -53,6 +37,19 @@ export const FilterMenuModal = ({
         title="Journal Filters"
       >
         <Stack>
+          <AccountGroupingMultiSelection
+            value={get(filters, "accountGroupingId.in")}
+            onChange={(e) =>
+              updateFilter(
+                "accountGroupingId.in",
+                e.length === 0 ? undefined : e
+              )
+            }
+            searchable
+            clearable
+            size="xs"
+            label="Account Grouping"
+          />
           <MultiSelect
             size="xs"
             clearable
@@ -69,11 +66,12 @@ export const FilterMenuModal = ({
               { key: "isNetWorth", title: "Net Worth" },
             ].map((item) => (
               <Checkbox
+                key={item.key}
                 checked={get(filters, `account.${item.key}.equals`) || false}
                 indeterminate={
                   get(filters, `account.${item.key}.equals`) === undefined
                 }
-                onChange={(e) => {
+                onChange={() => {
                   const currentValue = get(
                     filters,
                     `account.${item.key}.equals`
@@ -98,6 +96,7 @@ export const FilterMenuModal = ({
             searchable
             clearable
             size="xs"
+            label="Accounts"
           />
         </Stack>
       </Modal>
@@ -109,7 +108,7 @@ export const FilterMenuModal = ({
   );
 };
 
-const useFilters = ({
+const useJournalFilters = ({
   filters: externalFilters,
   setFilters: setExternalFilters,
 }: FiltersStateType) => {
@@ -130,8 +129,6 @@ const useFilters = ({
   const updateFilter = (key: string, value: unknown) => {
     const newFilter = { ...filters };
     set(newFilter, key, value);
-    console.log("Updating Filter", key, value);
-    console.log("New Filter", newFilter);
 
     setFilters(newFilter);
   };

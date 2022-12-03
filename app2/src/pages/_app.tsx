@@ -8,6 +8,7 @@ import { NotificationsProvider } from "@mantine/notifications";
 import { trpc } from "../utils/trpc";
 
 import { useState } from "react";
+import { UserProvider } from "src/utils/hooks/user/useLoggedInUser";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -21,23 +22,25 @@ const MyApp: AppType<{ session: Session | null }> = ({
 
   return (
     <SessionProvider session={session}>
-      <ColorSchemeProvider
-        colorScheme={colorScheme}
-        toggleColorScheme={toggleColorScheme}
-      >
-        <MantineProvider
-          withGlobalStyles
-          withNormalizeCSS
-          theme={{
-            /** Put your mantine theme override here */
-            colorScheme,
-          }}
+      <UserProvider>
+        <ColorSchemeProvider
+          colorScheme={colorScheme}
+          toggleColorScheme={toggleColorScheme}
         >
-          <NotificationsProvider>
-            <Component {...pageProps} />
-          </NotificationsProvider>
-        </MantineProvider>
-      </ColorSchemeProvider>
+          <MantineProvider
+            withGlobalStyles
+            withNormalizeCSS
+            theme={{
+              /** Put your mantine theme override here */
+              colorScheme,
+            }}
+          >
+            <NotificationsProvider>
+              <Component {...pageProps} />
+            </NotificationsProvider>
+          </MantineProvider>
+        </ColorSchemeProvider>
+      </UserProvider>
     </SessionProvider>
   );
 };
