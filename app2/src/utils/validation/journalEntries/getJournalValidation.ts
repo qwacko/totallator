@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidation";
 
 const idFilter = z.object({ in: z.array(z.string().cuid()) }).optional();
 
@@ -49,6 +50,17 @@ export const journalFilter = z.object({
   accountGroupingId: idFilter,
   primaryJournalId: idFilter,
 
+  account: z
+    .object({
+      isCash: z.object({ equals: z.boolean().optional() }).optional(),
+      isNetWorth: z.object({ equals: z.boolean().optional() }).optional(),
+      type: z
+        .object({ in: z.array(PrismaAccountTypeEnumValidation).optional() })
+        .optional(),
+      id: z.object({ in: z.array(z.string().cuid()).optional() }).optional(),
+    })
+    .optional(),
+
   //Dates
   updatedAt: dateFilter,
   createdAt: dateFilter,
@@ -60,7 +72,18 @@ export type JournalFilterValidation = z.infer<typeof journalFilter>;
 const sort = z
   .array(
     z.object({
-      key: z.enum(["date", "description", "updatedAt", "createdAt", "amount"]),
+      key: z.enum([
+        "date",
+        "description",
+        "updatedAt",
+        "createdAt",
+        "amount",
+        "account",
+        "category",
+        "tag",
+        "bill",
+        "budget",
+      ]),
       direction: z.enum(["asc", "desc"]),
     })
   )

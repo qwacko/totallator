@@ -20,16 +20,22 @@ export const SortButtonReactTable = ({
   const thisSort = sort.find((item) => item.id === targetKey);
 
   const addSort = () => {
-    setSort(() => [{ id: targetKey, desc: false }]);
+    console.log("Adding Sort", targetKey);
+    console.log("Current Sort", sort);
+    setSort([{ id: targetKey, desc: false }]);
   };
 
   const removeSort = () => {
-    setSort((data) => data.filter((item) => item.id !== targetKey));
+    console.log("Removing Sort", targetKey);
+    console.log("Current Sort", sort);
+    setSort(sort.filter((item) => item.id !== targetKey));
   };
 
   const updateSort = (newDir: boolean) => {
-    setSort((data) =>
-      data.map((item) =>
+    console.log("Updating Sort", targetKey);
+    console.log("Current Sort", sort);
+    setSort(
+      sort.map((item) =>
         item.id === targetKey ? { ...item, desc: newDir } : item
       )
     );

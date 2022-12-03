@@ -1,21 +1,29 @@
-import { Select, type SelectProps } from "@mantine/core";
+import {
+  MultiSelect,
+  MultiSelectProps,
+  Select,
+  type SelectProps,
+} from "@mantine/core";
 import { useMemo } from "react";
 import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
 
-export const AccountSelection = ({
+export const useAccountsDropdown = ({
   accountGroupingId,
-  showAccountGroup = false,
-  ...props
-}: Omit<SelectProps, "data"> & {
-  accountGroupingId: string;
-  showAccountGroup?: boolean;
+  showAccountGroup,
+}: {
+  accountGroupingId?: string;
+  showAccountGroup: boolean;
 }) => {
   const accounts = useAccounts();
   const filteredAccounts = useMemo(
     () =>
       accounts.data
         ? accounts.data
-            .filter((item) => item.accountGroupingId === accountGroupingId)
+            .filter((item) =>
+              accountGroupingId
+                ? item.accountGroupingId === accountGroupingId
+                : true
+            )
             .map((item) => ({
               label: showAccountGroup
                 ? item.accountTitleCombined || item.title
@@ -30,5 +38,39 @@ export const AccountSelection = ({
     [accounts.data, accountGroupingId, showAccountGroup]
   );
 
+  return { accounts, filteredAccounts };
+};
+
+export const AccountSelection = ({
+  accountGroupingId,
+  showAccountGroup = false,
+  ...props
+}: Omit<SelectProps, "data"> & {
+  accountGroupingId?: string;
+  showAccountGroup?: boolean;
+  multiSelect?: boolean;
+}) => {
+  const { filteredAccounts } = useAccountsDropdown({
+    accountGroupingId,
+    showAccountGroup,
+  });
+
   return <Select {...props} data={filteredAccounts} />;
+};
+
+export const AccountMultiSelection = ({
+  accountGroupingId,
+  showAccountGroup = false,
+  ...props
+}: Omit<MultiSelectProps, "data"> & {
+  accountGroupingId?: string;
+  showAccountGroup?: boolean;
+  multiSelect?: boolean;
+}) => {
+  const { filteredAccounts } = useAccountsDropdown({
+    accountGroupingId,
+    showAccountGroup,
+  });
+
+  return <MultiSelect {...props} data={filteredAccounts} />;
 };

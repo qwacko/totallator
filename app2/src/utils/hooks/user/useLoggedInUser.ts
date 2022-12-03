@@ -10,7 +10,10 @@ import { useUpdateUser } from "./useUpdateUser";
 
 export const useLoggedInUser = () => {
   const router = useRouter();
-  const { data, isLoading, refetch } = trpc.user.get.useQuery();
+  const { data, isLoading, refetch } = trpc.user.get.useQuery(undefined, {
+    networkMode: "online",
+    refetchOnWindowFocus: false,
+  });
   const { updateUser, isUpdatingUser } = useUpdateUser();
   const { status } = useSession();
 

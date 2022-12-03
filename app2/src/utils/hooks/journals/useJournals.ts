@@ -17,9 +17,18 @@ import {
   type MergedDataType,
   buildMergedData,
 } from "./helpers/buildMergedData";
+import { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 
-export const useJournals = () => {
-  const [sorting, setSorting] = useState<SortingState>([]);
+export const useJournals = ({
+  externalFilters,
+}: {
+  externalFilters: JournalFilterValidationInputType[];
+}) => {
+  const [sorting, setSorting2] = useState<SortingState>([]);
+  const setSorting = (data: SortingState) => {
+    console.log("Updating useJournal Sorting", data);
+    setSorting2(data);
+  };
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
@@ -46,7 +55,9 @@ export const useJournals = () => {
         pageNo: pagination.pageIndex,
         pageSize: pagination.pageSize,
       },
-      filters: filtersToUse,
+      filters: filtersToUse
+        ? [...filtersToUse, ...externalFilters]
+        : externalFilters,
     },
     {
       onSuccess: (data) => {

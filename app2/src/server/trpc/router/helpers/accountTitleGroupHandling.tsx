@@ -66,10 +66,6 @@ export const updateAccountGroupTitle = <
     useGroup3 = accountGroup3 === null ? null : accountGroup3 || useGroup3;
   }
 
-  console.log("useGroup", useGroup);
-  console.log("useGroup2", useGroup2);
-  console.log("useGroup3", useGroup3);
-
   const useTitle = title || existing.title;
 
   const useAccountGroupCombined = [useGroup, useGroup2, useGroup3]

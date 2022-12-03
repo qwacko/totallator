@@ -10,7 +10,9 @@ export const journalsWithStats = async ({
   userId,
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
-  orderBy?: Prisma.JournalEntryOrderByWithAggregationInput[] | undefined;
+  orderBy?:
+    | Prisma.Enumerable<Prisma.JournalEntryOrderByWithRelationAndSearchRelevanceInput>
+    | undefined;
   take: number;
   skip: number;
   filters: JournalFilterValidation[] | undefined;
@@ -32,8 +34,6 @@ export const journalsWithStats = async ({
     orderBy,
   });
 
-  console.log("Skip, Take", { skip, take });
-
   const count = allJournals.length;
   const startingTotal = allJournals
     .slice(skip + take)
@@ -47,7 +47,6 @@ export const journalsWithStats = async ({
     return { ...item, total: sinceStart + startingTotal };
   });
 
-  console.log("Count", count);
   return {
     count,
     data: selected,

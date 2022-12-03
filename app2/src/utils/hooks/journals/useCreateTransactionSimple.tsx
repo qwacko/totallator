@@ -31,12 +31,12 @@ export function useCreateTransactionSimple({
       onMutate && onMutate();
     },
     onError: (e) => {
-      utils.bills.invalidate();
+      utils.journals.invalidate();
       notifications.onError(e);
     },
     onSuccess: () => {
       form.reset();
-      utils.bills.invalidate();
+      utils.journals.invalidate();
       notifications.onSuccess();
     },
   });

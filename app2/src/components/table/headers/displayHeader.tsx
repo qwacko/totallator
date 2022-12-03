@@ -4,10 +4,15 @@ import type { FilterTypes } from "./TableFilterInput";
 import type { AllReturnTypes } from "src/server/trpc/router/_app";
 import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 
-export const displayHeader = <T extends AllReturnTypes | JournalsMergedType>(
-  title: string,
-  filterType?: FilterTypes
-) => {
+export const displayHeader = <T extends AllReturnTypes | JournalsMergedType>({
+  title,
+  filterType,
+  sortKey,
+}: {
+  title: string;
+  filterType?: FilterTypes;
+  sortKey?: string;
+}) => {
   const Header = (props: HeaderContext<T, unknown>) => {
     return (
       <TableHeader
@@ -15,6 +20,7 @@ export const displayHeader = <T extends AllReturnTypes | JournalsMergedType>(
         header={props.header}
         title={title}
         filterType={filterType}
+        sortKey={sortKey || props.header.column.id}
       />
     );
   };

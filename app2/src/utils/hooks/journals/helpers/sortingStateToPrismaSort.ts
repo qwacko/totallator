@@ -17,7 +17,12 @@ export const sortingStateToPrismaSort = (
         item.id === "date" ||
         item.id === "description" ||
         item.id === "createdAt" ||
-        item.id === "amount"
+        item.id === "amount" ||
+        item.id === "account" ||
+        item.id === "category" ||
+        item.id === "tag" ||
+        item.id === "bill" ||
+        item.id === "budget"
       ) {
         return { key: item.id, direction: item.desc ? "desc" : "asc" };
       }

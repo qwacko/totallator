@@ -1,11 +1,16 @@
 import { Group, Loader, Text } from "@mantine/core";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useJournals } from "src/utils/hooks/journals/useJournals";
+import { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 import { TableDisplay } from "../table/TableDisplay";
 import { journalColumns } from "./journalColumns";
 
-export const JournalTable = () => {
-  const data = useJournals();
+export const JournalTable = ({
+  filters,
+}: {
+  filters: JournalFilterValidationInputType[];
+}) => {
+  const data = useJournals({ externalFilters: filters });
 
   const table = useReactTable({
     data: data.data.mergedData ? data.data.mergedData : [],
