@@ -9,14 +9,16 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { IconFilter } from "@tabler/icons";
 import { cloneDeep, get, set } from "lodash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { defaultJournalFilters } from "src/pages/journals";
+import { trpc } from "src/utils/trpc";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 import { AccountMultiSelection } from "../account/AccountSelection";
 import { AccountGroupingMultiSelection } from "../accountGrouping/AccountGroupingSelection";
 import { BillMultiSelection } from "../bill/BillSelection";
 import { BudgetMultiSelection } from "../budget/BudgetSelection";
 import { CategoryMultiSelection } from "../category/CategorySelection";
+import { DateRangeInput } from "../reusable/DateRangeInput";
 import { TagMultiSelection } from "../tag/TagSelection";
 
 type FiltersStateType = {
@@ -34,6 +36,12 @@ export const JournalFilterModal = ({
       setFilters: setExternalFilters,
     });
 
+  console.log("Date GTE", get(filters, "date.gte"));
+  console.log("Date LTE", get(filters, "date.lte"));
+
+  const startDate = (get(filters, "date.gte") as Date | undefined) || null;
+  const endDate = (get(filters, "date.lte") as Date | undefined) || null;
+
   return (
     <>
       <Modal
@@ -43,6 +51,22 @@ export const JournalFilterModal = ({
         title="Journal Filters"
       >
         <Stack>
+          <DateRangeInput
+            size="xs"
+            label="Date Range"
+            value={[startDate, endDate]}
+            onChange={(e) => {
+              if (e) {
+                console.log("New Date Range", e);
+                updateFilter("date.gte", e[0] || undefined);
+                updateFilter("date.lte", e[1] || undefined);
+              } else {
+                updateFilter("date.gte", undefined);
+                updateFilter("date.lte", undefined);
+              }
+            }}
+            clearable
+          />
           <AccountGroupingMultiSelection
             value={get(filters, "accountGroupingId.in")}
             onChange={(e) =>
@@ -183,6 +207,15 @@ const useJournalFilters = ({
   const [opened, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [filters, setFilters] =
     useState<JournalFilterValidationInputType>(externalFilters);
+
+  const utils = trpc.useContext();
+  const prefetch = (filters: JournalFilterValidationInputType) => {
+    console.log("Prefetch", filters);
+  };
+
+  useEffect(() => {
+    prefetch(filters);
+  }, [prefetch, filters]);
 
   const open = () => {
     setFilters(externalFilters);

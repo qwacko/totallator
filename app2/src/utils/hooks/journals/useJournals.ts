@@ -1,5 +1,6 @@
 import type {
   ColumnFiltersState,
+  OnChangeFn,
   PaginationState,
   SortingState,
 } from "@tanstack/react-table";
@@ -25,8 +26,7 @@ export const useJournals = ({
   externalFilters: JournalFilterValidationInputType[];
 }) => {
   const [sorting, setSorting2] = useState<SortingState>([]);
-  const setSorting = (data: SortingState) => {
-    console.log("Updating useJournal Sorting", data);
+  const setSorting: OnChangeFn<SortingState> = (data) => {
     setSorting2(data);
   };
   const [pagination, setPagination] = useState<PaginationState>({
