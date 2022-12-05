@@ -96,12 +96,17 @@ export const JournalTableCell = ({
           onBlur={runMutate}
           disabled={!isAdmin}
           size="xs"
+          styles={{ input: { textAlign: "right", paddingRight: 25 } }}
         />
       </form>
     );
   }
   if (column === "total") {
-    return <Text size="xs">{formatter(data[column])}</Text>;
+    return (
+      <Text size="xs" align="end">
+        {formatter(data[column])}
+      </Text>
+    );
   }
 
   if (column === "date") {

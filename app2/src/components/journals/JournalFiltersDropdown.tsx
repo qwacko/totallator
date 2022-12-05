@@ -6,12 +6,8 @@ import {
   MultiSelect,
   Stack,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { IconFilter } from "@tabler/icons";
-import { cloneDeep, get, set } from "lodash";
-import { useEffect, useState } from "react";
-import { defaultJournalFilters } from "src/pages/journals";
-import { trpc } from "src/utils/trpc";
+import { get } from "lodash";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 import { AccountMultiSelection } from "../account/AccountSelection";
 import { AccountGroupingMultiSelection } from "../accountGrouping/AccountGroupingSelection";
@@ -20,8 +16,9 @@ import { BudgetMultiSelection } from "../budget/BudgetSelection";
 import { CategoryMultiSelection } from "../category/CategorySelection";
 import { DateRangeInput } from "../reusable/DateRangeInput";
 import { TagMultiSelection } from "../tag/TagSelection";
+import { useJournalFilters } from "src/utils/hooks/journals/useJournalFilters";
 
-type FiltersStateType = {
+export type FiltersStateType = {
   filters: JournalFilterValidationInputType;
   setFilters: (data: JournalFilterValidationInputType) => void;
 };
@@ -35,9 +32,6 @@ export const JournalFilterModal = ({
       filters: externalFilters,
       setFilters: setExternalFilters,
     });
-
-  console.log("Date GTE", get(filters, "date.gte"));
-  console.log("Date LTE", get(filters, "date.lte"));
 
   const startDate = (get(filters, "date.gte") as Date | undefined) || null;
   const endDate = (get(filters, "date.lte") as Date | undefined) || null;
@@ -57,7 +51,6 @@ export const JournalFilterModal = ({
             value={[startDate, endDate]}
             onChange={(e) => {
               if (e) {
-                console.log("New Date Range", e);
                 updateFilter("date.gte", e[0] || undefined);
                 updateFilter("date.lte", e[1] || undefined);
               } else {
@@ -198,53 +191,4 @@ export const JournalFilterModal = ({
       </Button>
     </>
   );
-};
-
-const useJournalFilters = ({
-  filters: externalFilters,
-  setFilters: setExternalFilters,
-}: FiltersStateType) => {
-  const [opened, { open: openModal, close: closeModal }] = useDisclosure(false);
-  const [filters, setFilters] =
-    useState<JournalFilterValidationInputType>(externalFilters);
-
-  const utils = trpc.useContext();
-  const prefetch = (filters: JournalFilterValidationInputType) => {
-    console.log("Prefetch", filters);
-  };
-
-  useEffect(() => {
-    prefetch(filters);
-  }, [prefetch, filters]);
-
-  const open = () => {
-    setFilters(externalFilters);
-    openModal();
-  };
-
-  const close = () => {
-    setExternalFilters(filters);
-    closeModal();
-  };
-
-  const updateFilter = (key: string, value: unknown) => {
-    const newFilter = { ...filters };
-    set(newFilter, key, value);
-
-    setFilters(newFilter);
-  };
-
-  const resetFilter = () => {
-    setFilters(cloneDeep(defaultJournalFilters));
-  };
-
-  return {
-    filters,
-    setFilters,
-    open,
-    close,
-    opened,
-    updateFilter,
-    resetFilter,
-  };
 };

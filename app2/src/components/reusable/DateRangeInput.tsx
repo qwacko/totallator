@@ -11,6 +11,8 @@ import {
   subQuarters,
   subYears,
   endOfYear,
+  startOfMonth,
+  addYears,
 } from "date-fns";
 import { useMemo } from "react";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
@@ -31,6 +33,12 @@ const useDateRanges = () => {
     );
 
     return [
+      {
+        title: "All",
+        group: "All",
+        end: addYears(now, 10),
+        start: new Date(1900, 0, 0),
+      },
       {
         title: "Current Year",
         group: "Year",
@@ -66,6 +74,18 @@ const useDateRanges = () => {
         group: "Quarter",
         end: endOfQuarter(subQuarters(now, 1)),
         start: startOfQuarter(subQuarters(now, 1)),
+      },
+      {
+        title: "Current Month",
+        group: "Month",
+        end: endOfMonth(now),
+        start: startOfMonth(now),
+      },
+      {
+        title: "Previous Month",
+        group: "Month",
+        end: endOfMonth(subMonths(now, 1)),
+        start: startOfMonth(subMonths(now, 1)),
       },
     ];
   }, [firstMonth]);
