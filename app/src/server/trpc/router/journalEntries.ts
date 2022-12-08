@@ -215,7 +215,7 @@ export const journalsRouter = router({
       }
 
       await ctx.prisma.$transaction(async (prismaClient) => {
-        await Promise.all(
+        const createdTransactions = await Promise.all(
           transactions.map(async (transaction) => {
             const newJournals = transaction.journalEntries.map((journal) => {
               const {
@@ -239,6 +239,11 @@ export const journalsRouter = router({
             });
           })
         );
+
+        await checkTransactions({
+          prisma: prismaClient,
+          transactionIds: createdTransactions.map((item) => item.id),
+        });
       });
 
       return true;
