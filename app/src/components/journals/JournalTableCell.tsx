@@ -12,6 +12,7 @@ import { CategorySelection } from "../category/CategorySelection";
 import { useDisplayCurrency } from "../reusable/DisplayCurrency";
 import { InputCurrency } from "../reusable/InputCurrency";
 import { TagSelection } from "../tag/TagSelection";
+import { JournalCommandButtons } from "./JournalCommandButtons";
 
 export type JournalRowColumns =
   | "description"
@@ -25,7 +26,8 @@ export type JournalRowColumns =
   | "categoryId"
   | "tagId"
   | "billId"
-  | "budgetId";
+  | "budgetId"
+  | "commands";
 
 export const displayJournalCell = (
   props: CellContext<JournalsMergedType, unknown>
@@ -49,7 +51,10 @@ export const JournalTableCell = ({
   data: JournalsMergedType;
 }) => {
   const columnUse =
-    column === "createdAt" || column === "updatedAt" || column === "total"
+    column === "createdAt" ||
+    column === "updatedAt" ||
+    column === "total" ||
+    column === "commands"
       ? "description"
       : column;
   const { dateFormat } = useLoggedInUser();
@@ -64,6 +69,9 @@ export const JournalTableCell = ({
 
   const isAdmin = data.userIsAdmin;
 
+  if (column === "commands") {
+    return <JournalCommandButtons data={data} />;
+  }
   if (column === "description") {
     return (
       <form

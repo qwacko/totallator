@@ -8,8 +8,8 @@ export const CommandButtons = ({
   canClone = true,
   admin = false,
 }: {
-  onDelete: () => void;
-  onClone: () => void;
+  onDelete?: () => void;
+  onClone?: () => void;
   canDelete: boolean;
   canClone: boolean;
   admin: boolean;
@@ -20,7 +20,7 @@ export const CommandButtons = ({
         <Button.Group>
           <Tooltip label="Clone">
             <Button
-              onClick={() => onClone()}
+              onClick={() => onClone && onClone()}
               size="xs"
               variant="outline"
               disabled={!admin || !canClone}
@@ -30,7 +30,7 @@ export const CommandButtons = ({
           </Tooltip>
           <Tooltip label="Delete" color="red">
             <Button
-              onClick={() => onDelete()}
+              onClick={() => onDelete && onDelete()}
               size="xs"
               variant="outline"
               disabled={!admin || !canDelete}

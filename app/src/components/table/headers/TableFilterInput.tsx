@@ -4,6 +4,51 @@ import { FilterAccountType } from "./FilterAccountType";
 import { Center, Checkbox } from "@mantine/core";
 import { FilterStatus } from "./FilterStatus";
 import { DateRangePicker, type DateRangePickerValue } from "@mantine/dates";
+import { useEffect, useState } from "react";
+import { setDate } from "date-fns";
+import { statusFilter } from "../filters/statusFilter";
+
+const DateFilterHandler = ({
+  filter,
+  setFilter,
+}: {
+  filter: storedDateRangeType;
+  setFilter: (data: storedDateRangeType) => void;
+}) => {
+  const [dateFilter, setDateFilter] = useState<
+    DateRangePickerValue | undefined
+  >(filter ? [filter.gte || null, filter.lte || null] : undefined);
+
+  useEffect(
+    () =>
+      setDateFilter(
+        filter ? [filter.gte || null, filter.lte || null] : undefined
+      ),
+    [filter, setDateFilter]
+  );
+
+  return (
+    <DateRangePicker
+      value={dateFilter}
+      onChange={(newValue) => setDateFilter(newValue)}
+      onBlur={() =>
+        setFilter(
+          dateFilter
+            ? {
+                gte: dateFilter[0] || undefined,
+                lte: dateFilter[1] || undefined,
+              }
+            : undefined
+        )
+      }
+      clearable
+      dropdownType="modal"
+      placeholder="Date Range"
+      size="xs"
+      inputFormat="YYYY-MM-DD"
+    />
+  );
+};
 
 export type FilterTypes =
   | "string"
@@ -45,19 +90,11 @@ export const TableFilterInput = ({
   }
 
   if (type === "date") {
-    const filterTyped = filter as DateRangePickerValue | undefined;
-    const setFilterTyped = (data: DateRangePickerValue | undefined) =>
+    const filterTyped = filter as storedDateRangeType | undefined;
+    const setFilterTyped = (data: storedDateRangeType | undefined) =>
       setFilter(data);
     return (
-      <DateRangePicker
-        value={filterTyped}
-        onChange={(newValue) => setFilterTyped(newValue)}
-        clearable
-        dropdownType="modal"
-        placeholder="Date Range"
-        size="xs"
-        inputFormat="YYYY-MM-DD"
-      />
+      <DateFilterHandler filter={filterTyped} setFilter={setFilterTyped} />
     );
   }
   if (type === "boolean") {
@@ -86,3 +123,5 @@ export const TableFilterInput = ({
 
   return <></>;
 };
+
+type storedDateRangeType = { gte?: Date; lte?: Date } | undefined;

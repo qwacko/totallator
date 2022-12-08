@@ -13,6 +13,8 @@ import { checkTransactions } from "./helpers/journals/checkTransactions";
 import { updateSingleJournal } from "./helpers/journals/updateSingleJournal";
 import { sortToOrderBy } from "./helpers/journals/sortToOrderBy";
 import { omit } from "lodash";
+import { z } from "zod";
+import { cloneTransactionInput } from "src/utils/validation/journalEntries/cloneTransactionsValidation";
 
 export const journalsRouter = router({
   get: protectedProcedure
@@ -181,5 +183,64 @@ export const journalsRouter = router({
           transactionIds: data.map((item) => item.transactionId),
         });
       });
+    }),
+  cloneTransactions: protectedProcedure
+    .input(cloneTransactionInput)
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const transactions = await ctx.prisma.transaction.findMany({
+        where: {
+          id: { in: input.ids },
+          journalEntries: {
+            some: {
+              accountGrouping: { adminUsers: { some: { id: user.id } } },
+            },
+          },
+        },
+        include: { journalEntries: true },
+      });
+
+      if (transactions.length > input.maxUpdated) {
+        throw new TRPCError({
+          message: `Number of Transactions Exceeds Max Updated (${input.maxUpdated})`,
+          code: "FORBIDDEN",
+        });
+      }
+      if (transactions.length === 0) {
+        throw new TRPCError({
+          message: `No Matching Transaction Found Or User Doesn't Have Admin Permissions`,
+          code: "NOT_FOUND",
+        });
+      }
+
+      await ctx.prisma.$transaction(async (prismaClient) => {
+        await Promise.all(
+          transactions.map(async (transaction) => {
+            const newJournals = transaction.journalEntries.map((journal) => {
+              const {
+                complete,
+                id,
+                reconciled,
+                createdAt,
+                updatedAt,
+                dataChecked,
+                transactionId,
+                ...journalSelected
+              } = journal;
+              return {
+                ...journalSelected,
+                complete: false,
+                description: `${journalSelected.description} (Clone)`,
+              };
+            });
+            return prismaClient.transaction.create({
+              data: { journalEntries: { createMany: { data: newJournals } } },
+            });
+          })
+        );
+      });
+
+      return true;
     }),
 });

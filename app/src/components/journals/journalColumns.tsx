@@ -7,6 +7,12 @@ import { displayJournalCell } from "./JournalTableCell";
 const columnHelper = createColumnHelper<JournalsMergedType>();
 
 export const journalColumns = [
+  columnHelper.display({
+    id: "commands",
+    header: displayHeader({ title: "Commands" }),
+    cell: displayJournalCell,
+    enableColumnFilter: false,
+  }),
   columnHelper.accessor("date", {
     header: displayHeader({ title: "Date", filterType: "date" }),
     cell: displayJournalCell,
@@ -16,7 +22,6 @@ export const journalColumns = [
   columnHelper.accessor("accountId", {
     header: displayHeader({
       title: "Account",
-      filterType: "date",
       sortKey: "account",
     }),
     cell: displayJournalCell,
@@ -24,19 +29,19 @@ export const journalColumns = [
     filterFn: "includesString",
   }),
   columnHelper.accessor("otherJournals", {
-    header: displayHeader({ title: "Payee(s)", filterType: "date" }),
+    header: displayHeader({ title: "Payee(s)" }),
     cell: displayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("description", {
-    header: displayHeader({ title: "Description", filterType: "date" }),
+    header: displayHeader({ title: "Description", filterType: "string" }),
     cell: displayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("amount", {
-    header: displayHeader({ title: "Amount", filterType: "date" }),
+    header: displayHeader({ title: "Amount" }),
     cell: displayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString",
@@ -51,7 +56,6 @@ export const journalColumns = [
   columnHelper.accessor("categoryId", {
     header: displayHeader({
       title: "Category",
-      filterType: "date",
       sortKey: "category",
     }),
     cell: displayJournalCell,
@@ -59,7 +63,7 @@ export const journalColumns = [
     filterFn: "includesString",
   }),
   columnHelper.accessor("tagId", {
-    header: displayHeader({ title: "Tag", filterType: "date", sortKey: "tag" }),
+    header: displayHeader({ title: "Tag", sortKey: "tag" }),
     cell: displayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString",
@@ -67,7 +71,6 @@ export const journalColumns = [
   columnHelper.accessor("billId", {
     header: displayHeader({
       title: "Bill",
-      filterType: "date",
       sortKey: "bill",
     }),
     cell: displayJournalCell,
@@ -77,7 +80,6 @@ export const journalColumns = [
   columnHelper.accessor("budgetId", {
     header: displayHeader({
       title: "Budget",
-      filterType: "date",
       sortKey: "budget",
     }),
     cell: displayJournalCell,
