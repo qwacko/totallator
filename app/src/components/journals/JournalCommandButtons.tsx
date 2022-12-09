@@ -1,4 +1,5 @@
 import { useCloneTransactions } from "src/utils/hooks/journals/useCloneTransactions";
+import { useDeleteTransactions } from "src/utils/hooks/journals/useDeleteTransactions";
 import { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 import { CommandButtons } from "../table/CommandButtons";
 
@@ -12,13 +13,25 @@ export const JournalCommandButtons = ({
     ids: [data.transactionId],
     maxUpdated: 1,
   });
+  const { deleteTrans } = useDeleteTransactions({
+    ids: [data.transactionId],
+    maxDeleted: 1,
+    deleteComplete: false,
+  });
 
   return (
     <CommandButtons
-      canDelete={false}
-      canClone={true}
-      onClone={clone}
-      admin={data.userIsAdmin}
+      cloneButton={{
+        hidden: false,
+        disabled: !data.userIsAdmin,
+        action: clone,
+      }}
+      deleteButton={{
+        hidden: false,
+        disabled: !data.userIsAdmin || data.complete,
+        action: deleteTrans,
+        message: `Delete Transaction ${data.description}?`,
+      }}
     />
   );
 };

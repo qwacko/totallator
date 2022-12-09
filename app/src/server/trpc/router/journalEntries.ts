@@ -15,6 +15,7 @@ import { sortToOrderBy } from "./helpers/journals/sortToOrderBy";
 import { omit } from "lodash";
 import { z } from "zod";
 import { cloneTransactionInput } from "src/utils/validation/journalEntries/cloneTransactionsValidation";
+import { deleteTransactionInput } from "src/utils/validation/journalEntries/deleteTransactionsValidation";
 
 export const journalsRouter = router({
   get: protectedProcedure
@@ -125,11 +126,6 @@ export const journalsRouter = router({
         ? !amountInOtherJournals
         : amountInOtherJournals;
 
-      console.log("Other Amount Updates", {
-        amountInOtherJournals,
-        amountInCoreJournal,
-        updateOtherAmounts,
-      });
       const { data: otherData } = await journalsWithStats({
         prisma: ctx.prisma,
         take: input.maxUpdated + 1,
@@ -209,7 +205,7 @@ export const journalsRouter = router({
       }
       if (transactions.length === 0) {
         throw new TRPCError({
-          message: `No Matching Transaction Found Or User Doesn't Have Admin Permissions`,
+          message: `No Matching Transactions Found Or User Doesn't Have Admin Permissions`,
           code: "NOT_FOUND",
         });
       }
@@ -244,6 +240,52 @@ export const journalsRouter = router({
           prisma: prismaClient,
           transactionIds: createdTransactions.map((item) => item.id),
         });
+      });
+
+      return true;
+    }),
+  deleteTransactions: protectedProcedure
+    .input(deleteTransactionInput)
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const transactions = await ctx.prisma.transaction.findMany({
+        where: {
+          id: { in: input.ids },
+          journalEntries: {
+            some: {
+              accountGrouping: { adminUsers: { some: { id: user.id } } },
+            },
+            every: input.canDeleteComplete
+              ? undefined
+              : {
+                  complete: false,
+                },
+          },
+        },
+        include: { journalEntries: true },
+      });
+
+      if (transactions.length > input.maxDeleted) {
+        throw new TRPCError({
+          message: `Number of Transactions Exceeds Max Deleted (${input.maxDeleted})`,
+          code: "FORBIDDEN",
+        });
+      }
+      if (transactions.length === 0) {
+        throw new TRPCError({
+          message: `No Matching${
+            input.canDeleteComplete ? "" : " Incomplete"
+          } Transactions Found Or User Doesn't Have Admin Permissions`,
+          code: "NOT_FOUND",
+        });
+      }
+
+      const transactionIds = transactions.map((trans) => trans.id);
+
+      //Related Journal Entries are deleted through cascade deletes
+      await ctx.prisma.transaction.deleteMany({
+        where: { id: { in: transactionIds } },
       });
 
       return true;

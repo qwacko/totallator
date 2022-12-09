@@ -7,8 +7,6 @@ export const filtersToPrismaFilters = ({
 }: {
   filters: ColumnFiltersState;
 }): JournalFilterValidationInputType[] | undefined => {
-  console.log("Column Filters", filters);
-
   const processedFilters: JournalFilterValidationInputType[] = removeUndefined(
     filters.map((item): JournalFilterValidationInputType | undefined => {
       if (item.id === "description") {

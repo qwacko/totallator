@@ -129,7 +129,7 @@ model TransactionAccount {
   endDate              DateTime?
 
   //Account Grouping
-  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id])
+  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   accountGroupingId String
 
   //Journals
@@ -164,21 +164,21 @@ model JournalEntry {
   amount      Float    @default(0)
 
   //Relationships
-  account       TransactionAccount @relation(fields: [accountId], references: [id])
+  account       TransactionAccount @relation(fields: [accountId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   accountId     String
-  tag           Tag?               @relation(fields: [tagId], references: [id])
+  tag           Tag?               @relation(fields: [tagId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   tagId         String?
-  category      Category?          @relation(fields: [categoryId], references: [id])
+  category      Category?          @relation(fields: [categoryId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   categoryId    String?
-  bill          Bill?              @relation(fields: [billId], references: [id])
+  bill          Bill?              @relation(fields: [billId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   billId        String?
-  budget        Budget?            @relation(fields: [budgetId], references: [id])
+  budget        Budget?            @relation(fields: [budgetId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   budgetId      String?
-  transaction   Transaction        @relation(fields: [transactionId], references: [id])
+  transaction   Transaction        @relation(fields: [transactionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   transactionId String
 
   //Account Grouping
-  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id])
+  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   accountGroupingId String
 
   //Timing Information
@@ -193,7 +193,7 @@ model Tag {
   single String
 
   //Account Grouping
-  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id])
+  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   accountGroupingId String
 
   //Journals
@@ -218,7 +218,7 @@ model Category {
   single String
 
   //Account Grouping
-  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id])
+  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   accountGroupingId String
 
   //Journals
@@ -241,7 +241,7 @@ model Bill {
   title String
 
   //Account Grouping
-  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id])
+  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   accountGroupingId String
 
   //Journals
@@ -264,7 +264,7 @@ model Budget {
   title String
 
   //Account Grouping
-  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id])
+  accountGrouping   AccountGrouping @relation(fields: [accountGroupingId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   accountGroupingId String
 
   //Journals

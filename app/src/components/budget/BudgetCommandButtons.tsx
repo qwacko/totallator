@@ -10,11 +10,17 @@ export const BudgetCommandButtons = ({ data }: { data: BudgetsReturnType }) => {
 
   return (
     <CommandButtons
-      onClone={clone}
-      onDelete={del}
-      admin={data.userIsAdmin}
-      canClone={true}
-      canDelete={data._count.journalEntries === 0}
+      cloneButton={{
+        hidden: false,
+        disabled: !data.userIsAdmin,
+        action: clone,
+      }}
+      deleteButton={{
+        hidden: false,
+        disabled: !data.userIsAdmin || data._count.journalEntries > 0,
+        action: del,
+        message: `Delete ${data.title}?`,
+      }}
     />
   );
 };

@@ -11,36 +11,36 @@ const columnHelper = createColumnHelper<AccountsReturnType>();
 export const accountColumns = [
   columnHelper.display({
     id: "commands",
-    header: displayHeader("Commands"),
+    header: displayHeader({ title: "Commands" }),
     cell: displayAccountCell,
     enableColumnFilter: false,
   }),
   columnHelper.accessor("title", {
-    header: displayHeader("Title", "string"),
+    header: displayHeader({ title: "Title", filterType: "string" }),
     cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("status", {
-    header: displayHeader("Status", "status"),
+    header: displayHeader({ title: "Status", filterType: "status" }),
     cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: statusFilter("status"),
   }),
   columnHelper.accessor("isNetWorth", {
     cell: displayAccountCell,
-    header: displayHeader("Net Worth", "boolean"),
+    header: displayHeader({ title: "Net Worth", filterType: "boolean" }),
     enableColumnFilter: true,
     filterFn: "equals",
   }),
   columnHelper.accessor("isCash", {
     cell: displayAccountCell,
-    header: displayHeader("Cash", "boolean"),
+    header: displayHeader({ title: "Cash", filterType: "boolean" }),
     enableColumnFilter: true,
     filterFn: "equals",
   }),
   columnHelper.accessor("type", {
-    header: displayHeader("Account Type", "accountType"),
+    header: displayHeader({ title: "Account Type", filterType: "accountType" }),
     cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: accountTypeFilter,
@@ -51,7 +51,10 @@ export const accountColumns = [
         ? data.accountGroupCombined
         : "",
     {
-      header: displayHeader("Account Grouping", "string"),
+      header: displayHeader({
+        title: "Account Grouping",
+        filterType: "string",
+      }),
       id: "accountGroupCombined",
       enableColumnFilter: true,
       filterFn: "includesString",
@@ -59,43 +62,43 @@ export const accountColumns = [
     }
   ),
   columnHelper.accessor("accountGroup", {
-    header: displayHeader("Account Group", "string"),
+    header: displayHeader({ title: "Account Group", filterType: "string" }),
     cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("accountGroup2", {
-    header: displayHeader("Account Group 2", "string"),
+    header: displayHeader({ title: "Account Group 2", filterType: "string" }),
     cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("accountGroup3", {
-    header: displayHeader("Account Group 3", "string"),
+    header: displayHeader({ title: "Account Group 3", filterType: "string" }),
     cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("startDate", {
-    header: displayHeader("Start Date", "date"),
+    header: displayHeader({ title: "Start Date", filterType: "date" }),
     cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: dateFilter("startDate"),
   }),
   columnHelper.accessor("endDate", {
-    header: displayHeader("End Date", "date"),
+    header: displayHeader({ title: "End Date", filterType: "date" }),
     cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: dateFilter("startDate"),
   }),
   columnHelper.accessor("createdAt", {
-    header: displayHeader("Crated At", "date"),
+    header: displayHeader({ title: "Created At", filterType: "date" }),
     enableColumnFilter: true,
     filterFn: dateFilter("createdAt"),
     cell: displayAccountCell,
   }),
   columnHelper.accessor("updatedAt", {
-    header: displayHeader("Updated At", "date"),
+    header: displayHeader({ title: "Updated At", filterType: "date" }),
     enableColumnFilter: true,
     filterFn: dateFilter("updatedAt"),
     cell: displayAccountCell,
