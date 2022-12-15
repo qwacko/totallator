@@ -36,6 +36,8 @@ export const useJournals = ({
   const [filters, setFilters] = useState<ColumnFiltersState>([]);
   const [rowCount, setRowCount] = useState<number>(0);
 
+  const [rowSelection, setRowSelection] = useState({});
+
   const sortingToUse = sortingStateToPrismaSort(sorting);
   const filtersToUse = filtersToPrismaFilters({ filters });
 
@@ -89,6 +91,8 @@ export const useJournals = ({
       pagination,
       setPagination,
       pageCount,
+      setRowSelection,
+      rowSelection,
     },
   };
 };

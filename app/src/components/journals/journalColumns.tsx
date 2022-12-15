@@ -3,10 +3,33 @@ import { dateFilter } from "../table/filters/dateFilter";
 import { displayHeader } from "../table/headers/displayHeader";
 import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 import { displayJournalCell } from "./JournalTableCell";
+import { selectionCell } from "../table/selectionCell";
+import { Checkbox, Stack, Text } from "@mantine/core";
 
 const columnHelper = createColumnHelper<JournalsMergedType>();
 
 export const journalColumns = [
+  columnHelper.display({
+    id: "selection",
+    header: (column) => {
+      return (
+        <Stack>
+          <Text>Selection</Text>
+          <Checkbox
+            checked={column.table.getIsAllPageRowsSelected()}
+            indeterminate={column.table.getIsSomePageRowsSelected()}
+            onClick={() =>
+              column.table.toggleAllPageRowsSelected(
+                !column.table.getIsAllPageRowsSelected()
+              )
+            }
+          />
+        </Stack>
+      );
+    },
+    cell: selectionCell,
+    enableColumnFilter: false,
+  }),
   columnHelper.display({
     id: "commands",
     header: displayHeader({ title: "Commands" }),

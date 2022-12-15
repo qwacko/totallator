@@ -1,5 +1,10 @@
 import { Group, Loader, Text } from "@mantine/core";
-import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import {
+  getCoreRowModel,
+  RowSelectionState,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useState } from "react";
 import { useJournals } from "src/utils/hooks/journals/useJournals";
 import { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 import { TableDisplay } from "../table/TableDisplay";
@@ -23,6 +28,7 @@ export const JournalTable = ({
       sorting: data.tableState.sorting,
       columnFilters: data.tableState.filters,
       pagination: data.tableState.pagination,
+      rowSelection: data.tableState.rowSelection,
     },
 
     //Sorting
@@ -53,6 +59,11 @@ export const JournalTable = ({
     },
     autoResetPageIndex: false,
     autoResetAll: false,
+
+    //Selection
+    enableRowSelection: (rowData) => rowData.original.userIsAdmin,
+    enableMultiRowSelection: (rowData) => rowData.original.userIsAdmin,
+    onRowSelectionChange: data.tableState.setRowSelection,
   });
 
   if (!data.data || data.data.isLoading) {

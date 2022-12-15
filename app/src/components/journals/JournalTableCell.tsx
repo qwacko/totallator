@@ -1,4 +1,4 @@
-import { Center, Group, Stack, Text, TextInput } from "@mantine/core";
+import { Center, Checkbox, Group, Stack, Text, TextInput } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";

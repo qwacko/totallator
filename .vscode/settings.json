@@ -1,16 +1,18 @@
 {
-	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"files.autoSaveDelay": 500,
-	"files.autoSave": "onFocusChange",
-	"[prisma]": {
-		"editor.defaultFormatter": "Prisma.prisma"
-	},
-	"[graphql]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	},
-	"workbench.editor.labelFormat": "medium",
-	"[svelte]": {
-		"editor.defaultFormatter": "svelte.svelte-vscode"
-	},
-	"todo-tree.tree.showBadges": false
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.autoSaveDelay": 500,
+  "files.autoSave": "onFocusChange",
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
+  "[graphql]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "workbench.editor.labelFormat": "medium",
+  "[svelte]": {
+    "editor.defaultFormatter": "svelte.svelte-vscode"
+  },
+  "todo-tree.tree.showBadges": false,
+  "editor.tabCompletion": "on",
+  "diffEditor.codeLens": true
 }
