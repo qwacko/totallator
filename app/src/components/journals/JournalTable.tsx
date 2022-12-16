@@ -61,8 +61,10 @@ export const JournalTable = ({
     autoResetAll: false,
 
     //Selection
-    enableRowSelection: (rowData) => rowData.original.userIsAdmin,
-    enableMultiRowSelection: (rowData) => rowData.original.userIsAdmin,
+    enableRowSelection: (rowData) =>
+      rowData.original.userIsAdmin && !rowData.original.complete,
+    enableMultiRowSelection: (rowData) =>
+      rowData.original.userIsAdmin && !rowData.original.complete,
     onRowSelectionChange: data.tableState.setRowSelection,
   });
 

@@ -23,18 +23,23 @@ export const updateSingleJournal = async ({
       code: "BAD_REQUEST",
     });
   }
+
+  const dataWithComplete = data.complete
+    ? { ...data, reconciled: true, dataChecked: true }
+    : data;
+
   //Check Linked Data (Account, Category etc..)
   await checkLinkedItems({
     client: prisma,
     accountGroupingId: journal.accountGroupingId,
-    accountIds: [data.accountId],
-    billIds: [data.billId],
-    budgetIds: [data.budgetId],
-    categoryIds: [data.categoryId],
-    tagIds: [data.tagId],
+    accountIds: [dataWithComplete.accountId],
+    billIds: [dataWithComplete.billId],
+    budgetIds: [dataWithComplete.budgetId],
+    categoryIds: [dataWithComplete.categoryId],
+    tagIds: [dataWithComplete.tagId],
   });
 
-  const dataWithoutOther = omit(data, ["otherJournals"]);
+  const dataWithoutOther = omit(dataWithComplete, ["otherJournals"]);
 
   //Split data into items to be updated on linked and individual journals
   if (!journal.linked) {
@@ -52,7 +57,10 @@ export const updateSingleJournal = async ({
       });
       await prisma.journalEntry.update({
         where: { id: journal.id },
-        data: { amount: data.amount, accountId: data.accountId },
+        data: {
+          amount: dataWithComplete.amount,
+          accountId: dataWithComplete.accountId,
+        },
       });
     }
 
@@ -65,7 +73,7 @@ export const updateSingleJournal = async ({
   }
 
   //Update Other Amounts
-  if (data.amount !== undefined && !dontUpdateOtherAmounts) {
+  if (dataWithComplete.amount !== undefined && !dontUpdateOtherAmounts) {
     const transaction = await prisma.transaction.findUnique({
       where: { id: journal.transactionId },
       include: { journalEntries: true },

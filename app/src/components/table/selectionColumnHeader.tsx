@@ -24,13 +24,12 @@ export const SelectionColumnHeader = <T extends unknown, U extends unknown>({
       <Center>
         <Group>
           <Checkbox
-            checked={column.table.getIsAllPageRowsSelected()}
-            indeterminate={column.table.getIsSomePageRowsSelected()}
-            onClick={() =>
-              column.table.toggleAllPageRowsSelected(
-                !column.table.getIsAllPageRowsSelected()
-              )
-            }
+            checked={true}
+            onClick={() => column.table.toggleAllPageRowsSelected(true)}
+          />
+          <Checkbox
+            checked={false}
+            onClick={() => column.table.toggleAllPageRowsSelected(false)}
           />
           {children}
         </Group>

@@ -1,4 +1,13 @@
-import { Button, Group, Menu, Modal, NumberInput, Stack } from "@mantine/core";
+import {
+  Button,
+  Group,
+  Menu,
+  Modal,
+  NumberInput,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowDown } from "@tabler/icons";
 import { HeaderContext, Row } from "@tanstack/react-table";
@@ -8,12 +17,25 @@ import { useDeleteTransactions } from "src/utils/hooks/journals/useDeleteTransac
 import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
 import { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 import { SelectionColumnHeader } from "../table/selectionColumnHeader";
+import { useForm, zodResolver } from "@mantine/form";
+import {
+  UpdateJournalDataInputType,
+  updateJournalInputData,
+} from "src/utils/validation/journalEntries/updateJournalValidation";
+import { DatePicker } from "@mantine/dates";
+import { AccountSelection } from "../account/AccountSelection";
+import { InputCurrency } from "../reusable/InputCurrency";
+import { CategorySelection } from "../category/CategorySelection";
+import { TagSelection } from "../tag/TagSelection";
+import { BillSelection } from "../bill/BillSelection";
+import { BudgetSelection } from "../budget/BudgetSelection";
 
 export const JournalTableBulkActions = <T extends unknown>(
   column: HeaderContext<JournalsMergedType, T>
 ) => {
   const [deleteOpened, deleteActions] = useDisclosure(false);
   const [cloneOpened, cloneActions] = useDisclosure(false);
+  const [updateOpened, updateActions] = useDisclosure(false);
 
   const selection = column.table.getSelectedRowModel().rows;
   const { mutate: updateJournals } = useUpdateJournals();
@@ -43,7 +65,7 @@ export const JournalTableBulkActions = <T extends unknown>(
             >
               Clone
             </Menu.Item>
-            <Menu.Item>Update</Menu.Item>
+            <Menu.Item onClick={updateActions.open}>Update</Menu.Item>
             <Menu.Divider />
             <Menu.Label>Bulk Update</Menu.Label>
             <Menu.Item
@@ -130,6 +152,13 @@ export const JournalTableBulkActions = <T extends unknown>(
           rows={selection}
         />
       )}
+      {updateOpened && (
+        <UpdateBulkModal
+          opened={updateOpened}
+          close={updateActions.close}
+          rows={selection}
+        />
+      )}
     </>
   );
 };
@@ -205,6 +234,117 @@ const CloneModal = ({
           <Button onClick={() => clone(count)}>Clone</Button>
         </Group>
       </Stack>
+    </Modal>
+  );
+};
+
+const UpdateBulkModal = ({
+  opened,
+  close,
+  rows,
+}: {
+  opened: boolean;
+  close: () => void;
+  rows: Row<JournalsMergedType>[];
+}) => {
+  console.log("UpdateBulkModal");
+  const ids = rows.map((item) => item.original.id);
+  const accountGroupings = [
+    ...new Set(rows.map((item) => item.original.accountGroupingId)),
+  ];
+  const multipleAccountGroupings = accountGroupings.length > 1;
+  const accountGroupingId = accountGroupings[0];
+
+  const { mutate } = useUpdateJournals({ onSuccess: close });
+
+  const form = useForm<UpdateJournalDataInputType>({
+    validate: zodResolver(updateJournalInputData),
+  });
+
+  console.log("Form Values", form.values);
+
+  const resetForm = () => {
+    console.log("Resetting");
+    form.reset();
+  };
+
+  return (
+    <Modal
+      opened={opened}
+      onClose={close}
+      title={`Update ${rows.length} Transactions?`}
+    >
+      <form
+        onSubmit={form.onSubmit((value) =>
+          mutate({
+            filters: [{ id: { in: ids } }],
+            data: value,
+            maxUpdated: ids.length,
+          })
+        )}
+      >
+        <Stack>
+          <TextInput
+            {...form.getInputProps("description")}
+            value={form.values.description}
+            label="Description"
+          />
+          <DatePicker
+            {...form.getInputProps("date")}
+            value={form.values.date || null}
+            label="Date"
+          />
+          <InputCurrency
+            {...form.getInputProps("amount")}
+            value={form.values.amount || null}
+            label="Amount"
+          />
+          {multipleAccountGroupings && <Text>Multiple Account Groupings</Text>}
+          {!multipleAccountGroupings && (
+            <>
+              <AccountSelection
+                {...form.getInputProps("accountId")}
+                value={form.values.accountId || null}
+                label="Account"
+                accountGroupingId={accountGroupingId}
+              />
+              <CategorySelection
+                {...form.getInputProps("categoryId")}
+                value={form.values.categoryId || null}
+                label="Category"
+                accountGroupingId={accountGroupingId}
+              />
+              <TagSelection
+                {...form.getInputProps("tagId")}
+                value={form.values.tagId || null}
+                label="Tag"
+                accountGroupingId={accountGroupingId}
+              />
+              <BillSelection
+                {...form.getInputProps("billId")}
+                value={form.values.billId || null}
+                label="Bill"
+                accountGroupingId={accountGroupingId}
+              />
+              <BudgetSelection
+                {...form.getInputProps("budgetId")}
+                value={form.values.budgetId || null}
+                label="Budget"
+                accountGroupingId={accountGroupingId}
+              />
+            </>
+          )}
+          <Group position="apart">
+            <Button variant="outline" onClick={close}>
+              Cancel
+            </Button>
+            <Button variant="outline" onClick={resetForm}>
+              Clear
+            </Button>
+            <Button type="submit">Update</Button>
+          </Group>
+        </Stack>
+      </form>
     </Modal>
   );
 };
