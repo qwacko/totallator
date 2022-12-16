@@ -68,6 +68,7 @@ export const JournalTableCell = ({
   const { dayjsFormat } = useLoggedInUser();
 
   const isAdmin = data.userIsAdmin;
+  const isComplete = data.complete;
 
   if (column === "commands") {
     return <JournalCommandButtons data={data} />;
@@ -84,7 +85,7 @@ export const JournalTableCell = ({
           {...form.getInputProps("description")}
           onBlur={runMutate}
           type="text"
-          disabled={!isAdmin}
+          disabled={!isAdmin || isComplete}
           size="xs"
         />
       </form>
@@ -102,7 +103,7 @@ export const JournalTableCell = ({
         <InputCurrency
           {...form.getInputProps("amount")}
           onBlur={runMutate}
-          disabled={!isAdmin}
+          disabled={!isAdmin || isComplete}
           size="xs"
           styles={{ input: { textAlign: "right", paddingRight: 25 } }}
         />
@@ -127,7 +128,7 @@ export const JournalTableCell = ({
       >
         <DatePicker
           {...form.getInputProps(column)}
-          disabled={!isAdmin}
+          disabled={!isAdmin || isComplete}
           inputFormat={dayjsFormat}
           onBlur={runMutate}
           size="xs"
@@ -147,7 +148,7 @@ export const JournalTableCell = ({
       >
         <AccountSelection
           {...form.getInputProps(column)}
-          disabled={!isAdmin}
+          disabled={!isAdmin || isComplete}
           accountGroupingId={data.accountGroupingId}
           onBlur={runMutate}
           size="xs"
@@ -167,7 +168,7 @@ export const JournalTableCell = ({
       >
         <CategorySelection
           {...form.getInputProps(column)}
-          disabled={!isAdmin}
+          disabled={!isAdmin || isComplete}
           accountGroupingId={data.accountGroupingId}
           onBlur={runMutate}
           size="xs"
@@ -188,7 +189,7 @@ export const JournalTableCell = ({
       >
         <TagSelection
           {...form.getInputProps(column)}
-          disabled={!isAdmin}
+          disabled={!isAdmin || isComplete}
           accountGroupingId={data.accountGroupingId}
           onBlur={runMutate}
           size="xs"
@@ -209,7 +210,7 @@ export const JournalTableCell = ({
       >
         <BillSelection
           {...form.getInputProps(column)}
-          disabled={!isAdmin}
+          disabled={!isAdmin || isComplete}
           accountGroupingId={data.accountGroupingId}
           onBlur={runMutate}
           size="xs"
@@ -230,7 +231,7 @@ export const JournalTableCell = ({
       >
         <BudgetSelection
           {...form.getInputProps(column)}
-          disabled={!isAdmin}
+          disabled={!isAdmin || isComplete}
           accountGroupingId={data.accountGroupingId}
           onBlur={runMutate}
           size="xs"
@@ -255,7 +256,6 @@ export const JournalTableCell = ({
                   value={item.accountId}
                   onBlur={runMutate}
                   onChange={(e) => {
-                    console.log("Updating Account Selection", e);
                     const newOtherJournals = form.values.otherJournals
                       ? form.values.otherJournals.map((journal) =>
                           journal.id === item.id
@@ -263,10 +263,10 @@ export const JournalTableCell = ({
                             : journal
                         )
                       : undefined;
-                    console.log("New Other Journals", newOtherJournals);
                     form.setFieldValue("otherJournals", newOtherJournals);
                   }}
                   size="xs"
+                  disabled={!isAdmin || isComplete}
                 />
                 {showAmounts && (
                   <InputCurrency
@@ -289,6 +289,7 @@ export const JournalTableCell = ({
                     }}
                     onBlur={runMutate}
                     size="xs"
+                    disabled={!isAdmin || isComplete}
                   />
                 )}
               </Group>

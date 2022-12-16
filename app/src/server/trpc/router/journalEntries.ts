@@ -149,6 +149,7 @@ export const journalsRouter = router({
               journal,
               data: input.data,
               dontUpdateOtherAmounts: !updateOtherAmounts,
+              updateCompleted: input.updateCompleteJournals,
             });
 
             //Update the referenced other journal information
@@ -165,6 +166,7 @@ export const journalsRouter = router({
                       journal,
                       data: otherJournalData,
                       dontUpdateOtherAmounts: !updateOtherAmounts,
+                      updateCompleted: input.updateCompleteJournals,
                     });
                   }
                 }
@@ -211,8 +213,15 @@ export const journalsRouter = router({
       }
 
       await ctx.prisma.$transaction(async (prismaClient) => {
+        const expandedTransactions: typeof transactions[] = new Array(
+          input.cloneCount
+        ).fill(transactions);
+        const flattened = expandedTransactions.reduce((prev, current) => {
+          return [...prev, ...current];
+        }, []);
+
         const createdTransactions = await Promise.all(
-          transactions.map(async (transaction) => {
+          flattened.map(async (transaction) => {
             const newJournals = transaction.journalEntries.map((journal) => {
               const {
                 complete,
@@ -230,6 +239,7 @@ export const journalsRouter = router({
                 description: `${journalSelected.description} (Clone)`,
               };
             });
+
             return prismaClient.transaction.create({
               data: { journalEntries: { createMany: { data: newJournals } } },
             });

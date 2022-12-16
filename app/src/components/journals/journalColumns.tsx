@@ -4,29 +4,17 @@ import { displayHeader } from "../table/headers/displayHeader";
 import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 import { displayJournalCell } from "./JournalTableCell";
 import { selectionCell } from "../table/selectionCell";
-import { Checkbox, Stack, Text } from "@mantine/core";
+import { SelectionColumnHeader } from "../table/selectionColumnHeader";
+import { Button, Menu } from "@mantine/core";
+import { IconArrowDown } from "@tabler/icons";
+import { JournalTableBulkActions } from "./JournalTableBulkActions";
 
 const columnHelper = createColumnHelper<JournalsMergedType>();
 
 export const journalColumns = [
   columnHelper.display({
     id: "selection",
-    header: (column) => {
-      return (
-        <Stack>
-          <Text>Selection</Text>
-          <Checkbox
-            checked={column.table.getIsAllPageRowsSelected()}
-            indeterminate={column.table.getIsSomePageRowsSelected()}
-            onClick={() =>
-              column.table.toggleAllPageRowsSelected(
-                !column.table.getIsAllPageRowsSelected()
-              )
-            }
-          />
-        </Stack>
-      );
-    },
+    header: JournalTableBulkActions,
     cell: selectionCell,
     enableColumnFilter: false,
   }),

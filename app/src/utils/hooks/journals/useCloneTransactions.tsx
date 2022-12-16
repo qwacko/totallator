@@ -37,8 +37,8 @@ export const useCloneTransactions = ({
       },
     });
 
-  const clone = () => {
-    mutate({ ids, maxUpdated });
+  const clone = (cloneCount: number) => {
+    mutate({ ids, maxUpdated, cloneCount });
   };
 
   return {

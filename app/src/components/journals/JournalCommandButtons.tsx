@@ -24,7 +24,7 @@ export const JournalCommandButtons = ({
       cloneButton={{
         hidden: false,
         disabled: !data.userIsAdmin,
-        action: clone,
+        action: () => clone(1),
       }}
       deleteButton={{
         hidden: false,
