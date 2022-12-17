@@ -9,7 +9,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconArrowDown } from "@tabler/icons";
+import { IconArrowDown, IconMenu, IconMenu2 } from "@tabler/icons";
 import { HeaderContext, Row } from "@tanstack/react-table";
 import { useState } from "react";
 import { useCloneTransactions } from "src/utils/hooks/journals/useCloneTransactions";
@@ -47,10 +47,30 @@ export const JournalTableBulkActions = <T extends unknown>(
         <Menu>
           <Menu.Target>
             <Button compact>
-              <IconArrowDown size={10} />
+              <IconMenu2 size={15} />
             </Button>
           </Menu.Target>
           <Menu.Dropdown>
+            <Menu.Label>Selection</Menu.Label>
+            <Menu.Item
+              closeMenuOnClick={false}
+              onClick={() => {
+                column.table.toggleAllRowsSelected(false);
+                column.table.toggleAllPageRowsSelected(true);
+              }}
+            >
+              Select All
+            </Menu.Item>
+            <Menu.Item
+              closeMenuOnClick={false}
+              onClick={() => {
+                column.table.toggleAllRowsSelected(false);
+                column.table.toggleAllPageRowsSelected(false);
+              }}
+            >
+              Clear Selection
+            </Menu.Item>
+            <Menu.Divider />
             <Menu.Label>Bulk Modify {selection.length} Transactions</Menu.Label>
             <Menu.Item
               onClick={deleteActions.open}

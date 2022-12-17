@@ -1,14 +1,5 @@
 import { HeaderContext } from "@tanstack/react-table";
-import {
-  Center,
-  Checkbox,
-  Stack,
-  Text,
-  Group,
-  Menu,
-  Button,
-} from "@mantine/core";
-import { IconArrowDown } from "@tabler/icons";
+import { Center, Checkbox, Stack, Text, Group } from "@mantine/core";
 import { ReactNode } from "react";
 
 export const SelectionColumnHeader = <T extends unknown, U extends unknown>({
@@ -19,21 +10,9 @@ export const SelectionColumnHeader = <T extends unknown, U extends unknown>({
   children: ReactNode;
 }) => {
   return (
-    <Stack>
+    <Group>
       <Text>Selection</Text>
-      <Center>
-        <Group>
-          <Checkbox
-            checked={true}
-            onClick={() => column.table.toggleAllPageRowsSelected(true)}
-          />
-          <Checkbox
-            checked={false}
-            onClick={() => column.table.toggleAllPageRowsSelected(false)}
-          />
-          {children}
-        </Group>
-      </Center>
-    </Stack>
+      {children}
+    </Group>
   );
 };
