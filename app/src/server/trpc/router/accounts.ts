@@ -16,21 +16,7 @@ import {
   updateAccountGroupTitle,
 } from "./helpers/accountTitleGroupHandling";
 import { z } from "zod";
-
-const defaultIncExp = (title: string) => {
-  return {
-    title: title,
-    accountGroup: null,
-    accountGroup2: null,
-    accountGroup3: null,
-    accountGroupCombined: null,
-    accountTitleCombined: title,
-    startDate: null,
-    endDate: null,
-    isCash: true,
-    isNetWorth: true,
-  };
-};
+import { defaultIncExp } from "./helpers/defaultIncExp";
 
 export const accountRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {

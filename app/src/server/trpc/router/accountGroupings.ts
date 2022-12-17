@@ -1,11 +1,18 @@
 import { router, protectedProcedure } from "../trpc";
 import { z } from "zod";
-import { basicStatusToDB } from "src/utils/validation/basicStatusToDB";
+import {
+  basicStatusToDB,
+  basicStatusToDBRequired,
+} from "src/utils/validation/basicStatusToDB";
 import { getUserInfo } from "./helpers/getUserInfo";
 import { PrismaStatusEnumValidation } from "../../../utils/validation/PrismaStatusEnumValidation";
 import { TRPCError } from "@trpc/server";
 import { checkAccountGroupingAccess } from "./helpers/checkAccountGroupingAccess";
 import { createAccountGroupingValidation } from "src/utils/validation/accountGrouping/createAccountGroupingValidation";
+import { Prisma, PrismaClient, PrismaStatusEnum } from "@prisma/client";
+import { createAccountGroupTitle } from "./helpers/accountTitleGroupHandling";
+import { defaultIncExp } from "./helpers/defaultIncExp";
+import { bulkUpdateAccountGrouping } from "./helpers/bulkUpdateAccountGrouping";
 
 export const accountGroupingRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -206,6 +213,69 @@ export const accountGroupingRouter = router({
 
       return true;
     }),
+  clearLinkedItems: protectedProcedure
+    .input(z.object({ accountGroupingId: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+      await checkAccountGroupingAccess({
+        prisma: ctx.prisma,
+        accountGroupingId: input.accountGroupingId,
+        user,
+      });
+
+      //Delete All The Linked Items. All done in parallel
+      await ctx.prisma.$transaction(async (prisma) => {
+        await Promise.all([
+          prisma.journalEntry.deleteMany({
+            where: { accountGroupingId: input.accountGroupingId },
+          }),
+          prisma.transactionAccount.deleteMany({
+            where: { accountGroupingId: input.accountGroupingId },
+          }),
+          prisma.category.deleteMany({
+            where: { accountGroupingId: input.accountGroupingId },
+          }),
+          prisma.bill.deleteMany({
+            where: { accountGroupingId: input.accountGroupingId },
+          }),
+          prisma.budget.deleteMany({
+            where: { accountGroupingId: input.accountGroupingId },
+          }),
+          prisma.tag.deleteMany({
+            where: { accountGroupingId: input.accountGroupingId },
+          }),
+        ]);
+      });
+
+      return true;
+    }),
+  delete: protectedProcedure
+    .input(z.object({ accountGroupingId: z.string().cuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+      await checkAccountGroupingAccess({
+        prisma: ctx.prisma,
+        accountGroupingId: input.accountGroupingId,
+        user,
+      });
+      const accountGrouping = await checkCanSeed({
+        prisma: ctx.prisma,
+        accountGroupingId: input.accountGroupingId,
+      });
+
+      if (!accountGrouping) {
+        throw new TRPCError({
+          message: "Cannot Delete Account Grouping With Linked Items",
+          code: "FORBIDDEN",
+        });
+      }
+
+      await ctx.prisma.accountGrouping.delete({
+        where: { id: input.accountGroupingId },
+      });
+
+      return true;
+    }),
   setUserView: protectedProcedure
     .input(
       z.object({
@@ -238,4 +308,217 @@ export const accountGroupingRouter = router({
 
       return true;
     }),
+  canSeed: protectedProcedure
+    .input(z.object({ accountGroupingId: z.string().cuid() }))
+    .query(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+      await checkAccountGroupingAccess({
+        prisma: ctx.prisma,
+        accountGroupingId: input.accountGroupingId,
+        user,
+        adminRequired: false,
+      });
+
+      const seedingPossible = await checkCanSeed({
+        prisma: ctx.prisma,
+        accountGroupingId: input.accountGroupingId,
+      });
+
+      return seedingPossible ? true : false;
+    }),
+  seed: protectedProcedure
+    .input(
+      z.object({
+        accountGroupingId: z.string().cuid(),
+        transactionCount: z.number().int().optional().default(0),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+      await checkAccountGroupingAccess({
+        prisma: ctx.prisma,
+        accountGroupingId: input.accountGroupingId,
+        user,
+        adminRequired: true,
+      });
+
+      const accountGrouping = await checkCanSeed({
+        prisma: ctx.prisma,
+        accountGroupingId: input.accountGroupingId,
+      });
+
+      if (!accountGrouping) {
+        throw new TRPCError({
+          message:
+            "Cannot find account grouping, or account grouping has existing accounts / journal entries / categories / bills / budgets / tags",
+          code: "BAD_REQUEST",
+        });
+      }
+
+      await ctx.prisma.$transaction(async (prisma) => {
+        await createPersonalItems({
+          prisma,
+          accountGroupingId: accountGrouping.id,
+        });
+        await createBusinessItems({
+          prisma,
+          accountGroupingId: accountGrouping.id,
+        });
+      });
+    }),
 });
+
+const checkCanSeed = async ({
+  prisma,
+  accountGroupingId,
+}: {
+  prisma: PrismaClient | Prisma.TransactionClient;
+  accountGroupingId: string;
+}) => {
+  const accountGrouping = await prisma.accountGrouping.findUnique({
+    where: { id: accountGroupingId },
+    include: {
+      _count: {
+        select: {
+          accounts: true,
+          journalEntries: true,
+          categories: true,
+          bills: true,
+          budgets: true,
+          tags: true,
+        },
+      },
+    },
+  });
+
+  if (
+    !accountGrouping ||
+    accountGrouping._count.accounts > 0 ||
+    accountGrouping._count.journalEntries > 0 ||
+    accountGrouping._count.categories > 0 ||
+    accountGrouping._count.bills > 0 ||
+    accountGrouping._count.budgets > 0 ||
+    accountGrouping._count.tags > 0
+  ) {
+    return undefined;
+  }
+
+  return accountGrouping;
+};
+
+const createBusinessItems = async ({
+  prisma,
+  accountGroupingId,
+}: {
+  accountGroupingId: string;
+  prisma: PrismaClient | Prisma.TransactionClient;
+}) =>
+  bulkUpdateAccountGrouping({
+    prisma,
+    input: {
+      accountGroupingId,
+      assetAccountTitles: [
+        "Business/Bank/Transactional",
+        "Business/Inventory/On Premise",
+      ],
+      liabilityAccountTitles: [
+        "Business/Bank/Short Term Loan",
+        "Business/Bank/Capex Loan",
+        "Business/Bank/Credit Card",
+      ],
+      incomeAccountTitles: [
+        "Business Customer 1",
+        "Business Customer 2",
+        "Business Customer 3",
+      ],
+      expenseAccountTitles: [
+        "Supplier A",
+        "Supplier B",
+        "Transportation Company",
+        "Logistics Company",
+        "Skrinkage",
+      ],
+      tagTitles: [
+        "Business/Location 1",
+        "Business/Location 2",
+        "Business/Online",
+        "Business/Overhead",
+      ],
+      billTitles: ["Lease", "Transportation"],
+      budgetTitles: [],
+    },
+  });
+
+const createPersonalItems = async ({
+  prisma,
+  accountGroupingId,
+}: {
+  accountGroupingId: string;
+  prisma: PrismaClient | Prisma.TransactionClient;
+}) =>
+  bulkUpdateAccountGrouping({
+    prisma,
+    input: {
+      accountGroupingId,
+      assetAccountTitles: [
+        "Cash",
+        "Personal/Bank/Primary/Cash",
+        "Personal/Bank/Primary/Checking",
+        "Personal/Bank/Secondary/Savings",
+        "Personal/Bank/Secondary/Cash",
+        "Personal/Bank/Secondary/Checking",
+        "Property/Main Home",
+        "Property/Holiday House",
+      ],
+      liabilityAccountTitles: [
+        "Personal/Bank/Primary/Credit Card",
+        "Property/Main Home Mortgage 1",
+        "Property/Main Home Mortgage 2",
+        "Property/Holiday Home Mortgage",
+      ],
+      incomeAccountTitles: [
+        "Employer 1",
+        "Bank Interest",
+        "Employer 2",
+        "Initial Value",
+        "Capital Gains",
+      ],
+      expenseAccountTitles: [
+        "Tax",
+        "Government",
+        "Supermarket A",
+        "Supermarket B",
+        "Petrol Station",
+        "Fast Food A",
+        "Fast Food B",
+        "Bank A",
+        "Bank B",
+        "Bank C",
+        "Appliance Store",
+        "Hardware Store",
+        "Parking",
+        "Airline",
+        "Restaurant A",
+        "Restaurant B",
+        "Hotel A",
+        "Hotel B",
+        "Corner Store",
+        "Furniture Store",
+        "Hunting Store",
+        "Power Company",
+        "Water Company",
+        "City Council",
+        "State Government",
+        "Internet Provider A",
+        "Internet Provider B",
+      ],
+      tagTitles: [
+        "Personal/Personal",
+        "Property/Property A",
+        "Property/Property B",
+        "Personal/Capital",
+      ],
+      billTitles: ["Rent", "Power", "Internet"],
+      budgetTitles: ["Bills", "Spending", "Transportation"],
+    },
+  });

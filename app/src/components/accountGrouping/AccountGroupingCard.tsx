@@ -1,6 +1,8 @@
 import { Card, Group, Stack, Title, Text, Center } from "@mantine/core";
 import type { AppRouterOutputs } from "src/server/trpc/router/_app";
+import { AccountGroupingDelete } from "./AccountGroupingDelete";
 import { AccountGroupingEditPopup } from "./AccountGroupingEditForm";
+import { AccountGroupingSeed } from "./AccountGroupingSeed";
 import { AccountGroupingAddUserPopup } from "./AcountGroupingAddUsrer";
 import { DisplayAGUser } from "./DisplayAGUser";
 
@@ -33,6 +35,15 @@ export const AccountGroupingCard = ({
                   title={data.title}
                 />
               </>
+            )}
+            {data.userIsAdmin && (
+              <AccountGroupingSeed accountGroupingId={data.id} />
+            )}
+            {data.userIsAdmin && (
+              <AccountGroupingDelete
+                accountGroupingId={data.id}
+                title={data.title}
+              />
             )}
           </Group>
         </Center>
