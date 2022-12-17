@@ -19,8 +19,19 @@ export type AccountRowColumns =
 export const displayAccountCell = (
   props: CellContext<AccountsReturnType, unknown>
 ) => {
+  const selected = props.row.getIsSelected();
+
+  if (selected) {
+    return (
+      <AccountTableCell
+        id={props.row.id}
+        column={props.column.id as AccountRowColumns}
+        data={props.row.original}
+      />
+    );
+  }
   return (
-    <AccountTableCell
+    <AccountTableCellView
       id={props.row.id}
       column={props.column.id as AccountRowColumns}
       data={props.row.original}
@@ -161,5 +172,70 @@ export const AccountTableCell = ({
       </Center>
     );
   }
+  return <></>;
+};
+
+export const AccountTableCellView = ({
+  id,
+  column,
+  data,
+}: {
+  id: string;
+  column: AccountRowColumns;
+  data: AccountsReturnType;
+}) => {
+  const { dayjsFormat, dateFormat } = useLoggedInUser();
+
+  if (column === "commands") {
+    return <AccountCommandButtons data={data} />;
+  }
+  if (column === "title" || column === "type" || column === "status") {
+    return (
+      <Text size="xs" pl="xs" py={6}>
+        {data[column]}
+      </Text>
+    );
+  }
+
+  if (
+    column === "accountGroup" ||
+    column === "accountGroup2" ||
+    column === "accountGroup3" ||
+    column === "accountGroupCombined"
+  ) {
+    const isAssetLiability = ["Asset", "Liability"].includes(data?.type || "");
+    if (isAssetLiability) {
+      return <Text size="xs">{data[column]}</Text>;
+    }
+    return <></>;
+  }
+
+  if (column === "isCash" || column === "isNetWorth") {
+    const checked = data[column];
+    return (
+      <Center>
+        <Checkbox checked={checked} disabled />
+      </Center>
+    );
+  }
+
+  if (
+    column === "endDate" ||
+    column === "startDate" ||
+    column === "createdAt" ||
+    column === "updatedAt"
+  ) {
+    const displayDate = data[column];
+    if (displayDate) {
+      const formattedDate = format(displayDate, dateFormat);
+      return (
+        <Center>
+          <Text size="xs">{formattedDate}</Text>
+        </Center>
+      );
+    }
+    return <></>;
+  }
+
   return <></>;
 };

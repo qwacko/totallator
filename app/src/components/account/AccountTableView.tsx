@@ -8,17 +8,16 @@ import {
 } from "@tanstack/react-table";
 
 import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
-import { accountColumns } from "./accountColumns";
 import { TableDisplay } from "../table/TableDisplay";
-import { useState } from "react";
+import { accountColumnsView } from "./accountColumnsView";
 
-export const AccountTable = () => {
+export const AccountTableView = () => {
   const data = useAccounts();
 
   const table = useReactTable({
     data: data.data ? data.data : [],
     getRowId: (data) => data.id,
-    columns: accountColumns,
+    columns: accountColumnsView,
     getCoreRowModel: getCoreRowModel(),
     enableSorting: true,
     enableMultiSort: true,
@@ -27,6 +26,9 @@ export const AccountTable = () => {
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    meta: {
+      editing: false,
+    },
     initialState: {
       pagination: { pageSize: 20 },
       sorting: [{ id: "title", desc: false }],

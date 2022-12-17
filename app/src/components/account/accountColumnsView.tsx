@@ -1,55 +1,35 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { displayAccountCell } from "./AccountTableCell";
 import { accountTypeFilter } from "../table/filters/accountTypeFilter";
 import { statusFilter } from "../table/filters/statusFilter";
 import { dateFilter } from "../table/filters/dateFilter";
 import type { AccountsReturnType } from "src/server/trpc/router/_app";
 import { displayHeader } from "../table/headers/displayHeader";
-import { selectionCell } from "../table/selectionCell";
-import { AccountTableBulkActions } from "./AccountTableBulkActions";
 
 const columnHelper = createColumnHelper<AccountsReturnType>();
 
-export const accountColumns = [
-  columnHelper.display({
-    id: "selection",
-    header: AccountTableBulkActions,
-    cell: selectionCell,
-    enableColumnFilter: false,
-  }),
-  columnHelper.display({
-    id: "commands",
-    header: displayHeader({ title: "Commands" }),
-    cell: displayAccountCell,
-    enableColumnFilter: false,
-  }),
+export const accountColumnsView = [
   columnHelper.accessor("title", {
     header: displayHeader({ title: "Title", filterType: "string" }),
-    cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("status", {
     header: displayHeader({ title: "Status", filterType: "status" }),
-    cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: statusFilter("status"),
   }),
   columnHelper.accessor("isNetWorth", {
-    cell: displayAccountCell,
-    header: displayHeader({ title: "Net Worth", filterType: "boolean" }),
     enableColumnFilter: true,
+    header: displayHeader({ title: "Net Worth", filterType: "boolean" }),
     filterFn: "equals",
   }),
   columnHelper.accessor("isCash", {
-    cell: displayAccountCell,
     header: displayHeader({ title: "Cash", filterType: "boolean" }),
     enableColumnFilter: true,
     filterFn: "equals",
   }),
   columnHelper.accessor("type", {
     header: displayHeader({ title: "Account Type", filterType: "accountType" }),
-    cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: accountTypeFilter,
   }),
@@ -66,36 +46,30 @@ export const accountColumns = [
       id: "accountGroupCombined",
       enableColumnFilter: true,
       filterFn: "includesString",
-      cell: displayAccountCell,
     }
   ),
   columnHelper.accessor("accountGroup", {
     header: displayHeader({ title: "Account Group", filterType: "string" }),
-    cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("accountGroup2", {
     header: displayHeader({ title: "Account Group 2", filterType: "string" }),
-    cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("accountGroup3", {
     header: displayHeader({ title: "Account Group 3", filterType: "string" }),
-    cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: "includesString",
   }),
   columnHelper.accessor("startDate", {
     header: displayHeader({ title: "Start Date", filterType: "date" }),
-    cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: dateFilter("startDate"),
   }),
   columnHelper.accessor("endDate", {
     header: displayHeader({ title: "End Date", filterType: "date" }),
-    cell: displayAccountCell,
     enableColumnFilter: true,
     filterFn: dateFilter("startDate"),
   }),
@@ -103,12 +77,10 @@ export const accountColumns = [
     header: displayHeader({ title: "Created At", filterType: "date" }),
     enableColumnFilter: true,
     filterFn: dateFilter("createdAt"),
-    cell: displayAccountCell,
   }),
   columnHelper.accessor("updatedAt", {
     header: displayHeader({ title: "Updated At", filterType: "date" }),
     enableColumnFilter: true,
     filterFn: dateFilter("updatedAt"),
-    cell: displayAccountCell,
   }),
 ];
