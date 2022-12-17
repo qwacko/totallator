@@ -4,10 +4,18 @@ import { statusFilter } from "../table/filters/statusFilter";
 import { dateFilter } from "../table/filters/dateFilter";
 import type { TagsReturnType } from "src/server/trpc/router/_app";
 import { displayHeader } from "../table/headers/displayHeader";
+import { selectionCell } from "../table/selectionCell";
+import { TagTableBulkActions } from "./TagTableBulkActions";
 
 const columnHelper = createColumnHelper<TagsReturnType>();
 
 export const tagColumns = [
+  columnHelper.display({
+    id: "selection",
+    header: TagTableBulkActions,
+    cell: selectionCell,
+    enableColumnFilter: false,
+  }),
   columnHelper.display({
     id: "commands",
     header: displayHeader({ title: "Commands" }),

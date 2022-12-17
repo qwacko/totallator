@@ -7,6 +7,8 @@ import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccount
 import { useUpdateTag } from "src/utils/hooks/tags/useUpdateTag";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateTagDataValidationType } from "src/utils/validation/tag/updateTagValidation";
+import { DateCell } from "../table/cells/DateCell";
+import { TextCell } from "../table/cells/TextCell";
 import { TagCommandButtons } from "./TagCommandButtons";
 
 export type TagRowColumns =
@@ -16,8 +18,19 @@ export type TagRowColumns =
   | "commands";
 
 export const displayTagCell = (props: CellContext<TagsReturnType, unknown>) => {
+  const selected = props.row.getIsSelected();
+
+  if (selected) {
+    return (
+      <TagTableCell
+        id={props.row.id}
+        column={props.column.id as TagRowColumns}
+        data={props.row.original}
+      />
+    );
+  }
   return (
-    <TagTableCell
+    <TagTableCellView
       id={props.row.id}
       column={props.column.id as TagRowColumns}
       data={props.row.original}
@@ -95,5 +108,33 @@ export const TagTableCell = ({
       </Center>
     );
   }
+  return <></>;
+};
+
+export const TagTableCellView = ({
+  id,
+  column,
+  data,
+}: {
+  id: string;
+  column: TagRowColumns;
+  data: TagsReturnType;
+}) => {
+  if (column === "commands") {
+    return <TagCommandButtons data={data} />;
+  }
+  if (
+    column === "title" ||
+    column === "status" ||
+    column === "group" ||
+    column === "single"
+  ) {
+    return <TextCell>{data[column]}</TextCell>;
+  }
+
+  if (column === "createdAt" || column === "updatedAt") {
+    return <DateCell displayDate={data[column]} />;
+  }
+
   return <></>;
 };

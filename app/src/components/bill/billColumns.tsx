@@ -4,10 +4,18 @@ import { statusFilter } from "../table/filters/statusFilter";
 import { dateFilter } from "../table/filters/dateFilter";
 import type { BillsReturnType } from "src/server/trpc/router/_app";
 import { displayHeader } from "../table/headers/displayHeader";
+import { BillTableBulkActions } from "./BillTableBulkActions";
+import { selectionCell } from "../table/selectionCell";
 
 const columnHelper = createColumnHelper<BillsReturnType>();
 
 export const billColumns = [
+  columnHelper.display({
+    id: "selection",
+    header: BillTableBulkActions,
+    cell: selectionCell,
+    enableColumnFilter: false,
+  }),
   columnHelper.display({
     id: "commands",
     header: displayHeader({ title: "Commands" }),

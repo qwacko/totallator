@@ -9,6 +9,8 @@ import { useUpdateAccount } from "src/utils/hooks/accounts/useUpdateAccount";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateAccountDataValidationType } from "src/utils/validation/account/updateAccountValidation";
 import { AccountCommandButtons } from "./AccountCommandButtons";
+import { DateCell } from "../table/cells/DateCell";
+import { TextCell } from "../table/cells/TextCell";
 
 export type AccountRowColumns =
   | keyof updateAccountDataValidationType
@@ -184,17 +186,11 @@ export const AccountTableCellView = ({
   column: AccountRowColumns;
   data: AccountsReturnType;
 }) => {
-  const { dayjsFormat, dateFormat } = useLoggedInUser();
-
   if (column === "commands") {
     return <AccountCommandButtons data={data} />;
   }
   if (column === "title" || column === "type" || column === "status") {
-    return (
-      <Text size="xs" pl="xs" py={6}>
-        {data[column]}
-      </Text>
-    );
+    return <TextCell>{data[column]}</TextCell>;
   }
 
   if (
@@ -205,7 +201,7 @@ export const AccountTableCellView = ({
   ) {
     const isAssetLiability = ["Asset", "Liability"].includes(data?.type || "");
     if (isAssetLiability) {
-      return <Text size="xs">{data[column]}</Text>;
+      return <TextCell>{data[column]}</TextCell>;
     }
     return <></>;
   }
@@ -225,16 +221,7 @@ export const AccountTableCellView = ({
     column === "createdAt" ||
     column === "updatedAt"
   ) {
-    const displayDate = data[column];
-    if (displayDate) {
-      const formattedDate = format(displayDate, dateFormat);
-      return (
-        <Center>
-          <Text size="xs">{formattedDate}</Text>
-        </Center>
-      );
-    }
-    return <></>;
+    return <DateCell displayDate={data[column]} />;
   }
 
   return <></>;

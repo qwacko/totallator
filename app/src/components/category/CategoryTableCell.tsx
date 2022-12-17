@@ -7,6 +7,8 @@ import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccount
 import { useUpdateCategory } from "src/utils/hooks/categories/useUpdateCategory";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateCategoryDataValidationType } from "src/utils/validation/category/updateCategoryValidation";
+import { DateCell } from "../table/cells/DateCell";
+import { TextCell } from "../table/cells/TextCell";
 import { CategoryCommandButtons } from "./CategoryCommandButtons";
 
 export type CategoryRowColumns =
@@ -18,8 +20,19 @@ export type CategoryRowColumns =
 export const displayCategoryCell = (
   props: CellContext<CategoriesReturnType, unknown>
 ) => {
+  const selected = props.row.getIsSelected();
+
+  if (selected) {
+    return (
+      <CategoryTableCell
+        id={props.row.id}
+        column={props.column.id as CategoryRowColumns}
+        data={props.row.original}
+      />
+    );
+  }
   return (
-    <CategoryTableCell
+    <CategoryTableCellView
       id={props.row.id}
       column={props.column.id as CategoryRowColumns}
       data={props.row.original}
@@ -97,5 +110,33 @@ export const CategoryTableCell = ({
       </Center>
     );
   }
+  return <></>;
+};
+
+export const CategoryTableCellView = ({
+  id,
+  column,
+  data,
+}: {
+  id: string;
+  column: CategoryRowColumns;
+  data: CategoriesReturnType;
+}) => {
+  if (column === "commands") {
+    return <CategoryCommandButtons data={data} />;
+  }
+  if (
+    column === "title" ||
+    column === "status" ||
+    column === "group" ||
+    column === "single"
+  ) {
+    return <TextCell>{data[column]}</TextCell>;
+  }
+
+  if (column === "createdAt" || column === "updatedAt") {
+    return <DateCell displayDate={data[column]} />;
+  }
+
   return <></>;
 };

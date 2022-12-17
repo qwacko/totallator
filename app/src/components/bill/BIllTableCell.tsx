@@ -7,6 +7,8 @@ import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccount
 import { useUpdateBill } from "src/utils/hooks/bills/useUpdateBIll";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateBillDataValidationType } from "src/utils/validation/bill/updateBillValidation";
+import { DateCell } from "../table/cells/DateCell";
+import { TextCell } from "../table/cells/TextCell";
 import { BillCommandButtons } from "./BillCommandButtons";
 
 export type BillRowColumns =
@@ -18,8 +20,19 @@ export type BillRowColumns =
 export const displayBillCell = (
   props: CellContext<BillsReturnType, unknown>
 ) => {
+  const selected = props.row.getIsSelected();
+
+  if (selected) {
+    return (
+      <BillTableCell
+        id={props.row.id}
+        column={props.column.id as BillRowColumns}
+        data={props.row.original}
+      />
+    );
+  }
   return (
-    <BillTableCell
+    <BillTableCellView
       id={props.row.id}
       column={props.column.id as BillRowColumns}
       data={props.row.original}
@@ -97,5 +110,28 @@ export const BillTableCell = ({
       </Center>
     );
   }
+  return <></>;
+};
+
+export const BillTableCellView = ({
+  id,
+  column,
+  data,
+}: {
+  id: string;
+  column: BillRowColumns;
+  data: BillsReturnType;
+}) => {
+  if (column === "commands") {
+    return <BillCommandButtons data={data} />;
+  }
+  if (column === "title" || column === "status") {
+    return <TextCell>{data[column]}</TextCell>;
+  }
+
+  if (column === "createdAt" || column === "updatedAt") {
+    return <DateCell displayDate={data[column]} />;
+  }
+
   return <></>;
 };

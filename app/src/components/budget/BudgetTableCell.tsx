@@ -7,6 +7,8 @@ import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccount
 import { useUpdateBudget } from "src/utils/hooks/budgets/useUpdateBudget";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateBudgetDataValidationType } from "src/utils/validation/budget/updateBudgetValidation";
+import { DateCell } from "../table/cells/DateCell";
+import { TextCell } from "../table/cells/TextCell";
 import { BudgetCommandButtons } from "./BudgetCommandButtons";
 
 export type BudgetRowColumns =
@@ -18,8 +20,19 @@ export type BudgetRowColumns =
 export const displayBudgetCell = (
   props: CellContext<BudgetsReturnType, unknown>
 ) => {
+  const selected = props.row.getIsSelected();
+
+  if (selected) {
+    return (
+      <BudgetTableCell
+        id={props.row.id}
+        column={props.column.id as BudgetRowColumns}
+        data={props.row.original}
+      />
+    );
+  }
   return (
-    <BudgetTableCell
+    <BudgetTableCellView
       id={props.row.id}
       column={props.column.id as BudgetRowColumns}
       data={props.row.original}
@@ -97,5 +110,28 @@ export const BudgetTableCell = ({
       </Center>
     );
   }
+  return <></>;
+};
+
+export const BudgetTableCellView = ({
+  id,
+  column,
+  data,
+}: {
+  id: string;
+  column: BudgetRowColumns;
+  data: BudgetsReturnType;
+}) => {
+  if (column === "commands") {
+    return <BudgetCommandButtons data={data} />;
+  }
+  if (column === "title" || column === "status") {
+    return <TextCell>{data[column]}</TextCell>;
+  }
+
+  if (column === "createdAt" || column === "updatedAt") {
+    return <DateCell displayDate={data[column]} />;
+  }
+
   return <></>;
 };

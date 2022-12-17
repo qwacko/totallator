@@ -4,10 +4,18 @@ import { statusFilter } from "../table/filters/statusFilter";
 import { dateFilter } from "../table/filters/dateFilter";
 import type { CategoriesReturnType } from "src/server/trpc/router/_app";
 import { displayHeader } from "../table/headers/displayHeader";
+import { selectionCell } from "../table/selectionCell";
+import { CategoryTableBulkActions } from "./CategoryTableBulkActions";
 
 const columnHelper = createColumnHelper<CategoriesReturnType>();
 
 export const categoryColumns = [
+  columnHelper.display({
+    id: "selection",
+    header: CategoryTableBulkActions,
+    cell: selectionCell,
+    enableColumnFilter: false,
+  }),
   columnHelper.display({
     id: "commands",
     header: displayHeader({ title: "Commands" }),

@@ -11,6 +11,9 @@ import { BudgetSelection } from "../budget/BudgetSelection";
 import { CategorySelection } from "../category/CategorySelection";
 import { useDisplayCurrency } from "../reusable/DisplayCurrency";
 import { InputCurrency } from "../reusable/InputCurrency";
+import { CurrencyCell } from "../table/cells/CurrencyCell";
+import { DateCell } from "../table/cells/DateCell";
+import { TextCell } from "../table/cells/TextCell";
 import { TagSelection } from "../tag/TagSelection";
 import { JournalCommandButtons } from "./JournalCommandButtons";
 
@@ -32,8 +35,19 @@ export type JournalRowColumns =
 export const displayJournalCell = (
   props: CellContext<JournalsMergedType, unknown>
 ) => {
+  const selected = props.row.getIsSelected();
+
+  if (selected) {
+    return (
+      <JournalTableCell
+        id={props.row.id}
+        column={props.column.id as JournalRowColumns}
+        data={props.row.original}
+      />
+    );
+  }
   return (
-    <JournalTableCell
+    <JournalTableCellView
       id={props.row.id}
       column={props.column.id as JournalRowColumns}
       data={props.row.original}
@@ -309,5 +323,52 @@ export const JournalTableCell = ({
       </Center>
     );
   }
+  return <></>;
+};
+
+export const JournalTableCellView = ({
+  id,
+  column,
+  data,
+}: {
+  id: string;
+  column: JournalRowColumns;
+  data: JournalsMergedType;
+}) => {
+  if (column === "commands") {
+    return <JournalCommandButtons data={data} />;
+  }
+  if (column === "description") {
+    return <TextCell>{data[column]}</TextCell>;
+  }
+
+  if (column === "createdAt" || column === "updatedAt" || column === "date") {
+    return <DateCell displayDate={data[column]} />;
+  }
+
+  if (column === "tagId") {
+    return <TextCell>{data.tag ? data.tag.title : ""}</TextCell>;
+  }
+
+  if (column === "categoryId") {
+    return <TextCell>{data.category ? data.category.title : ""}</TextCell>;
+  }
+
+  if (column === "billId") {
+    return <TextCell>{data.bill ? data.bill.title : ""}</TextCell>;
+  }
+
+  if (column === "budgetId") {
+    return <TextCell>{data.budget ? data.budget.title : ""}</TextCell>;
+  }
+
+  if (column === "accountId") {
+    return <TextCell>{data.account ? data.account.title : ""}</TextCell>;
+  }
+
+  if (column === "amount" || column === "total") {
+    return <CurrencyCell amount={data[column]} />;
+  }
+
   return <></>;
 };
