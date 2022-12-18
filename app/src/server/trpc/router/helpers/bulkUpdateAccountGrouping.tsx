@@ -1,27 +1,12 @@
 import { NumberInput } from "@mantine/core";
 import { Prisma, PrismaClient, PrismaStatusEnum } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import {
-  createAccountValidation,
-  createAccountValidationWithoutAccountGrouping,
-} from "src/utils/validation/account/createAccountValidation";
+import { createAccountValidation } from "src/utils/validation/account/createAccountValidation";
 import { basicStatusToDBRequired } from "src/utils/validation/basicStatusToDB";
-import {
-  createBillValidation,
-  createBillValidationWithoutAG,
-} from "src/utils/validation/bill/createBillValidation";
-import {
-  createBudgetValidation,
-  createBudgetValidationWithoutAG,
-} from "src/utils/validation/budget/createBudgetValidation";
-import {
-  createCategoryValidation,
-  createCategoryValidationWithoutAG,
-} from "src/utils/validation/category/createCategoryValidation";
-import {
-  createTagValidation,
-  createTagValidationWithoutAG,
-} from "src/utils/validation/tag/createTagValidation";
+import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
+import { createBudgetValidation } from "src/utils/validation/budget/createBudgetValidation";
+import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
+import { createTagValidation } from "src/utils/validation/tag/createTagValidation";
 import { z } from "zod";
 import { createAccountGroupTitle } from "./accountTitleGroupHandling";
 import { defaultIncExp } from "./defaultIncExp";
@@ -33,15 +18,25 @@ const bulkUpdateAccountGroupingValidation = z.object({
   expenseAccountTitles: z.array(z.string()).optional(),
   assetAccountTitles: z.array(z.string()).optional(),
   liabilityAccountTitles: z.array(z.string()).optional(),
-  accounts: z.array(createAccountValidationWithoutAccountGrouping).optional(),
+  accounts: z
+    .array(createAccountValidation.omit({ accountGroupingId: true }))
+    .optional(),
   tagTitles: z.array(z.string()).optional(),
-  tags: z.array(createTagValidationWithoutAG).optional(),
+  tags: z
+    .array(createTagValidation.omit({ accountGroupingId: true }))
+    .optional(),
   billTitles: z.array(z.string()).optional(),
-  bills: z.array(createBillValidationWithoutAG).optional(),
+  bills: z
+    .array(createBillValidation.omit({ accountGroupingId: true }))
+    .optional(),
   categoryTitles: z.array(z.string()).optional(),
-  categories: z.array(createCategoryValidationWithoutAG).optional(),
+  categories: z
+    .array(createCategoryValidation.omit({ accountGroupingId: true }))
+    .optional(),
   budgetTitles: z.array(z.string()).optional(),
-  budgets: z.array(createBudgetValidationWithoutAG).optional(),
+  budgets: z
+    .array(createBudgetValidation.omit({ accountGroupingId: true }))
+    .optional(),
 });
 
 type BulkUpgradeAccountGroupingValidationType = z.infer<

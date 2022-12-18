@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidation";
 
-export const createAccountValidationWithoutAccountGrouping = z.object({
+export const createAccountValidation = z.object({
   title: z.string().min(2),
   accountGroup: z.string().min(2).optional(),
   accountGroup2: z.string().min(2).optional(),
@@ -11,14 +11,8 @@ export const createAccountValidationWithoutAccountGrouping = z.object({
   startDate: z.date().optional(),
   endDate: z.date().optional(),
   type: PrismaAccountTypeEnumValidation.default("Expense").optional(),
+  accountGroupingId: z.string().cuid(),
 });
-
-export const createAccountValidation =
-  createAccountValidationWithoutAccountGrouping.merge(
-    z.object({
-      accountGroupingId: z.string().cuid(),
-    })
-  );
 
 export type createAccountValidationType = z.infer<
   typeof createAccountValidation
