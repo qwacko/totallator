@@ -366,6 +366,24 @@ export const JournalTableCellView = ({
     return <TextCell>{data.account ? data.account.title : ""}</TextCell>;
   }
 
+  if (column === "otherJournals") {
+    const targetData = data.otherJournals;
+    const showAmounts = data.otherJournals.length > 2;
+    return (
+      <Stack>
+        {data.otherJournals.map((item) => {
+          if (item.id === data.id) return <></>;
+          return (
+            <Group key={item.id} p={0} m={0} spacing={0} grow>
+              <TextCell>{item.account ? item.account.title : ""}</TextCell>
+              {showAmounts && <CurrencyCell amount={item.amount} />}
+            </Group>
+          );
+        })}
+      </Stack>
+    );
+  }
+
   if (column === "amount" || column === "total") {
     return <CurrencyCell amount={data[column]} />;
   }

@@ -1,3 +1,4 @@
+import { journalsRouter } from "src/server/trpc/router/journalEntries";
 import type {
   AccountGroupingReturnType,
   AccountsReturnType,
@@ -41,6 +42,12 @@ export const buildMergedData = ({
     accountGrouping: accountGroupings
       ? accountGroupings.find((item) => item.id === journal.accountGroupingId)
       : undefined,
+    otherJournals: journal.otherJournals.map((otherj) => ({
+      ...otherj,
+      account: accounts
+        ? accounts.find((item) => item.id === otherj.accountId)
+        : undefined,
+    })),
   }));
 };
 export type MergedDataType = ReturnType<typeof buildMergedData>;
