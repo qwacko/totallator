@@ -161,7 +161,7 @@ model JournalEntry {
   reconciled  Boolean  @default(false)
   dataChecked Boolean  @default(false)
   complete    Boolean  @default(false)
-  amount      Float    @default(0)
+  amount      Decimal  @default(0) @db.Decimal(40, 8)
 
   //Relationships
   account       TransactionAccount @relation(fields: [accountId], references: [id], onDelete: Restrict, onUpdate: Restrict)
