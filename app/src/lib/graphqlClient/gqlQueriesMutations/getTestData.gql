@@ -1,7 +1,0 @@
-query GetTestData($id: String!) {
-	testResult(id: $id) {
-		id
-		title
-		requestTime
-	}
-}
