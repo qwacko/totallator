@@ -1,6 +1,7 @@
-import { NumberInput } from "@mantine/core";
-import { Prisma, PrismaClient, PrismaStatusEnum } from "@prisma/client";
+import type { Prisma, PrismaClient, PrismaStatusEnum } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { omit } from "lodash";
+import { notUndefinedGuard } from "src/utils/arrayHelpers";
 import { createAccountValidation } from "src/utils/validation/account/createAccountValidation";
 import { basicStatusToDBRequired } from "src/utils/validation/basicStatusToDB";
 import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
@@ -14,26 +15,30 @@ import { createGroupSingleTitle } from "./groupSingleHandling";
 
 const bulkUpdateAccountGroupingValidation = z.object({
   accountGroupingId: z.string().cuid(),
-  incomeAccountTitles: z.array(z.string()).optional(),
-  expenseAccountTitles: z.array(z.string()).optional(),
-  assetAccountTitles: z.array(z.string()).optional(),
-  liabilityAccountTitles: z.array(z.string()).optional(),
-  accounts: z
-    .array(createAccountValidation.omit({ accountGroupingId: true }))
+  createIncomeAccountTitles: z.array(z.string()).optional(),
+  createExpenseAccountTitles: z.array(z.string()).optional(),
+  createAssetAccountTitles: z.array(z.string()).optional(),
+  createLiabilityAccountTitles: z.array(z.string()).optional(),
+  upsertAccounts: z
+    .array(
+      createAccountValidation
+        .omit({ accountGroupingId: true })
+        .merge(z.object({ id: z.string().optional() }))
+    )
     .optional(),
-  tagTitles: z.array(z.string()).optional(),
+  createTagTitles: z.array(z.string()).optional(),
   tags: z
     .array(createTagValidation.omit({ accountGroupingId: true }))
     .optional(),
-  billTitles: z.array(z.string()).optional(),
+  createBillTitles: z.array(z.string()).optional(),
   bills: z
     .array(createBillValidation.omit({ accountGroupingId: true }))
     .optional(),
-  categoryTitles: z.array(z.string()).optional(),
+  createCategoryTitles: z.array(z.string()).optional(),
   categories: z
     .array(createCategoryValidation.omit({ accountGroupingId: true }))
     .optional(),
-  budgetTitles: z.array(z.string()).optional(),
+  createBudgetTitles: z.array(z.string()).optional(),
   budgets: z
     .array(createBudgetValidation.omit({ accountGroupingId: true }))
     .optional(),
@@ -51,20 +56,20 @@ export const bulkUpdateAccountGrouping = async ({
   input: BulkUpgradeAccountGroupingValidationType;
 }) => {
   const linkedItems = createLinkedItems({
-    assetAccounts: input.assetAccountTitles,
-    incomeAccounts: input.incomeAccountTitles,
-    expenseAccounts: input.expenseAccountTitles,
-    liabilityAccounts: input.liabilityAccountTitles,
-    tags: input.tagTitles,
-    categories: input.categoryTitles,
-    bills: input.billTitles,
-    budgets: input.budgetTitles,
+    createAssetAccounts: input.createAssetAccountTitles,
+    createIncomeAccounts: input.createIncomeAccountTitles,
+    createExpenseAccounts: input.createExpenseAccountTitles,
+    createLiabilityAccounts: input.createLiabilityAccountTitles,
+    createTags: input.createTagTitles,
+    createCategories: input.createCategoryTitles,
+    createBills: input.createBillTitles,
+    createBudgets: input.createBudgetTitles,
   });
 
   //Create Necessary Accounts
   const transactionAccountsToCreate: Prisma.TransactionAccountCreateManyAccountGroupingInput[] =
     [
-      ...(input.accounts ? input.accounts : []),
+      ...(input.upsertAccounts ? input.upsertAccounts : []),
       ...linkedItems.accountCreationAll,
     ];
 
@@ -132,42 +137,89 @@ export const bulkUpdateAccountGrouping = async ({
   });
 };
 
-const createLinkedItems = ({
-  assetAccounts,
-  liabilityAccounts,
-  incomeAccounts,
-  expenseAccounts,
-  tags,
-  categories,
-  bills,
-  budgets,
+//Needs to return a list of accounts to create, and mappings between accounts to create and account ids in journals.
+const upsertAccounts = async ({
+  prisma,
+  list,
+  accountGroupingId,
 }: {
-  assetAccounts: string[] | undefined;
-  liabilityAccounts: string[] | undefined;
-  incomeAccounts: string[] | undefined;
-  expenseAccounts: string[] | undefined;
-  tags?: string[] | undefined;
-  categories?: string[] | undefined;
-  bills?: string[] | undefined;
-  budgets?: string[] | undefined;
+  prisma: PrismaClient | PrismaClient | Prisma.TransactionClient;
+  list: BulkUpgradeAccountGroupingValidationType["upsertAccounts"];
+  accountGroupingId: string;
+}) => {
+  if (!list) {
+    return undefined;
+  }
+
+  const accountIdsToFind = list
+    .map((item) => item.id)
+    .filter(notUndefinedGuard);
+  const noAccountIds = list.filter((item) => !item.id);
+
+  const matchingAccounts = await prisma.transactionAccount.findMany({
+    where: { id: { in: accountIdsToFind }, accountGroupingId },
+  });
+
+  const foundAccountIds = matchingAccounts.map((item) => item.id);
+  const remainingAccountIds = accountIdsToFind.filter(
+    (item) => !foundAccountIds.includes(item)
+  );
+
+  const accountsToCreate = [
+    ...noAccountIds,
+    ...list.filter((item) => item.id && remainingAccountIds.includes(item.id)),
+  ].map((item) => omit(item, "id"));
+
+  const accountsToUpdate = list.filter(
+    (item) => item.id && foundAccountIds.includes(item.id)
+  );
+
+  return {
+    accountsToCreate,
+    accountsToUpdate: list.filter(
+      (item) => item.id && foundAccountIds.includes(item.id)
+    ),
+  };
+};
+
+const createLinkedItems = ({
+  createAssetAccounts,
+  createLiabilityAccounts,
+  createIncomeAccounts,
+  createExpenseAccounts,
+  createTags,
+  createCategories,
+  createBills,
+  createBudgets,
+}: {
+  createAssetAccounts: string[] | undefined;
+  createLiabilityAccounts: string[] | undefined;
+  createIncomeAccounts: string[] | undefined;
+  createExpenseAccounts: string[] | undefined;
+  createTags?: string[] | undefined;
+  createCategories?: string[] | undefined;
+  createBills?: string[] | undefined;
+  createBudgets?: string[] | undefined;
 }) => {
   const accountCreationAll = [
-    ...(assetAccounts
-      ? assetAccounts.map((item) => assAct({ title: item }))
+    ...(createAssetAccounts
+      ? createAssetAccounts.map((item) => assAct({ title: item }))
       : []),
-    ...(liabilityAccounts
-      ? liabilityAccounts.map((item) => assAct({ title: item, liab: true }))
+    ...(createLiabilityAccounts
+      ? createLiabilityAccounts.map((item) =>
+          assAct({ title: item, liab: true })
+        )
       : []),
-    ...(incomeAccounts
-      ? incomeAccounts.map((item) => incAct({ title: item }))
+    ...(createIncomeAccounts
+      ? createIncomeAccounts.map((item) => incAct({ title: item }))
       : []),
-    ...(expenseAccounts
-      ? expenseAccounts.map((item) => expAct({ title: item }))
+    ...(createExpenseAccounts
+      ? createExpenseAccounts.map((item) => expAct({ title: item }))
       : []),
   ];
 
-  const tagCreationAll: Prisma.TagCreateManyAccountGroupingInput[] = tags
-    ? tags.map((item) => {
+  const tagCreationAll: Prisma.TagCreateManyAccountGroupingInput[] = createTags
+    ? createTags.map((item) => {
         const [single, group] = item.split("/").reverse();
         return {
           ...basicStatusToDBRequired("Active"),
@@ -180,8 +232,8 @@ const createLinkedItems = ({
     : [];
 
   const categoryCreationAll: Prisma.CategoryCreateManyAccountGroupingInput[] =
-    categories
-      ? categories.map((item) => {
+    createCategories
+      ? createCategories.map((item) => {
           const [single, group] = item.split("/").reverse();
           return {
             ...basicStatusToDBRequired("Active"),
@@ -193,29 +245,31 @@ const createLinkedItems = ({
         })
       : [];
 
-  const billCreationAll: Prisma.BillCreateManyAccountGroupingInput[] = bills
-    ? bills.map((item) => {
-        return {
-          ...basicStatusToDBRequired("Active"),
-          title: item,
-        };
-      })
-    : [];
+  const billCreationAll: Prisma.BillCreateManyAccountGroupingInput[] =
+    createBills
+      ? createBills.map((item) => {
+          return {
+            ...basicStatusToDBRequired("Active"),
+            title: item,
+          };
+        })
+      : [];
 
-  const budgetCreationAll: Prisma.BillCreateManyAccountGroupingInput[] = budgets
-    ? budgets.map((item) => {
-        return {
-          ...basicStatusToDBRequired("Active"),
-          title: item,
-        };
-      })
-    : [];
+  const budgetCreationAll: Prisma.BillCreateManyAccountGroupingInput[] =
+    createBudgets
+      ? createBudgets.map((item) => {
+          return {
+            ...basicStatusToDBRequired("Active"),
+            title: item,
+          };
+        })
+      : [];
 
   return {
-    assetAccounts,
-    liabilityAccounts,
-    incomeAccounts,
-    expenseAccounts,
+    assetAccounts: createAssetAccounts,
+    liabilityAccounts: createLiabilityAccounts,
+    incomeAccounts: createIncomeAccounts,
+    expenseAccounts: createExpenseAccounts,
     accountCreationAll,
     tagCreationAll,
     categoryCreationAll,

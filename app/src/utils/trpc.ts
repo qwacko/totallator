@@ -15,6 +15,18 @@ export const trpc = createTRPCNext<AppRouter>({
   config() {
     return {
       transformer: superjson,
+      queryClientConfig: {
+        defaultOptions: {
+          mutations: {
+            networkMode:
+              process.env.NODE_ENV === "development" ? "always" : undefined,
+          },
+          queries: {
+            networkMode:
+              process.env.NODE_ENV === "development" ? "always" : undefined,
+          },
+        },
+      },
       links: [
         loggerLink({
           enabled: (opts) =>

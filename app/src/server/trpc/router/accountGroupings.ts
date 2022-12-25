@@ -1,17 +1,12 @@
 import { router, protectedProcedure } from "../trpc";
 import { z } from "zod";
-import {
-  basicStatusToDB,
-  basicStatusToDBRequired,
-} from "src/utils/validation/basicStatusToDB";
+import { basicStatusToDB } from "src/utils/validation/basicStatusToDB";
 import { getUserInfo } from "./helpers/getUserInfo";
 import { PrismaStatusEnumValidation } from "../../../utils/validation/PrismaStatusEnumValidation";
 import { TRPCError } from "@trpc/server";
 import { checkAccountGroupingAccess } from "./helpers/checkAccountGroupingAccess";
 import { createAccountGroupingValidation } from "src/utils/validation/accountGrouping/createAccountGroupingValidation";
-import { Prisma, PrismaClient, PrismaStatusEnum } from "@prisma/client";
-import { createAccountGroupTitle } from "./helpers/accountTitleGroupHandling";
-import { defaultIncExp } from "./helpers/defaultIncExp";
+import type { Prisma, PrismaClient } from "@prisma/client";
 import { bulkUpdateAccountGrouping } from "./helpers/bulkUpdateAccountGrouping";
 
 export const accountGroupingRouter = router({
@@ -417,35 +412,35 @@ const createBusinessItems = async ({
     prisma,
     input: {
       accountGroupingId,
-      assetAccountTitles: [
+      createAssetAccountTitles: [
         "Business/Bank/Transactional",
         "Business/Inventory/On Premise",
       ],
-      liabilityAccountTitles: [
+      createLiabilityAccountTitles: [
         "Business/Bank/Short Term Loan",
         "Business/Bank/Capex Loan",
         "Business/Bank/Credit Card",
       ],
-      incomeAccountTitles: [
+      createIncomeAccountTitles: [
         "Business Customer 1",
         "Business Customer 2",
         "Business Customer 3",
       ],
-      expenseAccountTitles: [
+      createExpenseAccountTitles: [
         "Supplier A",
         "Supplier B",
         "Transportation Company",
         "Logistics Company",
         "Skrinkage",
       ],
-      tagTitles: [
+      createTagTitles: [
         "Business/Location 1",
         "Business/Location 2",
         "Business/Online",
         "Business/Overhead",
       ],
-      billTitles: ["Lease", "Transportation"],
-      budgetTitles: [],
+      createBillTitles: ["Lease", "Transportation"],
+      createBudgetTitles: [],
     },
   });
 
@@ -460,7 +455,7 @@ const createPersonalItems = async ({
     prisma,
     input: {
       accountGroupingId,
-      assetAccountTitles: [
+      createAssetAccountTitles: [
         "Cash",
         "Personal/Bank/Primary/Cash",
         "Personal/Bank/Primary/Checking",
@@ -470,20 +465,20 @@ const createPersonalItems = async ({
         "Property/Main Home",
         "Property/Holiday House",
       ],
-      liabilityAccountTitles: [
+      createLiabilityAccountTitles: [
         "Personal/Bank/Primary/Credit Card",
         "Property/Main Home Mortgage 1",
         "Property/Main Home Mortgage 2",
         "Property/Holiday Home Mortgage",
       ],
-      incomeAccountTitles: [
+      createIncomeAccountTitles: [
         "Employer 1",
         "Bank Interest",
         "Employer 2",
         "Initial Value",
         "Capital Gains",
       ],
-      expenseAccountTitles: [
+      createExpenseAccountTitles: [
         "Tax",
         "Government",
         "Supermarket A",
@@ -512,13 +507,13 @@ const createPersonalItems = async ({
         "Internet Provider A",
         "Internet Provider B",
       ],
-      tagTitles: [
+      createTagTitles: [
         "Personal/Personal",
         "Property/Property A",
         "Property/Property B",
         "Personal/Capital",
       ],
-      billTitles: ["Rent", "Power", "Internet"],
-      budgetTitles: ["Bills", "Spending", "Transportation"],
+      createBillTitles: ["Rent", "Power", "Internet"],
+      createBudgetTitles: ["Bills", "Spending", "Transportation"],
     },
   });
