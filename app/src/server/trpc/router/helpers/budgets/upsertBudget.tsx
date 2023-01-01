@@ -5,7 +5,7 @@ import type { UpsertActions } from "../types";
 import type { createBudgetValidationType } from "src/utils/validation/budget/createBudgetValidation";
 import type { updateBudgetDataValidationType } from "src/utils/validation/budget/updateBudgetValidation";
 
-type UpsertBudgetData =
+export type UpsertBudgetData =
   | createBudgetValidationType
   | updateBudgetDataValidationType;
 

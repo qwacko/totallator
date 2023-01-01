@@ -1,8 +1,6 @@
 import type { Prisma, PrismaClient, TransactionAccount } from "@prisma/client";
-import {
-  type BulkUpgradeAccountGroupingValidationType,
-  type UpsertReturnType,
-} from "./../bulkUpdateAccountGrouping";
+import { type BulkUpgradeAccountGroupingValidationType } from "./../bulkUpdateAccountGrouping";
+import { type UpsertReturnType } from "./../types";
 import { createAccountLinkedItems } from "./createAccountLinkedItems";
 import { upsertAccount } from "./upsertAccount";
 
@@ -51,7 +49,7 @@ export const upsertAccounts = async ({
           action: "Upsert",
         });
         returnData.idLookup[upsertedAccount.id] = upsertedAccount;
-        if ("id" in currentItem) {
+        if ("id" in currentItem && currentItem.id) {
           returnData.idLookup[currentItem.id] = upsertedAccount;
         }
         returnData.nameLookup[

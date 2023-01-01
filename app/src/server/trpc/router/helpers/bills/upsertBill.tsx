@@ -5,7 +5,9 @@ import type { UpsertActions } from "../types";
 import type { createBillValidationType } from "src/utils/validation/bill/createBillValidation";
 import type { updateBillDataValidationType } from "src/utils/validation/bill/updateBillValidation";
 
-type UpsertBillData = createBillValidationType | updateBillDataValidationType;
+export type UpsertBillData =
+  | createBillValidationType
+  | updateBillDataValidationType;
 
 export const upsertBill = async ({
   data,

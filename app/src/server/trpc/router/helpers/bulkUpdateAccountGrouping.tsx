@@ -6,6 +6,10 @@ import { createCategoryValidation } from "src/utils/validation/category/createCa
 import { createTagValidation } from "src/utils/validation/tag/createTagValidation";
 import { z } from "zod";
 import { upsertAccounts } from "./accounts/upsertAccounts";
+import { upsertBills } from "./bills/upsertBills";
+import { upsertBudgets } from "./budgets/upsertBudgets";
+import { upsertCategories } from "./categories/upsertCategories";
+import { upsertTags } from "./tags/upsertTags";
 
 const bulkUpdateAccountGroupingValidation = z.object({
   accountGroupingId: z.string().cuid(),
@@ -17,24 +21,40 @@ const bulkUpdateAccountGroupingValidation = z.object({
     .array(
       createAccountValidation
         .omit({ accountGroupingId: true })
-        .merge(z.object({ id: z.string() }))
+        .merge(z.object({ id: z.string().optional() }))
     )
     .optional(),
   createTagTitles: z.array(z.string()).optional(),
-  tags: z
-    .array(createTagValidation.omit({ accountGroupingId: true }))
+  upsertTags: z
+    .array(
+      createTagValidation
+        .omit({ accountGroupingId: true })
+        .merge(z.object({ id: z.string().optional() }))
+    )
     .optional(),
   createBillTitles: z.array(z.string()).optional(),
-  bills: z
-    .array(createBillValidation.omit({ accountGroupingId: true }))
+  upsertBills: z
+    .array(
+      createBillValidation
+        .omit({ accountGroupingId: true })
+        .merge(z.object({ id: z.string().optional() }))
+    )
     .optional(),
   createCategoryTitles: z.array(z.string()).optional(),
-  categories: z
-    .array(createCategoryValidation.omit({ accountGroupingId: true }))
+  upsertCategories: z
+    .array(
+      createCategoryValidation
+        .omit({ accountGroupingId: true })
+        .merge(z.object({ id: z.string().optional() }))
+    )
     .optional(),
   createBudgetTitles: z.array(z.string()).optional(),
-  budgets: z
-    .array(createBudgetValidation.omit({ accountGroupingId: true }))
+  upsertBudgets: z
+    .array(
+      createBudgetValidation
+        .omit({ accountGroupingId: true })
+        .merge(z.object({ id: z.string().optional() }))
+    )
     .optional(),
   journals: z
     .array(
@@ -67,9 +87,32 @@ export const bulkUpdateAccountGrouping = async ({
     userId,
     userIsAdmin,
   });
-};
 
-export type UpsertReturnType<T> = {
-  idLookup: Record<string, T>;
-  nameLookup: Record<string, T>;
+  const categoryInfo = await upsertCategories({
+    prisma,
+    data: input,
+    userId,
+    userIsAdmin,
+  });
+
+  const billInfo = await upsertBills({
+    prisma,
+    data: input,
+    userId,
+    userIsAdmin,
+  });
+
+  const budgetInfo = await upsertBudgets({
+    prisma,
+    data: input,
+    userId,
+    userIsAdmin,
+  });
+
+  const tagInfo = await upsertTags({
+    prisma,
+    data: input,
+    userId,
+    userIsAdmin,
+  });
 };

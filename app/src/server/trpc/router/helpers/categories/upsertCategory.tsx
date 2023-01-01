@@ -9,7 +9,7 @@ import {
   updateGroupSingleTitle,
 } from "../groupSingleHandling";
 
-type UpsertCategoryData =
+export type UpsertCategoryData =
   | createCategoryValidationType
   | updateCategoryDataValidationType;
 

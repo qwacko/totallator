@@ -9,7 +9,9 @@ import {
 import type { createTagValidationType } from "src/utils/validation/tag/createTagValidation";
 import type { updateTagDataValidationType } from "src/utils/validation/tag/updateTagValidation";
 
-type UpsertTagData = createTagValidationType | updateTagDataValidationType;
+export type UpsertTagData =
+  | createTagValidationType
+  | updateTagDataValidationType;
 
 export const upsertTag = async ({
   data,
