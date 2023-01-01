@@ -13,9 +13,9 @@ import { checkTransactions } from "./helpers/journals/checkTransactions";
 import { updateSingleJournal } from "./helpers/journals/updateSingleJournal";
 import { sortToOrderBy } from "./helpers/journals/sortToOrderBy";
 import { omit } from "lodash";
-import { z } from "zod";
 import { cloneTransactionInput } from "src/utils/validation/journalEntries/cloneTransactionsValidation";
 import { deleteTransactionInput } from "src/utils/validation/journalEntries/deleteTransactionsValidation";
+import { createSimpleTranasction } from "./helpers/journals/createSimpleTranasction";
 
 export const journalsRouter = router({
   get: protectedProcedure
@@ -64,29 +64,7 @@ export const journalsRouter = router({
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
       // Build up the transaction information / details from the provided information
-      const { fromAccountId, toAccountId, amount, ...sharedProperties } = input;
-      const fromTransaction = {
-        ...sharedProperties,
-        accountId: fromAccountId,
-        amount: -1 * amount,
-        linked: true,
-      };
-      const toTransaction = {
-        ...sharedProperties,
-        accountId: toAccountId,
-        amount: 1 * amount,
-        linked: true,
-      };
-
-      const transaction = [fromTransaction, toTransaction];
-
-      const transactionValidated =
-        createTransactionValidation.parse(transaction);
-      await createTransaction({
-        user,
-        prisma: ctx.prisma,
-        input: transactionValidated,
-      });
+      await createSimpleTranasction({ input, user, prisma: ctx.prisma });
       return true;
     }),
   createTransaction: protectedProcedure
@@ -223,16 +201,16 @@ export const journalsRouter = router({
         const createdTransactions = await Promise.all(
           flattened.map(async (transaction) => {
             const newJournals = transaction.journalEntries.map((journal) => {
-              const {
-                complete,
-                id,
-                reconciled,
-                createdAt,
-                updatedAt,
-                dataChecked,
-                transactionId,
-                ...journalSelected
-              } = journal;
+              const journalSelected = omit(
+                journal,
+                "complete",
+                "id",
+                "reconciled",
+                "createdAt",
+                "updatedAt",
+                "dataChecked",
+                "transactionId"
+              );
               return {
                 ...journalSelected,
                 complete: false,

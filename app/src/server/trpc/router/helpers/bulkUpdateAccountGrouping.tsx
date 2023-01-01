@@ -3,6 +3,10 @@ import { createAccountValidation } from "src/utils/validation/account/createAcco
 import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
 import { createBudgetValidation } from "src/utils/validation/budget/createBudgetValidation";
 import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
+import {
+  createSimpleTransactionValidation,
+  createTransactionValidation,
+} from "src/utils/validation/journalEntries/createJournalValidation";
 import { createTagValidation } from "src/utils/validation/tag/createTagValidation";
 import { z } from "zod";
 import { upsertAccounts } from "./accounts/upsertAccounts";
@@ -56,13 +60,9 @@ const bulkUpdateAccountGroupingValidation = z.object({
         .merge(z.object({ id: z.string().optional() }))
     )
     .optional(),
-  journals: z
-    .array(
-      z.object({
-        accountTitle: z.string().optional(),
-        accountId: z.string().optional(),
-      })
-    )
+  createTransactions: z.array(createTransactionValidation).optional(),
+  createSimpleTransactions: z
+    .array(createSimpleTransactionValidation)
     .optional(),
 });
 
