@@ -5,15 +5,15 @@ export const createAccountGroupTitle = ({
   accountGroup3,
 }: {
   title: string;
-  accountGroup: string | undefined;
-  accountGroup2: string | undefined;
-  accountGroup3: string | undefined;
+  accountGroup: string | null | undefined;
+  accountGroup2: string | null | undefined;
+  accountGroup3: string | null | undefined;
 }) => {
   return {
     title,
-    accountGroup,
-    accountGroup2,
-    accountGroup3,
+    accountGroup: accountGroup || undefined,
+    accountGroup2: accountGroup2 || undefined,
+    accountGroup3: accountGroup3 || undefined,
     accountGroupCombined: [accountGroup, accountGroup2, accountGroup3]
       .filter((item) => item)
       .join("/"),
@@ -42,7 +42,7 @@ export const updateAccountGroupTitle = <
   accountGroup: string | undefined | null;
   accountGroup2: string | undefined | null;
   accountGroup3: string | undefined | null;
-  accountGroupCombined: string | undefined;
+  accountGroupCombined: string | null | undefined;
   existing: T;
 }) => {
   let useGroup = existing.accountGroup;
