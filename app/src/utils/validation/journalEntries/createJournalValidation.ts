@@ -39,12 +39,12 @@ export const createSingleJournalValidation = z.object({
   linked: z.boolean().optional().default(true),
 
   //Linked Items
-  accountId: z.string().cuid(),
+  accountId: z.string(),
   accountGroupingId: z.string().cuid(),
-  billId: z.string().cuid().optional(),
-  budgetId: z.string().cuid().optional(),
-  categoryId: z.string().cuid().optional(),
-  tagId: z.string().cuid().optional(),
+  billId: z.string().optional(),
+  budgetId: z.string().optional(),
+  categoryId: z.string().optional(),
+  tagId: z.string().optional(),
 
   //Status
   reconciled: z.boolean().optional().default(false),
