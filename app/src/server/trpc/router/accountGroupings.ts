@@ -6,7 +6,7 @@ import { PrismaStatusEnumValidation } from "../../../utils/validation/PrismaStat
 import { TRPCError } from "@trpc/server";
 import { checkAccountGroupingAccess } from "./helpers/checkAccountGroupingAccess";
 import { createAccountGroupingValidation } from "src/utils/validation/accountGrouping/createAccountGroupingValidation";
-import type { Prisma, PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaClient, User } from "@prisma/client";
 import { bulkUpdateAccountGrouping } from "./helpers/bulkUpdateAccountGrouping";
 
 export const accountGroupingRouter = router({
@@ -352,10 +352,12 @@ export const accountGroupingRouter = router({
 
       await ctx.prisma.$transaction(async (prisma) => {
         await createPersonalItems({
+          user,
           prisma,
           accountGroupingId: accountGrouping.id,
         });
         await createBusinessItems({
+          user,
           prisma,
           accountGroupingId: accountGrouping.id,
         });
@@ -404,11 +406,14 @@ const checkCanSeed = async ({
 const createBusinessItems = async ({
   prisma,
   accountGroupingId,
+  user,
 }: {
   accountGroupingId: string;
   prisma: PrismaClient | Prisma.TransactionClient;
+  user: User;
 }) =>
   bulkUpdateAccountGrouping({
+    user,
     prisma,
     input: {
       accountGroupingId,
@@ -447,12 +452,15 @@ const createBusinessItems = async ({
 const createPersonalItems = async ({
   prisma,
   accountGroupingId,
+  user,
 }: {
   accountGroupingId: string;
   prisma: PrismaClient | Prisma.TransactionClient;
+  user: User;
 }) =>
   bulkUpdateAccountGrouping({
     prisma,
+    user,
     input: {
       accountGroupingId,
       createAssetAccountTitles: [

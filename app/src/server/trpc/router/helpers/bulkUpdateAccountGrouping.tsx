@@ -1,4 +1,4 @@
-import type { Prisma, PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaClient, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { createAccountValidation } from "src/utils/validation/account/createAccountValidation";
 import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
@@ -6,6 +6,7 @@ import { createBudgetValidation } from "src/utils/validation/budget/createBudget
 import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
 import {
   createSimpleTransactionValidation,
+  type createSimpleTransactionValidationType,
   createTransactionValidation,
 } from "src/utils/validation/journalEntries/createJournalValidation";
 import { createTagValidation } from "src/utils/validation/tag/createTagValidation";
@@ -15,7 +16,8 @@ import { upsertBills } from "./bills/upsertBills";
 import { upsertBudgets } from "./budgets/upsertBudgets";
 import { upsertCategories } from "./categories/upsertCategories";
 import { upsertTags } from "./tags/upsertTags";
-import { UpsertReturnType } from "./types";
+import type { UpsertReturnType } from "./types";
+import { createSimpleTranasction } from "./journals/createSimpleTranasction";
 
 const bulkUpdateAccountGroupingValidation = z.object({
   accountGroupingId: z.string().cuid(),
@@ -74,8 +76,11 @@ export type BulkUpgradeAccountGroupingValidationType = z.infer<
 
 const findData = <T extends Record<string, unknown>>(
   data: UpsertReturnType<T>,
-  search: string
+  search: string | undefined
 ) => {
+  if (!search) {
+    return undefined;
+  }
   if (search in data.idLookup && data.idLookup[search]) {
     return data.idLookup[search];
   }
@@ -92,14 +97,15 @@ const findData = <T extends Record<string, unknown>>(
 export const bulkUpdateAccountGrouping = async ({
   prisma,
   input,
-  userId,
-  userIsAdmin,
+  user,
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   input: BulkUpgradeAccountGroupingValidationType;
-  userId: string;
-  userIsAdmin?: boolean;
+  user: User;
 }) => {
+  const userId = user.id;
+  const userIsAdmin = user.admin;
+
   const accountInfo = await upsertAccounts({
     prisma,
     data: input,
@@ -134,4 +140,50 @@ export const bulkUpdateAccountGrouping = async ({
     userId,
     userIsAdmin,
   });
+
+  if (
+    input.createSimpleTransactions &&
+    input.createSimpleTransactions.length > 0
+  ) {
+    const simpleTransactionsForCreation: createSimpleTransactionValidationType[] =
+      input.createSimpleTransactions.map((item) => {
+        const bill = findData(billInfo, item.billId);
+        const budget = findData(budgetInfo, item.budgetId);
+        const category = findData(categoryInfo, item.categoryId);
+        const tag = findData(tagInfo, item.tagId);
+        const fromAccount = findData(accountInfo, item.fromAccountId);
+        const toAccount = findData(accountInfo, item.toAccountId);
+
+        if (!fromAccount) {
+          throw new TRPCError({
+            message: `From Account Not Found. id = ${item.fromAccountId}`,
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+
+        if (!toAccount) {
+          throw new TRPCError({
+            message: `To Account Not Found. id = ${item.toAccountId}`,
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+
+        return {
+          ...item,
+          billId: bill ? bill.id : undefined,
+          budgetId: budget ? budget.id : undefined,
+          categoryId: category ? category.id : undefined,
+          tagId: tag ? tag.id : undefined,
+          accountGroupingId: input.accountGroupingId,
+          fromAccountId: fromAccount.id,
+          toAccountId: toAccount.id,
+        };
+      });
+
+    await Promise.all(
+      simpleTransactionsForCreation.map(async (trans) =>
+        createSimpleTranasction({ user, prisma, input: trans })
+      )
+    );
+  }
 };
