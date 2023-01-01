@@ -1,4 +1,5 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import { createAccountValidation } from "src/utils/validation/account/createAccountValidation";
 import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
 import { createBudgetValidation } from "src/utils/validation/budget/createBudgetValidation";
@@ -14,6 +15,7 @@ import { upsertBills } from "./bills/upsertBills";
 import { upsertBudgets } from "./budgets/upsertBudgets";
 import { upsertCategories } from "./categories/upsertCategories";
 import { upsertTags } from "./tags/upsertTags";
+import { UpsertReturnType } from "./types";
 
 const bulkUpdateAccountGroupingValidation = z.object({
   accountGroupingId: z.string().cuid(),
@@ -69,6 +71,23 @@ const bulkUpdateAccountGroupingValidation = z.object({
 export type BulkUpgradeAccountGroupingValidationType = z.infer<
   typeof bulkUpdateAccountGroupingValidation
 >;
+
+const findData = <T extends Record<string, unknown>>(
+  data: UpsertReturnType<T>,
+  search: string
+) => {
+  if (search in data.idLookup && data.idLookup[search]) {
+    return data.idLookup[search];
+  }
+  if (search in data.nameLookup && data.nameLookup[search]) {
+    return data.nameLookup[search];
+  }
+
+  throw new TRPCError({
+    message: "Cannot find item. ID = ${searc}",
+    code: "PARSE_ERROR",
+  });
+};
 
 export const bulkUpdateAccountGrouping = async ({
   prisma,
