@@ -9,15 +9,15 @@ export const createSimpleTransactionValidation = z.object({
   amount: z.number(),
 
   //Accounts
-  fromAccountId: z.string().cuid(),
-  toAccountId: z.string().cuid(),
+  fromAccountId: z.string(),
+  toAccountId: z.string(),
 
   //Linked Items
   accountGroupingId: z.string().cuid(),
-  billId: z.string().cuid().optional(),
-  budgetId: z.string().cuid().optional(),
-  categoryId: z.string().cuid().optional(),
-  tagId: z.string().cuid().optional(),
+  billId: z.string().optional(),
+  budgetId: z.string().optional(),
+  categoryId: z.string().optional(),
+  tagId: z.string().optional(),
 
   //Status
   reconciled: z.boolean().optional().default(false),
