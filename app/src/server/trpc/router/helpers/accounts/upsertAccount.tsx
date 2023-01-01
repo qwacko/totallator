@@ -11,12 +11,11 @@ import {
 } from "./accountTitleGroupHandling";
 import { TRPCError } from "@trpc/server";
 import { defaultIncExp } from "./defaultIncExp";
+import type { UpsertActions } from "../types";
 
 type UpsertAccountData =
   | createAccountValidationType
   | updateAccountDataValidationType;
-
-type UpsertActions = "Create" | "Update" | "Upsert";
 
 export const upsertAccount = async ({
   data,

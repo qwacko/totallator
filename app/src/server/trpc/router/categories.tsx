@@ -1,21 +1,14 @@
 import { router, protectedProcedure } from "../trpc";
-import {
-  basicStatusToDB,
-  basicStatusToDBRequired,
-} from "src/utils/validation/basicStatusToDB";
 import { getUserInfo } from "./helpers/getUserInfo";
 import {
   accountGroupingFilter,
   checkAccountGroupingAccess,
 } from "./helpers/checkAccountGroupingAccess";
 import { TRPCError } from "@trpc/server";
-import {
-  createGroupSingleTitle,
-  updateGroupSingleTitle,
-} from "./helpers/groupSingleHandling";
 import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
 import { updateCategoryValidation } from "src/utils/validation/category/updateCategoryValidation";
 import { z } from "zod";
+import { upsertCategory } from "./helpers/categories/upsertCategory";
 
 export const categoryRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -52,15 +45,13 @@ export const categoryRouter = router({
         adminRequired: true,
       });
 
-      await ctx.prisma.category.create({
-        data: {
-          accountGroupingId: input.accountGroupingId,
-          ...createGroupSingleTitle({
-            group: input.group,
-            single: input.single,
-          }),
-          ...basicStatusToDBRequired("Active"),
-        },
+      await upsertCategory({
+        prisma: ctx.prisma,
+        userId: user.id,
+        userAdmin: user.admin,
+        action: "Create",
+        data: input,
+        accountGroupingId: input.accountGroupingId,
       });
 
       return true;
@@ -70,31 +61,13 @@ export const categoryRouter = router({
     .mutation(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-      const targetCategory = await ctx.prisma.category.findFirst({
-        where: {
-          id: input.id,
-          ...accountGroupingFilter(user.id),
-        },
-      });
-
-      if (!targetCategory) {
-        throw new TRPCError({
-          message: "Cannot find category or user doesn't have admin accces",
-          code: "FORBIDDEN",
-        });
-      }
-
-      await ctx.prisma.category.update({
-        where: { id: targetCategory.id },
-        data: {
-          ...updateGroupSingleTitle({
-            group: input.data.group,
-            single: input.data.single,
-            title: input.data.title,
-            existing: targetCategory,
-          }),
-          ...basicStatusToDB(input.data.status),
-        },
+      await upsertCategory({
+        prisma: ctx.prisma,
+        userId: user.id,
+        userAdmin: user.admin,
+        data: input.data,
+        id: input.id,
+        action: "Update",
       });
 
       return true;
@@ -118,15 +91,13 @@ export const categoryRouter = router({
         });
       }
 
-      const { createdAt, updatedAt, id, ...targetCategoryProps } =
-        targetCategory;
-
-      await ctx.prisma.category.create({
-        data: {
-          ...targetCategoryProps,
-          single: `${targetCategoryProps.single} (Clone)`,
-          title: `${targetCategoryProps.title} (Clone)`,
-        },
+      await upsertCategory({
+        userId: user.id,
+        userAdmin: user.admin,
+        prisma: ctx.prisma,
+        data: { ...targetCategory, single: `${targetCategory.single} (Clone)` },
+        action: "Create",
+        accountGroupingId: targetCategory.accountGroupingId,
       });
 
       return true;

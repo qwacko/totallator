@@ -118,6 +118,7 @@ export const accountRouter = router({
         prisma: ctx.prisma,
         userId: user.id,
         userAdmin: user.admin,
+        accountGroupingId: targetAccount.accountGroupingId,
       });
 
       return true;
