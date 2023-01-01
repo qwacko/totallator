@@ -12,6 +12,7 @@ import { createBudgetValidation } from "src/utils/validation/budget/createBudget
 import { updateBudgetValidation } from "src/utils/validation/budget/updateBudgetValidation";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { upsertBudget } from "./helpers/budgets/upsertBudget";
 
 export const budgetRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -48,10 +49,14 @@ export const budgetRouter = router({
         adminRequired: true,
       });
 
-      await ctx.prisma.budget.create({
-        data: { ...input, ...basicStatusToDBRequired("Active") },
+      await upsertBudget({
+        prisma: ctx.prisma,
+        userId: user.id,
+        userAdmin: user.admin,
+        action: "Create",
+        data: input,
+        accountGroupingId: input.accountGroupingId,
       });
-
       return true;
     }),
   update: protectedProcedure
@@ -59,23 +64,13 @@ export const budgetRouter = router({
     .mutation(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-      const targetBudget = await ctx.prisma.budget.findFirst({
-        where: {
-          id: input.id,
-          ...accountGroupingFilter(user.id),
-        },
-      });
-
-      if (!targetBudget) {
-        throw new TRPCError({
-          message: "Cannot find budget or user doesn't have admin accces",
-          code: "FORBIDDEN",
-        });
-      }
-
-      await ctx.prisma.budget.update({
-        where: { id: targetBudget.id },
-        data: { ...input.data, ...basicStatusToDB(input.data.status) },
+      await upsertBudget({
+        prisma: ctx.prisma,
+        userId: user.id,
+        userAdmin: user.admin,
+        data: input.data,
+        id: input.id,
+        action: "Update",
       });
 
       return true;
@@ -98,16 +93,14 @@ export const budgetRouter = router({
           code: "FORBIDDEN",
         });
       }
-
-      const { createdAt, updatedAt, id, ...targetBudgetProps } = targetBudget;
-
-      await ctx.prisma.budget.create({
-        data: {
-          ...targetBudgetProps,
-          title: `${targetBudgetProps.title} (Clone)`,
-        },
+      await upsertBudget({
+        userId: user.id,
+        userAdmin: user.admin,
+        prisma: ctx.prisma,
+        data: { ...targetBudget, title: `${targetBudget.title} (Clone)` },
+        action: "Create",
+        accountGroupingId: targetBudget.accountGroupingId,
       });
-
       return true;
     }),
   delete: protectedProcedure

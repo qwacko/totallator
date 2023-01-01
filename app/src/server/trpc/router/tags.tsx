@@ -1,8 +1,4 @@
 import { router, protectedProcedure } from "../trpc";
-import {
-  basicStatusToDB,
-  basicStatusToDBRequired,
-} from "src/utils/validation/basicStatusToDB";
 import { getUserInfo } from "./helpers/getUserInfo";
 import {
   accountGroupingFilter,
@@ -11,11 +7,8 @@ import {
 import { TRPCError } from "@trpc/server";
 import { createTagValidation } from "src/utils/validation/tag/createTagValidation";
 import { updateTagValidation } from "src/utils/validation/tag/updateTagValidation";
-import {
-  createGroupSingleTitle,
-  updateGroupSingleTitle,
-} from "./helpers/groupSingleHandling";
 import { z } from "zod";
+import { upsertTag } from "./helpers/tags/upsertTag";
 
 export const tagRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -52,15 +45,13 @@ export const tagRouter = router({
         adminRequired: true,
       });
 
-      await ctx.prisma.tag.create({
-        data: {
-          accountGroupingId: input.accountGroupingId,
-          ...createGroupSingleTitle({
-            group: input.group,
-            single: input.single,
-          }),
-          ...basicStatusToDBRequired("Active"),
-        },
+      await upsertTag({
+        prisma: ctx.prisma,
+        userId: user.id,
+        userAdmin: user.admin,
+        action: "Create",
+        data: input,
+        accountGroupingId: input.accountGroupingId,
       });
 
       return true;
@@ -70,31 +61,13 @@ export const tagRouter = router({
     .mutation(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-      const targetTag = await ctx.prisma.tag.findFirst({
-        where: {
-          id: input.id,
-          ...accountGroupingFilter(user.id),
-        },
-      });
-
-      if (!targetTag) {
-        throw new TRPCError({
-          message: "Cannot find tag or user doesn't have admin accces",
-          code: "FORBIDDEN",
-        });
-      }
-
-      await ctx.prisma.tag.update({
-        where: { id: targetTag.id },
-        data: {
-          ...updateGroupSingleTitle({
-            group: input.data.group,
-            single: input.data.single,
-            title: input.data.title,
-            existing: targetTag,
-          }),
-          ...basicStatusToDB(input.data.status),
-        },
+      await upsertTag({
+        prisma: ctx.prisma,
+        userId: user.id,
+        userAdmin: user.admin,
+        data: input.data,
+        id: input.id,
+        action: "Update",
       });
 
       return true;
@@ -117,15 +90,13 @@ export const tagRouter = router({
           code: "FORBIDDEN",
         });
       }
-
-      const { createdAt, updatedAt, id, ...targetTagProps } = targetTag;
-
-      await ctx.prisma.tag.create({
-        data: {
-          ...targetTagProps,
-          single: `${targetTagProps.single} (Clone)`,
-          title: `${targetTagProps.title} (Clone)`,
-        },
+      await upsertTag({
+        userId: user.id,
+        userAdmin: user.admin,
+        prisma: ctx.prisma,
+        data: { ...targetTag, single: `${targetTag.single} (Clone)` },
+        action: "Create",
+        accountGroupingId: targetTag.accountGroupingId,
       });
 
       return true;
