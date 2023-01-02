@@ -6,13 +6,13 @@ import { PrismaStatusEnumValidation } from "src/utils/validation/PrismaStatusEnu
 import { TRPCError } from "@trpc/server";
 import { checkAccountGroupingAccess } from "./helpers/checkAccountGroupingAccess";
 import { createAccountGroupingValidation } from "src/utils/validation/accountGrouping/createAccountGroupingValidation";
-import type { Prisma, PrismaClient } from "@prisma/client";
 import {
   createPersonalItems,
   createBusinessItems,
 } from "./helpers/accountGrouping/seedAccountGroupingItems";
 import { accountGroupingGetValidation } from "src/utils/validation/accountGrouping/readAccountGroupingValidation";
 import { accountGroupingExportValidation } from "src/utils/validation/accountGrouping/exportAccountGroupingValidation copy";
+import { checkCanSeed } from "./helpers/accountGrouping/checkCanSeed";
 
 export const accountGroupingRouter = router({
   get: protectedProcedure
@@ -413,41 +413,3 @@ export const accountGroupingRouter = router({
       };
     }),
 });
-
-const checkCanSeed = async ({
-  prisma,
-  accountGroupingId,
-}: {
-  prisma: PrismaClient | Prisma.TransactionClient;
-  accountGroupingId: string;
-}) => {
-  const accountGrouping = await prisma.accountGrouping.findUnique({
-    where: { id: accountGroupingId },
-    include: {
-      _count: {
-        select: {
-          accounts: true,
-          journalEntries: true,
-          categories: true,
-          bills: true,
-          budgets: true,
-          tags: true,
-        },
-      },
-    },
-  });
-
-  if (
-    !accountGrouping ||
-    accountGrouping._count.accounts > 0 ||
-    accountGrouping._count.journalEntries > 0 ||
-    accountGrouping._count.categories > 0 ||
-    accountGrouping._count.bills > 0 ||
-    accountGrouping._count.budgets > 0 ||
-    accountGrouping._count.tags > 0
-  ) {
-    return undefined;
-  }
-
-  return accountGrouping;
-};
