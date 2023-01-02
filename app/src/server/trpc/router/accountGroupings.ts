@@ -11,7 +11,7 @@ import {
   createBusinessItems,
 } from "./helpers/accountGrouping/seedAccountGroupingItems";
 import { accountGroupingGetValidation } from "src/utils/validation/accountGrouping/readAccountGroupingValidation";
-import { accountGroupingExportValidation } from "src/utils/validation/accountGrouping/exportAccountGroupingValidation copy";
+import { accountGroupingExportValidation } from "src/utils/validation/accountGrouping/exportAccountGroupingValidation";
 import { checkCanSeed } from "./helpers/accountGrouping/checkCanSeed";
 
 export const accountGroupingRouter = router({
