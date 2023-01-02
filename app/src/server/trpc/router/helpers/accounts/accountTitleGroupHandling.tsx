@@ -59,7 +59,7 @@ export const updateAccountGroupTitle = <
     useGroup = g1 ? g1 : null;
     useGroup2 = g2 ? g2 : null;
     useGroup3 = g3 ? g3 : null;
-    console.log("g1", g1);
+    // console.log("g1", g1);
   } else {
     useGroup = accountGroup === null ? null : accountGroup || useGroup;
     useGroup2 = accountGroup2 === null ? null : accountGroup2 || useGroup2;

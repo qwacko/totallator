@@ -51,10 +51,6 @@ export const updateSingleJournal = async ({
     const { amount, accountId, ...linkedProperties } = dataWithoutOther;
 
     if (amount !== undefined || accountId) {
-      console.log("Updating Amount Or account for linked", {
-        amount,
-        accountId,
-      });
       await prisma.journalEntry.update({
         where: { id: journal.id },
         data: {
@@ -81,7 +77,7 @@ export const updateSingleJournal = async ({
     if (transaction) {
       const total = transaction.journalEntries
         .map((item) => item.amount)
-        .reduce((prev, current) => prev + current, 0);
+        .reduce((prev, current) => prev + current.toNumber(), 0);
       const first = transaction.journalEntries[0];
 
       if (total !== 0 && first) {
@@ -93,7 +89,7 @@ export const updateSingleJournal = async ({
 
         await prisma.journalEntry.update({
           where: { id: oldestTrans.id },
-          data: { amount: oldestTrans.amount - total },
+          data: { amount: oldestTrans.amount.toNumber() - total },
         });
       }
     }
