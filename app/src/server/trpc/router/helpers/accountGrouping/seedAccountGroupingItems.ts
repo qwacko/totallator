@@ -43,7 +43,11 @@ export const createBusinessItems = async ({
         "Business/Overhead",
       ],
       createBillTitles: ["Lease", "Transportation"],
-      createBudgetTitles: [],
+      createBudgetTitles: ["Regular Expenses", "Overheads"],
+      createCategoryTitles: [
+        "Business Category/Number 1",
+        "Business Category/Number 2",
+      ],
       createSimpleTransactions: [
         {
           accountGroupingId,
