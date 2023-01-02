@@ -1,10 +1,6 @@
 import { Card, Group, Stack, Title, Text, Center } from "@mantine/core";
 import type { AppRouterOutputs } from "src/server/trpc/router/_app";
-import { AccountGroupingDelete } from "./AccountGroupingDelete";
-import { AccountGroupingEditPopup } from "./AccountGroupingEditForm";
-import { AccountGroupingExport } from "./AccountGroupingExport";
-import { AccountGroupingSeed } from "./AccountGroupingSeed";
-import { AccountGroupingAddUserPopup } from "./AcountGroupingAddUsrer";
+import { AccountGroupingMenu } from "./AccountGroupingMenu";
 import { DisplayAGUser } from "./DisplayAGUser";
 
 export type AccountGroupingReturnSingle =
@@ -28,25 +24,10 @@ export const AccountGroupingCard = ({
         <Center>
           <Group align="center">
             <Title order={5}>{data.title}</Title>
-            {data.userIsAdmin && (
-              <>
-                <AccountGroupingEditPopup data={data} />
-                <AccountGroupingAddUserPopup
-                  accountGroupingId={data.id}
-                  title={data.title}
-                />
-              </>
-            )}
-            {data.userIsAdmin && (
-              <AccountGroupingSeed accountGroupingId={data.id} />
-            )}
-            {data.userIsAdmin && (
-              <AccountGroupingDelete
-                accountGroupingId={data.id}
-                title={data.title}
-              />
-            )}
-            <AccountGroupingExport accountGroupingId={data.id} />
+            <AccountGroupingMenu
+              accountGroupingId={data.id}
+              admin={data.userIsAdmin}
+            />
           </Group>
         </Center>
         <Center>
