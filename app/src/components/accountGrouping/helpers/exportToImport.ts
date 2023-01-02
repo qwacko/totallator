@@ -1,90 +1,92 @@
-import { removeUndefinedAndDuplicates } from "src/utils/arrayHelpers";
-import type { BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 import type { AccountGroupingExportValidationType } from "src/utils/validation/accountGrouping/exportAccountGroupingValidation";
+import type { AccountGroupingImportValidationType } from "src/utils/validation/accountGrouping/importAccountGroupingValidation";
 
 export const exportToImport = (
   data: AccountGroupingExportValidationType
-): BulkUpgradeAccountGroupingValidationType => {
-  const returnData: BulkUpgradeAccountGroupingValidationType = {
+): AccountGroupingImportValidationType => {
+  const returnData: AccountGroupingImportValidationType = {
     accountGroupingId: data.accountGrouping.id,
   };
 
   if (data.accounts && data.accounts.length > 0) {
-    returnData.upsertAccounts = data.accounts.map((account) => ({
-      title: account.title,
-      accountGroup: account.accountGroup || undefined,
-      accountGroup2: account.accountGroup2 || undefined,
-      accountGroup3: account.accountGroup3 || undefined,
-      endDate: account.endDate || undefined,
-      startDate: account.startDate || undefined,
+    returnData.accounts = data.accounts.map((account) => ({
       id: account.id,
-      isCash: account.isCash,
-      isNetWorth: account.isNetWorth,
       status: account.status,
       type: account.type,
+      title: account.title,
+      accountGroup: account.accountGroup,
+      accountGroup2: account.accountGroup2,
+      accountGroup3: account.accountGroup3,
+      endDate: account.endDate,
+      startDate: account.startDate,
+      isCash: account.isCash,
+      isNetWorth: account.isNetWorth,
+      createdAt: account.createdAt,
+      updatedAt: account.updatedAt,
     }));
   }
 
   if (data.categories && data.categories.length > 0) {
-    returnData.upsertCategories = data.categories.map((category) => ({
+    returnData.categories = data.categories.map((category) => ({
       id: category.id,
+      status: category.status,
       group: category.group,
       single: category.single,
-      status: category.status,
+      createdAt: category.createdAt,
+      updatedAt: category.updatedAt,
     }));
   }
 
   if (data.tags && data.tags.length > 0) {
-    returnData.upsertTags = data.tags.map((tag) => ({
+    returnData.tags = data.tags.map((tag) => ({
       id: tag.id,
+      status: tag.status,
       group: tag.group,
       single: tag.single,
-      status: tag.status,
+      createdAt: tag.createdAt,
+      updatedAt: tag.updatedAt,
     }));
   }
 
   if (data.bills && data.bills.length > 0) {
-    returnData.upsertBills = data.bills.map((bill) => ({
+    returnData.bills = data.bills.map((bill) => ({
       id: bill.id,
-      title: bill.title,
       status: bill.status,
+      title: bill.title,
+      createdAt: bill.createdAt,
+      updatedAt: bill.updatedAt,
     }));
   }
 
   if (data.budgets && data.budgets.length > 0) {
-    returnData.upsertBudgets = data.budgets.map((budget) => ({
+    returnData.budgets = data.budgets.map((budget) => ({
       id: budget.id,
-      title: budget.title,
       status: budget.status,
+      title: budget.title,
+      createdAt: budget.createdAt,
+      updatedAt: budget.updatedAt,
     }));
   }
 
   if (data.journalEntries && data.journalEntries.length > 0) {
-    const transactionIds = removeUndefinedAndDuplicates(
-      data.journalEntries.map((item) => item.transactionId)
-    );
-
-    returnData.createTransactions = transactionIds.map((trans) => {
-      const journals = data.journalEntries.filter(
-        (item) => item.transactionId === trans
-      );
-
-      return journals.map((journal) => ({
-        billId: journal.billId || undefined,
-        budgetId: journal.budgetId || undefined,
-        tagId: journal.tagId || undefined,
-        categoryId: journal.categoryId || undefined,
-        accountId: journal.accountId,
-        amount: journal.amount,
-        date: journal.date,
-        description: journal.description,
-        linked: journal.linked,
-        dataChecked: journal.dataChecked,
-        reconciled: journal.reconciled,
-        complete: journal.complete,
-        accountGroupingId: data.accountGrouping.id,
-      }));
-    });
+    returnData.journalEntries = data.journalEntries.map((journal) => ({
+      id: journal.id,
+      date: journal.date,
+      description: journal.description,
+      amount: journal.amount,
+      accountId: journal.accountId,
+      billId: journal.billId,
+      budgetId: journal.budgetId,
+      tagId: journal.tagId,
+      categoryId: journal.categoryId,
+      linked: journal.linked,
+      dataChecked: journal.dataChecked,
+      reconciled: journal.reconciled,
+      complete: journal.complete,
+      transactionId: journal.transactionId,
+      createdAt: journal.createdAt,
+      updatedAt: journal.updatedAt,
+    }));
   }
 
   return returnData;
