@@ -10,34 +10,37 @@ import { updateAccountValidation } from "src/utils/validation/account/updateAcco
 import { z } from "zod";
 import { upsertAccount } from "./helpers/accounts/upsertAccount";
 import { omit } from "lodash";
+import { accountGetValidation } from "src/utils/validation/account/readAccountValidation";
 
 export const accountRouter = router({
-  get: protectedProcedure.query(async ({ ctx }) => {
-    const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+  get: protectedProcedure
+    .output(accountGetValidation)
+    .query(async ({ ctx }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-    const accounts = await ctx.prisma.transactionAccount.findMany({
-      where: {
-        accountGrouping: { viewUsers: { some: { id: user.id } } },
-      },
-      include: {
-        accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-        _count: { select: { journalEntries: true } },
-      },
-    });
+      const accounts = await ctx.prisma.transactionAccount.findMany({
+        where: {
+          accountGrouping: { viewUsers: { some: { id: user.id } } },
+        },
+        include: {
+          accountGrouping: { include: { viewUsers: true, adminUsers: true } },
+          _count: { select: { journalEntries: true } },
+        },
+      });
 
-    return accounts.map((account) => {
-      const { accountGrouping, ...pickedAccount } = account;
+      return accounts.map((account) => {
+        const { accountGrouping, ...pickedAccount } = account;
 
-      const userIsAdmin =
-        user.admin ||
-        accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
+        const userIsAdmin =
+          user.admin ||
+          accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
 
-      return {
-        ...pickedAccount,
-        userIsAdmin,
-      };
-    });
-  }),
+        return {
+          ...pickedAccount,
+          userIsAdmin,
+        };
+      });
+    }),
   create: protectedProcedure
     .input(createAccountValidation)
     .mutation(async ({ ctx, input }) => {

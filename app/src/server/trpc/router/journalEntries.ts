@@ -16,10 +16,12 @@ import { omit } from "lodash";
 import { cloneTransactionInput } from "src/utils/validation/journalEntries/cloneTransactionsValidation";
 import { deleteTransactionInput } from "src/utils/validation/journalEntries/deleteTransactionsValidation";
 import { createSimpleTranasction } from "./helpers/journals/createSimpleTranasction";
+import { journalEntryGetValidation } from "src/utils/validation/journalEntries/readJournalEntriesValidation";
 
 export const journalsRouter = router({
   get: protectedProcedure
     .input(getJournalValidation)
+    .output(journalEntryGetValidation)
     .query(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 

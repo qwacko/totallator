@@ -2,6 +2,7 @@ import { Card, Group, Stack, Title, Text, Center } from "@mantine/core";
 import type { AppRouterOutputs } from "src/server/trpc/router/_app";
 import { AccountGroupingDelete } from "./AccountGroupingDelete";
 import { AccountGroupingEditPopup } from "./AccountGroupingEditForm";
+import { AccountGroupingExport } from "./AccountGroupingExport";
 import { AccountGroupingSeed } from "./AccountGroupingSeed";
 import { AccountGroupingAddUserPopup } from "./AcountGroupingAddUsrer";
 import { DisplayAGUser } from "./DisplayAGUser";
@@ -45,6 +46,7 @@ export const AccountGroupingCard = ({
                 title={data.title}
               />
             )}
+            <AccountGroupingExport accountGroupingId={data.id} />
           </Group>
         </Center>
         <Center>

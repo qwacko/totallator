@@ -1,8 +1,4 @@
 import { router, protectedProcedure } from "../trpc";
-import {
-  basicStatusToDB,
-  basicStatusToDBRequired,
-} from "src/utils/validation/basicStatusToDB";
 import { getUserInfo } from "./helpers/getUserInfo";
 import {
   accountGroupingFilter,
@@ -13,9 +9,10 @@ import { updateBudgetValidation } from "src/utils/validation/budget/updateBudget
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { upsertBudget } from "./helpers/budgets/upsertBudget";
+import { budgetGetValidation } from "src/utils/validation/budget/readBudgetValidation";
 
 export const budgetRouter = router({
-  get: protectedProcedure.query(async ({ ctx }) => {
+  get: protectedProcedure.output(budgetGetValidation).query(async ({ ctx }) => {
     const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
     const budgets = await ctx.prisma.budget.findMany({

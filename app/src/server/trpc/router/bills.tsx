@@ -9,9 +9,10 @@ import { updateBillValidation } from "src/utils/validation/bill/updateBillValida
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { upsertBill } from "./helpers/bills/upsertBill";
+import { billGetValidation } from "src/utils/validation/bill/readBillValidation";
 
 export const billRouter = router({
-  get: protectedProcedure.query(async ({ ctx }) => {
+  get: protectedProcedure.output(billGetValidation).query(async ({ ctx }) => {
     const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
     const bills = await ctx.prisma.bill.findMany({

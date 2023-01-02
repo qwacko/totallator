@@ -9,30 +9,33 @@ import { createCategoryValidation } from "src/utils/validation/category/createCa
 import { updateCategoryValidation } from "src/utils/validation/category/updateCategoryValidation";
 import { z } from "zod";
 import { upsertCategory } from "./helpers/categories/upsertCategory";
+import { categoryGetValidation } from "src/utils/validation/category/readCategoryValidation";
 
 export const categoryRouter = router({
-  get: protectedProcedure.query(async ({ ctx }) => {
-    const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+  get: protectedProcedure
+    .output(categoryGetValidation)
+    .query(async ({ ctx }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-    const categories = await ctx.prisma.category.findMany({
-      where: {
-        accountGrouping: { viewUsers: { some: { id: user.id } } },
-      },
-      include: {
-        accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-        _count: { select: { journalEntries: true } },
-      },
-    });
+      const categories = await ctx.prisma.category.findMany({
+        where: {
+          accountGrouping: { viewUsers: { some: { id: user.id } } },
+        },
+        include: {
+          accountGrouping: { include: { viewUsers: true, adminUsers: true } },
+          _count: { select: { journalEntries: true } },
+        },
+      });
 
-    return categories.map((category) => {
-      const { accountGrouping, ...pickedCategory } = category;
-      const userIsAdmin =
-        user.admin ||
-        accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
+      return categories.map((category) => {
+        const { accountGrouping, ...pickedCategory } = category;
+        const userIsAdmin =
+          user.admin ||
+          accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
 
-      return { ...pickedCategory, userIsAdmin };
-    });
-  }),
+        return { ...pickedCategory, userIsAdmin };
+      });
+    }),
   create: protectedProcedure
     .input(createCategoryValidation)
     .mutation(async ({ ctx, input }) => {

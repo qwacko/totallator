@@ -9,9 +9,10 @@ import { createTagValidation } from "src/utils/validation/tag/createTagValidatio
 import { updateTagValidation } from "src/utils/validation/tag/updateTagValidation";
 import { z } from "zod";
 import { upsertTag } from "./helpers/tags/upsertTag";
+import { tagGetValidation } from "src/utils/validation/tag/readTagValidation";
 
 export const tagRouter = router({
-  get: protectedProcedure.query(async ({ ctx }) => {
+  get: protectedProcedure.output(tagGetValidation).query(async ({ ctx }) => {
     const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
     const tags = await ctx.prisma.tag.findMany({

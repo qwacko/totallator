@@ -11,55 +11,59 @@ import {
   createPersonalItems,
   createBusinessItems,
 } from "./helpers/accountGrouping/seedAccountGroupingItems";
+import { accountGroupingGetValidation } from "src/utils/validation/accountGrouping/readAccountGroupingValidation";
+import { accountGroupingExportValidation } from "src/utils/validation/accountGrouping/exportAccountGroupingValidation copy";
 
 export const accountGroupingRouter = router({
-  get: protectedProcedure.query(async ({ ctx }) => {
-    const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+  get: protectedProcedure
+    .output(accountGroupingGetValidation)
+    .query(async ({ ctx }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-    const data = await ctx.prisma.accountGrouping.findMany({
-      //   where: user.admin ? { viewUsers: { some: { id: user.id } } } : {},
-      include: { viewUsers: true, adminUsers: true },
-    });
+      const data = await ctx.prisma.accountGrouping.findMany({
+        //   where: user.admin ? { viewUsers: { some: { id: user.id } } } : {},
+        include: { viewUsers: true, adminUsers: true },
+      });
 
-    return data.map((item) => {
-      const adminUserIds = item.adminUsers.map((user) => user.id);
-      const filteredViewUsers = item.viewUsers.filter(
-        (user) => !adminUserIds.includes(user.id)
-      );
-      const users = [
-        ...item.adminUsers.map((item) => ({
+      return data.map((item) => {
+        const adminUserIds = item.adminUsers.map((user) => user.id);
+        const filteredViewUsers = item.viewUsers.filter(
+          (user) => !adminUserIds.includes(user.id)
+        );
+        const users = [
+          ...item.adminUsers.map((item) => ({
+            id: item.id,
+            name: item.name,
+            username: item.username,
+            isUser: item.id === user.id,
+            admin: true,
+          })),
+          ...filteredViewUsers.map((item) => ({
+            id: item.id,
+            name: item.name,
+            username: item.username,
+            isUser: item.id === user.id,
+            admin: false,
+          })),
+        ];
+
+        const pickedItems = {
           id: item.id,
-          name: item.name,
-          username: item.username,
-          isUser: item.id === user.id,
-          admin: true,
-        })),
-        ...filteredViewUsers.map((item) => ({
-          id: item.id,
-          name: item.name,
-          username: item.username,
-          isUser: item.id === user.id,
-          admin: false,
-        })),
-      ];
-
-      const pickedItems = {
-        id: item.id,
-        active: item.active,
-        status: item.status,
-        allowUpdate: item.allowUpdate,
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-        deleted: item.deleted,
-        disabled: item.disabled,
-        title: item.title,
-      };
-      const userIsAdmin = item.adminUsers
-        .map((item) => item.id)
-        .includes(user.id);
-      return { ...pickedItems, userIsAdmin, users };
-    });
-  }),
+          active: item.active,
+          status: item.status,
+          allowUpdate: item.allowUpdate,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          deleted: item.deleted,
+          disabled: item.disabled,
+          title: item.title,
+        };
+        const userIsAdmin = item.adminUsers
+          .map((item) => item.id)
+          .includes(user.id);
+        return { ...pickedItems, userIsAdmin, users };
+      });
+    }),
   create: protectedProcedure
     .input(createAccountGroupingValidation)
     .mutation(async ({ ctx, input }) => {
@@ -365,6 +369,48 @@ export const accountGroupingRouter = router({
           accountGroupingId: accountGrouping.id,
         });
       });
+    }),
+  export: protectedProcedure
+    .input(z.object({ accountGroupingId: z.string().cuid() }))
+    .output(accountGroupingExportValidation)
+    .query(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+      await checkAccountGroupingAccess({
+        accountGroupingId: input.accountGroupingId,
+        prisma: ctx.prisma,
+        user,
+        adminRequired: false,
+      });
+
+      const data = await ctx.prisma.accountGrouping.findFirstOrThrow({
+        where: { id: input.accountGroupingId },
+        select: {
+          tags: true,
+          bills: true,
+          budgets: true,
+          categories: true,
+          accounts: true,
+          journalEntries: true,
+        },
+      });
+      const accountGrouping = await ctx.prisma.accountGrouping.findFirstOrThrow(
+        {
+          where: { id: input.accountGroupingId },
+        }
+      );
+
+      return {
+        accountGrouping,
+        accounts: data.accounts,
+        categories: data.categories,
+        bills: data.bills,
+        budgets: data.budgets,
+        tags: data.tags,
+        journalEntries: data.journalEntries.map((item) => ({
+          ...item,
+          amount: item.amount.toNumber(),
+        })),
+      };
     }),
 });
 
