@@ -37,12 +37,12 @@ export const journalsWithStats = async ({
   const count = allJournals.length;
   const startingTotal = allJournals
     .slice(skip + take)
-    .reduce((prev, current) => prev + current.amount, 0);
+    .reduce((prev, current) => prev + current.amount.toNumber(), 0);
   const selected = allJournals.slice(skip, skip + take);
   const selectedWithRunningTotal = selected.map((item, index) => {
     const sinceStart = selected
       .filter((_, idx) => idx >= index)
-      .reduce((prev, current) => prev + current.amount, 0);
+      .reduce((prev, current) => prev + current.amount.toNumber(), 0);
 
     return { ...item, total: sinceStart + startingTotal };
   });

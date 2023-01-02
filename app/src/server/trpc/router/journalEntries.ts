@@ -49,11 +49,16 @@ export const journalsRouter = router({
           (otherJournal) => ({
             id: otherJournal.id,
             accountId: otherJournal.accountId,
-            amount: otherJournal.amount,
+            amount: otherJournal.amount.toNumber(),
           })
         );
 
-        return { ...pickedJournal, otherJournals, userIsAdmin };
+        return {
+          ...pickedJournal,
+          amount: pickedJournal.amount.toNumber(),
+          otherJournals,
+          userIsAdmin,
+        };
       });
 
       return { data: returnJournals, count };
