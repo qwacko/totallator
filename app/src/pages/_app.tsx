@@ -5,7 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 
-import { trpc } from "../utils/trpc";
+import { trpc } from "src/utils/trpc";
 
 import { useState } from "react";
 import { UserProvider } from "src/utils/hooks/user/useLoggedInUser";

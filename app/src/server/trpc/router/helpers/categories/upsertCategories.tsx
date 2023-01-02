@@ -1,5 +1,5 @@
 import type { Category, Prisma, PrismaClient } from "@prisma/client";
-import { type BulkUpgradeAccountGroupingValidationType } from "../bulkUpdateAccountGrouping";
+import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 import { type UpsertReturnType } from "../types";
 import { upsertCategory, type UpsertCategoryData } from "./upsertCategory";
 

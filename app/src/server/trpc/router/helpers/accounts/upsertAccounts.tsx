@@ -1,5 +1,5 @@
 import type { Prisma, PrismaClient, TransactionAccount } from "@prisma/client";
-import { type BulkUpgradeAccountGroupingValidationType } from "./../bulkUpdateAccountGrouping";
+import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 import { type UpsertReturnType } from "./../types";
 import { createAccountLinkedItems } from "./createAccountLinkedItems";
 import { upsertAccount } from "./upsertAccount";

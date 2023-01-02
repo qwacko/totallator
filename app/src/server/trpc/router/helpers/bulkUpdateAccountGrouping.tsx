@@ -1,16 +1,6 @@
 import type { Prisma, PrismaClient, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { createAccountValidation } from "src/utils/validation/account/createAccountValidation";
-import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
-import { createBudgetValidation } from "src/utils/validation/budget/createBudgetValidation";
-import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
-import {
-  createSimpleTransactionValidation,
-  type createSimpleTransactionValidationType,
-  createTransactionValidation,
-} from "src/utils/validation/journalEntries/createJournalValidation";
-import { createTagValidation } from "src/utils/validation/tag/createTagValidation";
-import { z } from "zod";
+import { type createSimpleTransactionValidationType } from "src/utils/validation/journalEntries/createJournalValidation";
 import { upsertAccounts } from "./accounts/upsertAccounts";
 import { upsertBills } from "./bills/upsertBills";
 import { upsertBudgets } from "./budgets/upsertBudgets";
@@ -19,61 +9,10 @@ import { upsertTags } from "./tags/upsertTags";
 import type { UpsertReturnType } from "./types";
 import { createSimpleTranasction } from "./journals/createSimpleTranasction";
 import { createTransaction } from "./journals/createTransaction";
-
-const bulkUpdateAccountGroupingValidation = z.object({
-  accountGroupingId: z.string().cuid(),
-  createIncomeAccountTitles: z.array(z.string()).optional(),
-  createExpenseAccountTitles: z.array(z.string()).optional(),
-  createAssetAccountTitles: z.array(z.string()).optional(),
-  createLiabilityAccountTitles: z.array(z.string()).optional(),
-  upsertAccounts: z
-    .array(
-      createAccountValidation
-        .omit({ accountGroupingId: true })
-        .merge(z.object({ id: z.string().optional() }))
-    )
-    .optional(),
-  createTagTitles: z.array(z.string()).optional(),
-  upsertTags: z
-    .array(
-      createTagValidation
-        .omit({ accountGroupingId: true })
-        .merge(z.object({ id: z.string().optional() }))
-    )
-    .optional(),
-  createBillTitles: z.array(z.string()).optional(),
-  upsertBills: z
-    .array(
-      createBillValidation
-        .omit({ accountGroupingId: true })
-        .merge(z.object({ id: z.string().optional() }))
-    )
-    .optional(),
-  createCategoryTitles: z.array(z.string()).optional(),
-  upsertCategories: z
-    .array(
-      createCategoryValidation
-        .omit({ accountGroupingId: true })
-        .merge(z.object({ id: z.string().optional() }))
-    )
-    .optional(),
-  createBudgetTitles: z.array(z.string()).optional(),
-  upsertBudgets: z
-    .array(
-      createBudgetValidation
-        .omit({ accountGroupingId: true })
-        .merge(z.object({ id: z.string().optional() }))
-    )
-    .optional(),
-  createTransactions: z.array(createTransactionValidation).optional(),
-  createSimpleTransactions: z
-    .array(createSimpleTransactionValidation)
-    .optional(),
-});
-
-export type BulkUpgradeAccountGroupingValidationType = z.infer<
-  typeof bulkUpdateAccountGroupingValidation
->;
+import {
+  type BulkUpgradeAccountGroupingValidationType,
+  bulkUpdateAccountGroupingValidation,
+} from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 
 const findData = <T extends Record<string, unknown>>(
   data: UpsertReturnType<T>,
@@ -104,51 +43,52 @@ export const bulkUpdateAccountGrouping = async ({
   input: BulkUpgradeAccountGroupingValidationType;
   user: User;
 }) => {
+  const data = bulkUpdateAccountGroupingValidation.parse(input);
   const userId = user.id;
   const userIsAdmin = user.admin;
 
   const accountInfo = await upsertAccounts({
     prisma,
-    data: input,
+    data,
     userId,
     userIsAdmin,
   });
 
   const categoryInfo = await upsertCategories({
     prisma,
-    data: input,
+    data,
     userId,
     userIsAdmin,
   });
 
   const billInfo = await upsertBills({
     prisma,
-    data: input,
+    data,
     userId,
     userIsAdmin,
   });
 
   const budgetInfo = await upsertBudgets({
     prisma,
-    data: input,
+    data,
     userId,
     userIsAdmin,
   });
 
   const tagInfo = await upsertTags({
     prisma,
-    data: input,
+    data,
     userId,
     userIsAdmin,
   });
 
   //Create Simple Transactions
   if (
-    input.createSimpleTransactions &&
-    input.createSimpleTransactions.length > 0
+    data.createSimpleTransactions &&
+    data.createSimpleTransactions.length > 0
   ) {
     const simpleTransactionsForCreation: createSimpleTransactionValidationType[] =
-      input.createSimpleTransactions.map((item) => {
+      data.createSimpleTransactions.map((item) => {
         const bill = findData(billInfo, item.billId);
         const budget = findData(budgetInfo, item.budgetId);
         const category = findData(categoryInfo, item.categoryId);
@@ -176,7 +116,7 @@ export const bulkUpdateAccountGrouping = async ({
           budgetId: budget ? budget.id : undefined,
           categoryId: category ? category.id : undefined,
           tagId: tag ? tag.id : undefined,
-          accountGroupingId: input.accountGroupingId,
+          accountGroupingId: data.accountGroupingId,
           fromAccountId: fromAccount.id,
           toAccountId: toAccount.id,
         };
@@ -190,8 +130,8 @@ export const bulkUpdateAccountGrouping = async ({
   }
 
   //Create Non-Simple Transactions
-  if (input.createTransactions && input.createTransactions.length > 0) {
-    const transactionsToCreate = input.createTransactions.map((trans) => {
+  if (data.createTransactions && data.createTransactions.length > 0) {
+    const transactionsToCreate = data.createTransactions.map((trans) => {
       const journalsToCreate = trans.map((item) => {
         const bill = findData(billInfo, item.billId);
         const budget = findData(budgetInfo, item.budgetId);
@@ -212,7 +152,7 @@ export const bulkUpdateAccountGrouping = async ({
           budgetId: budget ? budget.id : undefined,
           categoryId: category ? category.id : undefined,
           tagId: tag ? tag.id : undefined,
-          accountGroupingId: input.accountGroupingId,
+          accountGroupingId: data.accountGroupingId,
           accountId: account.id,
         };
       });

@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import type { Prisma, PrismaClient } from "@prisma/client";
-import { makeToSet } from "../../../../utils/arrayHelpers";
+import { makeToSet } from "src/utils/arrayHelpers";
 
 const checkItem = ({
   accountGroupingIds,

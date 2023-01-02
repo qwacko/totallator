@@ -1,5 +1,5 @@
 import type { Budget, Prisma, PrismaClient } from "@prisma/client";
-import { type BulkUpgradeAccountGroupingValidationType } from "../bulkUpdateAccountGrouping";
+import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 import { type UpsertReturnType } from "../types";
 import { upsertBudget, type UpsertBudgetData } from "./upsertBudget";
 

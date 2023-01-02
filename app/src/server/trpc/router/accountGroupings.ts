@@ -2,7 +2,7 @@ import { router, protectedProcedure } from "../trpc";
 import { z } from "zod";
 import { basicStatusToDB } from "src/utils/validation/basicStatusToDB";
 import { getUserInfo } from "./helpers/getUserInfo";
-import { PrismaStatusEnumValidation } from "../../../utils/validation/PrismaStatusEnumValidation";
+import { PrismaStatusEnumValidation } from "src/utils/validation/PrismaStatusEnumValidation";
 import { TRPCError } from "@trpc/server";
 import { checkAccountGroupingAccess } from "./helpers/checkAccountGroupingAccess";
 import { createAccountGroupingValidation } from "src/utils/validation/accountGrouping/createAccountGroupingValidation";
