@@ -18,6 +18,7 @@ import { upsertCategories } from "./categories/upsertCategories";
 import { upsertTags } from "./tags/upsertTags";
 import type { UpsertReturnType } from "./types";
 import { createSimpleTranasction } from "./journals/createSimpleTranasction";
+import { createTransaction } from "./journals/createTransaction";
 
 const bulkUpdateAccountGroupingValidation = z.object({
   accountGroupingId: z.string().cuid(),
@@ -141,6 +142,7 @@ export const bulkUpdateAccountGrouping = async ({
     userIsAdmin,
   });
 
+  //Create Simple Transactions
   if (
     input.createSimpleTransactions &&
     input.createSimpleTransactions.length > 0
@@ -183,6 +185,43 @@ export const bulkUpdateAccountGrouping = async ({
     await Promise.all(
       simpleTransactionsForCreation.map(async (trans) =>
         createSimpleTranasction({ user, prisma, input: trans })
+      )
+    );
+  }
+
+  //Create Non-Simple Transactions
+  if (input.createTransactions && input.createTransactions.length > 0) {
+    const transactionsToCreate = input.createTransactions.map((trans) => {
+      const journalsToCreate = trans.map((item) => {
+        const bill = findData(billInfo, item.billId);
+        const budget = findData(budgetInfo, item.budgetId);
+        const category = findData(categoryInfo, item.categoryId);
+        const tag = findData(tagInfo, item.tagId);
+        const account = findData(accountInfo, item.accountId);
+
+        if (!account) {
+          throw new TRPCError({
+            message: `Account ID ${item.accountId} not found`,
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+
+        return {
+          ...item,
+          billId: bill ? bill.id : undefined,
+          budgetId: budget ? budget.id : undefined,
+          categoryId: category ? category.id : undefined,
+          tagId: tag ? tag.id : undefined,
+          accountGroupingId: input.accountGroupingId,
+          accountId: account.id,
+        };
+      });
+
+      return journalsToCreate;
+    });
+    await Promise.all(
+      transactionsToCreate.map(async (transaction) =>
+        createTransaction({ prisma, input: transaction, user })
       )
     );
   }
