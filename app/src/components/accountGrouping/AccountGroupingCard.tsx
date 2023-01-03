@@ -24,10 +24,7 @@ export const AccountGroupingCard = ({
         <Center>
           <Group align="center">
             <Title order={5}>{data.title}</Title>
-            <AccountGroupingMenu
-              accountGroupingId={data.id}
-              admin={data.userIsAdmin}
-            />
+            <AccountGroupingMenu data={data} />
           </Group>
         </Center>
         <Center>
