@@ -15,6 +15,7 @@ import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 import { AccountGroupingDelete } from "./AccountGroupingDelete";
 import { AccountGroupingDeleteLinked } from "./AccountGroupingDeleteLinked";
 import { AccountGroupingEditPopup } from "./AccountGroupingEditForm";
+import { AccountGroupingSeed } from "./AccountGroupingSeed";
 import { AccountGroupingAddUserPopup } from "./AcountGroupingAddUsrer";
 4;
 import { useExportData } from "./helpers/useExportData";
@@ -33,6 +34,8 @@ export const AccountGroupingMenu = ({
   const [delLinkedOpened, { open: delLinkedOpen, close: delLinkedClose }] =
     useDisclosure(false);
   const [delOpened, { open: delOpen, close: delClose }] = useDisclosure(false);
+  const [seedOpened, { open: seedOpen, close: seedClose }] =
+    useDisclosure(false);
   const seeding = useSeedAccountGrouping({ accountGroupingId });
   const exportData = useExportData({ accountGroupingId });
 
@@ -54,6 +57,7 @@ export const AccountGroupingMenu = ({
         close={delLinkedClose}
       />
       <AccountGroupingDelete data={data} opened={delOpened} close={delClose} />
+      <AccountGroupingSeed data={data} opened={seedOpened} close={seedClose} />
 
       <Menu onClose={close} opened={opened} withinPortal={true}>
         <Menu.Target>
@@ -80,8 +84,8 @@ export const AccountGroupingMenu = ({
 
           <Menu.Item
             disabled={!admin || !seeding.canSeed}
+            onClick={seedOpen}
             icon={<IconTree size={15} />}
-            onClick={() => seeding.seed(50)}
           >
             Seed With Data
           </Menu.Item>

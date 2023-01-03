@@ -3,9 +3,9 @@ import { IconMenu2 } from "@tabler/icons";
 import type { HeaderContext } from "@tanstack/react-table";
 import { SelectionColumnHeader } from "../table/selectionColumnHeader";
 import type { AccountsReturnType } from "src/server/trpc/router/_app";
-s;
-export const AccountTableBulkActions = <T extends unknown>(
-  column: HeaderContext<AccountsReturnType, T>
+
+export const AccountTableBulkActions = (
+  column: HeaderContext<AccountsReturnType, unknown>
 ) => {
   return (
     <>

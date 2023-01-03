@@ -13,6 +13,7 @@ import {
 import { accountGroupingGetValidation } from "src/utils/validation/accountGrouping/readAccountGroupingValidation";
 import { accountGroupingExportValidation } from "src/utils/validation/accountGrouping/exportAccountGroupingValidation";
 import { checkCanSeed } from "./helpers/accountGrouping/checkCanSeed";
+import { seedAccountGroupingValidation } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
 
 export const accountGroupingRouter = router({
   get: protectedProcedure
@@ -329,12 +330,7 @@ export const accountGroupingRouter = router({
       return seedingPossible ? true : false;
     }),
   seed: protectedProcedure
-    .input(
-      z.object({
-        accountGroupingId: z.string().cuid(),
-        transactionCount: z.number().int().optional().default(0),
-      })
-    )
+    .input(seedAccountGroupingValidation)
     .mutation(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
       await checkAccountGroupingAccess({
@@ -356,17 +352,18 @@ export const accountGroupingRouter = router({
           code: "BAD_REQUEST",
         });
       }
-
       await ctx.prisma.$transaction(async (prisma) => {
         await createPersonalItems({
           user,
           prisma,
           accountGroupingId: accountGrouping.id,
+          input,
         });
         await createBusinessItems({
           user,
           prisma,
           accountGroupingId: accountGrouping.id,
+          input,
         });
       });
     }),
