@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  Container,
   Group,
   Modal,
   NumberInput,
@@ -60,10 +61,10 @@ export const AccountGroupingSeed = ({
             label="Number Of Years For Generated Transactions"
           />
 
-          <Group>
+          <Group pt="md">
             <Button onClick={close}>Cancel</Button>
             <Button onClick={reset}>Reset</Button>
-            <Space />
+            <Container fluid />
             <Button type="submit">Seed</Button>
           </Group>
         </Stack>
