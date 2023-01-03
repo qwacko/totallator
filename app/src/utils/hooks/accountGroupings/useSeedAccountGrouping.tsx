@@ -19,6 +19,7 @@ const initialValues = (
   seedAsSample: false,
   numberYears: 5,
   transactionCount: 0,
+  includeAccounts: true,
 });
 
 export const useSeedAccountGrouping = ({

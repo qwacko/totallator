@@ -8,10 +8,15 @@ export const seedAccountGroupingInputValidation = z
     includePersonal: z.boolean(),
     seedAsSample: z.boolean(),
     numberYears: z.number().int().optional().default(5),
+    includeAccounts: z.boolean(),
   })
   .refine((data) => data.includeBusiness || data.includePersonal, {
     path: ["includePersonal"],
     message: "Must select one of personal or business",
+  })
+  .refine((data) => data.transactionCount === 0 || data.includeAccounts, {
+    path: ["includeAccounts"],
+    message: "Must select if generating transactions",
   });
 
 export const seedAccountGroupingValidation =

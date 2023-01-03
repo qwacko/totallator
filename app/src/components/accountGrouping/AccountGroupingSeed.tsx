@@ -5,7 +5,6 @@ import {
   Group,
   Modal,
   NumberInput,
-  Space,
   Stack,
 } from "@mantine/core";
 import { useSeedAccountGrouping } from "src/utils/hooks/accountGroupings/useSeedAccountGrouping";
@@ -45,6 +44,11 @@ export const AccountGroupingSeed = ({
             {...form.getInputProps("includeBusiness")}
             checked={form.values.includeBusiness}
             label="Include Business Items"
+          />
+          <Checkbox
+            {...form.getInputProps("includeAccounts")}
+            checked={form.values.includeAccounts}
+            label="Seed Accounts"
           />
           <Checkbox
             {...form.getInputProps("seedAsSample")}
