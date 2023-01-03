@@ -1,24 +1,24 @@
 import type { BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 
 export type SeedInputData = {
-  assetAccounts?: readonly string[];
-  assetAccountsSample?: readonly string[];
-  liabilityAccounts?: readonly string[];
-  liabilityAccountsSample?: readonly string[];
-  incomeAccounts?: readonly string[];
-  incomeAccountsSample?: readonly string[];
-  expenseAccounts?: readonly string[];
-  expenseAccountsSample?: readonly string[];
-  tags?: readonly string[];
-  tagsSample?: readonly string[];
-  bills?: readonly string[];
-  billsSample?: readonly string[];
-  budgets?: readonly string[];
-  budgetsSample?: readonly string[];
-  categories?: readonly string[];
-  categoriesSample?: readonly string[];
+  assetAccounts: readonly string[];
+  assetAccountsSample: readonly string[];
+  liabilityAccounts: readonly string[];
+  liabilityAccountsSample: readonly string[];
+  incomeAccounts: readonly string[];
+  incomeAccountsSample: readonly string[];
+  expenseAccounts: readonly string[];
+  expenseAccountsSample: readonly string[];
+  tags: readonly string[];
+  tagsSample: readonly string[];
+  bills: readonly string[];
+  billsSample: readonly string[];
+  budgets: readonly string[];
+  budgetsSample: readonly string[];
+  categories: readonly string[];
+  categoriesSample: readonly string[];
 };
-export const mergeItems = ({
+export const mergeSeedItems = ({
   sample,
   data,
   includeAccounts,

@@ -2,7 +2,7 @@ import type { Prisma, PrismaClient, User } from "@prisma/client";
 import type { SeedAccountGroupingValidationType } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
 import { bulkUpdateAccountGrouping } from "../bulkUpdateAccountGrouping";
 import { businessSeedData } from "./businessSeedItems";
-import { mergeItems } from "./mergeSeedItems";
+import { mergeSeedItems } from "./mergeSeedItems";
 import { personalSeedData } from "./personalSeedItems";
 
 export const createBusinessItems = async ({
@@ -23,7 +23,7 @@ export const createBusinessItems = async ({
       prisma,
       input: {
         accountGroupingId,
-        ...mergeItems({
+        ...mergeSeedItems({
           data: businessSeedData,
           sample: input.seedAsSample,
           includeAccounts: input.includeAccounts,
@@ -67,7 +67,7 @@ export const createPersonalItems = async ({
       user,
       input: {
         accountGroupingId,
-        ...mergeItems({
+        ...mergeSeedItems({
           sample: input.seedAsSample,
           includeAccounts: input.includeAccounts,
           data: personalSeedData,
