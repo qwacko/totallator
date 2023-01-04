@@ -1,6 +1,7 @@
 import type { Prisma, PrismaClient, User } from "@prisma/client";
 import type { SeedAccountGroupingValidationType } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
 import { bulkUpdateAccountGrouping } from "../bulkUpdateAccountGrouping";
+import { buildSeedTransactions } from "./buildSeedTransactions";
 import { businessSeedData } from "./businessSeedItems";
 import { mergeSeedItems } from "./mergeSeedItems";
 import { personalSeedData } from "./personalSeedItems";
@@ -28,23 +29,11 @@ export const createBusinessItems = async ({
           sample: input.seedAsSample,
           includeAccounts: input.includeAccounts,
         }),
-        createSimpleTransactions: [
-          // {
-          //   accountGroupingId,
-          //   amount: 50,
-          //   complete: false,
-          //   dataChecked: false,
-          //   date: new Date(),
-          //   description: "Test Generated",
-          //   fromAccountId: "Business Customer 1",
-          //   toAccountId: "Business/Bank/Transactional",
-          //   reconciled: false,
-          //   billId: undefined,
-          //   budgetId: undefined,
-          //   tagId: "Business/Location 1",
-          //   categoryId: undefined,
-          // },
-        ],
+        createSimpleTransactions: buildSeedTransactions({
+          inputConfig: businessSeedData,
+          transConfig: [],
+          queryConfig: input,
+        }),
       },
     });
   }

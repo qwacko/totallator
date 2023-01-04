@@ -7,6 +7,7 @@ importers:
       '@babel/core': ^7.20.2
       '@emotion/react': ^11.10.5
       '@emotion/server': ^11.10.0
+      '@faker-js/faker': ^7.6.0
       '@mantine/core': ^5.7.2
       '@mantine/dates': ^5.7.2
       '@mantine/dropzone': ^5.7.2
@@ -53,6 +54,7 @@ importers:
       '@babel/core': 7.20.2
       '@emotion/react': 11.10.5_lmetjsborprf4euefw4m3w36su
       '@emotion/server': 11.10.0
+      '@faker-js/faker': 7.6.0
       '@mantine/core': 5.7.2_77o55g32ovb32jcvrlteplarbu
       '@mantine/dates': 5.7.2_jc22cljiz55xiepef7uf36e3se
       '@mantine/dropzone': 5.7.2_gpb23uvyv4tvmpz42jjjg2mwmq
@@ -2810,6 +2812,11 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@faker-js/faker/7.6.0:
+    resolution: {integrity: sha512-XK6BTq1NDMo9Xqw/YkYyGjSsg44fbNwYRx7QK2CuoQgyy+f1rrTDHoExVM5PsyXCtfl2vs2vVJ0MN0yN6LppRw==}
+    engines: {node: '>=14.0.0', npm: '>=6.0.0'}
+    dev: false
 
   /@floating-ui/core/1.0.2:
     resolution: {integrity: sha512-Skfy0YS3NJ5nV9us0uuPN0HDk1Q4edljaOhRBJGDWs9EBa7ZVMYBHRFlhLvvmwEoaIM9BlH6QJFn9/uZg0bACg==}
