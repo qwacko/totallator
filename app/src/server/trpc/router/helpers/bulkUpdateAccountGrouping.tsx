@@ -87,6 +87,8 @@ export const bulkUpdateAccountGrouping = async ({
     data.createSimpleTransactions &&
     data.createSimpleTransactions.length > 0
   ) {
+    console.log("Item 1");
+
     const simpleTransactionsForCreation: createSimpleTransactionValidationType[] =
       data.createSimpleTransactions.map((item) => {
         const bill = findData(billInfo, item.billId);
@@ -122,11 +124,16 @@ export const bulkUpdateAccountGrouping = async ({
         };
       });
 
+    console.log("Item 2");
+
     await Promise.all(
-      simpleTransactionsForCreation.map(async (trans) =>
-        createSimpleTranasction({ user, prisma, input: trans })
-      )
+      simpleTransactionsForCreation.map(async (trans, index) => {
+        console.log("Creating Simple Transaction", index);
+        await createSimpleTranasction({ user, prisma, input: trans });
+        console.log("Simple Transaction Creation Complete");
+      })
     );
+    console.log("Item 3");
   }
 
   //Create Non-Simple Transactions

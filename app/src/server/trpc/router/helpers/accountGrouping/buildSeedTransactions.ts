@@ -1,30 +1,41 @@
 import { TRPCError } from "@trpc/server";
-import {
-  SeedAcconutGroupingInputValidationType,
-  SeedAccountGroupingValidationType,
-} from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
-import { createSimpleTransactionValidationType } from "src/utils/validation/journalEntries/createJournalValidation";
-import { mergeSeedItems, SeedInputData } from "./mergeSeedItems";
+import type { SeedAccountGroupingValidationType } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
+import type { createSimpleTransactionValidationType } from "src/utils/validation/journalEntries/createJournalValidation";
+import { mergeSeedItems, type SeedInputData } from "./mergeSeedItems";
 import { faker } from "@faker-js/faker";
-import { differenceInDays, subYears } from "date-fns";
+import { addDays, differenceInDays, subYears } from "date-fns";
 
-export type DefaultTransactionSeedingConfig = {
+export type DefaultTransactionSeedingConfig<
+  Accounts extends string,
+  Categories extends string,
+  Bills extends string,
+  Budgets extends string,
+  Tags extends string
+> = {
   descriptions: string[];
-  dateStart: Date;
-  dateEnd: Date;
-  amountMax: number;
-  amountMin: number;
-  fromAccounts: string[];
-  toAccounts: string[];
-  bills?: (string | undefined)[];
-  budgets?: (string | undefined)[];
-  categories?: (string | undefined)[];
-  tags?: (string | undefined)[];
+  dateStartPercentage?: number;
+  dateEndPercentage?: number;
+  amountMax?: number;
+  amountMin?: number;
+  fromAccounts: Accounts[];
+  toAccounts: Accounts[];
+  bills?: (Bills | undefined)[];
+  budgets?: (Budgets | undefined)[];
+  categories?: (Categories | undefined)[];
+  tags?: (Tags | undefined)[];
   daysSinceReconciled?: number;
   daysSinceChecked?: number;
   daysSinceComplete?: number;
   weighting: number;
 };
+
+type DefaultTransactionSeedingConfigString = DefaultTransactionSeedingConfig<
+  string,
+  string,
+  string,
+  string,
+  string
+>;
 
 export const buildSeedTransactions = ({
   inputConfig,
@@ -32,7 +43,7 @@ export const buildSeedTransactions = ({
   queryConfig,
 }: {
   inputConfig: SeedInputData;
-  transConfig: DefaultTransactionSeedingConfig[];
+  transConfig: DefaultTransactionSeedingConfigString[];
   queryConfig: SeedAccountGroupingValidationType;
 }): createSimpleTransactionValidationType[] => {
   checkSeedTransactionConfig({ inputConfig, queryConfig, transConfig });
@@ -47,23 +58,35 @@ export const buildSeedTransactions = ({
 
   const endDate = new Date();
   const startDate = subYears(endDate, queryConfig.numberYears);
+  const dateSpan = differenceInDays(endDate, startDate);
 
   const returnTrans: createSimpleTransactionValidationType[] = [];
 
   transConfig.forEach((config) => {
     const numberGenerated = Math.ceil(config.weighting * transPerWeighting);
+    const startDatePercent =
+      "dateStartPercentage" in config
+        ? (config.dateStartPercentage || 0.0) / 100.0
+        : 0;
+    const endDatePercent =
+      "dateEndPercentage" in config
+        ? (config.dateEndPercentage || 100.0) / 100.0
+        : 1;
+    const thisStartDays = startDatePercent * dateSpan;
+    const thisEndDays = endDatePercent * dateSpan;
+    const thisStartDate = addDays(startDate, thisStartDays);
+    const thisEndDate = addDays(startDate, thisEndDays);
 
     //Generate the transactions
     for (let i = 0; i < numberGenerated; i++) {
-      console.log("Generating Transaction With Config", config);
-      const transDate = faker.date.between(startDate, endDate);
+      const transDate = faker.date.between(thisStartDate, thisEndDate);
       const daysSinceTrans = differenceInDays(transDate, endDate);
       returnTrans.push({
         description: faker.helpers.arrayElement(config.descriptions),
         accountGroupingId: queryConfig.accountGroupingId,
         amount: faker.datatype.number({
-          min: config.amountMin,
-          max: config.amountMax,
+          min: "amountMin" in config ? config.amountMin : 0,
+          max: "amountMax" in config ? config.amountMax : 1000,
           precision: 2,
         }),
         date: transDate,
@@ -97,7 +120,7 @@ const checkSeedTransactionConfig = ({
   queryConfig,
 }: {
   inputConfig: SeedInputData;
-  transConfig: DefaultTransactionSeedingConfig[];
+  transConfig: DefaultTransactionSeedingConfigString[];
   queryConfig: SeedAccountGroupingValidationType;
 }) => {
   //Check that all of the transConfig data is in the inputConfig

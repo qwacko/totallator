@@ -1,6 +1,10 @@
 import type { SeedInputData } from "./mergeSeedItems";
+import type {
+  personalTransactionSeedingConfig,
+  personalTransactionSeedingSampleConfig,
+} from "./personalSeedItemsTypes";
 
-export const personalSeedData: SeedInputData = {
+export const personalSeedData = {
   assetAccounts: [
     "Cash",
     "Personal/Bank/Primary/Cash",
@@ -70,4 +74,28 @@ export const personalSeedData: SeedInputData = {
     "Personal/Capital",
   ],
   tagsSample: [],
-} as const;
+} as const satisfies SeedInputData;
+
+export const personalTransactionSeeding: personalTransactionSeedingConfig[] = [
+  {
+    fromAccounts: ["Personal/Bank/Primary/Cash"],
+    toAccounts: ["Bank A", "Bank B"],
+    amountMax: 200,
+    amountMin: 0,
+    descriptions: ["Test Description 1", "Test Description 2"],
+    weighting: 10,
+  },
+];
+
+export const personalTransactionSampleSeeding: personalTransactionSeedingSampleConfig[] =
+  [
+    ...personalTransactionSeeding,
+    {
+      fromAccounts: ["Property/Main Home Mortgage 1"],
+      toAccounts: ["Bank B", "Bank C"],
+      amountMax: 200,
+      amountMin: 0,
+      descriptions: ["Test Description 1", "Test Description 2"],
+      weighting: 10,
+    },
+  ];

@@ -1,6 +1,10 @@
+import type {
+  businessTransactionSeedingConfig,
+  businessTransactionSeedingSampleConfig,
+} from "./businessSeedItemsTypes";
 import type { SeedInputData } from "./mergeSeedItems";
 
-export const businessSeedData: SeedInputData = {
+export const businessSeedData = {
   assetAccounts: [
     "Business/Bank/Transactional",
     "Business/Inventory/On Premise",
@@ -34,4 +38,28 @@ export const businessSeedData: SeedInputData = {
   categoriesSample: [],
   tags: [],
   tagsSample: [],
-} as const;
+} as const satisfies SeedInputData;
+
+export const businessTransactionSeeding: businessTransactionSeedingConfig[] = [
+  {
+    fromAccounts: ["Skrinkage"],
+    toAccounts: ["Business Customer 1", "Business Customer 2"],
+    amountMax: 200,
+    amountMin: 0,
+    descriptions: ["Test Description 1", "Test Description 2"],
+    weighting: 10,
+  },
+];
+
+export const businessTransactionSampleSeeding: businessTransactionSeedingSampleConfig[] =
+  [
+    ...businessTransactionSeeding,
+    {
+      fromAccounts: ["Business/Bank/Transactional"],
+      toAccounts: ["Business Customer 2"],
+      amountMax: 200,
+      amountMin: 0,
+      descriptions: ["Who Knows", "Random Transactions"],
+      weighting: 10,
+    },
+  ];

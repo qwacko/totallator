@@ -2,9 +2,17 @@ import type { Prisma, PrismaClient, User } from "@prisma/client";
 import type { SeedAccountGroupingValidationType } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
 import { bulkUpdateAccountGrouping } from "../bulkUpdateAccountGrouping";
 import { buildSeedTransactions } from "./buildSeedTransactions";
-import { businessSeedData } from "./businessSeedItems";
+import {
+  businessSeedData,
+  businessTransactionSampleSeeding,
+  businessTransactionSeeding,
+} from "./businessSeedItems";
 import { mergeSeedItems } from "./mergeSeedItems";
-import { personalSeedData } from "./personalSeedItems";
+import {
+  personalSeedData,
+  personalTransactionSampleSeeding,
+  personalTransactionSeeding,
+} from "./personalSeedItems";
 
 export const createBusinessItems = async ({
   prisma,
@@ -31,7 +39,9 @@ export const createBusinessItems = async ({
         }),
         createSimpleTransactions: buildSeedTransactions({
           inputConfig: businessSeedData,
-          transConfig: [],
+          transConfig: input.seedAsSample
+            ? businessTransactionSampleSeeding
+            : businessTransactionSeeding,
           queryConfig: input,
         }),
       },
@@ -60,6 +70,13 @@ export const createPersonalItems = async ({
           sample: input.seedAsSample,
           includeAccounts: input.includeAccounts,
           data: personalSeedData,
+        }),
+        createSimpleTransactions: buildSeedTransactions({
+          inputConfig: personalSeedData,
+          transConfig: input.seedAsSample
+            ? personalTransactionSampleSeeding
+            : personalTransactionSeeding,
+          queryConfig: input,
         }),
       },
     });
