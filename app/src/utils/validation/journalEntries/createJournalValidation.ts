@@ -19,7 +19,7 @@ export const createSimpleTransactionValidation = z.object({
   categoryId: z.string().optional(),
   tagId: z.string().optional(),
 
-  //Status
+  //Status f
   reconciled: z.boolean().optional().default(false),
   dataChecked: z.boolean().optional().default(false),
   complete: z.boolean().optional().default(false),
