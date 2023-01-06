@@ -352,20 +352,23 @@ export const accountGroupingRouter = router({
           code: "BAD_REQUEST",
         });
       }
-      await ctx.prisma.$transaction(async (prisma) => {
-        await createPersonalItems({
-          user,
-          prisma,
-          accountGroupingId: accountGrouping.id,
-          input,
-        });
-        await createBusinessItems({
-          user,
-          prisma,
-          accountGroupingId: accountGrouping.id,
-          input,
-        });
-      });
+      await ctx.prisma.$transaction(
+        async (prisma) => {
+          await createPersonalItems({
+            user,
+            prisma,
+            accountGroupingId: accountGrouping.id,
+            input,
+          });
+          await createBusinessItems({
+            user,
+            prisma,
+            accountGroupingId: accountGrouping.id,
+            input,
+          });
+        },
+        { timeout: 60000 }
+      );
     }),
   export: protectedProcedure
     .input(z.object({ accountGroupingId: z.string().cuid() }))
