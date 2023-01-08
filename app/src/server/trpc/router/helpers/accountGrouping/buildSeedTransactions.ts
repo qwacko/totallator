@@ -80,6 +80,7 @@ export const buildSeedTransactions = ({
     //Generate the transactions
     for (let i = 0; i < numberGenerated; i++) {
       const transDate = faker.date.between(thisStartDate, thisEndDate);
+      transDate.setHours(0, 0, 0, 0);
       const daysSinceTrans = differenceInDays(transDate, endDate);
       returnTrans.push({
         description: faker.helpers.arrayElement(config.descriptions),
@@ -87,7 +88,7 @@ export const buildSeedTransactions = ({
         amount: faker.datatype.number({
           min: "amountMin" in config ? config.amountMin : 0,
           max: "amountMax" in config ? config.amountMax : 1000,
-          precision: 2,
+          precision: 0.01,
         }),
         date: transDate,
         fromAccountId: faker.helpers.arrayElement(config.fromAccounts),

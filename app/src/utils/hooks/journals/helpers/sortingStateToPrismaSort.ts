@@ -6,6 +6,8 @@ export const sortingStateToPrismaSort = (
   input: SortingState
 ): JournalSortValidation => {
   const fixedSort: JournalSortValidation = [
+    { key: "date", direction: "desc" },
+    { key: "account", direction: "asc" },
     { key: "amount", direction: "desc" },
     { key: "updatedAt", direction: "desc" },
   ];

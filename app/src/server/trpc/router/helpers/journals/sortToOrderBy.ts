@@ -52,11 +52,5 @@ export const sortToOrderBy = (
     }
   );
 
-  return [
-    ...returnData,
-    { date: "desc" },
-    { amount: "desc" },
-    { createdAt: "desc" },
-    { id: "asc" },
-  ];
+  return [...returnData, { id: "asc" }];
 };
