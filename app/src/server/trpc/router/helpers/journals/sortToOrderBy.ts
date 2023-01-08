@@ -7,10 +7,15 @@ export const sortToOrderBy = (
   | Prisma.Enumerable<Prisma.JournalEntryOrderByWithRelationAndSearchRelevanceInput>
   | undefined => {
   if (!input) {
-    return undefined;
+    return [
+      { date: "desc" },
+      { amount: "desc" },
+      { createdAt: "desc" },
+      { id: "asc" },
+    ];
   }
 
-  return input.map(
+  const returnData = input.map(
     (sort): Prisma.JournalEntryOrderByWithRelationAndSearchRelevanceInput => {
       if (sort.key === "date") {
         return { date: sort.direction };
@@ -46,4 +51,12 @@ export const sortToOrderBy = (
       return {};
     }
   );
+
+  return [
+    ...returnData,
+    { date: "desc" },
+    { amount: "desc" },
+    { createdAt: "desc" },
+    { id: "asc" },
+  ];
 };

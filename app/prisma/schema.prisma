@@ -184,6 +184,20 @@ model JournalEntry {
   //Timing Information
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index(accountId)
+  @@index(accountGroupingId)
+  @@index(date)
+  @@index(tagId)
+  @@index(categoryId)
+  @@index(billId)
+  @@index(budgetId)
+  @@index(description)
+  @@index(linked)
+  @@index(reconciled)
+  @@index(dataChecked)
+  @@index(complete)
+  @@index(amount)
 }
 
 model Tag {

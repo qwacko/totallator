@@ -48,13 +48,14 @@ export const journalsRouter = router({
           accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
 
         const otherJournals = transaction["journalEntries"].map(
-          (otherJournal) => ({
-            id: otherJournal.id,
-            accountId: otherJournal.accountId,
-            amount: otherJournal.amount.toNumber(),
-          })
+          (otherJournal) => {
+            return {
+              id: otherJournal.id,
+              accountId: otherJournal.accountId,
+              amount: otherJournal.amount.toNumber(),
+            };
+          }
         );
-
         return {
           ...pickedJournal,
           amount: pickedJournal.amount.toNumber(),
