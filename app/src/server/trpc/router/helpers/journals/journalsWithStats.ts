@@ -33,7 +33,12 @@ const filtersToQuery = async ({
             });
             const accountIds = accounts.map((item) => item.id);
             delete filter.account;
-            filter.accountId = { in: accountIds };
+            filter.accountId = {
+              in: [
+                ...(filter?.accountId?.in ? filter.accountId.in : []),
+                ...accountIds,
+              ],
+            };
           }
           return filter;
         })
