@@ -1,7 +1,6 @@
-import { Button, Group, Modal, Stack, Text, TextInput } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconPlus } from "@tabler/icons";
+import { Button, Group, Modal, Stack, TextInput } from "@mantine/core";
 import { useAddUserToAG } from "src/utils/hooks/accountGroupings/useAddUserTOAG";
+import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 
 export const AccountGroupingAddUserForm = ({
   accountGroupingId,
@@ -31,28 +30,20 @@ export const AccountGroupingAddUserForm = ({
 };
 
 export const AccountGroupingAddUserPopup = ({
-  accountGroupingId,
-  title,
+  data,
+  opened,
+  close,
 }: {
-  accountGroupingId: string;
-  title: string;
+  data: AccountGroupingReturnSingle;
+  opened: boolean;
+  close: () => void;
 }) => {
-  const [opened, { open, close }] = useDisclosure(false);
-
   return (
-    <>
-      <Button onClick={open} compact variant="light">
-        <Group spacing={2}>
-          <IconPlus size={15} />
-          <Text size="xs">Add User</Text>
-        </Group>
-      </Button>
-      <Modal title={`Add User To ${title}`} opened={opened} onClose={close}>
-        <AccountGroupingAddUserForm
-          accountGroupingId={accountGroupingId}
-          onSuccess={close}
-        />
-      </Modal>
-    </>
+    <Modal title={`Add User To ${data.title}`} opened={opened} onClose={close}>
+      <AccountGroupingAddUserForm
+        accountGroupingId={data.title}
+        onSuccess={close}
+      />
+    </Modal>
   );
 };

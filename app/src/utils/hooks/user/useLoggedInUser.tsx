@@ -17,8 +17,6 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: user, refetch } = trpc.user.get.useQuery();
   const { status } = useSession();
 
-  console.log({ status, user });
-
   useEffect(() => {
     refetch();
   }, [status, refetch]);
@@ -30,8 +28,6 @@ export const useLoggedInUser = () => {
   const router = useRouter();
   const data = useContext(UserContext);
   const { updateUser, isUpdatingUser } = useUpdateUser();
-
-  console.log({ router, data });
 
   const userSignOut = () => {
     signOut();

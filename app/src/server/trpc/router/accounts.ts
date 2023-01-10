@@ -1,8 +1,4 @@
 import { router, protectedProcedure } from "../trpc";
-import {
-  basicStatusToDB,
-  basicStatusToDBRequired,
-} from "src/utils/validation/basicStatusToDB";
 import { getUserInfo } from "./helpers/getUserInfo";
 import {
   accountGroupingFilter,
@@ -11,40 +7,40 @@ import {
 import { TRPCError } from "@trpc/server";
 import { createAccountValidation } from "src/utils/validation/account/createAccountValidation";
 import { updateAccountValidation } from "src/utils/validation/account/updateAccountValidation";
-import {
-  createAccountGroupTitle,
-  updateAccountGroupTitle,
-} from "./helpers/accountTitleGroupHandling";
 import { z } from "zod";
-import { defaultIncExp } from "./helpers/defaultIncExp";
+import { upsertAccount } from "./helpers/accounts/upsertAccount";
+import { omit } from "lodash";
+import { accountGetValidation } from "src/utils/validation/account/readAccountValidation";
 
 export const accountRouter = router({
-  get: protectedProcedure.query(async ({ ctx }) => {
-    const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+  get: protectedProcedure
+    .output(accountGetValidation)
+    .query(async ({ ctx }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-    const accounts = await ctx.prisma.transactionAccount.findMany({
-      where: {
-        accountGrouping: { viewUsers: { some: { id: user.id } } },
-      },
-      include: {
-        accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-        _count: { select: { journalEntries: true } },
-      },
-    });
+      const accounts = await ctx.prisma.transactionAccount.findMany({
+        where: {
+          accountGrouping: { viewUsers: { some: { id: user.id } } },
+        },
+        include: {
+          accountGrouping: { include: { viewUsers: true, adminUsers: true } },
+          _count: { select: { journalEntries: true } },
+        },
+      });
 
-    return accounts.map((account) => {
-      const { accountGrouping, ...pickedAccount } = account;
+      return accounts.map((account) => {
+        const { accountGrouping, ...pickedAccount } = account;
 
-      const userIsAdmin =
-        user.admin ||
-        accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
+        const userIsAdmin =
+          user.admin ||
+          accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
 
-      return {
-        ...pickedAccount,
-        userIsAdmin,
-      };
-    });
-  }),
+        return {
+          ...pickedAccount,
+          userIsAdmin,
+        };
+      });
+    }),
   create: protectedProcedure
     .input(createAccountValidation)
     .mutation(async ({ ctx, input }) => {
@@ -57,31 +53,14 @@ export const accountRouter = router({
         adminRequired: true,
       });
 
-      const { title, accountGroup, accountGroup2, accountGroup3, ...other } =
-        input;
-
-      if (input.type === "Income" || input.type === "Expense") {
-        await ctx.prisma.transactionAccount.create({
-          data: {
-            ...other,
-            ...basicStatusToDBRequired("Active"),
-            ...defaultIncExp(input.title),
-          },
-        });
-      } else {
-        await ctx.prisma.transactionAccount.create({
-          data: {
-            ...other,
-            ...basicStatusToDBRequired("Active"),
-            ...createAccountGroupTitle({
-              title,
-              accountGroup,
-              accountGroup2,
-              accountGroup3,
-            }),
-          },
-        });
-      }
+      await upsertAccount({
+        userId: user.id,
+        userAdmin: user.admin,
+        action: "Create",
+        data: input,
+        accountGroupingId: input.accountGroupingId,
+        prisma: ctx.prisma,
+      });
 
       return true;
     }),
@@ -90,60 +69,14 @@ export const accountRouter = router({
     .mutation(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-      const targetAccount = await ctx.prisma.transactionAccount.findFirst({
-        where: {
-          id: input.id,
-          ...accountGroupingFilter(user.id),
-        },
+      await upsertAccount({
+        userId: user.id,
+        userAdmin: user.admin,
+        action: "Update",
+        prisma: ctx.prisma,
+        data: input.data,
+        id: input.id,
       });
-
-      if (!targetAccount) {
-        throw new TRPCError({
-          message: "Cannot find account or user doesn't have admin accces",
-          code: "FORBIDDEN",
-        });
-      }
-
-      const {
-        title,
-        accountGroup,
-        accountGroup2,
-        accountGroup3,
-        status,
-        accountGroupCombined,
-        ...other
-      } = input.data;
-
-      const isIncExp = other.type
-        ? other.type === "Expense" || other.type === "Income"
-        : targetAccount.type === "Expense" || targetAccount.type === "Income";
-
-      if (isIncExp) {
-        await ctx.prisma.transactionAccount.update({
-          where: { id: targetAccount.id },
-          data: {
-            ...other,
-            ...basicStatusToDB(status),
-            ...defaultIncExp(title || targetAccount.title),
-          },
-        });
-      } else {
-        await ctx.prisma.transactionAccount.update({
-          where: { id: targetAccount.id },
-          data: {
-            ...other,
-            ...basicStatusToDB(status),
-            ...updateAccountGroupTitle({
-              title,
-              accountGroup,
-              accountGroup2,
-              accountGroup3,
-              existing: targetAccount,
-              accountGroupCombined: accountGroupCombined || undefined,
-            }),
-          },
-        });
-      }
 
       return true;
     }),
@@ -166,14 +99,29 @@ export const accountRouter = router({
         });
       }
 
-      const { createdAt, updatedAt, id, ...targetAccountProps } = targetAccount;
+      const targetAccountProps = omit(
+        targetAccount,
+        "id",
+        "createdAt",
+        "updatedAt",
+        "accountGroupCombined",
+        "accountTitleCombined",
+        "active",
+        "allowUpdate",
+        "deleted",
+        "disabled"
+      );
 
-      await ctx.prisma.transactionAccount.create({
+      await upsertAccount({
         data: {
           ...targetAccountProps,
           title: `${targetAccountProps.title} (Clone)`,
-          accountTitleCombined: `${targetAccountProps.accountTitleCombined} (Clone)`,
         },
+        action: "Create",
+        prisma: ctx.prisma,
+        userId: user.id,
+        userAdmin: user.admin,
+        accountGroupingId: targetAccount.accountGroupingId,
       });
 
       return true;

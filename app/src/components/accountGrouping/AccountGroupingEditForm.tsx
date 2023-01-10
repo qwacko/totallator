@@ -7,8 +7,6 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconSettings } from "@tabler/icons";
 import { useUpdateAccountGrouping } from "src/utils/hooks/accountGroupings/useUpdateAccountGrouping";
 import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 
@@ -54,19 +52,16 @@ export const AccountGroupingEditForm = ({
 
 export const AccountGroupingEditPopup = ({
   data,
+  opened,
+  close,
 }: {
   data: AccountGroupingReturnSingle;
+  opened: boolean;
+  close: () => void;
 }) => {
-  const [opened, { open, close }] = useDisclosure(false);
-
   return (
-    <>
-      <Modal title="Update Account Grouping" opened={opened} onClose={close}>
-        <AccountGroupingEditForm data={data} onSubmit={close} />
-      </Modal>
-      <Button variant="light" compact onClick={open}>
-        <IconSettings size={15} />
-      </Button>
-    </>
+    <Modal title="Update Account Grouping" opened={opened} onClose={close}>
+      <AccountGroupingEditForm data={data} onSubmit={close} />
+    </Modal>
   );
 };

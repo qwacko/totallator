@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import type { Prisma, PrismaClient } from "@prisma/client";
-import { makeToSet } from "../../../../utils/arrayHelpers";
+import { makeToSet } from "src/utils/arrayHelpers";
 
 const checkItem = ({
   accountGroupingIds,
@@ -62,6 +62,7 @@ export const checkLinkedItems = async ({
       where: { id: { in: makeToSet(useAccountIds) } },
       select: { id: true, accountGroupingId: true },
     });
+
     checkItem({
       accountGroupingIds: accounts.map((item) => item.accountGroupingId),
       targetIds: useAccountIds,

@@ -4,7 +4,7 @@ import type {
   PaginationState,
   SortingState,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "src/utils/trpc";
 import { useAccountGroupings } from "../accountGroupings/useAccountGroupings";
 import { useAccounts } from "../accounts/useAccounts";
@@ -18,7 +18,7 @@ import {
   type MergedDataType,
   buildMergedData,
 } from "./helpers/buildMergedData";
-import { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
+import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 
 export const useJournals = ({
   externalFilters,
@@ -37,6 +37,7 @@ export const useJournals = ({
   const [rowCount, setRowCount] = useState<number>(0);
 
   const [rowSelection, setRowSelection] = useState({});
+  const [mergedData, setMergedData] = useState<MergedDataType>([]);
 
   const sortingToUse = sortingStateToPrismaSort(sorting);
   const filtersToUse = filtersToPrismaFilters({ filters });
@@ -48,36 +49,39 @@ export const useJournals = ({
   const accountGroupingData = useAccountGroupings();
   const categoryData = useCategories();
 
-  const [mergedData, setMergedData] = useState<MergedDataType>([]);
-
-  const data = trpc.journals.get.useQuery(
-    {
-      sort: sortingToUse,
-      pagination: {
-        pageNo: pagination.pageIndex,
-        pageSize: pagination.pageSize,
-      },
-      filters: filtersToUse
-        ? [...filtersToUse, ...externalFilters]
-        : externalFilters,
+  const data = trpc.journals.get.useQuery({
+    sort: sortingToUse,
+    pagination: {
+      pageNo: pagination.pageIndex,
+      pageSize: pagination.pageSize,
     },
-    {
-      onSuccess: (data) => {
-        setRowCount(data.count);
-        setMergedData(
-          buildMergedData({
-            input: data.data,
-            bills: billData.data,
-            budgets: budgetData.data,
-            tags: tagData.data,
-            categories: categoryData.data,
-            accounts: accountData.data,
-            accountGroupings: accountGroupingData.data,
-          })
-        );
-      },
-    }
-  );
+    filters: filtersToUse
+      ? [...filtersToUse, ...externalFilters]
+      : externalFilters,
+  });
+
+  useEffect(() => {
+    setRowCount(data.data ? data.data.count : 0);
+    setMergedData(
+      buildMergedData({
+        input: data.data ? data.data.data : [],
+        bills: billData.data,
+        budgets: budgetData.data,
+        tags: tagData.data,
+        categories: categoryData.data,
+        accounts: accountData.data,
+        accountGroupings: accountGroupingData.data,
+      })
+    );
+  }, [
+    data.data,
+    accountData.data,
+    categoryData.data,
+    tagData.data,
+    billData.data,
+    budgetData.data,
+    accountGroupingData.data,
+  ]);
 
   const pageCount = Math.max(Math.ceil(rowCount / pagination.pageSize), 1);
 

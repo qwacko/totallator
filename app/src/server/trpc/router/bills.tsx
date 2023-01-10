@@ -1,8 +1,4 @@
 import { router, protectedProcedure } from "../trpc";
-import {
-  basicStatusToDB,
-  basicStatusToDBRequired,
-} from "src/utils/validation/basicStatusToDB";
 import { getUserInfo } from "./helpers/getUserInfo";
 import {
   accountGroupingFilter,
@@ -12,9 +8,11 @@ import { createBillValidation } from "src/utils/validation/bill/createBillValida
 import { updateBillValidation } from "src/utils/validation/bill/updateBillValidation";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
+import { upsertBill } from "./helpers/bills/upsertBill";
+import { billGetValidation } from "src/utils/validation/bill/readBillValidation";
 
 export const billRouter = router({
-  get: protectedProcedure.query(async ({ ctx }) => {
+  get: protectedProcedure.output(billGetValidation).query(async ({ ctx }) => {
     const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
     const bills = await ctx.prisma.bill.findMany({
@@ -48,8 +46,13 @@ export const billRouter = router({
         adminRequired: true,
       });
 
-      await ctx.prisma.bill.create({
-        data: { ...input, ...basicStatusToDBRequired("Active") },
+      await upsertBill({
+        prisma: ctx.prisma,
+        userId: user.id,
+        userAdmin: user.admin,
+        action: "Create",
+        data: input,
+        accountGroupingId: input.accountGroupingId,
       });
 
       return true;
@@ -59,23 +62,13 @@ export const billRouter = router({
     .mutation(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-      const targetBill = await ctx.prisma.bill.findFirst({
-        where: {
-          id: input.id,
-          ...accountGroupingFilter(user.id),
-        },
-      });
-
-      if (!targetBill) {
-        throw new TRPCError({
-          message: "Cannot find bill or user doesn't have admin accces",
-          code: "FORBIDDEN",
-        });
-      }
-
-      await ctx.prisma.bill.update({
-        where: { id: targetBill.id },
-        data: { ...input.data, ...basicStatusToDB(input.data.status) },
+      await upsertBill({
+        prisma: ctx.prisma,
+        userId: user.id,
+        userAdmin: user.admin,
+        data: input.data,
+        id: input.id,
+        action: "Update",
       });
 
       return true;
@@ -99,13 +92,13 @@ export const billRouter = router({
         });
       }
 
-      const { createdAt, updatedAt, id, ...targetBillProps } = targetBill;
-
-      await ctx.prisma.bill.create({
-        data: {
-          ...targetBillProps,
-          title: `${targetBillProps.title} (Clone)`,
-        },
+      await upsertBill({
+        userId: user.id,
+        userAdmin: user.admin,
+        prisma: ctx.prisma,
+        data: { ...targetBill, title: `${targetBill.title} (Clone)` },
+        action: "Create",
+        accountGroupingId: targetBill.accountGroupingId,
       });
 
       return true;

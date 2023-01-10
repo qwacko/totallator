@@ -25,7 +25,7 @@ export const checkTransactions = async ({
     //Check Amount = 0
     const total = transaction.journalEntries
       .map((item) => item.amount)
-      .reduce((prev, current) => prev + current, 0);
+      .reduce((prev, current) => prev + current.toNumber(), 0);
     if (total !== 0) {
       throw new TRPCError({
         message: `Transaction total doesn't equal zero (${transaction.journalEntries[0]?.description}). Make sure to update all of transaction.`,

@@ -12,6 +12,7 @@ export const checkAccountGroupingAccess = async ({
   user: User;
   adminRequired?: boolean;
 }) => {
+  // console.log("Checking Account Grouping Access");
   const targetAccountGrouping = await prisma.accountGrouping.findFirst({
     where: {
       id: accountGroupingId,
@@ -29,6 +30,7 @@ export const checkAccountGroupingAccess = async ({
       code: "BAD_REQUEST",
     });
   }
+  // console.log("Account Grouping Access Success");
 };
 
 export const accountGroupingFilter = (userId: string, admin = true) => {
