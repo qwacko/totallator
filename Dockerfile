@@ -1,6 +1,6 @@
 ##### DEPENDENCIES
 
-FROM --platform=linux/amd64 node:16-alpine AS deps
+FROM --platform=linux/amd64 node:19-alpine AS deps
 RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
@@ -21,7 +21,7 @@ RUN \
 
 ##### BUILDER
 
-FROM --platform=linux/amd64 node:16-alpine AS builder
+FROM --platform=linux/amd64 node:19-alpine AS builder
 ENV DATABASE_URL postgres://admin:default@127.0.0.1
 ENV NEXTAUTH_SECRET nextauthsecret
 ENV NEXTAUTH_URL http://auth.example.com
@@ -38,16 +38,27 @@ RUN \
  else echo "Lockfile not found." && exit 1; \
  fi
 
+##### PRISMA
+FROM --platform=linux/amd64 node:19-alpine AS prisma
+WORKDIR /app
+
+ENV DATABASE_URL postgres://admin:default@127.0.0.1
+
+COPY ./prisma ./prisma
+
+RUN npm init -y
+RUN npm install prisma --save-dev
+
+
 ##### RUNNER
 
-FROM --platform=linux/amd64 node:16-alpine AS runner
+FROM --platform=linux/amd64 node:19-alpine AS runner
 WORKDIR /app
 
 ENV DATABASE_URL postgres://admin:default@127.0.0.1
 ENV NEXTAUTH_SECRET nextauthsecret
 ENV NEXTAUTH_URL http://auth.example.com
 ENV NODE_ENV production
-ARG ENGINE_TYPE binary
 
 # ENV NEXT_TELEMETRY_DISABLED 1
 
@@ -61,8 +72,16 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+COPY --from=prisma /app ./prisma
+
+COPY --chown=nextjs:nodejs ./dockerEntrypoint.sh /
+
+
 USER nextjs
 EXPOSE 3000
 ENV PORT 3000
 
-CMD ["node", "server.js"]
+RUN chmod +x /dockerEntrypoint.sh
+
+ENTRYPOINT ["/dockerEntrypoint.sh"]
+CMD []
