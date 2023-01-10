@@ -6,6 +6,7 @@ import {
   IconMenu2,
   IconPlus,
   IconTableExport,
+  IconTableImport,
   IconTrash,
   IconTree,
   IconUnlink,
@@ -15,6 +16,7 @@ import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 import { AccountGroupingDelete } from "./AccountGroupingDelete";
 import { AccountGroupingDeleteLinked } from "./AccountGroupingDeleteLinked";
 import { AccountGroupingEditPopup } from "./AccountGroupingEditForm";
+import { AccountGroupingImportExcel } from "./AccountGroupingImportExcel";
 import { AccountGroupingSeed } from "./AccountGroupingSeed";
 import { AccountGroupingAddUserPopup } from "./AcountGroupingAddUsrer";
 4;
@@ -34,6 +36,8 @@ export const AccountGroupingMenu = ({
   const [delLinkedOpened, { open: delLinkedOpen, close: delLinkedClose }] =
     useDisclosure(false);
   const [delOpened, { open: delOpen, close: delClose }] = useDisclosure(false);
+  const [impExcelOpened, { open: impExcelOpen, close: impExcelClose }] =
+    useDisclosure(false);
   const [seedOpened, { open: seedOpen, close: seedClose }] =
     useDisclosure(false);
   const seeding = useSeedAccountGrouping({ accountGroupingId });
@@ -55,6 +59,11 @@ export const AccountGroupingMenu = ({
         data={data}
         opened={delLinkedOpened}
         close={delLinkedClose}
+      />
+      <AccountGroupingImportExcel
+        data={data}
+        opened={impExcelOpened}
+        close={impExcelClose}
       />
       <AccountGroupingDelete data={data} opened={delOpened} close={delClose} />
       <AccountGroupingSeed data={data} opened={seedOpened} close={seedClose} />
@@ -117,7 +126,13 @@ export const AccountGroupingMenu = ({
           </Menu.Item>
           <Menu.Divider />
           <Menu.Label>Import</Menu.Label>
-          <Menu.Item disabled={!admin}>Import From Excel</Menu.Item>
+          <Menu.Item
+            disabled={!admin}
+            onClick={impExcelOpen}
+            icon={<IconTableImport size={15} />}
+          >
+            Import From Excel
+          </Menu.Item>
           <Menu.Item disabled={!admin}>Import From JSON</Menu.Item>
           <Menu.Divider />
           <Menu.Label>Other Actions</Menu.Label>

@@ -57,7 +57,7 @@ export type createSingleJournalValidationType = z.infer<
 >;
 
 export const createTransactionValidation = z
-  .array(createSingleJournalValidation)
+  .array(createSingleJournalValidation.strip())
   .min(2)
   .refine(
     (data) => {

@@ -1,5 +1,7 @@
 import type { Bill, Prisma, PrismaClient } from "@prisma/client";
 import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+import { buildSearchIDList } from "../buildSearchIDList";
+import { populateRemainingIds } from "../populateRemainingIds";
 import { type UpsertReturnType } from "../types";
 import { upsertBill, type UpsertBillData } from "./upsertBill";
 
@@ -21,6 +23,7 @@ export const upsertBills = async ({
   const returnData: UpsertBillsReturnType = {
     idLookup: {},
     nameLookup: {},
+    allLookup: {},
   };
 
   const listData: UpsertBillData[] = data.createBillTitles
@@ -54,6 +57,18 @@ export const upsertBills = async ({
       })
     );
   }
+
+  returnData.allLookup = { ...returnData.idLookup, ...returnData.idLookup };
+
+  await populateRemainingIds({
+    returnData,
+    idList: buildSearchIDList({ data, key: "billId" }),
+    itemsType: "Bills",
+    getMatching: async (ids) =>
+      await prisma.bill.findMany({
+        where: { id: { in: ids }, accountGroupingId },
+      }),
+  });
 
   return returnData;
 };

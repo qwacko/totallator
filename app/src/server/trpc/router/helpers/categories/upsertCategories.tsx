@@ -1,5 +1,7 @@
 import type { Category, Prisma, PrismaClient } from "@prisma/client";
 import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+import { buildSearchIDList } from "../buildSearchIDList";
+import { populateRemainingIds } from "../populateRemainingIds";
 import { type UpsertReturnType } from "../types";
 import { upsertCategory, type UpsertCategoryData } from "./upsertCategory";
 
@@ -21,6 +23,7 @@ export const upsertCategories = async ({
   const returnData: UpsertCategoriesReturnType = {
     idLookup: {},
     nameLookup: {},
+    allLookup: {},
   };
 
   const listData: UpsertCategoryData[] = data.createCategoryTitles
@@ -57,6 +60,18 @@ export const upsertCategories = async ({
       })
     );
   }
+
+  returnData.allLookup = { ...returnData.idLookup, ...returnData.idLookup };
+
+  await populateRemainingIds({
+    returnData,
+    idList: buildSearchIDList({ data, key: "categoryId" }),
+    itemsType: "Categories",
+    getMatching: async (ids) =>
+      await prisma.category.findMany({
+        where: { id: { in: ids }, accountGroupingId },
+      }),
+  });
 
   return returnData;
 };

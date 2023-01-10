@@ -1,5 +1,7 @@
 import type { Prisma, PrismaClient, Tag } from "@prisma/client";
 import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+import { buildSearchIDList } from "../buildSearchIDList";
+import { populateRemainingIds } from "../populateRemainingIds";
 import { type UpsertReturnType } from "../types";
 import { upsertTag, type UpsertTagData } from "./upsertTag";
 
@@ -10,17 +12,20 @@ export const upsertTags = async ({
   prisma,
   userId,
   userIsAdmin,
+  allIds,
 }: {
   data: BulkUpgradeAccountGroupingValidationType;
   prisma: PrismaClient | PrismaClient | Prisma.TransactionClient;
   userId: string;
   userIsAdmin?: boolean;
+  allIds?: (string | undefined)[];
 }): Promise<UpsertTagsReturnType> => {
   const accountGroupingId = data.accountGroupingId;
 
   const returnData: UpsertTagsReturnType = {
     idLookup: {},
     nameLookup: {},
+    allLookup: {},
   };
 
   const listData: UpsertTagData[] = data.createTagTitles
@@ -57,6 +62,18 @@ export const upsertTags = async ({
       })
     );
   }
+
+  returnData.allLookup = { ...returnData.idLookup, ...returnData.idLookup };
+
+  await populateRemainingIds({
+    returnData,
+    idList: buildSearchIDList({ data, key: "tagId" }),
+    itemsType: "Tags",
+    getMatching: async (ids) =>
+      await prisma.tag.findMany({
+        where: { id: { in: ids }, accountGroupingId },
+      }),
+  });
 
   return returnData;
 };

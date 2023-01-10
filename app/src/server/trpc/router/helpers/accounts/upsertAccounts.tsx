@@ -1,8 +1,11 @@
 import type { Prisma, PrismaClient, TransactionAccount } from "@prisma/client";
+import { omit } from "lodash";
 import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 import { type UpsertReturnType } from "./../types";
 import { createAccountLinkedItems } from "./createAccountLinkedItems";
+import { populateRemainingIds } from "../populateRemainingIds";
 import { upsertAccount } from "./upsertAccount";
+import { buildSearchIDList } from "../buildSearchIDList";
 
 export type UpsertAccountsReturnType = UpsertReturnType<TransactionAccount>;
 
@@ -12,11 +15,13 @@ export const upsertAccounts = async ({
   prisma,
   userId,
   userIsAdmin,
+  allIds,
 }: {
   data: BulkUpgradeAccountGroupingValidationType;
   prisma: PrismaClient | PrismaClient | Prisma.TransactionClient;
   userId: string;
   userIsAdmin?: boolean;
+  allIds?: (string | undefined)[];
 }): Promise<UpsertAccountsReturnType> => {
   const accountGroupingId = data.accountGroupingId;
 
@@ -24,6 +29,7 @@ export const upsertAccounts = async ({
   const returnData: UpsertAccountsReturnType = {
     idLookup: {},
     nameLookup: {},
+    allLookup: {},
   };
 
   const listData = createAccountLinkedItems({
@@ -40,13 +46,13 @@ export const upsertAccounts = async ({
       list.map(async (currentItem) => {
         const upsertedAccount = await upsertAccount({
           prisma,
-          accountGroupingId,
           id:
             "id" in currentItem && currentItem.id ? currentItem.id : undefined,
-          data: currentItem,
+          data: omit(currentItem, "id"),
           userId,
           userAdmin: userIsAdmin,
           action: "Upsert",
+          accountGroupingId,
         });
         returnData.idLookup[upsertedAccount.id] = upsertedAccount;
         if ("id" in currentItem && currentItem.id) {
@@ -58,6 +64,18 @@ export const upsertAccounts = async ({
       })
     );
   }
+
+  returnData.allLookup = { ...returnData.idLookup, ...returnData.idLookup };
+
+  await populateRemainingIds({
+    returnData,
+    idList: buildSearchIDList({ data, key: "accountId" }),
+    itemsType: "Accounts",
+    getMatching: async (ids) =>
+      await prisma.transactionAccount.findMany({
+        where: { id: { in: ids }, accountGroupingId },
+      }),
+  });
 
   return returnData;
 };

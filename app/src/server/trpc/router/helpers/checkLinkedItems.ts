@@ -62,6 +62,7 @@ export const checkLinkedItems = async ({
       where: { id: { in: makeToSet(useAccountIds) } },
       select: { id: true, accountGroupingId: true },
     });
+
     checkItem({
       accountGroupingIds: accounts.map((item) => item.accountGroupingId),
       targetIds: useAccountIds,

@@ -3,7 +3,7 @@ import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidat
 import { PrismaStatusEnumValidation } from "../PrismaStatusEnumValidation";
 
 export const createAccountValidation = z.object({
-  title: z.string().min(2),
+  title: z.string().min(1),
   accountGroup: z.string().min(2).optional(),
   accountGroup2: z.string().min(2).optional(),
   accountGroup3: z.string().min(2).optional(),

@@ -1,5 +1,7 @@
 import type { Budget, Prisma, PrismaClient } from "@prisma/client";
 import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+import { buildSearchIDList } from "../buildSearchIDList";
+import { populateRemainingIds } from "../populateRemainingIds";
 import { type UpsertReturnType } from "../types";
 import { upsertBudget, type UpsertBudgetData } from "./upsertBudget";
 
@@ -21,6 +23,7 @@ export const upsertBudgets = async ({
   const returnData: UpsertBudgetsReturnType = {
     idLookup: {},
     nameLookup: {},
+    allLookup: {},
   };
 
   const listData: UpsertBudgetData[] = data.createBudgetTitles
@@ -54,6 +57,18 @@ export const upsertBudgets = async ({
       })
     );
   }
+
+  returnData.allLookup = { ...returnData.idLookup, ...returnData.idLookup };
+
+  await populateRemainingIds({
+    returnData,
+    idList: buildSearchIDList({ data, key: "budgetId" }),
+    itemsType: "Budgets",
+    getMatching: async (ids) =>
+      await prisma.budget.findMany({
+        where: { id: { in: ids }, accountGroupingId },
+      }),
+  });
 
   return returnData;
 };

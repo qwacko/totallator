@@ -14,6 +14,8 @@ import { accountGroupingGetValidation } from "src/utils/validation/accountGroupi
 import { accountGroupingExportValidation } from "src/utils/validation/accountGrouping/exportAccountGroupingValidation";
 import { checkCanSeed } from "./helpers/accountGrouping/checkCanSeed";
 import { seedAccountGroupingValidation } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
+import { bulkUpdateAccountGroupingValidation } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+import { bulkUpdateAccountGrouping } from "./helpers/bulkUpdateAccountGrouping";
 
 export const accountGroupingRouter = router({
   get: protectedProcedure
@@ -369,6 +371,25 @@ export const accountGroupingRouter = router({
         },
         { timeout: 120000 }
       );
+    }),
+  bulkUpdate: protectedProcedure
+    .input(bulkUpdateAccountGroupingValidation)
+    .mutation(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+      checkAccountGroupingAccess({
+        accountGroupingId: input.accountGroupingId,
+        prisma: ctx.prisma,
+        user,
+        adminRequired: true,
+      });
+
+      await ctx.prisma.$transaction(
+        async (prisma) =>
+          await bulkUpdateAccountGrouping({ prisma, user, input }),
+        { timeout: 120000 }
+      );
+
+      return true;
     }),
   export: protectedProcedure
     .input(z.object({ accountGroupingId: z.string().cuid() }))

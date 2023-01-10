@@ -4,10 +4,12 @@ import { createBudgetValidation } from "src/utils/validation/budget/createBudget
 import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
 import {
   createSimpleTransactionValidation,
+  createSingleJournalValidation,
   createTransactionValidation,
 } from "src/utils/validation/journalEntries/createJournalValidation";
 import { createTagValidation } from "src/utils/validation/tag/createTagValidation";
 import { z } from "zod";
+import { upsertJournalsValidation } from "../journalEntries/upsertJournalValidation";
 
 export const bulkUpdateAccountGroupingValidation = z.object({
   accountGroupingId: z.string().cuid(),
@@ -20,6 +22,7 @@ export const bulkUpdateAccountGroupingValidation = z.object({
       createAccountValidation
         .omit({ accountGroupingId: true })
         .merge(z.object({ id: z.string().optional() }))
+        .strip()
     )
     .optional(),
   createTagTitles: z.array(z.string()).optional(),
@@ -28,6 +31,7 @@ export const bulkUpdateAccountGroupingValidation = z.object({
       createTagValidation
         .omit({ accountGroupingId: true })
         .merge(z.object({ id: z.string().optional() }))
+        .strip()
     )
     .optional(),
   createBillTitles: z.array(z.string()).optional(),
@@ -36,6 +40,7 @@ export const bulkUpdateAccountGroupingValidation = z.object({
       createBillValidation
         .omit({ accountGroupingId: true })
         .merge(z.object({ id: z.string().optional() }))
+        .strip()
     )
     .optional(),
   createCategoryTitles: z.array(z.string()).optional(),
@@ -44,6 +49,7 @@ export const bulkUpdateAccountGroupingValidation = z.object({
       createCategoryValidation
         .omit({ accountGroupingId: true })
         .merge(z.object({ id: z.string().optional() }))
+        .strip()
     )
     .optional(),
   createBudgetTitles: z.array(z.string()).optional(),
@@ -52,12 +58,14 @@ export const bulkUpdateAccountGroupingValidation = z.object({
       createBudgetValidation
         .omit({ accountGroupingId: true })
         .merge(z.object({ id: z.string().optional() }))
+        .strip()
     )
     .optional(),
   createTransactions: z.array(createTransactionValidation).optional(),
   createSimpleTransactions: z
-    .array(createSimpleTransactionValidation)
+    .array(createSimpleTransactionValidation.strip())
     .optional(),
+  upsertJournalEntries: upsertJournalsValidation.optional(),
 });
 
 export type BulkUpgradeAccountGroupingValidationType = z.infer<

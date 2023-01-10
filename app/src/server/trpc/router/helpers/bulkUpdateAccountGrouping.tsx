@@ -13,6 +13,8 @@ import {
   type BulkUpgradeAccountGroupingValidationType,
   bulkUpdateAccountGroupingValidation,
 } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+import { JournalTable } from "src/components/journals/JournalTable";
+import { upsertJournals } from "./journals/upsertJournals";
 
 const findData = <T extends Record<string, unknown>>(
   data: UpsertReturnType<T>,
@@ -81,6 +83,21 @@ export const bulkUpdateAccountGrouping = async ({
     userId,
     userIsAdmin,
   });
+
+  //Upsert Transactions
+  if (data.upsertJournalEntries && data.upsertJournalEntries.length > 0) {
+    await upsertJournals({
+      prisma,
+      data: data.upsertJournalEntries,
+      accountInfo,
+      billInfo,
+      budgetInfo,
+      categoryInfo,
+      tagInfo,
+      accountGroupingId: data.accountGroupingId,
+      user,
+    });
+  }
 
   //Create Simple Transactions
   if (
