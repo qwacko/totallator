@@ -150,7 +150,6 @@ export const upsertJournals = async ({
 
   await Promise.all(
     transactionIds.map(async (transactionId, index) => {
-      console.log("Starting Transaction Creation", index);
       const journals = inputJournalsToCreate.filter(
         (item) => item.transactionId === transactionId
       );
@@ -167,7 +166,6 @@ export const upsertJournals = async ({
       }));
 
       await createTransaction({ prisma, input: transactionData, user });
-      console.log("Transaction Creation Completed", index);
     })
   );
 };
