@@ -318,7 +318,7 @@ const UpdateBulkModal = ({
           />
           <InputCurrency
             {...form.getInputProps("amount")}
-            value={form.values.amount || null}
+            value={form.values.amount || undefined}
             label="Amount"
           />
           {multipleAccountGroupings && <Text>Multiple Account Groupings</Text>}
