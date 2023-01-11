@@ -1,13 +1,9 @@
-NEXT Make It So An Account Grouping Can Be Seeded
-NEXT Ability to bulk import through API (Partially already present), however this also needs to allow for bill / budget etc... to be selected based on title.
-
 LATER Readd Favicon
 LATER Add Logo / Branding
 
 LATER High level filtering from URL
 LATER Link to High Level Filtered Journal List from Referenced Items (i.e. from Bill / Budget etc.. pages)
 LATER Make Work On Mobile (Responsive)
-LATER Make sure all the dispalys / buttons / etc... are consistent
 LATER Add Ability to do automated and scheduled dumps / backups (May require addition of a separate process to auto-request through a CRON job)
 
 #Other Stuff
