@@ -19,27 +19,27 @@ export const trpc = createTRPCNext<AppRouter>({
         defaultOptions: {
           mutations: {
             networkMode:
-              process.env.NODE_ENV === "development" ? "always" : undefined,
+              process.env.NODE_ENV === "development" ? "always" : undefined
           },
           queries: {
             networkMode:
-              process.env.NODE_ENV === "development" ? "always" : undefined,
-          },
-        },
+              process.env.NODE_ENV === "development" ? "always" : undefined
+          }
+        }
       },
       links: [
         loggerLink({
           enabled: (opts) =>
             process.env.NODE_ENV === "development" ||
-            (opts.direction === "down" && opts.result instanceof Error),
+            (opts.direction === "down" && opts.result instanceof Error)
         }),
         httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
-        }),
-      ],
+          url: `${getBaseUrl()}/api/trpc`
+        })
+      ]
     };
   },
-  ssr: false,
+  ssr: false
 });
 
 /**

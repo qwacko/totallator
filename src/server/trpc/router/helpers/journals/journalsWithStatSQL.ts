@@ -1,15 +1,17 @@
 import { Prisma, type PrismaClient } from "@prisma/client";
-import type {
-  JournalFilterValidation,
-  JournalSortValidation,
-} from "src/utils/validation/journalEntries/getJournalValidation";
-import { filtersToSQLQuery } from "./filtersToSQLQuery";
-import { orderByToSQLQuery } from "./orderByToSQLQuery";
-import { rawJournalQueryReturnValidation } from "../../../../../utils/validation/category/rawJournalQueryReturnValidation";
 import { z } from "zod";
 
+import type {
+  JournalFilterValidation,
+  JournalSortValidation
+} from "src/utils/validation/journalEntries/getJournalValidation";
+
+import { rawJournalQueryReturnValidation } from "../../../../../utils/validation/category/rawJournalQueryReturnValidation";
+import { filtersToSQLQuery } from "./filtersToSQLQuery";
+import { orderByToSQLQuery } from "./orderByToSQLQuery";
+
 const addIsAdminSQL = ({
-  userId,
+  userId
 }: {
   userId: string;
 }) => Prisma.sql`(SELECT COUNT(*) > 0 as count
@@ -37,7 +39,7 @@ export const journalsWithStatsSQL = async ({
   take,
   skip,
   filters,
-  userId,
+  userId
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   orderBy?:
@@ -89,13 +91,13 @@ export const journalsWithStatsSQL = async ({
   const [rawResult, rawCountResult, rawTotalResult] = await Promise.all([
     prisma.$queryRaw`${combinedSQL}`,
     prisma.$queryRaw`${combinedSQLCount}`,
-    prisma.$queryRaw`${combinedSQLTotal}`,
+    prisma.$queryRaw`${combinedSQLTotal}`
   ]);
   const rawResultsProcessed = rawJournalQueryReturnValidation.parse(rawResult);
   const journalCount = z
     .array(
       z.object({
-        journalCount: z.bigint(),
+        journalCount: z.bigint()
       })
     )
     .transform((data) => {

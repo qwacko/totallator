@@ -1,12 +1,12 @@
 import { Button } from "@mantine/core";
-import { IconArrowDown, IconArrowsSort, IconArrowUp } from "@tabler/icons";
+import { IconArrowDown, IconArrowUp, IconArrowsSort } from "@tabler/icons";
 import type { SortingState, Updater } from "@tanstack/react-table";
 
 export const SortButtonReactTable = ({
   sort,
   setSort,
   targetKey,
-  sortable,
+  sortable
 }: {
   sort: SortingState;
   setSort: (updater: Updater<SortingState>) => void;

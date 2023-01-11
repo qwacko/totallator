@@ -1,22 +1,24 @@
+import { TRPCError } from "@trpc/server";
+import { omit } from "lodash";
+
+import { cloneTransactionInput } from "src/utils/validation/journalEntries/cloneTransactionsValidation";
 import {
   createSimpleTransactionValidation,
-  createTransactionValidation,
+  createTransactionValidation
 } from "src/utils/validation/journalEntries/createJournalValidation";
-import { getJournalValidation } from "src/utils/validation/journalEntries/getJournalValidation";
-import { router, protectedProcedure } from "../trpc";
-import { createTransaction } from "./helpers/journals/createTransaction";
-import { getUserInfo } from "./helpers/getUserInfo";
-import { journalsWithStats } from "./helpers/journals/journalsWithStats";
-import { updateJournalInput } from "src/utils/validation/journalEntries/updateJournalValidation";
-import { TRPCError } from "@trpc/server";
-import { checkTransactions } from "./helpers/journals/checkTransactions";
-import { updateSingleJournal } from "./helpers/journals/updateSingleJournal";
-import { sortToOrderBy } from "./helpers/journals/sortToOrderBy";
-import { omit } from "lodash";
-import { cloneTransactionInput } from "src/utils/validation/journalEntries/cloneTransactionsValidation";
 import { deleteTransactionInput } from "src/utils/validation/journalEntries/deleteTransactionsValidation";
-import { createSimpleTranasction } from "./helpers/journals/createSimpleTranasction";
+import { getJournalValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 import { journalEntryGetValidation } from "src/utils/validation/journalEntries/readJournalEntriesValidation";
+import { updateJournalInput } from "src/utils/validation/journalEntries/updateJournalValidation";
+
+import { protectedProcedure, router } from "../trpc";
+import { getUserInfo } from "./helpers/getUserInfo";
+import { checkTransactions } from "./helpers/journals/checkTransactions";
+import { createSimpleTranasction } from "./helpers/journals/createSimpleTranasction";
+import { createTransaction } from "./helpers/journals/createTransaction";
+import { journalsWithStats } from "./helpers/journals/journalsWithStats";
+import { sortToOrderBy } from "./helpers/journals/sortToOrderBy";
+import { updateSingleJournal } from "./helpers/journals/updateSingleJournal";
 
 export const journalsRouter = router({
   get: protectedProcedure
@@ -38,7 +40,7 @@ export const journalsRouter = router({
         take,
         skip,
         filters: input.filters,
-        userId: user.id,
+        userId: user.id
       });
 
       const returnJournals = journals.map((journal) => {
@@ -52,7 +54,7 @@ export const journalsRouter = router({
             return {
               id: otherJournal.id,
               accountId: otherJournal.accountId,
-              amount: otherJournal.amount.toNumber(),
+              amount: otherJournal.amount.toNumber()
             };
           }
         );
@@ -60,7 +62,7 @@ export const journalsRouter = router({
           ...pickedJournal,
           amount: pickedJournal.amount.toNumber(),
           otherJournals,
-          userIsAdmin,
+          userIsAdmin
         };
       });
 
@@ -92,7 +94,7 @@ export const journalsRouter = router({
         take: input.maxUpdated + 1,
         skip: 0,
         filters: input.filters,
-        userId: user.id,
+        userId: user.id
       });
 
       //Handle Other items
@@ -117,13 +119,13 @@ export const journalsRouter = router({
         take: input.maxUpdated + 1,
         skip: 0,
         filters: [{ id: { in: otherIds } }],
-        userId: user.id,
+        userId: user.id
       });
 
       if (count > input.maxUpdated) {
         throw new TRPCError({
           message: `Max number updated journals (${input.maxUpdated} exceeded.`,
-          code: "BAD_REQUEST",
+          code: "BAD_REQUEST"
         });
       }
 
@@ -135,7 +137,7 @@ export const journalsRouter = router({
               journal,
               data: input.data,
               dontUpdateOtherAmounts: !updateOtherAmounts,
-              updateCompleted: input.updateCompleteJournals,
+              updateCompleted: input.updateCompleteJournals
             });
 
             //Update the referenced other journal information
@@ -152,7 +154,7 @@ export const journalsRouter = router({
                       journal,
                       data: otherJournalData,
                       dontUpdateOtherAmounts: !updateOtherAmounts,
-                      updateCompleted: input.updateCompleteJournals,
+                      updateCompleted: input.updateCompleteJournals
                     });
                   }
                 }
@@ -164,7 +166,7 @@ export const journalsRouter = router({
         //Check Transactions
         await checkTransactions({
           prisma,
-          transactionIds: data.map((item) => item.transactionId),
+          transactionIds: data.map((item) => item.transactionId)
         });
       });
     }),
@@ -178,28 +180,28 @@ export const journalsRouter = router({
           id: { in: input.ids },
           journalEntries: {
             some: {
-              accountGrouping: { adminUsers: { some: { id: user.id } } },
-            },
-          },
+              accountGrouping: { adminUsers: { some: { id: user.id } } }
+            }
+          }
         },
-        include: { journalEntries: true },
+        include: { journalEntries: true }
       });
 
       if (transactions.length > input.maxUpdated) {
         throw new TRPCError({
           message: `Number of Transactions Exceeds Max Updated (${input.maxUpdated})`,
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       if (transactions.length === 0) {
         throw new TRPCError({
           message: `No Matching Transactions Found Or User Doesn't Have Admin Permissions`,
-          code: "NOT_FOUND",
+          code: "NOT_FOUND"
         });
       }
 
       await ctx.prisma.$transaction(async (prismaClient) => {
-        const expandedTransactions: typeof transactions[] = new Array(
+        const expandedTransactions: (typeof transactions)[] = new Array(
           input.cloneCount
         ).fill(transactions);
         const flattened = expandedTransactions.reduce((prev, current) => {
@@ -222,19 +224,19 @@ export const journalsRouter = router({
               return {
                 ...journalSelected,
                 complete: false,
-                description: `${journalSelected.description} (Clone)`,
+                description: `${journalSelected.description} (Clone)`
               };
             });
 
             return prismaClient.transaction.create({
-              data: { journalEntries: { createMany: { data: newJournals } } },
+              data: { journalEntries: { createMany: { data: newJournals } } }
             });
           })
         );
 
         await checkTransactions({
           prisma: prismaClient,
-          transactionIds: createdTransactions.map((item) => item.id),
+          transactionIds: createdTransactions.map((item) => item.id)
         });
       });
 
@@ -250,22 +252,22 @@ export const journalsRouter = router({
           id: { in: input.ids },
           journalEntries: {
             some: {
-              accountGrouping: { adminUsers: { some: { id: user.id } } },
+              accountGrouping: { adminUsers: { some: { id: user.id } } }
             },
             every: input.canDeleteComplete
               ? undefined
               : {
-                  complete: false,
-                },
-          },
+                  complete: false
+                }
+          }
         },
-        include: { journalEntries: true },
+        include: { journalEntries: true }
       });
 
       if (transactions.length > input.maxDeleted) {
         throw new TRPCError({
           message: `Number of Transactions Exceeds Max Deleted (${input.maxDeleted})`,
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       if (transactions.length === 0) {
@@ -273,7 +275,7 @@ export const journalsRouter = router({
           message: `No Matching${
             input.canDeleteComplete ? "" : " Incomplete"
           } Transactions Found Or User Doesn't Have Admin Permissions`,
-          code: "NOT_FOUND",
+          code: "NOT_FOUND"
         });
       }
 
@@ -281,9 +283,9 @@ export const journalsRouter = router({
 
       //Related Journal Entries are deleted through cascade deletes
       await ctx.prisma.transaction.deleteMany({
-        where: { id: { in: transactionIds } },
+        where: { id: { in: transactionIds } }
       });
 
       return true;
-    }),
+    })
 });

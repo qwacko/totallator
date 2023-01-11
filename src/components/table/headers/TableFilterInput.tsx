@@ -1,14 +1,15 @@
-import type { PrismaAccountEnum, PrismaStatusEnum } from "@prisma/client";
-import { FilterText } from "./FilterText";
-import { FilterAccountType } from "./FilterAccountType";
 import { Center, Checkbox } from "@mantine/core";
-import { FilterStatus } from "./FilterStatus";
 import { DateRangePicker, type DateRangePickerValue } from "@mantine/dates";
+import type { PrismaAccountEnum, PrismaStatusEnum } from "@prisma/client";
 import { useEffect, useState } from "react";
+
+import { FilterAccountType } from "./FilterAccountType";
+import { FilterStatus } from "./FilterStatus";
+import { FilterText } from "./FilterText";
 
 const DateFilterHandler = ({
   filter,
-  setFilter,
+  setFilter
 }: {
   filter: storedDateRangeType;
   setFilter: (data: storedDateRangeType) => void;
@@ -34,7 +35,7 @@ const DateFilterHandler = ({
           dateFilter
             ? {
                 gte: dateFilter[0] || undefined,
-                lte: dateFilter[1] || undefined,
+                lte: dateFilter[1] || undefined
               }
             : undefined
         )
@@ -58,7 +59,7 @@ export type FilterTypes =
 export const TableFilterInput = ({
   type,
   filter,
-  setFilter,
+  setFilter
 }: {
   type: FilterTypes;
   filter: unknown;

@@ -1,9 +1,11 @@
 import type { Category, Prisma, PrismaClient } from "@prisma/client";
+
 import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+
 import { buildSearchIDList } from "../buildSearchIDList";
 import { populateRemainingIds } from "../populateRemainingIds";
 import { type UpsertReturnType } from "../types";
-import { upsertCategory, type UpsertCategoryData } from "./upsertCategory";
+import { type UpsertCategoryData, upsertCategory } from "./upsertCategory";
 
 export type UpsertCategoriesReturnType = UpsertReturnType<Category>;
 
@@ -11,7 +13,7 @@ export const upsertCategories = async ({
   data,
   prisma,
   userId,
-  userIsAdmin,
+  userIsAdmin
 }: {
   data: BulkUpgradeAccountGroupingValidationType;
   prisma: PrismaClient | PrismaClient | Prisma.TransactionClient;
@@ -23,7 +25,7 @@ export const upsertCategories = async ({
   const returnData: UpsertCategoriesReturnType = {
     idLookup: {},
     nameLookup: {},
-    allLookup: {},
+    allLookup: {}
   };
 
   const listData: UpsertCategoryData[] = data.createCategoryTitles
@@ -35,9 +37,9 @@ export const upsertCategories = async ({
 
   const upsertData = data.upsertCategories ? data.upsertCategories : [];
 
-  const list: (typeof upsertData[0] | UpsertCategoryData)[] = [
+  const list: ((typeof upsertData)[0] | UpsertCategoryData)[] = [
     ...upsertData,
-    ...listData,
+    ...listData
   ];
   if (list) {
     await Promise.all(
@@ -50,7 +52,7 @@ export const upsertCategories = async ({
           data: currentItem,
           userId,
           userAdmin: userIsAdmin,
-          action: "Upsert",
+          action: "Upsert"
         });
         returnData.idLookup[upsertedCategory.id] = upsertedCategory;
         if ("id" in currentItem && currentItem.id) {
@@ -69,8 +71,8 @@ export const upsertCategories = async ({
     itemsType: "Categories",
     getMatching: async (ids) =>
       await prisma.category.findMany({
-        where: { id: { in: ids }, accountGroupingId },
-      }),
+        where: { id: { in: ids }, accountGroupingId }
+      })
   });
 
   return returnData;

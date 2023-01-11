@@ -1,8 +1,9 @@
-import { getServerSidePropsNotLoggedIn } from "src/server/common/get-server-auth-session";
-import { Stack, TextInput, Group, Container, Button } from "@mantine/core";
-import { useCreateUser } from "src/utils/hooks/user/useCreateUser";
-import { AuthLayout } from "src/components/auth/AuthLayout";
+import { Button, Container, Group, Stack, TextInput } from "@mantine/core";
 import { useRouter } from "next/router";
+
+import { AuthLayout } from "src/components/auth/AuthLayout";
+import { getServerSidePropsNotLoggedIn } from "src/server/common/get-server-auth-session";
+import { useCreateUser } from "src/utils/hooks/user/useCreateUser";
 
 export const getServerSideProps = getServerSidePropsNotLoggedIn;
 

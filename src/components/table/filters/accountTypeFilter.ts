@@ -1,5 +1,6 @@
 import type { PrismaAccountEnum } from "@prisma/client";
 import { type FilterFn } from "@tanstack/react-table";
+
 import type { AccountsReturnType } from "src/server/trpc/router/_app";
 
 export const accountTypeFilter: FilterFn<AccountsReturnType> = (

@@ -1,17 +1,18 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
+
 import type { JournalFilterValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 
 const filtersToQuery = async ({
   prisma,
   filters,
-  userId,
+  userId
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   filters: JournalFilterValidation[] | undefined;
   userId: string;
 }) => {
   const accountGroupings = await prisma.accountGrouping.findMany({
-    where: { viewUsers: { some: { id: userId } } },
+    where: { viewUsers: { some: { id: userId } } }
   });
   const accountGroupingIds = accountGroupings.map((item) => item.id);
   const returnFilters: JournalFilterValidation[] = filters
@@ -23,18 +24,18 @@ const filtersToQuery = async ({
                 AND: [
                   filter.account,
                   {
-                    accountGroupingId: { in: accountGroupingIds },
-                  },
-                ],
-              },
+                    accountGroupingId: { in: accountGroupingIds }
+                  }
+                ]
+              }
             });
             const accountIds = accounts.map((item) => item.id);
             delete filter.account;
             filter.accountId = {
               in: [
                 ...(filter?.accountId?.in ? filter.accountId.in : []),
-                ...accountIds,
-              ],
+                ...accountIds
+              ]
             };
           }
           return filter;
@@ -50,7 +51,7 @@ export const journalsWithStats = async ({
   take,
   skip,
   filters,
-  userId,
+  userId
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   orderBy?:
@@ -62,7 +63,7 @@ export const journalsWithStats = async ({
   userId: string;
 }) => {
   const accountGroupings = await prisma.accountGrouping.findMany({
-    where: { viewUsers: { some: { id: userId } } },
+    where: { viewUsers: { some: { id: userId } } }
   });
   const accountGroupingIds = accountGroupings.map((item) => item.id);
 
@@ -73,41 +74,41 @@ export const journalsWithStats = async ({
           AND: [
             ...(await filtersToQuery({ prisma, userId, filters })),
             {
-              accountGroupingId: { in: accountGroupingIds },
-            },
-          ],
+              accountGroupingId: { in: accountGroupingIds }
+            }
+          ]
         },
         include: {
           accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-          transaction: { select: { journalEntries: true } },
+          transaction: { select: { journalEntries: true } }
         },
         orderBy,
         take,
-        skip,
+        skip
       }),
       prisma.journalEntry.count({
         where: {
           AND: [
             ...(await filtersToQuery({ prisma, userId, filters })),
             {
-              accountGroupingId: { in: accountGroupingIds },
-            },
-          ],
-        },
+              accountGroupingId: { in: accountGroupingIds }
+            }
+          ]
+        }
       }),
       prisma.journalEntry.aggregate({
         where: {
           AND: [
             ...(await filtersToQuery({ prisma, userId, filters })),
             {
-              accountGroupingId: { in: accountGroupingIds },
-            },
-          ],
+              accountGroupingId: { in: accountGroupingIds }
+            }
+          ]
         },
         orderBy,
         _sum: { amount: true },
-        skip: skip + take,
-      }),
+        skip: skip + take
+      })
     ]);
 
   const count = journalCountDefault;
@@ -129,6 +130,6 @@ export const journalsWithStats = async ({
     count,
     data: selected,
     dataWithTotal: selectedWithRunningTotal,
-    total: startingTotal,
+    total: startingTotal
   };
 };

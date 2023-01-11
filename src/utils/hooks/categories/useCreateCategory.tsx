@@ -1,17 +1,19 @@
-import { trpc } from "src/utils/trpc";
 import { useForm, zodResolver } from "@mantine/form";
-import { notifyTemplate } from "../notifyTemplate";
+
+import { trpc } from "src/utils/trpc";
 import {
   createCategoryValidation,
-  type createCategoryValidationType,
+  type createCategoryValidationType
 } from "src/utils/validation/category/createCategoryValidation";
+
+import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useCreateCategory";
 const notifications = notifyTemplate(id, "Category", "Create");
 
 export function useCreateCategory({ onMutate }: { onMutate?: () => void }) {
   const form = useForm<createCategoryValidationType>({
-    validate: zodResolver(createCategoryValidation),
+    validate: zodResolver(createCategoryValidation)
   });
   const utils = trpc.useContext();
   const mutate = trpc.categories.create.useMutation({
@@ -37,8 +39,8 @@ export function useCreateCategory({ onMutate }: { onMutate?: () => void }) {
             updatedAt: new Date(),
             deleted: false,
             disabled: false,
-            _count: { journalEntries: 0 },
-          },
+            _count: { journalEntries: 0 }
+          }
         ]);
       }
     },
@@ -50,7 +52,7 @@ export function useCreateCategory({ onMutate }: { onMutate?: () => void }) {
       form.reset();
       utils.categories.invalidate();
       notifications.onSuccess();
-    },
+    }
   });
   return { form, mutate };
 }

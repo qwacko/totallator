@@ -1,9 +1,8 @@
 // Wrapper for unstable_getServerSession https://next-auth.js.org/configuration/nextjs
-
-import type { GetServerSidePropsContext } from "next";
+import type { GetServerSideProps, GetServerSidePropsContext } from "next";
 import { unstable_getServerSession } from "next-auth";
+
 import { authOptions as nextAuthOptions } from "src/pages/api/auth/[...nextauth]";
-import type { GetServerSideProps } from "next";
 
 // Next API route example - /pages/api/restricted.ts
 export const getServerAuthSession = async (ctx: {
@@ -19,15 +18,15 @@ export const getServerSidePropsPrivate: GetServerSideProps = async (ctx) => {
     return {
       redirect: {
         destination: "/user/signin",
-        permanent: false,
-      },
+        permanent: false
+      }
     };
   }
 
   return {
     props: {
-      session,
-    },
+      session
+    }
   };
 };
 
@@ -40,12 +39,12 @@ export const getServerSidePropsNotLoggedIn: GetServerSideProps = async (
     return {
       redirect: {
         destination: "/",
-        permanent: false,
-      },
+        permanent: false
+      }
     };
   }
 
   return {
-    props: {},
+    props: {}
   };
 };

@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { PrismaStatusEnumValidation } from "../PrismaStatusEnumValidation";
 
 export const importCategorySingleValidation = z.object({
@@ -7,7 +8,7 @@ export const importCategorySingleValidation = z.object({
   single: z.string(),
   status: PrismaStatusEnumValidation,
   createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  updatedAt: z.date().optional()
 });
 
 export type importCategorySingleValidationType = z.infer<

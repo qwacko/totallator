@@ -1,4 +1,5 @@
 import { trpc } from "src/utils/trpc";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useCloneAccount";
@@ -31,12 +32,12 @@ export const useCloneAccount = ({ id }: { id: string }) => {
               title: `${targetAccount.title} (Clone)`,
               accountTitleCombined: `${targetAccount.accountTitleCombined} (Clone)`,
               createdAt: new Date(),
-              updatedAt: new Date(),
-            },
+              updatedAt: new Date()
+            }
           ]);
         }
       }
-    },
+    }
   });
 
   const clone = () => {
@@ -46,6 +47,6 @@ export const useCloneAccount = ({ id }: { id: string }) => {
   return {
     isMutating,
     mutate,
-    clone,
+    clone
   };
 };

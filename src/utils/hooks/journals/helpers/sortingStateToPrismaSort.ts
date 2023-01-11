@@ -1,4 +1,5 @@
 import type { SortingState } from "@tanstack/react-table";
+
 import { removeUndefined } from "src/utils/arrayHelpers";
 import type { JournalSortValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 
@@ -9,7 +10,7 @@ export const sortingStateToPrismaSort = (
     { key: "date", direction: "desc" },
     { key: "account", direction: "asc" },
     { key: "amount", direction: "desc" },
-    { key: "updatedAt", direction: "desc" },
+    { key: "updatedAt", direction: "desc" }
   ];
 
   const sorting: JournalSortValidation = removeUndefined(

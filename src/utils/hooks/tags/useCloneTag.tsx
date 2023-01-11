@@ -1,4 +1,5 @@
 import { trpc } from "src/utils/trpc";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useCloneTag";
@@ -31,12 +32,12 @@ export const useCloneTag = ({ id }: { id: string }) => {
               title: `${target.title} (Clone)`,
               single: `${target.single} (Clone)`,
               createdAt: new Date(),
-              updatedAt: new Date(),
-            },
+              updatedAt: new Date()
+            }
           ]);
         }
       }
-    },
+    }
   });
 
   const clone = () => {
@@ -46,6 +47,6 @@ export const useCloneTag = ({ id }: { id: string }) => {
   return {
     isMutating,
     mutate,
-    clone,
+    clone
   };
 };

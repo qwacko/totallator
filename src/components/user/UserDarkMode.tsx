@@ -1,5 +1,6 @@
-import { useMantineColorScheme, ActionIcon, Group } from "@mantine/core";
-import { IconSun, IconMoonStars } from "@tabler/icons";
+import { ActionIcon, Group, useMantineColorScheme } from "@mantine/core";
+import { IconMoonStars, IconSun } from "@tabler/icons";
+
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 
 export const UserDarkMode = () => {
@@ -33,7 +34,7 @@ export const UserDarkMode = () => {
           color:
             theme.colorScheme === "dark"
               ? theme.colors.yellow[4]
-              : theme.colors.blue[6],
+              : theme.colors.blue[6]
         })}
       >
         {colorScheme === "dark" ? (

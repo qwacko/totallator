@@ -1,9 +1,10 @@
 import { trpc } from "src/utils/trpc";
+
 import { exportToExcel } from "./exportToExcel";
 import { exportToJSON } from "./exportToJSON";
 
 export const useExportData = ({
-  accountGroupingId,
+  accountGroupingId
 }: {
   accountGroupingId: string;
 }) => {
@@ -11,13 +12,13 @@ export const useExportData = ({
 
   const exportData = async ({
     excel,
-    allData,
+    allData
   }: {
     excel: boolean;
     allData: boolean;
   }) => {
     const data = await context.accountGroupings.export.fetch({
-      accountGroupingId,
+      accountGroupingId
     });
     if (excel) exportToExcel(data, allData);
     if (!excel) exportToJSON(data, allData);
@@ -33,6 +34,6 @@ export const useExportData = ({
     exportExcelAll,
     exportExcelImport,
     exportJSONAll,
-    exportJSONImport,
+    exportJSONImport
   };
 };

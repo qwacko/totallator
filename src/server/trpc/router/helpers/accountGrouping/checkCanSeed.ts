@@ -2,7 +2,7 @@ import type { Prisma, PrismaClient } from "@prisma/client";
 
 export const checkCanSeed = async ({
   prisma,
-  accountGroupingId,
+  accountGroupingId
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   accountGroupingId: string;
@@ -17,10 +17,10 @@ export const checkCanSeed = async ({
           categories: true,
           bills: true,
           budgets: true,
-          tags: true,
-        },
-      },
-    },
+          tags: true
+        }
+      }
+    }
   });
 
   if (

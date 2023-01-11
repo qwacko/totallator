@@ -1,9 +1,11 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
-import { basicStatusToDBRequired } from "src/utils/validation/basicStatusToDB";
 import { TRPCError } from "@trpc/server";
-import type { UpsertActions } from "../types";
+
+import { basicStatusToDBRequired } from "src/utils/validation/basicStatusToDB";
 import type { createBillValidationType } from "src/utils/validation/bill/createBillValidation";
 import type { updateBillDataValidationType } from "src/utils/validation/bill/updateBillValidation";
+
+import type { UpsertActions } from "../types";
 
 export type UpsertBillData =
   | createBillValidationType
@@ -16,7 +18,7 @@ export const upsertBill = async ({
   userId,
   userAdmin = false,
   prisma,
-  action,
+  action
 }: {
   data: UpsertBillData;
   id?: string | undefined;
@@ -33,28 +35,28 @@ export const upsertBill = async ({
         accountGroupingId,
         ...(!userAdmin
           ? { accountGrouping: { adminUsers: { some: { id: userId } } } }
-          : {}),
-      },
+          : {})
+      }
     });
     if (found && action === "Create") {
       throw new TRPCError({
         message: "Bill Found But Action Is Only Create, cannot update",
-        code: "BAD_REQUEST",
+        code: "BAD_REQUEST"
       });
     } else if (found) {
       return prisma.bill.update({
         where: { id: found.id },
         data: {
           title: data.title,
-          ...(data.status ? basicStatusToDBRequired(data.status) : {}),
-        },
+          ...(data.status ? basicStatusToDBRequired(data.status) : {})
+        }
       });
     }
   }
   if (action === "Update") {
     throw new TRPCError({
       message: "No bill found to update",
-      code: "BAD_REQUEST",
+      code: "BAD_REQUEST"
     });
   }
   if (accountGroupingId && data.title) {
@@ -62,12 +64,12 @@ export const upsertBill = async ({
       data: {
         title: data.title,
         accountGroupingId,
-        ...basicStatusToDBRequired(data.status || "Active"),
-      },
+        ...basicStatusToDBRequired(data.status || "Active")
+      }
     });
   }
   throw new TRPCError({
     message: "Cannot Create Bill Without Account Grouping Or Title",
-    code: "BAD_REQUEST",
+    code: "BAD_REQUEST"
   });
 };

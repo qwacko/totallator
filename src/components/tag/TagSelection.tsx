@@ -2,14 +2,15 @@ import {
   MultiSelect,
   type MultiSelectProps,
   Select,
-  type SelectProps,
+  type SelectProps
 } from "@mantine/core";
 import { useMemo } from "react";
+
 import { useTags } from "src/utils/hooks/tags/useTags";
 
 const useTagDropdown = ({
   accountGroupingId,
-  showCombined,
+  showCombined
 }: {
   accountGroupingId?: string;
   showCombined: boolean;
@@ -28,7 +29,7 @@ const useTagDropdown = ({
               showCombined
                 ? {
                     label: item.title,
-                    value: item.id,
+                    value: item.id
                   }
                 : { label: item.single, value: item.id, group: item.group }
             )
@@ -48,7 +49,7 @@ export const TagSelection = ({
 }) => {
   const filteredTags = useTagDropdown({
     accountGroupingId,
-    showCombined,
+    showCombined
   });
   return <Select {...props} data={filteredTags} />;
 };
@@ -63,7 +64,7 @@ export const TagMultiSelection = ({
 }) => {
   const filteredTags = useTagDropdown({
     accountGroupingId,
-    showCombined,
+    showCombined
   });
   return <MultiSelect {...props} data={filteredTags} />;
 };

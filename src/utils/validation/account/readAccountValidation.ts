@@ -1,11 +1,12 @@
 import { z } from "zod";
+
 import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidation";
 import {
-  statusReturnValidation,
-  createdUpdatedValidation,
   accountGroupingIdValidation,
+  createdUpdatedValidation,
   journalCountValidation,
-  userIsAdminValidation,
+  statusReturnValidation,
+  userIsAdminValidation
 } from "../returnValidationHelpers";
 
 export const accountSingleValidation = z
@@ -21,7 +22,7 @@ export const accountSingleValidation = z
     accountGroupCombined: z.string().nullable(),
     accountTitleCombined: z.string().nullable(),
     startDate: z.date().optional().nullable(),
-    endDate: z.date().optional().nullable(),
+    endDate: z.date().optional().nullable()
   })
   .merge(statusReturnValidation)
   .merge(createdUpdatedValidation)

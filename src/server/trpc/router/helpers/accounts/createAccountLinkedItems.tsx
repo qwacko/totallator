@@ -1,7 +1,9 @@
 import type { PrismaStatusEnum } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+
 import type { createAccountValidationType } from "src/utils/validation/account/createAccountValidation";
 import { basicStatusToDBRequired } from "src/utils/validation/basicStatusToDB";
+
 import { createAccountGroupTitle } from "./accountTitleGroupHandling";
 import { defaultIncExp } from "./defaultIncExp";
 
@@ -10,7 +12,7 @@ export const createAccountLinkedItems = ({
   createLiabilityAccounts,
   createIncomeAccounts,
   createExpenseAccounts,
-  accountGroupingId,
+  accountGroupingId
 }: {
   createAssetAccounts: string[] | undefined;
   createLiabilityAccounts: string[] | undefined;
@@ -38,7 +40,7 @@ export const createAccountLinkedItems = ({
       ? createExpenseAccounts.map((item) =>
           expAct({ title: item, accountGroupingId })
         )
-      : []),
+      : [])
   ];
 
   return {
@@ -46,13 +48,13 @@ export const createAccountLinkedItems = ({
     assetAccounts: createAssetAccounts,
     liabilityAccounts: createLiabilityAccounts,
     incomeAccounts: createIncomeAccounts,
-    expenseAccounts: createExpenseAccounts,
+    expenseAccounts: createExpenseAccounts
   };
 };
 
 export const incAct = ({
   title,
-  accountGroupingId,
+  accountGroupingId
 }: {
   title: string;
   accountGroupingId: string;
@@ -61,12 +63,12 @@ export const incAct = ({
     ...basicStatusToDBRequired("Active"),
     ...defaultIncExp(title),
     type: "Income",
-    accountGroupingId,
+    accountGroupingId
   };
 };
 export const expAct = ({
   title,
-  accountGroupingId,
+  accountGroupingId
 }: {
   title: string;
   accountGroupingId: string;
@@ -75,13 +77,13 @@ export const expAct = ({
     ...basicStatusToDBRequired("Active"),
     ...defaultIncExp(title),
     type: "Expense",
-    accountGroupingId,
+    accountGroupingId
   };
 };
 export const assAct = ({
   title: combinedTitle,
   liab: isLiability = false,
-  accountGroupingId,
+  accountGroupingId
 }: {
   title: string;
   liab?: boolean;
@@ -95,7 +97,7 @@ export const assAct = ({
   if (!title) {
     throw new TRPCError({
       message: "Account Title Is Blank",
-      code: "BAD_REQUEST",
+      code: "BAD_REQUEST"
     });
   }
 
@@ -107,9 +109,9 @@ export const assAct = ({
       title,
       accountGroup,
       accountGroup2,
-      accountGroup3,
+      accountGroup3
     }),
     type: isLiability ? "Liability" : "Asset",
-    accountGroupingId,
+    accountGroupingId
   };
 };

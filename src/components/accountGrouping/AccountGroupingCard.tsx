@@ -1,5 +1,7 @@
-import { Card, Group, Stack, Title, Text, Center } from "@mantine/core";
+import { Card, Center, Group, Stack, Text, Title } from "@mantine/core";
+
 import type { AppRouterOutputs } from "src/server/trpc/router/_app";
+
 import { AccountGroupingMenu } from "./AccountGroupingMenu";
 import { DisplayAGUser } from "./DisplayAGUser";
 
@@ -9,7 +11,7 @@ export type AccountGroupingReturnSingle =
 export type AccountGroupingReturnUser = AccountGroupingReturnSingle["users"][0];
 
 export const AccountGroupingCard = ({
-  data,
+  data
 }: {
   data: AccountGroupingReturnSingle;
 }) => {

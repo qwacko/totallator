@@ -5,7 +5,7 @@ import type {
   BudgetsReturnType,
   CategoriesReturnType,
   JournalsReturnType,
-  TagsReturnType,
+  TagsReturnType
 } from "src/server/trpc/router/_app";
 
 export const buildMergedData = ({
@@ -15,7 +15,7 @@ export const buildMergedData = ({
   categories,
   tags,
   accounts,
-  accountGroupings,
+  accountGroupings
 }: {
   input: JournalsReturnType[];
   bills: BillsReturnType[] | undefined;
@@ -45,8 +45,8 @@ export const buildMergedData = ({
       ...otherj,
       account: accounts
         ? accounts.find((item) => item.id === otherj.accountId)
-        : undefined,
-    })),
+        : undefined
+    }))
   }));
 };
 export type MergedDataType = ReturnType<typeof buildMergedData>;

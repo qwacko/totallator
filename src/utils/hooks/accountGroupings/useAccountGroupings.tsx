@@ -5,6 +5,6 @@ export const useAccountGroupings = () => {
 
   return {
     data,
-    isLoading,
+    isLoading
   };
 };

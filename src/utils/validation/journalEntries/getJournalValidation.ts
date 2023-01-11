@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidation";
 
 const idFilter = z
@@ -11,7 +12,7 @@ const stringFilter = z
     mode: z
       .enum(["insensitive", "default"] as const)
       .optional()
-      .default("insensitive"),
+      .default("insensitive")
   })
   .optional();
 
@@ -22,7 +23,7 @@ const booleanFilter = z
 const dateFilter = z
   .object({
     gte: z.date().optional(),
-    lte: z.date().optional(),
+    lte: z.date().optional()
   })
   .optional();
 
@@ -36,11 +37,11 @@ export const transactionFilter = z
       .object({
         some: z
           .object({
-            accountId: idFilter,
+            accountId: idFilter
           })
-          .optional(),
+          .optional()
       })
-      .optional(),
+      .optional()
   })
   .optional();
 
@@ -74,13 +75,13 @@ export const journalFilter = z.object({
       type: z
         .object({ in: z.array(PrismaAccountTypeEnumValidation).optional() })
         .optional(),
-      id: z.object({ in: z.array(z.string().cuid()).optional() }).optional(),
+      id: z.object({ in: z.array(z.string().cuid()).optional() }).optional()
     })
     .optional(),
 
   //Dates
   updatedAt: dateFilter,
-  createdAt: dateFilter,
+  createdAt: dateFilter
 });
 
 export type JournalFilterValidationInputType = z.input<typeof journalFilter>;
@@ -99,9 +100,9 @@ const sort = z
         "category",
         "tag",
         "bill",
-        "budget",
+        "budget"
       ]),
-      direction: z.enum(["asc", "desc"]),
+      direction: z.enum(["asc", "desc"])
     })
   )
   .optional();
@@ -112,12 +113,12 @@ export const getJournalValidation = z.object({
   pagination: z
     .object({
       pageNo: z.number(),
-      pageSize: z.number(),
+      pageSize: z.number()
     })
     .optional()
     .default({ pageNo: 0, pageSize: 10 }),
   filters: z.array(journalFilter).optional(),
-  sort,
+  sort
 });
 
 export type GetJournalValidation = z.infer<typeof getJournalValidation>;

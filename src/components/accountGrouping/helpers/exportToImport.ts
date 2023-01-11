@@ -5,7 +5,7 @@ export const exportToImport = (
   data: AccountGroupingExportValidationType
 ): AccountGroupingImportValidationType => {
   const returnData: AccountGroupingImportValidationType = {
-    accountGroupingId: data.accountGrouping.id,
+    accountGroupingId: data.accountGrouping.id
   };
 
   if (data.accounts && data.accounts.length > 0) {
@@ -22,7 +22,7 @@ export const exportToImport = (
       isCash: account.isCash,
       isNetWorth: account.isNetWorth,
       createdAt: account.createdAt,
-      updatedAt: account.updatedAt,
+      updatedAt: account.updatedAt
     }));
   }
 
@@ -33,7 +33,7 @@ export const exportToImport = (
       group: category.group,
       single: category.single,
       createdAt: category.createdAt,
-      updatedAt: category.updatedAt,
+      updatedAt: category.updatedAt
     }));
   }
 
@@ -44,7 +44,7 @@ export const exportToImport = (
       group: tag.group,
       single: tag.single,
       createdAt: tag.createdAt,
-      updatedAt: tag.updatedAt,
+      updatedAt: tag.updatedAt
     }));
   }
 
@@ -54,7 +54,7 @@ export const exportToImport = (
       status: bill.status,
       title: bill.title,
       createdAt: bill.createdAt,
-      updatedAt: bill.updatedAt,
+      updatedAt: bill.updatedAt
     }));
   }
 
@@ -64,7 +64,7 @@ export const exportToImport = (
       status: budget.status,
       title: budget.title,
       createdAt: budget.createdAt,
-      updatedAt: budget.updatedAt,
+      updatedAt: budget.updatedAt
     }));
   }
 
@@ -85,7 +85,7 @@ export const exportToImport = (
       complete: journal.complete,
       transactionId: journal.transactionId,
       createdAt: journal.createdAt,
-      updatedAt: journal.updatedAt,
+      updatedAt: journal.updatedAt
     }));
   }
 

@@ -4,9 +4,11 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
+
 import { useTags } from "src/utils/hooks/tags/useTags";
+
 import { TableDisplay } from "../table/TableDisplay";
 import { tagColumns } from "./tagColumns";
 
@@ -32,10 +34,10 @@ export const TagTable = () => {
         group: false,
         single: false,
         createdAt: false,
-        updatedAt: false,
-      },
+        updatedAt: false
+      }
     },
-    autoResetPageIndex: false,
+    autoResetPageIndex: false
   });
 
   if (!data.data || data.isLoading) {

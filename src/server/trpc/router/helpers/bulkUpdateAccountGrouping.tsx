@@ -1,19 +1,21 @@
 import type { Prisma, PrismaClient, User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+
+import {
+  type BulkUpgradeAccountGroupingValidationType,
+  bulkUpdateAccountGroupingValidation
+} from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 import { type createSimpleTransactionValidationType } from "src/utils/validation/journalEntries/createJournalValidation";
+
 import { upsertAccounts } from "./accounts/upsertAccounts";
 import { upsertBills } from "./bills/upsertBills";
 import { upsertBudgets } from "./budgets/upsertBudgets";
 import { upsertCategories } from "./categories/upsertCategories";
-import { upsertTags } from "./tags/upsertTags";
-import type { UpsertReturnType } from "./types";
 import { createSimpleTranasction } from "./journals/createSimpleTranasction";
 import { createTransaction } from "./journals/createTransaction";
-import {
-  type BulkUpgradeAccountGroupingValidationType,
-  bulkUpdateAccountGroupingValidation,
-} from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 import { upsertJournals } from "./journals/upsertJournals";
+import { upsertTags } from "./tags/upsertTags";
+import type { UpsertReturnType } from "./types";
 
 const findData = <T extends Record<string, unknown>>(
   data: UpsertReturnType<T>,
@@ -31,14 +33,14 @@ const findData = <T extends Record<string, unknown>>(
 
   throw new TRPCError({
     message: "Cannot find item. ID = ${searc}",
-    code: "PARSE_ERROR",
+    code: "PARSE_ERROR"
   });
 };
 
 export const bulkUpdateAccountGrouping = async ({
   prisma,
   input,
-  user,
+  user
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   input: BulkUpgradeAccountGroupingValidationType;
@@ -52,35 +54,35 @@ export const bulkUpdateAccountGrouping = async ({
     prisma,
     data,
     userId,
-    userIsAdmin,
+    userIsAdmin
   });
 
   const categoryInfo = await upsertCategories({
     prisma,
     data,
     userId,
-    userIsAdmin,
+    userIsAdmin
   });
 
   const billInfo = await upsertBills({
     prisma,
     data,
     userId,
-    userIsAdmin,
+    userIsAdmin
   });
 
   const budgetInfo = await upsertBudgets({
     prisma,
     data,
     userId,
-    userIsAdmin,
+    userIsAdmin
   });
 
   const tagInfo = await upsertTags({
     prisma,
     data,
     userId,
-    userIsAdmin,
+    userIsAdmin
   });
 
   //Upsert Transactions
@@ -94,7 +96,7 @@ export const bulkUpdateAccountGrouping = async ({
       categoryInfo,
       tagInfo,
       accountGroupingId: data.accountGroupingId,
-      user,
+      user
     });
   }
 
@@ -115,14 +117,14 @@ export const bulkUpdateAccountGrouping = async ({
         if (!fromAccount) {
           throw new TRPCError({
             message: `From Account Not Found. id = ${item.fromAccountId}`,
-            code: "INTERNAL_SERVER_ERROR",
+            code: "INTERNAL_SERVER_ERROR"
           });
         }
 
         if (!toAccount) {
           throw new TRPCError({
             message: `To Account Not Found. id = ${item.toAccountId}`,
-            code: "INTERNAL_SERVER_ERROR",
+            code: "INTERNAL_SERVER_ERROR"
           });
         }
 
@@ -134,7 +136,7 @@ export const bulkUpdateAccountGrouping = async ({
           tagId: tag ? tag.id : undefined,
           accountGroupingId: data.accountGroupingId,
           fromAccountId: fromAccount.id,
-          toAccountId: toAccount.id,
+          toAccountId: toAccount.id
         };
       });
 
@@ -160,7 +162,7 @@ export const bulkUpdateAccountGrouping = async ({
         if (!account) {
           throw new TRPCError({
             message: `Account ID ${item.accountId} not found`,
-            code: "INTERNAL_SERVER_ERROR",
+            code: "INTERNAL_SERVER_ERROR"
           });
         }
 
@@ -171,7 +173,7 @@ export const bulkUpdateAccountGrouping = async ({
           categoryId: category ? category.id : undefined,
           tagId: tag ? tag.id : undefined,
           accountGroupingId: data.accountGroupingId,
-          accountId: account.id,
+          accountId: account.id
         };
       });
 

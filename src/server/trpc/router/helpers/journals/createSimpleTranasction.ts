@@ -1,14 +1,16 @@
+import type { Prisma, PrismaClient, User } from "@prisma/client";
+
 import {
   type createSimpleTransactionValidationType,
-  createTransactionValidation,
+  createTransactionValidation
 } from "src/utils/validation/journalEntries/createJournalValidation";
+
 import { createTransaction } from "./createTransaction";
-import type { Prisma, PrismaClient, User } from "@prisma/client";
 
 export const createSimpleTranasction = async ({
   input,
   user,
-  prisma,
+  prisma
 }: {
   input: createSimpleTransactionValidationType;
   user: User;
@@ -19,13 +21,13 @@ export const createSimpleTranasction = async ({
     ...sharedProperties,
     accountId: fromAccountId,
     amount: -1 * amount,
-    linked: true,
+    linked: true
   };
   const toTransaction = {
     ...sharedProperties,
     accountId: toAccountId,
     amount: 1 * amount,
-    linked: true,
+    linked: true
   };
 
   const transaction = [fromTransaction, toTransaction];
@@ -34,6 +36,6 @@ export const createSimpleTranasction = async ({
   await createTransaction({
     user,
     prisma: prisma,
-    input: transactionValidated,
+    input: transactionValidated
   });
 };

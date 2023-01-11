@@ -1,8 +1,9 @@
 import { NumberInput, type NumberInputProps } from "@mantine/core";
+
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import {
   currencyFormatter,
-  currencyUnformatter,
+  currencyUnformatter
 } from "src/utils/validation/user/currencyFormats";
 
 export const InputCurrency = (input: NumberInputProps) => {

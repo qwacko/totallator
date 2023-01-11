@@ -1,13 +1,15 @@
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
+
 import { trpc } from "src/utils/trpc";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useUpdatePassword";
 const notifications = notifyTemplate(id, "Password", "Update");
 
 export const useUpdatePassword = ({
-  onComplete,
+  onComplete
 }: {
   onComplete?: () => void;
 }) => {
@@ -23,7 +25,7 @@ export const useUpdatePassword = ({
         signOut();
         utils.invalidate();
         router.push("/user/signin");
-      },
+      }
     });
 
   return { updateUser, isUpdatingUser: isLoading };

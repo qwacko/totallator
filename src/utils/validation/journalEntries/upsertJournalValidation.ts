@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { createSingleJournalValidation } from "./createJournalValidation";
 
 export const upsertJournalValidation = createSingleJournalValidation
@@ -6,7 +7,9 @@ export const upsertJournalValidation = createSingleJournalValidation
   .merge(
     z.object({
       id: z.string().optional(),
-      transactionId: z.string().or(z.number().transform(val => val.toString())),
+      transactionId: z
+        .string()
+        .or(z.number().transform((val) => val.toString()))
     })
   )
   .strip();

@@ -1,8 +1,9 @@
 import { Prisma } from "@prisma/client";
+
 import type { JournalSortValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 
 export const orderByToSQLQuery = ({
-  orderBy,
+  orderBy
 }: {
   orderBy: JournalSortValidation | undefined;
 }) => {

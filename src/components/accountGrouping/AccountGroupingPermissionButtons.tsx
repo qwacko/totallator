@@ -1,12 +1,14 @@
 import { Button } from "@mantine/core";
 import { IconEdit, IconEye, IconTrash } from "@tabler/icons";
+
 import { trpc } from "src/utils/trpc";
+
 import type { AccountGroupingReturnUser } from "./AccountGroupingCard";
 
 export const AccountGroupingPermissionButtons = ({
   user,
   isAdmin,
-  accountGroupingId,
+  accountGroupingId
 }: {
   user: AccountGroupingReturnUser;
   isAdmin: boolean;
@@ -20,7 +22,7 @@ export const AccountGroupingPermissionButtons = ({
       },
       onError: () => {
         utils.accountGroupings.invalidate();
-      },
+      }
     });
 
   const { mutate: setUserView, isLoading: setUserViewLoading } =
@@ -30,7 +32,7 @@ export const AccountGroupingPermissionButtons = ({
       },
       onError: () => {
         utils.accountGroupings.invalidate();
-      },
+      }
     });
 
   const { mutate: removeUser, isLoading: removeUserLoading } =
@@ -40,7 +42,7 @@ export const AccountGroupingPermissionButtons = ({
       },
       onError: () => {
         utils.accountGroupings.invalidate();
-      },
+      }
     });
 
   return (

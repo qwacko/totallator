@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { journalFilter } from "./getJournalValidation";
 
 export const updateJournalInputData = z.object({
@@ -16,7 +17,7 @@ export const updateJournalInputData = z.object({
       z.object({
         id: z.string().cuid(),
         amount: z.number().optional(),
-        accountId: z.string().cuid().optional(),
+        accountId: z.string().cuid().optional()
       })
     )
     .optional(),
@@ -30,7 +31,7 @@ export const updateJournalInputData = z.object({
   //Status
   reconciled: z.boolean().optional(),
   dataChecked: z.boolean().optional(),
-  complete: z.boolean().optional(),
+  complete: z.boolean().optional()
 });
 
 export type UpdateJournalDataInputType = z.infer<typeof updateJournalInputData>;
@@ -39,5 +40,5 @@ export const updateJournalInput = z.object({
   data: updateJournalInputData,
   filters: z.array(journalFilter).optional(),
   updateCompleteJournals: z.boolean().optional().default(false),
-  maxUpdated: z.number().optional().default(20),
+  maxUpdated: z.number().optional().default(20)
 });

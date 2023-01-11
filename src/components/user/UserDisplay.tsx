@@ -1,4 +1,5 @@
 import { Button, Group, Loader, Text } from "@mantine/core";
+
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 
 export const UserDisplay = () => {

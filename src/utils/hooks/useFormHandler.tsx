@@ -11,7 +11,7 @@ export const useFormHandler = <
   keys,
   mutate,
   id,
-  formDataToMutateData,
+  formDataToMutateData
 }: {
   data: T;
   form: UseFormReturnType<U>;

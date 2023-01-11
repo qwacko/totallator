@@ -1,8 +1,9 @@
 import type { FileWithPath } from "@mantine/dropzone";
 import { read, utils } from "xlsx";
+
 import {
-  bulkUpdateAccountGroupingValidation,
   type BulkUpgradeAccountGroupingValidationType,
+  bulkUpdateAccountGroupingValidation
 } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 
 export const handleExcelUpload = ({
@@ -11,7 +12,7 @@ export const handleExcelUpload = ({
   setUploadedData,
   setError,
   setFilename,
-  accountGroupingId,
+  accountGroupingId
 }: {
   files: FileWithPath[];
   setLoading: (data: boolean) => void;
@@ -41,9 +42,9 @@ export const handleExcelUpload = ({
               "Bills",
               "Budgets",
               "Categories",
-              "Tags",
+              "Tags"
             ],
-            cellDates: true,
+            cellDates: true
           });
           const journals = excel.Sheets["Journals"]
             ? utils.sheet_to_json(excel.Sheets["Journals"])
@@ -71,7 +72,7 @@ export const handleExcelUpload = ({
             upsertBudgets: budgets,
             upsertCategories: categories,
             upsertTags: tags,
-            upsertJournalEntries: journals,
+            upsertJournalEntries: journals
           });
           if (processedData.success) {
             console.log("Processed Data", processedData);

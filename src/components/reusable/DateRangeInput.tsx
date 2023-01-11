@@ -1,21 +1,21 @@
 import { Button, Flex, Menu } from "@mantine/core";
-import type { DateRangePickerProps } from "@mantine/dates";
-import { DateRangePicker } from "@mantine/dates";
+import { DateRangePicker, type DateRangePickerProps } from "@mantine/dates";
 import { IconArrowAutofitContent } from "@tabler/icons";
 import {
   addMonths,
+  addYears,
   endOfMonth,
   endOfQuarter,
+  endOfYear,
+  startOfMonth,
   startOfQuarter,
   startOfYear,
   subMonths,
   subQuarters,
-  subYears,
-  endOfYear,
-  startOfMonth,
-  addYears,
+  subYears
 } from "date-fns";
 import { useMemo } from "react";
+
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 
 const useDateRanges = () => {
@@ -37,56 +37,56 @@ const useDateRanges = () => {
         title: "All",
         group: "All",
         end: addYears(now, 10),
-        start: new Date(1900, 0, 0),
+        start: new Date(1900, 0, 0)
       },
       {
         title: "Current Year",
         group: "Year",
         end: endOfYear(now),
-        start: startOfYear(now),
+        start: startOfYear(now)
       },
       {
         title: "Previous Year",
         group: "Year",
         end: endOfYear(subYears(now, 1)),
-        start: startOfYear(subYears(now, 1)),
+        start: startOfYear(subYears(now, 1))
       },
       {
         title: "Current Financial Year",
         group: "Year",
         end: endOfFY,
-        start: startOfFY,
+        start: startOfFY
       },
       {
         title: "Previous Financial Year",
         group: "Year",
         end: subYears(endOfFY, 1),
-        start: subYears(startOfFY, 1),
+        start: subYears(startOfFY, 1)
       },
       {
         title: "Current Quarter",
         group: "Quarter",
         end: endOfQuarter(now),
-        start: startOfQuarter(now),
+        start: startOfQuarter(now)
       },
       {
         title: "Previous Quarter",
         group: "Quarter",
         end: endOfQuarter(subQuarters(now, 1)),
-        start: startOfQuarter(subQuarters(now, 1)),
+        start: startOfQuarter(subQuarters(now, 1))
       },
       {
         title: "Current Month",
         group: "Month",
         end: endOfMonth(now),
-        start: startOfMonth(now),
+        start: startOfMonth(now)
       },
       {
         title: "Previous Month",
         group: "Month",
         end: endOfMonth(subMonths(now, 1)),
-        start: startOfMonth(subMonths(now, 1)),
-      },
+        start: startOfMonth(subMonths(now, 1))
+      }
     ];
   }, [firstMonth]);
 

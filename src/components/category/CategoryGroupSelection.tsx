@@ -1,5 +1,6 @@
 import { Autocomplete, type AutocompleteProps } from "@mantine/core";
 import { useMemo } from "react";
+
 import { useCategories } from "src/utils/hooks/categories/useCategories";
 
 export const CategoryGroupSelection = (
@@ -18,7 +19,7 @@ export const CategoryGroupSelection = (
                 )
                 .map((category) => category.group)
             : []
-        ),
+        )
       ].sort((a, b) =>
         a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())
       ),

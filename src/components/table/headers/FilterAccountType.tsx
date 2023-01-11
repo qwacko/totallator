@@ -5,12 +5,12 @@ const options: PrismaAccountEnum[] = [
   "Asset",
   "Expense",
   "Income",
-  "Liability",
+  "Liability"
 ];
 
 export const FilterAccountType = ({
   filter,
-  setFilter,
+  setFilter
 }: {
   filter: PrismaAccountEnum[] | PrismaAccountEnum | undefined | null;
   setFilter: (

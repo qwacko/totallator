@@ -2,7 +2,7 @@ import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validat
 
 export const buildSearchIDList = ({
   data,
-  key,
+  key
 }: {
   data: BulkUpgradeAccountGroupingValidationType;
   key: "accountId" | "billId" | "budgetId" | "categoryId" | "tagId";
@@ -27,6 +27,6 @@ export const buildSearchIDList = ({
     ...upsertList,
     ...createSimpleListFrom,
     ...createSimpleListTo,
-    ...createTransactionsList,
+    ...createTransactionsList
   ];
 };

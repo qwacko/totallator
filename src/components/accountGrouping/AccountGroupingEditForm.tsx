@@ -5,21 +5,23 @@ import {
   Modal,
   SegmentedControl,
   Stack,
-  TextInput,
+  TextInput
 } from "@mantine/core";
+
 import { useUpdateAccountGrouping } from "src/utils/hooks/accountGroupings/useUpdateAccountGrouping";
+
 import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 
 export const AccountGroupingEditForm = ({
   data,
-  onSubmit,
+  onSubmit
 }: {
   data: AccountGroupingReturnSingle;
   onSubmit?: () => void;
 }) => {
   const { form, mutate } = useUpdateAccountGrouping({
     onMutate: onSubmit,
-    initialValues: { status: data.status, title: data.title },
+    initialValues: { status: data.status, title: data.title }
   });
 
   console.log("AG Edit Form Value", form.values);
@@ -37,7 +39,7 @@ export const AccountGroupingEditForm = ({
           data={[
             { value: "Active", label: "Active" },
             { value: "Disabled", label: "Disabled" },
-            { value: "Deleted", label: "Deleted" },
+            { value: "Deleted", label: "Deleted" }
           ]}
           color="blue"
         />
@@ -53,7 +55,7 @@ export const AccountGroupingEditForm = ({
 export const AccountGroupingEditPopup = ({
   data,
   opened,
-  close,
+  close
 }: {
   data: AccountGroupingReturnSingle;
   opened: boolean;

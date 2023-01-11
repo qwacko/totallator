@@ -4,9 +4,11 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
+
 import { useCategories } from "src/utils/hooks/categories/useCategories";
+
 import { TableDisplay } from "../table/TableDisplay";
 import { categoryColumns } from "./categoryColumns";
 
@@ -32,10 +34,10 @@ export const CategoryTable = () => {
         group: false,
         single: false,
         createdAt: false,
-        updatedAt: false,
-      },
+        updatedAt: false
+      }
     },
-    autoResetPageIndex: false,
+    autoResetPageIndex: false
   });
 
   if (!data.data || data.isLoading) {

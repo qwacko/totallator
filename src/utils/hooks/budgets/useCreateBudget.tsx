@@ -1,17 +1,19 @@
-import { trpc } from "src/utils/trpc";
 import { useForm, zodResolver } from "@mantine/form";
-import { notifyTemplate } from "../notifyTemplate";
+
+import { trpc } from "src/utils/trpc";
 import {
   createBudgetValidation,
-  type createBudgetValidationType,
+  type createBudgetValidationType
 } from "src/utils/validation/budget/createBudgetValidation";
+
+import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useCreateBudget";
 const notifications = notifyTemplate(id, "Budget", "Create");
 
 export function useCreateBudget({ onMutate }: { onMutate?: () => void }) {
   const form = useForm<createBudgetValidationType>({
-    validate: zodResolver(createBudgetValidation),
+    validate: zodResolver(createBudgetValidation)
   });
   const utils = trpc.useContext();
   const mutate = trpc.budgets.create.useMutation({
@@ -35,8 +37,8 @@ export function useCreateBudget({ onMutate }: { onMutate?: () => void }) {
             updatedAt: new Date(),
             deleted: false,
             disabled: false,
-            _count: { journalEntries: 0 },
-          },
+            _count: { journalEntries: 0 }
+          }
         ]);
       }
     },
@@ -48,7 +50,7 @@ export function useCreateBudget({ onMutate }: { onMutate?: () => void }) {
       form.reset();
       utils.budgets.invalidate();
       notifications.onSuccess();
-    },
+    }
   });
   return { form, mutate };
 }

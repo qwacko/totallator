@@ -1,17 +1,19 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+import { omit } from "lodash";
+
+import { removeUndefinedAndDuplicates } from "src/utils/arrayHelpers";
+import type { UpsertJournalsValidationType } from "src/utils/validation/journalEntries/upsertJournalValidation";
+
 import type { UpsertAccountsReturnType } from "../accounts/upsertAccounts";
 import type { UpsertBillsReturnType } from "../bills/upsertBills";
 import type { UpsertBudgetsReturnType } from "../budgets/upsertBudgets";
 import type { UpsertCategoriesReturnType } from "../categories/upsertCategories";
-import type { UpsertTagsReturnType } from "../tags/upsertTags";
-import type { UpsertJournalsValidationType } from "src/utils/validation/journalEntries/upsertJournalValidation";
-import type { UpsertReturnType } from "../types";
-import { removeUndefinedAndDuplicates } from "src/utils/arrayHelpers";
-import { updateSingleJournal } from "./updateSingleJournal";
-import { omit } from "lodash";
-import { createTransaction } from "./createTransaction";
 import type { UserInfo } from "../getUserInfo";
+import type { UpsertTagsReturnType } from "../tags/upsertTags";
+import type { UpsertReturnType } from "../types";
+import { createTransaction } from "./createTransaction";
+import { updateSingleJournal } from "./updateSingleJournal";
 
 export const upsertJournals = async ({
   prisma,
@@ -22,7 +24,7 @@ export const upsertJournals = async ({
   categoryInfo,
   tagInfo,
   accountGroupingId,
-  user,
+  user
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   data: UpsertJournalsValidationType;
@@ -48,13 +50,13 @@ export const upsertJournals = async ({
       message: `More than one account grouping id found. ${accountGroupingIdsAccounts.join(
         "|"
       )}`,
-      code: "INTERNAL_SERVER_ERROR",
+      code: "INTERNAL_SERVER_ERROR"
     });
   }
   if (accountGroupingIdsAccounts[0] !== accountGroupingId) {
     throw new TRPCError({
       message: `Account Grouping Ids Don't Match. account = ${accountGroupingIdsAccounts[0]}. Request = ${accountGroupingId}`,
-      code: "INTERNAL_SERVER_ERROR",
+      code: "INTERNAL_SERVER_ERROR"
     });
   }
 
@@ -65,37 +67,37 @@ export const upsertJournals = async ({
         data: accountInfo,
         id: journal.accountId,
         required: true,
-        title: "Account",
+        title: "Account"
       });
       if (!accountId) {
         throw new TRPCError({
           message: "Account Id Is Blank",
-          code: "INTERNAL_SERVER_ERROR",
+          code: "INTERNAL_SERVER_ERROR"
         });
       }
       const billId = findLinked({
         data: billInfo,
         id: journal.billId,
         required: false,
-        title: "Bill",
+        title: "Bill"
       });
       const budgetId = findLinked({
         data: budgetInfo,
         id: journal.budgetId,
         required: false,
-        title: "Budget",
+        title: "Budget"
       });
       const categoryId = findLinked({
         data: categoryInfo,
         id: journal.categoryId,
         required: false,
-        title: "Category",
+        title: "Category"
       });
       const tagId = findLinked({
         data: tagInfo,
         id: journal.tagId,
         required: false,
-        title: "Tag",
+        title: "Tag"
       });
 
       return { ...journal, accountId, billId, budgetId, categoryId, tagId };
@@ -106,7 +108,7 @@ export const upsertJournals = async ({
     processedData.map((item) => item.id)
   );
   const journalsToUpdate = await prisma.journalEntry.findMany({
-    where: { id: { in: journalIds }, accountGroupingId },
+    where: { id: { in: journalIds }, accountGroupingId }
   });
   const journalIdsToUpdate = journalsToUpdate.map((item) => item.id);
   const inputJournalsToUpdate = processedData.filter((item) =>
@@ -125,20 +127,20 @@ export const upsertJournals = async ({
       if (!currentJournal) {
         throw new TRPCError({
           message: "Shouldn't Happen - 123",
-          code: "INTERNAL_SERVER_ERROR",
+          code: "INTERNAL_SERVER_ERROR"
         });
       }
       if (currentJournal.transactionId !== journal.transactionId) {
         throw new TRPCError({
           message: `Transaction ID of jouirnal ${journal.id} doesn't match database`,
-          code: "BAD_REQUEST",
+          code: "BAD_REQUEST"
         });
       }
       await updateSingleJournal({
         prisma,
         journal: currentJournal,
         data: omit(journal, "id", "transactionId"),
-        updateCompleted: true,
+        updateCompleted: true
       });
     })
   );
@@ -156,13 +158,13 @@ export const upsertJournals = async ({
       if (journals.length < 2) {
         throw new TRPCError({
           message: `Transaction Id ${transactionId} has less than two journals`,
-          code: "BAD_REQUEST",
+          code: "BAD_REQUEST"
         });
       }
 
       const transactionData = journals.map((item) => ({
         ...omit(item, "id", "transactionId"),
-        accountGroupingId,
+        accountGroupingId
       }));
 
       await createTransaction({ prisma, input: transactionData, user });
@@ -174,7 +176,7 @@ const findLinked = <T extends { [key: string]: unknown; id: string }>({
   data,
   id,
   required = false,
-  title,
+  title
 }: {
   data: UpsertReturnType<T>;
   id: string | undefined;
@@ -184,7 +186,7 @@ const findLinked = <T extends { [key: string]: unknown; id: string }>({
   if (required && !id) {
     throw new TRPCError({
       message: `${title} not found but is required - ${id}`,
-      code: "INTERNAL_SERVER_ERROR",
+      code: "INTERNAL_SERVER_ERROR"
     });
   }
 
@@ -193,7 +195,7 @@ const findLinked = <T extends { [key: string]: unknown; id: string }>({
     if (!item) {
       throw new TRPCError({
         message: `${title} ${id} not found`,
-        code: "INTERNAL_SERVER_ERROR",
+        code: "INTERNAL_SERVER_ERROR"
       });
     }
     return item.id;

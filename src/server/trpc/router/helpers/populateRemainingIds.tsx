@@ -1,5 +1,7 @@
 import { TRPCError } from "@trpc/server";
+
 import { removeUndefinedAndDuplicates } from "src/utils/arrayHelpers";
+
 import { type UpsertReturnType } from "./types";
 
 export const populateRemainingIds = async <
@@ -8,7 +10,7 @@ export const populateRemainingIds = async <
   returnData,
   idList,
   getMatching,
-  itemsType,
+  itemsType
 }: {
   returnData: UpsertReturnType<T>;
   idList?: (string | undefined)[];
@@ -37,7 +39,7 @@ export const populateRemainingIds = async <
     if (remainingIds.length > 0) {
       throw new TRPCError({
         message: `Not All ${itemsType} Found. Remaining Ids = ${newRemainingIds}`,
-        code: "INTERNAL_SERVER_ERROR",
+        code: "INTERNAL_SERVER_ERROR"
       });
     }
   }

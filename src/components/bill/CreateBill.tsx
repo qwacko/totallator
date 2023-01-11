@@ -1,8 +1,9 @@
 import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
-import { IconPlus } from "@tabler/icons";
 import { useDisclosure } from "@mantine/hooks";
-import { useCreateBill } from "src/utils/hooks/bills/useCreateBill";
+import { IconPlus } from "@tabler/icons";
+
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
+import { useCreateBill } from "src/utils/hooks/bills/useCreateBill";
 
 export const CreateBillForm = ({ onClose }: { onClose?: () => void }) => {
   const { data: accountGroupings } = useAccountGroupings();
@@ -10,7 +11,7 @@ export const CreateBillForm = ({ onClose }: { onClose?: () => void }) => {
   const createBill = useCreateBill({
     onMutate: () => {
       onClose && onClose();
-    },
+    }
   });
 
   return (
@@ -28,7 +29,7 @@ export const CreateBillForm = ({ onClose }: { onClose?: () => void }) => {
             accountGroupings
               ? accountGroupings.map((ag) => ({
                   value: ag.id,
-                  label: ag.title,
+                  label: ag.title
                 }))
               : []
           }

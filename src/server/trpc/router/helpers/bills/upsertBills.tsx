@@ -1,9 +1,11 @@
 import type { Bill, Prisma, PrismaClient } from "@prisma/client";
+
 import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+
 import { buildSearchIDList } from "../buildSearchIDList";
 import { populateRemainingIds } from "../populateRemainingIds";
 import { type UpsertReturnType } from "../types";
-import { upsertBill, type UpsertBillData } from "./upsertBill";
+import { type UpsertBillData, upsertBill } from "./upsertBill";
 
 export type UpsertBillsReturnType = UpsertReturnType<Bill>;
 
@@ -11,7 +13,7 @@ export const upsertBills = async ({
   data,
   prisma,
   userId,
-  userIsAdmin,
+  userIsAdmin
 }: {
   data: BulkUpgradeAccountGroupingValidationType;
   prisma: PrismaClient | PrismaClient | Prisma.TransactionClient;
@@ -23,7 +25,7 @@ export const upsertBills = async ({
   const returnData: UpsertBillsReturnType = {
     idLookup: {},
     nameLookup: {},
-    allLookup: {},
+    allLookup: {}
   };
 
   const listData: UpsertBillData[] = data.createBillTitles
@@ -32,9 +34,9 @@ export const upsertBills = async ({
 
   const upsertData = data.upsertBills ? data.upsertBills : [];
 
-  const list: (typeof upsertData[0] | UpsertBillData)[] = [
+  const list: ((typeof upsertData)[0] | UpsertBillData)[] = [
     ...upsertData,
-    ...listData,
+    ...listData
   ];
   if (list) {
     await Promise.all(
@@ -47,7 +49,7 @@ export const upsertBills = async ({
           data: currentItem,
           userId,
           userAdmin: userIsAdmin,
-          action: "Upsert",
+          action: "Upsert"
         });
         returnData.idLookup[upsertedBill.id] = upsertedBill;
         if ("id" in currentItem && currentItem.id) {
@@ -66,8 +68,8 @@ export const upsertBills = async ({
     itemsType: "Bills",
     getMatching: async (ids) =>
       await prisma.bill.findMany({
-        where: { id: { in: ids }, accountGroupingId },
-      }),
+        where: { id: { in: ids }, accountGroupingId }
+      })
   });
 
   return returnData;

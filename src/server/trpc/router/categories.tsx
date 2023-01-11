@@ -1,15 +1,17 @@
-import { router, protectedProcedure } from "../trpc";
-import { getUserInfo } from "./helpers/getUserInfo";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
+import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
+import { categoryGetValidation } from "src/utils/validation/category/readCategoryValidation";
+import { updateCategoryValidation } from "src/utils/validation/category/updateCategoryValidation";
+
+import { protectedProcedure, router } from "../trpc";
+import { upsertCategory } from "./helpers/categories/upsertCategory";
 import {
   accountGroupingFilter,
-  checkAccountGroupingAccess,
+  checkAccountGroupingAccess
 } from "./helpers/checkAccountGroupingAccess";
-import { TRPCError } from "@trpc/server";
-import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
-import { updateCategoryValidation } from "src/utils/validation/category/updateCategoryValidation";
-import { z } from "zod";
-import { upsertCategory } from "./helpers/categories/upsertCategory";
-import { categoryGetValidation } from "src/utils/validation/category/readCategoryValidation";
+import { getUserInfo } from "./helpers/getUserInfo";
 
 export const categoryRouter = router({
   get: protectedProcedure
@@ -19,12 +21,12 @@ export const categoryRouter = router({
 
       const categories = await ctx.prisma.category.findMany({
         where: {
-          accountGrouping: { viewUsers: { some: { id: user.id } } },
+          accountGrouping: { viewUsers: { some: { id: user.id } } }
         },
         include: {
           accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-          _count: { select: { journalEntries: true } },
-        },
+          _count: { select: { journalEntries: true } }
+        }
       });
 
       return categories.map((category) => {
@@ -45,7 +47,7 @@ export const categoryRouter = router({
         accountGroupingId: input.accountGroupingId,
         prisma: ctx.prisma,
         user,
-        adminRequired: true,
+        adminRequired: true
       });
 
       await upsertCategory({
@@ -54,7 +56,7 @@ export const categoryRouter = router({
         userAdmin: user.admin,
         action: "Create",
         data: input,
-        accountGroupingId: input.accountGroupingId,
+        accountGroupingId: input.accountGroupingId
       });
 
       return true;
@@ -70,7 +72,7 @@ export const categoryRouter = router({
         userAdmin: user.admin,
         data: input.data,
         id: input.id,
-        action: "Update",
+        action: "Update"
       });
 
       return true;
@@ -83,14 +85,14 @@ export const categoryRouter = router({
       const targetCategory = await ctx.prisma.category.findFirst({
         where: {
           id: input.id,
-          ...accountGroupingFilter(user.id),
-        },
+          ...accountGroupingFilter(user.id)
+        }
       });
 
       if (!targetCategory) {
         throw new TRPCError({
           message: "Cannot find category or user doesn't have admin accces",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
 
@@ -100,7 +102,7 @@ export const categoryRouter = router({
         prisma: ctx.prisma,
         data: { ...targetCategory, single: `${targetCategory.single} (Clone)` },
         action: "Create",
-        accountGroupingId: targetCategory.accountGroupingId,
+        accountGroupingId: targetCategory.accountGroupingId
       });
 
       return true;
@@ -113,27 +115,27 @@ export const categoryRouter = router({
       const targetCategory = await ctx.prisma.category.findFirst({
         where: {
           id: input.id,
-          ...accountGroupingFilter(user.id),
+          ...accountGroupingFilter(user.id)
         },
-        include: { _count: { select: { journalEntries: true } } },
+        include: { _count: { select: { journalEntries: true } } }
       });
 
       if (!targetCategory) {
         throw new TRPCError({
           message: "Cannot find category or user doesn't have admin accces",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       if (targetCategory._count.journalEntries > 0) {
         throw new TRPCError({
           message: "Cannot remove category that has journal entries associated",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       await ctx.prisma.category.delete({
-        where: { id: targetCategory.id },
+        where: { id: targetCategory.id }
       });
 
       return true;
-    }),
+    })
 });

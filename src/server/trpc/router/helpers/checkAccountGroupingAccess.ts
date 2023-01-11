@@ -5,7 +5,7 @@ export const checkAccountGroupingAccess = async ({
   accountGroupingId,
   prisma,
   user,
-  adminRequired = true,
+  adminRequired = true
 }: {
   accountGroupingId: string;
   prisma: PrismaClient | Prisma.TransactionClient;
@@ -20,14 +20,14 @@ export const checkAccountGroupingAccess = async ({
         ? {}
         : adminRequired
         ? { adminUsers: { some: { id: user.id } } }
-        : { viewUsers: { some: { id: user.id } } }),
-    },
+        : { viewUsers: { some: { id: user.id } } })
+    }
   });
 
   if (!targetAccountGrouping) {
     throw new TRPCError({
       message: "No Account Grouping Found Or No Permission To Update",
-      code: "BAD_REQUEST",
+      code: "BAD_REQUEST"
     });
   }
   // console.log("Account Grouping Access Success");
@@ -36,7 +36,7 @@ export const checkAccountGroupingAccess = async ({
 export const accountGroupingFilter = (userId: string, admin = true) => {
   if (admin) {
     return {
-      accountGrouping: { adminUsers: { some: { id: userId } } },
+      accountGrouping: { adminUsers: { some: { id: userId } } }
     } as const;
   }
 

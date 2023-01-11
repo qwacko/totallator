@@ -1,11 +1,11 @@
-import { Card, Center, Stack, Title, Alert } from "@mantine/core";
-import type { ReactNode } from "react";
+import { Alert, Card, Center, Stack, Title } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons";
+import type { ReactNode } from "react";
 
 export const AuthLayout = ({
   children,
   title,
-  errors,
+  errors
 }: {
   children: ReactNode;
   title: string;

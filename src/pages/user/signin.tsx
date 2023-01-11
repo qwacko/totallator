@@ -1,15 +1,16 @@
-import { useRouter } from "next/router";
-import { trpc } from "src/utils/trpc";
-import { getCsrfToken } from "next-auth/react";
-import { Container, Group, Stack, TextInput, Button } from "@mantine/core";
-import { AuthLayout } from "src/components/auth/AuthLayout";
+import { Button, Container, Group, Stack, TextInput } from "@mantine/core";
 import type { GetServerSideProps } from "next";
+import { getCsrfToken } from "next-auth/react";
+import { useRouter } from "next/router";
+
+import { AuthLayout } from "src/components/auth/AuthLayout";
+import { trpc } from "src/utils/trpc";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
-      csrfToken: await getCsrfToken(context),
-    },
+      csrfToken: await getCsrfToken(context)
+    }
   };
 };
 

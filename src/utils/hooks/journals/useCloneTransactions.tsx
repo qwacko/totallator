@@ -1,4 +1,5 @@
 import { trpc } from "src/utils/trpc";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useCloneTransactions";
@@ -9,7 +10,7 @@ export const useCloneTransactions = ({
   maxUpdated,
   onSuccess,
   onError,
-  onMutate,
+  onMutate
 }: {
   ids?: string[];
   maxUpdated?: number;
@@ -34,7 +35,7 @@ export const useCloneTransactions = ({
       onMutate: () => {
         notifications.onLoading();
         onMutate && onMutate();
-      },
+      }
     });
 
   const clone = (cloneCount: number) => {
@@ -44,6 +45,6 @@ export const useCloneTransactions = ({
   return {
     isMutating,
     mutate,
-    clone,
+    clone
   };
 };

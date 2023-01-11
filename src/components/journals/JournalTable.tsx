@@ -1,15 +1,14 @@
 import { Group, Loader, Text } from "@mantine/core";
-import {
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
+
 import { useJournals } from "src/utils/hooks/journals/useJournals";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
+
 import { TableDisplay } from "../table/TableDisplay";
 import { journalColumns } from "./journalColumns";
 
 export const JournalTable = ({
-  filters,
+  filters
 }: {
   filters: JournalFilterValidationInputType[];
 }) => {
@@ -26,7 +25,7 @@ export const JournalTable = ({
       sorting: data.tableState.sorting,
       columnFilters: data.tableState.filters,
       pagination: data.tableState.pagination,
-      rowSelection: data.tableState.rowSelection,
+      rowSelection: data.tableState.rowSelection
     },
 
     //Sorting
@@ -52,8 +51,8 @@ export const JournalTable = ({
       sorting: [{ id: "description", desc: false }],
       columnVisibility: {
         createdAt: false,
-        updatedAt: false,
-      },
+        updatedAt: false
+      }
     },
     autoResetPageIndex: false,
     autoResetAll: false,
@@ -63,7 +62,7 @@ export const JournalTable = ({
       rowData.original.userIsAdmin && !rowData.original.complete,
     enableMultiRowSelection: (rowData) =>
       rowData.original.userIsAdmin && !rowData.original.complete,
-    onRowSelectionChange: data.tableState.setRowSelection,
+    onRowSelectionChange: data.tableState.setRowSelection
   });
 
   if (!data.data || data.data.isLoading) {

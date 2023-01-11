@@ -1,8 +1,8 @@
-import { Text, Group } from "@mantine/core";
+import { Group, Text } from "@mantine/core";
 import type { ReactNode } from "react";
 
 export const SelectionColumnHeader = ({
-  children,
+  children
 }: {
   children: ReactNode;
 }) => {

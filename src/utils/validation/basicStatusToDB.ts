@@ -6,7 +6,7 @@ export const basicStatusToDBRequired = (status: PrismaStatusEnum) => {
     active: status === "Active",
     disabled: status === "Disabled",
     deleted: status === "Deleted",
-    allowUpdate: status === "Active",
+    allowUpdate: status === "Active"
   };
 };
 

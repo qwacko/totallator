@@ -1,10 +1,11 @@
 import { z } from "zod";
+
 import {
-  statusReturnValidation,
-  createdUpdatedValidation,
   accountGroupingIdValidation,
+  createdUpdatedValidation,
   journalCountValidation,
-  userIsAdminValidation,
+  statusReturnValidation,
+  userIsAdminValidation
 } from "../returnValidationHelpers";
 
 export const tagSingleValidation = z
@@ -12,7 +13,7 @@ export const tagSingleValidation = z
     id: z.string().cuid(),
     title: z.string(),
     group: z.string(),
-    single: z.string(),
+    single: z.string()
   })
   .merge(statusReturnValidation)
   .merge(createdUpdatedValidation)

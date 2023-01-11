@@ -1,12 +1,13 @@
-import { Modal, Button, Group, Stack, Text, List } from "@mantine/core";
+import { Button, Group, List, Modal, Stack, Text } from "@mantine/core";
 import { Dropzone } from "@mantine/dropzone";
+
 import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 import { useImportExcel } from "./helpers/useImportExcel";
 
 export const AccountGroupingImportExcel = ({
   data,
   opened,
-  close,
+  close
 }: {
   data: AccountGroupingReturnSingle;
   opened: boolean;
@@ -19,7 +20,7 @@ export const AccountGroupingImportExcel = ({
     errorText,
     handleUpload,
     reset,
-    runMutation,
+    runMutation
   } = useImportExcel({ accountGroupingId: data.id, onComplete: () => close() });
 
   const closeModal = () => {
@@ -39,7 +40,7 @@ export const AccountGroupingImportExcel = ({
             maxFiles={1}
             onDrop={handleUpload}
             accept={[
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             ]}
             loading={loading}
           >
@@ -95,7 +96,7 @@ export const AccountGroupingImportExcel = ({
           </Button>
           <Button
             color="red"
-            disabled={!Boolean(uploadedData) || Boolean(errorText)}
+            disabled={!uploadedData || Boolean(errorText)}
             onClick={runMutation}
           >
             Import

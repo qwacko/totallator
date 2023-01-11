@@ -2,11 +2,13 @@ import { Center, Select, Text, TextInput } from "@mantine/core";
 import type { PrismaStatusEnum } from "@prisma/client";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
+
 import type { BillsReturnType } from "src/server/trpc/router/_app";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useUpdateBill } from "src/utils/hooks/bills/useUpdateBIll";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateBillDataValidationType } from "src/utils/validation/bill/updateBillValidation";
+
 import { DateCell } from "../table/cells/DateCell";
 import { TextCell } from "../table/cells/TextCell";
 import { BillCommandButtons } from "./BillCommandButtons";
@@ -42,7 +44,7 @@ export const displayBillCell = (
 export const BillTableCell = ({
   id,
   column,
-  data,
+  data
 }: {
   id: string;
   column: BillRowColumns;
@@ -56,7 +58,7 @@ export const BillTableCell = ({
   const { form, runMutate, mutate } = useUpdateBill({
     id,
     keys: [columnUse],
-    data,
+    data
   });
   const { data: accountGroupings } = useAccountGroupings();
   const { dateFormat } = useLoggedInUser();
@@ -114,7 +116,7 @@ export const BillTableCell = ({
 
 export const BillTableCellView = ({
   column,
-  data,
+  data
 }: {
   column: BillRowColumns;
   data: BillsReturnType;

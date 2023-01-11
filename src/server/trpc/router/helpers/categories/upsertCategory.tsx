@@ -1,13 +1,15 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
-import { basicStatusToDBRequired } from "src/utils/validation/basicStatusToDB";
 import { TRPCError } from "@trpc/server";
-import type { UpsertActions } from "../types";
+
+import { basicStatusToDBRequired } from "src/utils/validation/basicStatusToDB";
 import type { createCategoryValidationType } from "src/utils/validation/category/createCategoryValidation";
 import type { updateCategoryDataValidationType } from "src/utils/validation/category/updateCategoryValidation";
+
 import {
   createGroupSingleTitle,
-  updateGroupSingleTitle,
+  updateGroupSingleTitle
 } from "../groupSingleHandling";
+import type { UpsertActions } from "../types";
 
 export type UpsertCategoryData =
   | createCategoryValidationType
@@ -20,7 +22,7 @@ export const upsertCategory = async ({
   userId,
   userAdmin = false,
   prisma,
-  action,
+  action
 }: {
   data: UpsertCategoryData;
   id?: string | undefined;
@@ -37,13 +39,13 @@ export const upsertCategory = async ({
         accountGroupingId,
         ...(!userAdmin
           ? { accountGrouping: { adminUsers: { some: { id: userId } } } }
-          : {}),
-      },
+          : {})
+      }
     });
     if (found && action === "Create") {
       throw new TRPCError({
         message: "Category Found But Action Is Only Create, cannot update",
-        code: "BAD_REQUEST",
+        code: "BAD_REQUEST"
       });
     } else if (found) {
       return prisma.category.update({
@@ -53,17 +55,17 @@ export const upsertCategory = async ({
             group: data.group,
             single: data.single,
             title: "title" in data && data.title ? data.title : undefined,
-            existing: found,
+            existing: found
           }),
-          ...(data.status ? basicStatusToDBRequired(data.status) : {}),
-        },
+          ...(data.status ? basicStatusToDBRequired(data.status) : {})
+        }
       });
     }
   }
   if (action === "Update") {
     throw new TRPCError({
       message: "No category found to update",
-      code: "BAD_REQUEST",
+      code: "BAD_REQUEST"
     });
   }
   if (accountGroupingId && data.group && data.single) {
@@ -71,15 +73,15 @@ export const upsertCategory = async ({
       data: {
         ...createGroupSingleTitle({
           group: data.group,
-          single: data.single,
+          single: data.single
         }),
         accountGroupingId,
-        ...basicStatusToDBRequired(data.status || "Active"),
-      },
+        ...basicStatusToDBRequired(data.status || "Active")
+      }
     });
   }
   throw new TRPCError({
     message: "Cannot Create Category Without Account Grouping, Single Or Group",
-    code: "BAD_REQUEST",
+    code: "BAD_REQUEST"
   });
 };

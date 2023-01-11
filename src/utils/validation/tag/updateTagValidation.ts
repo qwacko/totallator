@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { PrismaStatusEnumValidation } from "src/utils/validation/PrismaStatusEnumValidation";
 
 export const updateTagDataValidation = z
@@ -9,10 +10,10 @@ export const updateTagDataValidation = z
       .string()
       .min(2)
       .regex(/^.{2,}\/.{2,}$/, {
-        message: "Must be of format (group)/(single)",
+        message: "Must be of format (group)/(single)"
       })
       .optional(),
-    status: PrismaStatusEnumValidation.optional(),
+    status: PrismaStatusEnumValidation.optional()
   })
   .refine(
     (arg) => {
@@ -25,7 +26,7 @@ export const updateTagDataValidation = z
     },
     {
       message: "Only one of title or group / single can be used",
-      path: ["title"],
+      path: ["title"]
     }
   );
 
@@ -35,7 +36,7 @@ export type updateTagDataValidationType = z.infer<
 
 export const updateTagValidation = z.object({
   id: z.string().cuid(),
-  data: updateTagDataValidation,
+  data: updateTagDataValidation
 });
 
 export type updateTagValidationType = z.infer<typeof updateTagValidation>;

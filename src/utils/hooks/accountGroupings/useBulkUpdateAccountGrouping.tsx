@@ -1,4 +1,5 @@
 import { trpc } from "src/utils/trpc";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useBulkUpdateAccountGrouping";
@@ -6,7 +7,7 @@ const notifications = notifyTemplate(id, "Account Grouping", "Bulk Update");
 
 export function useBulkUpdateAccountGrouping({
   onMutate,
-  setMutating,
+  setMutating
 }: {
   onMutate?: () => void;
   setMutating?: (state: boolean) => void;
@@ -27,7 +28,7 @@ export function useBulkUpdateAccountGrouping({
       utils.accountGroupings.invalidate();
       notifications.onSuccess();
       setMutating && setMutating(false);
-    },
+    }
   });
   return { mutate };
 }

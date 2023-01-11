@@ -1,16 +1,17 @@
 import { z } from "zod";
+
 import {
-  statusReturnValidation,
-  createdUpdatedValidation,
   accountGroupingIdValidation,
+  createdUpdatedValidation,
   journalCountValidation,
-  userIsAdminValidation,
+  statusReturnValidation,
+  userIsAdminValidation
 } from "../returnValidationHelpers";
 
 export const billSingleValidation = z
   .object({
     id: z.string().cuid(),
-    title: z.string(),
+    title: z.string()
   })
   .merge(statusReturnValidation)
   .merge(createdUpdatedValidation)

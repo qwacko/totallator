@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidation";
 import { PrismaStatusEnumValidation } from "../PrismaStatusEnumValidation";
 
@@ -13,7 +14,7 @@ export const createAccountValidation = z.object({
   endDate: z.date().optional(),
   type: PrismaAccountTypeEnumValidation.default("Expense").optional(),
   accountGroupingId: z.string().cuid(),
-  status: PrismaStatusEnumValidation.optional(),
+  status: PrismaStatusEnumValidation.optional()
 });
 
 export type createAccountValidationType = z.infer<

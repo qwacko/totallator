@@ -1,9 +1,11 @@
 import { format } from "date-fns";
+
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
+
 import { TextCell } from "./TextCell";
 
 export const DateCell = ({
-  displayDate,
+  displayDate
 }: {
   displayDate: Date | null | undefined;
 }) => {

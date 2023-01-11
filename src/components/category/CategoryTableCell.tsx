@@ -2,11 +2,13 @@ import { Center, Select, Text, TextInput } from "@mantine/core";
 import type { PrismaStatusEnum } from "@prisma/client";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
+
 import type { CategoriesReturnType } from "src/server/trpc/router/_app";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useUpdateCategory } from "src/utils/hooks/categories/useUpdateCategory";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateCategoryDataValidationType } from "src/utils/validation/category/updateCategoryValidation";
+
 import { DateCell } from "../table/cells/DateCell";
 import { TextCell } from "../table/cells/TextCell";
 import { CategoryCommandButtons } from "./CategoryCommandButtons";
@@ -42,7 +44,7 @@ export const displayCategoryCell = (
 export const CategoryTableCell = ({
   id,
   column,
-  data,
+  data
 }: {
   id: string;
   column: CategoryRowColumns;
@@ -56,7 +58,7 @@ export const CategoryTableCell = ({
   const { form, runMutate, mutate } = useUpdateCategory({
     id,
     keys: [columnUse],
-    data,
+    data
   });
   const { data: accountGroupings } = useAccountGroupings();
   const { dateFormat } = useLoggedInUser();
@@ -114,7 +116,7 @@ export const CategoryTableCell = ({
 
 export const CategoryTableCellView = ({
   column,
-  data,
+  data
 }: {
   column: CategoryRowColumns;
   data: CategoriesReturnType;

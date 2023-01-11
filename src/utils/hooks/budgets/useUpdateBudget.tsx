@@ -1,10 +1,12 @@
 import { useForm, zodResolver } from "@mantine/form";
+
 import type { BudgetsReturnType } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
   updateBudgetDataValidation,
-  type updateBudgetDataValidationType,
+  type updateBudgetDataValidationType
 } from "src/utils/validation/budget/updateBudgetValidation";
+
 import { notifyTemplate } from "../notifyTemplate";
 import { useFormHandler } from "../useFormHandler";
 
@@ -16,14 +18,14 @@ type keysType = keyof updateBudgetDataValidationType;
 export const useUpdateBudget = ({
   id,
   keys,
-  data,
+  data
 }: {
   id: string;
   keys: keysType[];
   data: BudgetsReturnType;
 }) => {
   const form = useForm<updateBudgetDataValidationType>({
-    validate: zodResolver(updateBudgetDataValidation),
+    validate: zodResolver(updateBudgetDataValidation)
   });
 
   const utils = trpc.useContext();
@@ -50,7 +52,7 @@ export const useUpdateBudget = ({
           })
         );
       }
-    },
+    }
   });
 
   const { resetForm, runMutate } = useFormHandler({
@@ -59,7 +61,7 @@ export const useUpdateBudget = ({
     keys,
     id,
     mutate,
-    formDataToMutateData: (id, data) => ({ id, data }),
+    formDataToMutateData: (id, data) => ({ id, data })
   });
 
   return {
@@ -68,6 +70,6 @@ export const useUpdateBudget = ({
     mutate,
     form,
     runMutate,
-    resetForm,
+    resetForm
   };
 };

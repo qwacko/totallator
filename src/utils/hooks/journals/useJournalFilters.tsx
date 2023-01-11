@@ -1,13 +1,14 @@
 import { useDisclosure } from "@mantine/hooks";
 import { cloneDeep, set } from "lodash";
 import { useState } from "react";
+
+import type { FiltersStateType } from "src/components/journals/JournalFiltersDropdown";
 import { defaultJournalFilters } from "src/pages/journals";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
-import type { FiltersStateType } from "src/components/journals/JournalFiltersDropdown";
 
 export const useJournalFilters = ({
   filters: externalFilters,
-  setFilters: setExternalFilters,
+  setFilters: setExternalFilters
 }: FiltersStateType) => {
   const [opened, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [filters, setFilters] =
@@ -41,6 +42,6 @@ export const useJournalFilters = ({
     close,
     opened,
     updateFilter,
-    resetFilter,
+    resetFilter
   };
 };

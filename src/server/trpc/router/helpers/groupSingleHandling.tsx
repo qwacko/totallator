@@ -1,6 +1,6 @@
 export const createGroupSingleTitle = ({
   group,
-  single,
+  single
 }: {
   group: string;
   single: string;
@@ -13,7 +13,7 @@ export const updateGroupSingleTitle = <
   group,
   single,
   title,
-  existing,
+  existing
 }: {
   group?: string | undefined;
   single?: string | undefined;
@@ -28,6 +28,6 @@ export const updateGroupSingleTitle = <
     title:
       useGroup || useSingle
         ? `${useGroup || existing.group}/${useSingle || existing.single}`
-        : undefined,
+        : undefined
   };
 };

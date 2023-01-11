@@ -1,22 +1,24 @@
-import { trpc } from "src/utils/trpc";
 import { useForm, zodResolver } from "@mantine/form";
-import { notifyTemplate } from "../notifyTemplate";
+import { useEffect } from "react";
+
+import { trpc } from "src/utils/trpc";
 import {
   createSimpleTransactionValidation,
-  type createSimpleTransactionValidationType,
+  type createSimpleTransactionValidationType
 } from "src/utils/validation/journalEntries/createJournalValidation";
-import { useEffect } from "react";
+
+import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useCreateTransactionSimple";
 const notifications = notifyTemplate(id, "Transaction", "Create");
 
 export function useCreateTransactionSimple({
-  onMutate,
+  onMutate
 }: {
   onMutate?: () => void;
 }) {
   const form = useForm<createSimpleTransactionValidationType>({
-    validate: zodResolver(createSimpleTransactionValidation),
+    validate: zodResolver(createSimpleTransactionValidation)
   });
 
   //Initialise the date. Better than using the form initial
@@ -38,7 +40,7 @@ export function useCreateTransactionSimple({
       form.reset();
       utils.journals.invalidate();
       notifications.onSuccess();
-    },
+    }
   });
   return { form, mutate };
 }

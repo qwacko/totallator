@@ -2,14 +2,15 @@ import {
   MultiSelect,
   type MultiSelectProps,
   Select,
-  type SelectProps,
+  type SelectProps
 } from "@mantine/core";
 import { useMemo } from "react";
+
 import { useCategories } from "src/utils/hooks/categories/useCategories";
 
 const useCategoryDropdown = ({
   accountGroupingId,
-  showCombined,
+  showCombined
 }: {
   accountGroupingId?: string;
   showCombined: boolean;
@@ -28,7 +29,7 @@ const useCategoryDropdown = ({
               showCombined
                 ? {
                     label: item.title,
-                    value: item.id,
+                    value: item.id
                   }
                 : { label: item.single, value: item.id, group: item.group }
             )
@@ -48,7 +49,7 @@ export const CategorySelection = ({
 }) => {
   const filteredCategories = useCategoryDropdown({
     accountGroupingId,
-    showCombined,
+    showCombined
   });
   return <Select {...props} data={filteredCategories} />;
 };
@@ -63,7 +64,7 @@ export const CategoryMultiSelection = ({
 }) => {
   const filteredCategories = useCategoryDropdown({
     accountGroupingId,
-    showCombined,
+    showCombined
   });
   return <MultiSelect {...props} data={filteredCategories} />;
 };

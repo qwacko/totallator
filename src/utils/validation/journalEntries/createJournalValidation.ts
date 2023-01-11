@@ -1,5 +1,6 @@
 import { omit } from "lodash";
 import { z } from "zod";
+
 import { compareLinked } from "../../compareLinked";
 
 export const createSimpleTransactionValidation = z.object({
@@ -22,7 +23,7 @@ export const createSimpleTransactionValidation = z.object({
   //Status
   reconciled: z.boolean().optional().default(false),
   dataChecked: z.boolean().optional().default(false),
-  complete: z.boolean().optional().default(false),
+  complete: z.boolean().optional().default(false)
 });
 
 export type createSimpleTransactionValidationType = z.infer<
@@ -49,7 +50,7 @@ export const createSingleJournalValidation = z.object({
   //Status
   reconciled: z.boolean().optional().default(false),
   dataChecked: z.boolean().optional().default(false),
-  complete: z.boolean().optional().default(false),
+  complete: z.boolean().optional().default(false)
 });
 
 export type createSingleJournalValidationType = z.infer<
@@ -76,18 +77,18 @@ export const createTransactionValidation = z
     },
     {
       message:
-        "For linked journal entries, all values other than account and amount must be equal",
+        "For linked journal entries, all values other than account and amount must be equal"
     }
   )
   .refine(
     (data) => new Set(data.map((item) => item.accountGroupingId)).size === 1,
     {
       message:
-        "All journals for a transaction must be the same account grouping",
+        "All journals for a transaction must be the same account grouping"
     }
   )
   .refine((data) => new Set(data.map((item) => item.linked)).size === 1, {
-    message: "All journals for a transaction must be the same linked setting",
+    message: "All journals for a transaction must be the same linked setting"
   });
 
 export type createTransactionValidationType = z.infer<

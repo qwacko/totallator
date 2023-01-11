@@ -1,17 +1,19 @@
-import { trpc } from "src/utils/trpc";
 import { useForm, zodResolver } from "@mantine/form";
-import { notifyTemplate } from "../notifyTemplate";
+
+import { trpc } from "src/utils/trpc";
 import {
   createAccountValidation,
-  type createAccountValidationType,
+  type createAccountValidationType
 } from "src/utils/validation/account/createAccountValidation";
+
+import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useCreateAccount";
 const notifications = notifyTemplate(id, "Account", "Create");
 
 export function useCreateAccount({ onMutate }: { onMutate?: () => void }) {
   const form = useForm<createAccountValidationType>({
-    validate: zodResolver(createAccountValidation),
+    validate: zodResolver(createAccountValidation)
   });
   const utils = trpc.useContext();
   const mutate = trpc.accounts.create.useMutation({
@@ -45,8 +47,8 @@ export function useCreateAccount({ onMutate }: { onMutate?: () => void }) {
             type: data.type || "Expense",
             startDate: null,
             endDate: null,
-            _count: { journalEntries: 0 },
-          },
+            _count: { journalEntries: 0 }
+          }
         ]);
       }
     },
@@ -58,7 +60,7 @@ export function useCreateAccount({ onMutate }: { onMutate?: () => void }) {
       form.reset();
       utils.accounts.invalidate();
       notifications.onSuccess();
-    },
+    }
   });
   return { form, mutate };
 }

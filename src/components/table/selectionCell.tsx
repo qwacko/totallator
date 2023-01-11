@@ -1,5 +1,5 @@
-import { type CellContext } from "@tanstack/react-table";
 import { Center, Checkbox } from "@mantine/core";
+import { type CellContext } from "@tanstack/react-table";
 
 export const selectionCell = <T, U>(cell: CellContext<T, U>) => {
   return (

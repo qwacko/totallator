@@ -8,14 +8,15 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
+  Title
 } from "@mantine/core";
-import { IconPlus } from "@tabler/icons";
-import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useDisclosure } from "@mantine/hooks";
-import { useCreateAccountGrouping } from "src/utils/hooks/accountGroupings/useCreateAccountGrouping";
+import { IconPlus } from "@tabler/icons";
+
 import { AccountGroupingCard } from "src/components/accountGrouping/AccountGroupingCard";
 import { AppLayout } from "src/components/layout/App";
+import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
+import { useCreateAccountGrouping } from "src/utils/hooks/accountGroupings/useCreateAccountGrouping";
 
 const AccountGroupingsPage = () => {
   const { data: accountGroupings, isLoading } = useAccountGroupings();
@@ -23,7 +24,7 @@ const AccountGroupingsPage = () => {
   const [opened, { close, open }] = useDisclosure(false);
 
   const createAccountGrouping = useCreateAccountGrouping({
-    onMutate: close,
+    onMutate: close
   });
 
   return (

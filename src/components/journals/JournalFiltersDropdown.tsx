@@ -4,11 +4,14 @@ import {
   Group,
   Modal,
   MultiSelect,
-  Stack,
+  Stack
 } from "@mantine/core";
 import { IconFilter } from "@tabler/icons";
 import { get } from "lodash";
+
+import { useJournalFilters } from "src/utils/hooks/journals/useJournalFilters";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
+
 import { AccountMultiSelection } from "../account/AccountSelection";
 import { AccountGroupingMultiSelection } from "../accountGrouping/AccountGroupingSelection";
 import { BillMultiSelection } from "../bill/BillSelection";
@@ -16,7 +19,6 @@ import { BudgetMultiSelection } from "../budget/BudgetSelection";
 import { CategoryMultiSelection } from "../category/CategorySelection";
 import { DateRangeInput } from "../reusable/DateRangeInput";
 import { TagMultiSelection } from "../tag/TagSelection";
-import { useJournalFilters } from "src/utils/hooks/journals/useJournalFilters";
 
 export type FiltersStateType = {
   filters: JournalFilterValidationInputType;
@@ -25,12 +27,12 @@ export type FiltersStateType = {
 
 export const JournalFilterModal = ({
   filters: externalFilters,
-  setFilters: setExternalFilters,
+  setFilters: setExternalFilters
 }: FiltersStateType) => {
   const { filters, opened, close, open, updateFilter, resetFilter } =
     useJournalFilters({
       filters: externalFilters,
-      setFilters: setExternalFilters,
+      setFilters: setExternalFilters
     });
 
   const startDate = (get(filters, "date.gte") as Date | undefined) || null;
@@ -86,7 +88,7 @@ export const JournalFilterModal = ({
           <Group>
             {[
               { key: "isCash", title: "Cash" },
-              { key: "isNetWorth", title: "Net Worth" },
+              { key: "isNetWorth", title: "Net Worth" }
             ].map((item) => (
               <Checkbox
                 key={item.key}

@@ -1,4 +1,5 @@
 import { trpc } from "src/utils/trpc";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useDeleteBudget";
@@ -28,7 +29,7 @@ export const useDeleteBudget = ({ id }: { id: string }) => {
           );
         }
       }
-    },
+    }
   });
 
   const del = () => {
@@ -38,6 +39,6 @@ export const useDeleteBudget = ({ id }: { id: string }) => {
   return {
     isMutating,
     mutate,
-    del,
+    del
   };
 };

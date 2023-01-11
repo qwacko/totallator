@@ -1,7 +1,6 @@
-import type { SeedInputData } from "./mergeSeedItems";
 import type {
   personalTransactionSeedingConfig,
-  personalTransactionSeedingSampleConfig,
+  personalTransactionSeedingSampleConfig
 } from "./personalSeedItemsTypes";
 
 export const personalSeedData = {
@@ -13,14 +12,14 @@ export const personalSeedData = {
     "Personal/Bank/Secondary/Cash",
     "Personal/Bank/Secondary/Checking",
     "Property/Main Home",
-    "Property/Holiday House",
+    "Property/Holiday House"
   ],
   assetAccountsSample: [],
   liabilityAccounts: [
     "Personal/Bank/Primary/Credit Card",
     "Property/Main Home Mortgage 1",
     "Property/Main Home Mortgage 2",
-    "Property/Holiday Home Mortgage",
+    "Property/Holiday Home Mortgage"
   ],
   liabilityAccountsSample: [],
   incomeAccounts: [
@@ -28,7 +27,7 @@ export const personalSeedData = {
     "Bank Interest",
     "Employer 2",
     "Initial Value",
-    "Capital Gains",
+    "Capital Gains"
   ],
   incomeAccountsSample: [],
   expenseAccounts: [
@@ -58,7 +57,7 @@ export const personalSeedData = {
     "City Council",
     "State Government",
     "Internet Provider A",
-    "Internet Provider B",
+    "Internet Provider B"
   ],
   expenseAccountsSample: [],
   bills: ["Rent", "Power", "Internet"],
@@ -71,10 +70,10 @@ export const personalSeedData = {
     "Personal/Personal",
     "Property/Property A",
     "Property/Property B",
-    "Personal/Capital",
+    "Personal/Capital"
   ],
-  tagsSample: [],
-} as const satisfies SeedInputData;
+  tagsSample: []
+} as const;
 
 export const personalTransactionSeeding: personalTransactionSeedingConfig[] = [
   {
@@ -83,8 +82,8 @@ export const personalTransactionSeeding: personalTransactionSeedingConfig[] = [
     amountMax: 200,
     amountMin: 0,
     descriptions: ["Test Description 1", "Test Description 2"],
-    weighting: 10,
-  },
+    weighting: 10
+  }
 ];
 
 export const personalTransactionSampleSeeding: personalTransactionSeedingSampleConfig[] =
@@ -96,6 +95,6 @@ export const personalTransactionSampleSeeding: personalTransactionSeedingSampleC
       amountMax: 200,
       amountMin: 0,
       descriptions: ["Test Description 1", "Test Description 2"],
-      weighting: 10,
-    },
+      weighting: 10
+    }
   ];

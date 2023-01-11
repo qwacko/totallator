@@ -1,6 +1,7 @@
 import { Center, Group, Stack, Title } from "@mantine/core";
-import { CreateBudgetPopup } from "src/components/budget/CreateBudget";
+
 import { BudgetTable } from "src/components/budget/BudgetTable";
+import { CreateBudgetPopup } from "src/components/budget/CreateBudget";
 import { AppLayout } from "src/components/layout/App";
 
 const BudgetsPage = () => {

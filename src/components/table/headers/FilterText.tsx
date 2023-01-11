@@ -3,7 +3,7 @@ import { IconX } from "@tabler/icons";
 
 export const FilterText = ({
   filter,
-  setFilter,
+  setFilter
 }: {
   filter: unknown;
   setFilter: (updater: string | undefined) => void;

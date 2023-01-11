@@ -1,6 +1,7 @@
 import type { TagsReturnType } from "src/server/trpc/router/_app";
 import { useCloneTag } from "src/utils/hooks/tags/useCloneTag";
 import { useDeleteTag } from "src/utils/hooks/tags/useDeleteTag";
+
 import { CommandButtons } from "../table/CommandButtons";
 
 export const TagCommandButtons = ({ data }: { data: TagsReturnType }) => {
@@ -13,13 +14,13 @@ export const TagCommandButtons = ({ data }: { data: TagsReturnType }) => {
       cloneButton={{
         hidden: false,
         disabled: !data.userIsAdmin,
-        action: clone,
+        action: clone
       }}
       deleteButton={{
         hidden: false,
         disabled: !data.userIsAdmin || data._count.journalEntries > 0,
         action: del,
-        message: `Delete ${data.title}?`,
+        message: `Delete ${data.title}?`
       }}
     />
   );

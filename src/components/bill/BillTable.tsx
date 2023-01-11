@@ -4,9 +4,11 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
+
 import { useBills } from "src/utils/hooks/bills/useBills";
+
 import { TableDisplay } from "../table/TableDisplay";
 import { billColumns } from "./billColumns";
 
@@ -30,10 +32,10 @@ export const BillTable = () => {
       sorting: [{ id: "title", desc: false }],
       columnVisibility: {
         createdAt: false,
-        updatedAt: false,
-      },
+        updatedAt: false
+      }
     },
-    autoResetPageIndex: false,
+    autoResetPageIndex: false
   });
 
   if (!data.data || data.isLoading) {

@@ -1,17 +1,19 @@
-import { TRPCError } from "@trpc/server";
-import {
-  router,
-  publicProcedure,
-  protectedProcedure,
-  unprotectedProcedure,
-} from "../trpc";
-import bcrypt from "bcrypt";
-import { createUserValidation } from "src/utils/validation/user/createUserValidation";
-import { updatePasswordResolver } from "src/utils/validation/user/updatePasswordValidation";
 import type { PrismaClient } from "@prisma/client";
-import { updateUserValidation } from "src/utils/validation/user/updateUserValidation";
+import { TRPCError } from "@trpc/server";
+import bcrypt from "bcrypt";
+
+import { createUserValidation } from "src/utils/validation/user/createUserValidation";
 import { currencyFormatValidation } from "src/utils/validation/user/currencyFormats";
 import { dbDateFormatValidation } from "src/utils/validation/user/dateFormats";
+import { updatePasswordResolver } from "src/utils/validation/user/updatePasswordValidation";
+import { updateUserValidation } from "src/utils/validation/user/updateUserValidation";
+
+import {
+  protectedProcedure,
+  publicProcedure,
+  router,
+  unprotectedProcedure
+} from "../trpc";
 
 const createUser = async (
   user: { username: string; name: string; password: string },
@@ -25,14 +27,14 @@ const createUser = async (
       username: user.username.toLowerCase(),
       name: user.name,
       passwordHash: hashedPassword,
-      admin,
-    },
+      admin
+    }
   });
 
   if (!createdUser) {
     throw new TRPCError({
       code: "CONFLICT",
-      message: "User Not Created",
+      message: "User Not Created"
     });
   }
 
@@ -52,7 +54,7 @@ export const userRouter = router({
     if (!data) {
       throw new TRPCError({
         code: "UNAUTHORIZED",
-        message: "User Not Found",
+        message: "User Not Found"
       });
     }
 
@@ -66,7 +68,7 @@ export const userRouter = router({
       currencyFormat: currencyFormatValidation.parse(
         data.currencyFormat || "USD"
       ),
-      dateFormat: dbDateFormatValidation.parse(data.dateFormat || "YYYYMMDD"),
+      dateFormat: dbDateFormatValidation.parse(data.dateFormat || "YYYYMMDD")
     };
   }),
   getSession: publicProcedure.query(({ ctx }) => {
@@ -84,7 +86,7 @@ export const userRouter = router({
       if (userExists) {
         throw new TRPCError({
           code: "UNAUTHORIZED",
-          message: "First User Already Exists",
+          message: "First User Already Exists"
         });
       }
 
@@ -99,17 +101,17 @@ export const userRouter = router({
       if (!firstUser) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Please use 'createFirstUser' to create first acount",
+          message: "Please use 'createFirstUser' to create first acount"
         });
       }
 
       const existingUser = await ctx.prisma.user.findUnique({
-        where: { username: input.username.toLowerCase() },
+        where: { username: input.username.toLowerCase() }
       });
       if (existingUser) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Username Already Used",
+          message: "Username Already Used"
         });
       }
 
@@ -124,13 +126,13 @@ export const userRouter = router({
       if (!userId) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "User Not Selected",
+          message: "User Not Selected"
         });
       }
 
       await ctx.prisma.user.update({
         where: { id: userId },
-        data: input,
+        data: input
       });
 
       return true;
@@ -141,18 +143,18 @@ export const userRouter = router({
       if (!ctx.session?.user?.id) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "User Not Selected",
+          message: "User Not Selected"
         });
       }
 
       const user = await ctx.prisma.user.findUnique({
-        where: { id: ctx.session.user.id },
+        where: { id: ctx.session.user.id }
       });
 
       if (!user) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "User Not Found",
+          message: "User Not Found"
         });
       }
 
@@ -164,7 +166,7 @@ export const userRouter = router({
       if (!passwordMatch) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Current Password Doesn't Match",
+          message: "Current Password Doesn't Match"
         });
       }
 
@@ -172,9 +174,9 @@ export const userRouter = router({
 
       await ctx.prisma.user.update({
         where: { id: ctx.session.user.id },
-        data: { passwordHash: hashedPassword },
+        data: { passwordHash: hashedPassword }
       });
 
       return true;
-    }),
+    })
 });

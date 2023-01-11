@@ -1,9 +1,10 @@
 import type { ColumnFiltersState } from "@tanstack/react-table";
+
 import { removeUndefined } from "src/utils/arrayHelpers";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 
 export const filtersToPrismaFilters = ({
-  filters,
+  filters
 }: {
   filters: ColumnFiltersState;
 }): JournalFilterValidationInputType[] | undefined => {

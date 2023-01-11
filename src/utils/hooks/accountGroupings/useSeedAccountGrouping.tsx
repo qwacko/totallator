@@ -1,10 +1,12 @@
 import { useForm, zodResolver } from "@mantine/form";
 import { useCallback } from "react";
+
 import { trpc } from "src/utils/trpc";
 import {
   type SeedAcconutGroupingInputValidationType,
-  seedAccountGroupingInputValidation,
+  seedAccountGroupingInputValidation
 } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useSeedAccountGrouping";
@@ -19,12 +21,12 @@ const initialValues = (
   seedAsSample: false,
   numberYears: 5,
   transactionCount: 0,
-  includeAccounts: true,
+  includeAccounts: true
 });
 
 export const useSeedAccountGrouping = ({
   accountGroupingId,
-  onMutate,
+  onMutate
 }: {
   accountGroupingId: string;
   onMutate?: () => void;
@@ -33,7 +35,7 @@ export const useSeedAccountGrouping = ({
 
   const form = useForm<SeedAcconutGroupingInputValidationType>({
     validate: zodResolver(seedAccountGroupingInputValidation),
-    initialValues: initialValues(accountGroupingId),
+    initialValues: initialValues(accountGroupingId)
   });
 
   const { mutate, isLoading: isMutating } =
@@ -49,11 +51,11 @@ export const useSeedAccountGrouping = ({
       onSuccess: () => {
         utils.accountGroupings.invalidate();
         notifications.onSuccess();
-      },
+      }
     });
 
   const { data: canSeed, isLoading } = trpc.accountGroupings.canSeed.useQuery({
-    accountGroupingId,
+    accountGroupingId
   });
 
   const reset = useCallback(() => {

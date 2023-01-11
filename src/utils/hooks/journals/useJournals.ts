@@ -2,26 +2,28 @@ import type {
   ColumnFiltersState,
   OnChangeFn,
   PaginationState,
-  SortingState,
+  SortingState
 } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
+
 import { trpc } from "src/utils/trpc";
+import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
+
 import { useAccountGroupings } from "../accountGroupings/useAccountGroupings";
 import { useAccounts } from "../accounts/useAccounts";
 import { useBills } from "../bills/useBills";
 import { useBudgets } from "../budgets/useBudgets";
 import { useCategories } from "../categories/useCategories";
 import { useTags } from "../tags/useTags";
-import { filtersToPrismaFilters } from "./helpers/filtersToPrismaFilters";
-import { sortingStateToPrismaSort } from "./helpers/sortingStateToPrismaSort";
 import {
   type MergedDataType,
-  buildMergedData,
+  buildMergedData
 } from "./helpers/buildMergedData";
-import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
+import { filtersToPrismaFilters } from "./helpers/filtersToPrismaFilters";
+import { sortingStateToPrismaSort } from "./helpers/sortingStateToPrismaSort";
 
 export const useJournals = ({
-  externalFilters,
+  externalFilters
 }: {
   externalFilters: JournalFilterValidationInputType[];
 }) => {
@@ -31,7 +33,7 @@ export const useJournals = ({
   };
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 10
   });
   const [filters, setFilters] = useState<ColumnFiltersState>([]);
   const [rowCount, setRowCount] = useState<number>(0);
@@ -53,11 +55,11 @@ export const useJournals = ({
     sort: sortingToUse,
     pagination: {
       pageNo: pagination.pageIndex,
-      pageSize: pagination.pageSize,
+      pageSize: pagination.pageSize
     },
     filters: filtersToUse
       ? [...filtersToUse, ...externalFilters]
-      : externalFilters,
+      : externalFilters
   });
 
   useEffect(() => {
@@ -70,7 +72,7 @@ export const useJournals = ({
         tags: tagData.data,
         categories: categoryData.data,
         accounts: accountData.data,
-        accountGroupings: accountGroupingData.data,
+        accountGroupings: accountGroupingData.data
       })
     );
   }, [
@@ -80,7 +82,7 @@ export const useJournals = ({
     tagData.data,
     billData.data,
     budgetData.data,
-    accountGroupingData.data,
+    accountGroupingData.data
   ]);
 
   const pageCount = Math.max(Math.ceil(rowCount / pagination.pageSize), 1);
@@ -96,8 +98,8 @@ export const useJournals = ({
       setPagination,
       pageCount,
       setRowSelection,
-      rowSelection,
-    },
+      rowSelection
+    }
   };
 };
 

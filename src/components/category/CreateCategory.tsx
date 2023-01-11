@@ -1,8 +1,10 @@
 import { Button, Group, Modal, Select, Stack } from "@mantine/core";
-import { IconPlus } from "@tabler/icons";
 import { useDisclosure } from "@mantine/hooks";
+import { IconPlus } from "@tabler/icons";
+
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useCreateCategory } from "src/utils/hooks/categories/useCreateCategory";
+
 import { CategoryGroupSelection } from "./CategoryGroupSelection";
 import { CategorySingleSelection } from "./CategorySingleSelection";
 
@@ -12,7 +14,7 @@ export const CreateCategoryForm = ({ onClose }: { onClose?: () => void }) => {
   const createCategory = useCreateCategory({
     onMutate: () => {
       onClose && onClose();
-    },
+    }
   });
 
   const enable = Boolean(createCategory.form.values["accountGroupingId"]);
@@ -32,7 +34,7 @@ export const CreateCategoryForm = ({ onClose }: { onClose?: () => void }) => {
             accountGroupings
               ? accountGroupings.map((ag) => ({
                   value: ag.id,
-                  label: ag.title,
+                  label: ag.title
                 }))
               : []
           }

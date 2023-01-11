@@ -1,16 +1,14 @@
-import type {
-  ButtonProps,
-  DefaultMantineColor,
-  TooltipProps,
-} from "@mantine/core";
 import {
   Button,
+  type ButtonProps,
   Center,
+  type DefaultMantineColor,
   Group,
   Popover,
   Stack,
   Text,
   Tooltip,
+  type TooltipProps
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -18,10 +16,9 @@ import {
   IconCopy,
   IconEyeCheck,
   IconReport,
-  IconTrash,
+  IconTrash
 } from "@tabler/icons";
-import type { ReactNode } from "react";
-import React from "react";
+import React, { type ReactNode } from "react";
 
 type buttonConfig = { hidden?: boolean; disabled: boolean; action: () => void };
 type buttonConfigWithHighlight = buttonConfig & { highlight?: boolean };
@@ -32,7 +29,7 @@ export const CommandButtons = ({
   cloneButton,
   completeButton,
   dataCheckedButton,
-  reconciledButton,
+  reconciledButton
 }: {
   deleteButton?: buttonConfigWithConfirmation;
   cloneButton?: buttonConfigWithHighlight;
@@ -92,7 +89,7 @@ const CommandButtonSingle = ({
   buttonConfig,
   children,
   tooltipConfig,
-  color,
+  color
 }: {
   buttonConfig?: buttonConfigWithHighlight;
   children?: ReactNode;

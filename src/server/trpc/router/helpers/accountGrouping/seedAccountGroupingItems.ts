@@ -1,24 +1,26 @@
 import type { Prisma, PrismaClient, User } from "@prisma/client";
+
 import type { SeedAccountGroupingValidationType } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
+
 import { bulkUpdateAccountGrouping } from "../bulkUpdateAccountGrouping";
 import { buildSeedTransactions } from "./buildSeedTransactions";
 import {
   businessSeedData,
   businessTransactionSampleSeeding,
-  businessTransactionSeeding,
+  businessTransactionSeeding
 } from "./businessSeedItems";
 import { mergeSeedItems } from "./mergeSeedItems";
 import {
   personalSeedData,
   personalTransactionSampleSeeding,
-  personalTransactionSeeding,
+  personalTransactionSeeding
 } from "./personalSeedItems";
 
 export const createBusinessItems = async ({
   prisma,
   accountGroupingId,
   user,
-  input,
+  input
 }: {
   accountGroupingId: string;
   prisma: PrismaClient | Prisma.TransactionClient;
@@ -35,16 +37,16 @@ export const createBusinessItems = async ({
         ...mergeSeedItems({
           data: businessSeedData,
           sample: input.seedAsSample,
-          includeAccounts: input.includeAccounts,
+          includeAccounts: input.includeAccounts
         }),
         createSimpleTransactions: buildSeedTransactions({
           inputConfig: businessSeedData,
           transConfig: input.seedAsSample
             ? businessTransactionSampleSeeding
             : businessTransactionSeeding,
-          queryConfig: input,
-        }),
-      },
+          queryConfig: input
+        })
+      }
     });
   }
 };
@@ -52,7 +54,7 @@ export const createPersonalItems = async ({
   prisma,
   accountGroupingId,
   user,
-  input,
+  input
 }: {
   accountGroupingId: string;
   prisma: PrismaClient | Prisma.TransactionClient;
@@ -69,16 +71,16 @@ export const createPersonalItems = async ({
         ...mergeSeedItems({
           sample: input.seedAsSample,
           includeAccounts: input.includeAccounts,
-          data: personalSeedData,
+          data: personalSeedData
         }),
         createSimpleTransactions: buildSeedTransactions({
           inputConfig: personalSeedData,
           transConfig: input.seedAsSample
             ? personalTransactionSampleSeeding
             : personalTransactionSeeding,
-          queryConfig: input,
-        }),
-      },
+          queryConfig: input
+        })
+      }
     });
   }
 };

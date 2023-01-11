@@ -1,4 +1,5 @@
 import { trpc } from "src/utils/trpc";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useDeleteLinkedAccountGrouping";
@@ -8,7 +9,7 @@ const notifications2 = notifyTemplate(id2, "Account Grouping", "Delete");
 
 export const useDeleteAccountGrouping = ({
   accountGroupingId,
-  onMutate,
+  onMutate
 }: {
   accountGroupingId: string;
   onMutate?: () => void;
@@ -28,7 +29,7 @@ export const useDeleteAccountGrouping = ({
       onSuccess: () => {
         utils.accountGroupings.invalidate();
         notifications.onSuccess();
-      },
+      }
     });
 
   const { mutate: deleteMutation, isLoading: isDeleteMutating } =
@@ -44,12 +45,12 @@ export const useDeleteAccountGrouping = ({
       onSuccess: () => {
         utils.accountGroupings.invalidate();
         notifications2.onSuccess();
-      },
+      }
     });
 
   const { data: canDelete, isLoading } = trpc.accountGroupings.canSeed.useQuery(
     {
-      accountGroupingId,
+      accountGroupingId
     }
   );
 
@@ -66,6 +67,6 @@ export const useDeleteAccountGrouping = ({
     isClearLinkedMutating,
     isDeleteMutating,
     clearLinked,
-    deleteAG,
+    deleteAG
   };
 };

@@ -4,9 +4,11 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
+
 import { useBudgets } from "src/utils/hooks/budgets/useBudgets";
+
 import { TableDisplay } from "../table/TableDisplay";
 import { budgetColumns } from "./budgetColumns";
 
@@ -30,10 +32,10 @@ export const BudgetTable = () => {
       sorting: [{ id: "title", desc: false }],
       columnVisibility: {
         createdAt: false,
-        updatedAt: false,
-      },
+        updatedAt: false
+      }
     },
-    autoResetPageIndex: false,
+    autoResetPageIndex: false
   });
 
   if (!data.data || data.isLoading) {

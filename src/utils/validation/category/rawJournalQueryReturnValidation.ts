@@ -1,6 +1,7 @@
 import type { Prisma } from "@prisma/client";
-import { PrismaAccountTypeEnumValidation } from "src/utils/validation/PrismaAccountTypeEnumValidation";
 import { z } from "zod";
+
+import { PrismaAccountTypeEnumValidation } from "src/utils/validation/PrismaAccountTypeEnumValidation";
 
 export const rawJournalQueryReturnValidation = z.array(
   z.object({
@@ -36,9 +37,9 @@ export const rawJournalQueryReturnValidation = z.array(
       z.object({
         transactionId: z.string().cuid(),
         journalId: z.string().cuid(),
-        amount: z.number(),
+        amount: z.number()
       })
     ),
-    isAdmin: z.boolean(),
+    isAdmin: z.boolean()
   })
 );

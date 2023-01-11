@@ -1,11 +1,13 @@
-import { Modal, Button, Group, Stack, Text } from "@mantine/core";
+import { Button, Group, Modal, Stack, Text } from "@mantine/core";
+
 import { useDeleteAccountGrouping } from "src/utils/hooks/accountGroupings/useDeleteAccountGrouping";
+
 import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 
 export const AccountGroupingDelete = ({
   data,
   opened,
-  close,
+  close
 }: {
   data: AccountGroupingReturnSingle;
   opened: boolean;
@@ -13,7 +15,7 @@ export const AccountGroupingDelete = ({
 }) => {
   const actions = useDeleteAccountGrouping({
     accountGroupingId: data.id,
-    onMutate: () => close(),
+    onMutate: () => close()
   });
 
   if (actions.isLoading) {

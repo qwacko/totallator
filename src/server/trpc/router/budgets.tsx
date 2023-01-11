@@ -1,15 +1,17 @@
-import { router, protectedProcedure } from "../trpc";
-import { getUserInfo } from "./helpers/getUserInfo";
-import {
-  accountGroupingFilter,
-  checkAccountGroupingAccess,
-} from "./helpers/checkAccountGroupingAccess";
-import { createBudgetValidation } from "src/utils/validation/budget/createBudgetValidation";
-import { updateBudgetValidation } from "src/utils/validation/budget/updateBudgetValidation";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { upsertBudget } from "./helpers/budgets/upsertBudget";
+
+import { createBudgetValidation } from "src/utils/validation/budget/createBudgetValidation";
 import { budgetGetValidation } from "src/utils/validation/budget/readBudgetValidation";
+import { updateBudgetValidation } from "src/utils/validation/budget/updateBudgetValidation";
+
+import { protectedProcedure, router } from "../trpc";
+import { upsertBudget } from "./helpers/budgets/upsertBudget";
+import {
+  accountGroupingFilter,
+  checkAccountGroupingAccess
+} from "./helpers/checkAccountGroupingAccess";
+import { getUserInfo } from "./helpers/getUserInfo";
 
 export const budgetRouter = router({
   get: protectedProcedure.output(budgetGetValidation).query(async ({ ctx }) => {
@@ -17,12 +19,12 @@ export const budgetRouter = router({
 
     const budgets = await ctx.prisma.budget.findMany({
       where: {
-        accountGrouping: { viewUsers: { some: { id: user.id } } },
+        accountGrouping: { viewUsers: { some: { id: user.id } } }
       },
       include: {
         accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-        _count: { select: { journalEntries: true } },
-      },
+        _count: { select: { journalEntries: true } }
+      }
     });
 
     return budgets.map((budget) => {
@@ -43,7 +45,7 @@ export const budgetRouter = router({
         accountGroupingId: input.accountGroupingId,
         prisma: ctx.prisma,
         user,
-        adminRequired: true,
+        adminRequired: true
       });
 
       await upsertBudget({
@@ -52,7 +54,7 @@ export const budgetRouter = router({
         userAdmin: user.admin,
         action: "Create",
         data: input,
-        accountGroupingId: input.accountGroupingId,
+        accountGroupingId: input.accountGroupingId
       });
       return true;
     }),
@@ -67,7 +69,7 @@ export const budgetRouter = router({
         userAdmin: user.admin,
         data: input.data,
         id: input.id,
-        action: "Update",
+        action: "Update"
       });
 
       return true;
@@ -80,14 +82,14 @@ export const budgetRouter = router({
       const targetBudget = await ctx.prisma.budget.findFirst({
         where: {
           id: input.id,
-          ...accountGroupingFilter(user.id),
-        },
+          ...accountGroupingFilter(user.id)
+        }
       });
 
       if (!targetBudget) {
         throw new TRPCError({
           message: "Cannot find budget or user doesn't have admin accces",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       await upsertBudget({
@@ -96,7 +98,7 @@ export const budgetRouter = router({
         prisma: ctx.prisma,
         data: { ...targetBudget, title: `${targetBudget.title} (Clone)` },
         action: "Create",
-        accountGroupingId: targetBudget.accountGroupingId,
+        accountGroupingId: targetBudget.accountGroupingId
       });
       return true;
     }),
@@ -108,28 +110,28 @@ export const budgetRouter = router({
       const targetBudget = await ctx.prisma.budget.findFirst({
         where: {
           id: input.id,
-          ...accountGroupingFilter(user.id),
+          ...accountGroupingFilter(user.id)
         },
-        include: { _count: { select: { journalEntries: true } } },
+        include: { _count: { select: { journalEntries: true } } }
       });
 
       if (!targetBudget) {
         throw new TRPCError({
           message: "Cannot find budget or user doesn't have admin accces",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       if (targetBudget._count.journalEntries > 0) {
         throw new TRPCError({
           message: "Cannot remove budget that has journal entries associated",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
 
       await ctx.prisma.budget.delete({
-        where: { id: targetBudget.id },
+        where: { id: targetBudget.id }
       });
 
       return true;
-    }),
+    })
 });

@@ -1,24 +1,25 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+
 import { compareLinked } from "src/utils/compareLinked";
 
 export const checkTransactions = async ({
   prisma,
-  transactionIds,
+  transactionIds
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   transactionIds: string[];
 }) => {
   const transactions = await prisma.transaction.findMany({
     where: { id: { in: transactionIds } },
-    include: { journalEntries: { include: { account: true } } },
+    include: { journalEntries: { include: { account: true } } }
   });
 
   transactions.map((transaction) => {
     if (!transaction) {
       throw new TRPCError({
         message: "Transaction not found for checking. Internal Error",
-        code: "INTERNAL_SERVER_ERROR",
+        code: "INTERNAL_SERVER_ERROR"
       });
     }
 
@@ -29,7 +30,7 @@ export const checkTransactions = async ({
     if (total !== 0) {
       throw new TRPCError({
         message: `Transaction total doesn't equal zero (${transaction.journalEntries[0]?.description}). Make sure to update all of transaction.`,
-        code: "BAD_REQUEST",
+        code: "BAD_REQUEST"
       });
     }
 
@@ -38,7 +39,7 @@ export const checkTransactions = async ({
     if (journalEntryCount < 2) {
       throw new TRPCError({
         message: "Transaction has too few journals",
-        code: "BAD_REQUEST",
+        code: "BAD_REQUEST"
       });
     }
 
@@ -54,7 +55,7 @@ export const checkTransactions = async ({
       throw new TRPCError({
         message:
           "Transaction must have at least one account which is an asset or liability",
-        code: "INTERNAL_SERVER_ERROR",
+        code: "INTERNAL_SERVER_ERROR"
       });
     }
 
@@ -70,7 +71,7 @@ export const checkTransactions = async ({
             throw new TRPCError({
               message:
                 "For a linked transaction, some linked properties don't match",
-              code: "BAD_REQUEST",
+              code: "BAD_REQUEST"
             });
           }
         });

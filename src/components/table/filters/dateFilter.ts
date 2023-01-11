@@ -16,7 +16,7 @@ export const dateFilter = <T extends Record<string, unknown>>(key: keyof T) => {
         endDate,
         date,
         matchesStartDate,
-        matchesEndDate,
+        matchesEndDate
       });
       return matchesEndDate && matchesStartDate;
     }

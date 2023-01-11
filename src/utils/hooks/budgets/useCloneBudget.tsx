@@ -1,4 +1,5 @@
 import { trpc } from "src/utils/trpc";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useCloneBudget";
@@ -30,12 +31,12 @@ export const useCloneBudget = ({ id }: { id: string }) => {
               id: "new",
               title: `${target.title} (Clone)`,
               createdAt: new Date(),
-              updatedAt: new Date(),
-            },
+              updatedAt: new Date()
+            }
           ]);
         }
       }
-    },
+    }
   });
 
   const clone = () => {
@@ -45,6 +46,6 @@ export const useCloneBudget = ({ id }: { id: string }) => {
   return {
     isMutating,
     mutate,
-    clone,
+    clone
   };
 };

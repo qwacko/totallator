@@ -1,10 +1,11 @@
 import type { CategoriesReturnType } from "src/server/trpc/router/_app";
 import { useCloneCategory } from "src/utils/hooks/categories/useCloneCategory";
 import { useDeleteCategory } from "src/utils/hooks/categories/useDeleteCategory";
+
 import { CommandButtons } from "../table/CommandButtons";
 
 export const CategoryCommandButtons = ({
-  data,
+  data
 }: {
   data: CategoriesReturnType;
 }) => {
@@ -17,13 +18,13 @@ export const CategoryCommandButtons = ({
       cloneButton={{
         hidden: false,
         disabled: !data.userIsAdmin,
-        action: clone,
+        action: clone
       }}
       deleteButton={{
         hidden: false,
         disabled: !data.userIsAdmin || data._count.journalEntries > 0,
         action: del,
-        message: `Delete ${data.title}?`,
+        message: `Delete ${data.title}?`
       }}
     />
   );

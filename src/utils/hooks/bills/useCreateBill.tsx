@@ -1,17 +1,19 @@
-import { trpc } from "src/utils/trpc";
 import { useForm, zodResolver } from "@mantine/form";
-import { notifyTemplate } from "../notifyTemplate";
+
+import { trpc } from "src/utils/trpc";
 import {
   createBillValidation,
-  type createBillValidationType,
+  type createBillValidationType
 } from "src/utils/validation/bill/createBillValidation";
+
+import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useCreateBill";
 const notifications = notifyTemplate(id, "Bill", "Create");
 
 export function useCreateBill({ onMutate }: { onMutate?: () => void }) {
   const form = useForm<createBillValidationType>({
-    validate: zodResolver(createBillValidation),
+    validate: zodResolver(createBillValidation)
   });
   const utils = trpc.useContext();
   const mutate = trpc.bills.create.useMutation({
@@ -35,8 +37,8 @@ export function useCreateBill({ onMutate }: { onMutate?: () => void }) {
             updatedAt: new Date(),
             deleted: false,
             disabled: false,
-            _count: { journalEntries: 0 },
-          },
+            _count: { journalEntries: 0 }
+          }
         ]);
       }
     },
@@ -48,7 +50,7 @@ export function useCreateBill({ onMutate }: { onMutate?: () => void }) {
       form.reset();
       utils.bills.invalidate();
       notifications.onSuccess();
-    },
+    }
   });
   return { form, mutate };
 }

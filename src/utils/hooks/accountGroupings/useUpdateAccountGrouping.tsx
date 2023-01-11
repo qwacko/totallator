@@ -1,24 +1,26 @@
-import { trpc } from "src/utils/trpc";
 import { useForm, zodResolver } from "@mantine/form";
-import { notifyTemplate } from "../notifyTemplate";
+
+import { trpc } from "src/utils/trpc";
 import {
   updateAccountGroupingDataValidation,
-  type updateAccountGroupingDataValidationType,
+  type updateAccountGroupingDataValidationType
 } from "src/utils/validation/accountGrouping/updateAccountGroupingValidation";
+
+import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useUpdateAccountGrouping";
 const notifications = notifyTemplate(id, "Account Grouping", "Update");
 
 export function useUpdateAccountGrouping({
   onMutate,
-  initialValues,
+  initialValues
 }: {
   onMutate?: () => void;
   initialValues?: updateAccountGroupingDataValidationType;
 }) {
   const form = useForm<updateAccountGroupingDataValidationType>({
     validate: zodResolver(updateAccountGroupingDataValidation),
-    initialValues,
+    initialValues
   });
   const utils = trpc.useContext();
   const mutate = trpc.accountGroupings.update.useMutation({
@@ -45,7 +47,7 @@ export function useUpdateAccountGrouping({
     onSuccess: () => {
       utils.accountGroupings.invalidate();
       notifications.onSuccess();
-    },
+    }
   });
   return { form, mutate };
 }

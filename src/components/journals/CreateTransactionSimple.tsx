@@ -6,24 +6,26 @@ import {
   NumberInput,
   Select,
   Stack,
-  TextInput,
+  TextInput
 } from "@mantine/core";
-import { IconPlus } from "@tabler/icons";
+import { DatePicker } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
+import { IconPlus } from "@tabler/icons";
+
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useCreateTransactionSimple } from "src/utils/hooks/journals/useCreateTransactionSimple";
-import { DatePicker } from "@mantine/dates";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
+
 import { AccountSelection } from "../account/AccountSelection";
-import { TagSelection } from "../tag/TagSelection";
-import { CategorySelection } from "../category/CategorySelection";
-import { BudgetSelection } from "../budget/BudgetSelection";
 import { BillSelection } from "../bill/BillSelection";
+import { BudgetSelection } from "../budget/BudgetSelection";
+import { CategorySelection } from "../category/CategorySelection";
+import { TagSelection } from "../tag/TagSelection";
 
 const size: MantineSize = "xs";
 
 export const CreateTransactionSimpleForm = ({
-  onClose,
+  onClose
 }: {
   onClose?: () => void;
 }) => {
@@ -33,7 +35,7 @@ export const CreateTransactionSimpleForm = ({
   const createTrans = useCreateTransactionSimple({
     onMutate: () => {
       onClose && onClose();
-    },
+    }
   });
 
   return (
@@ -51,7 +53,7 @@ export const CreateTransactionSimpleForm = ({
             accountGroupings
               ? accountGroupings.map((ag) => ({
                   value: ag.id,
-                  label: ag.title,
+                  label: ag.title
                 }))
               : []
           }

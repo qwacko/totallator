@@ -1,15 +1,17 @@
 import type { JournalEntry, Prisma, PrismaClient } from "@prisma/client";
-import { type UpdateJournalDataInputType } from "src/utils/validation/journalEntries/updateJournalValidation";
 import { TRPCError } from "@trpc/server";
-import { checkLinkedItems } from "../checkLinkedItems";
 import { omit } from "lodash";
+
+import { type UpdateJournalDataInputType } from "src/utils/validation/journalEntries/updateJournalValidation";
+
+import { checkLinkedItems } from "../checkLinkedItems";
 
 export const updateSingleJournal = async ({
   prisma,
   journal,
   data,
   updateCompleted = false,
-  dontUpdateOtherAmounts = false,
+  dontUpdateOtherAmounts = false
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   journal: JournalEntry;
@@ -20,7 +22,7 @@ export const updateSingleJournal = async ({
   if (!updateCompleted && journal.complete) {
     throw new TRPCError({
       message: "Cannot modify completed journal",
-      code: "BAD_REQUEST",
+      code: "BAD_REQUEST"
     });
   }
 
@@ -36,7 +38,7 @@ export const updateSingleJournal = async ({
     billIds: [dataWithComplete.billId],
     budgetIds: [dataWithComplete.budgetId],
     categoryIds: [dataWithComplete.categoryId],
-    tagIds: [dataWithComplete.tagId],
+    tagIds: [dataWithComplete.tagId]
   });
 
   const dataWithoutOther = omit(dataWithComplete, ["otherJournals"]);
@@ -45,7 +47,7 @@ export const updateSingleJournal = async ({
   if (!journal.linked) {
     await prisma.journalEntry.update({
       where: { id: journal.id },
-      data: dataWithoutOther,
+      data: dataWithoutOther
     });
   } else {
     const { amount, accountId, ...linkedProperties } = dataWithoutOther;
@@ -55,15 +57,15 @@ export const updateSingleJournal = async ({
         where: { id: journal.id },
         data: {
           amount: dataWithComplete.amount,
-          accountId: dataWithComplete.accountId,
-        },
+          accountId: dataWithComplete.accountId
+        }
       });
     }
 
     if (Object.keys(linkedProperties).length > 0) {
       await prisma.journalEntry.updateMany({
         where: { transactionId: journal.transactionId },
-        data: linkedProperties,
+        data: linkedProperties
       });
     }
   }
@@ -72,7 +74,7 @@ export const updateSingleJournal = async ({
   if (dataWithComplete.amount !== undefined && !dontUpdateOtherAmounts) {
     const transaction = await prisma.transaction.findUnique({
       where: { id: journal.transactionId },
-      include: { journalEntries: true },
+      include: { journalEntries: true }
     });
     if (transaction) {
       const total = transaction.journalEntries
@@ -89,7 +91,7 @@ export const updateSingleJournal = async ({
 
         await prisma.journalEntry.update({
           where: { id: oldestTrans.id },
-          data: { amount: oldestTrans.amount.toNumber() - total },
+          data: { amount: oldestTrans.amount.toNumber() - total }
         });
       }
     }

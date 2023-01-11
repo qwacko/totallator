@@ -1,4 +1,5 @@
 import { trpc } from "src/utils/trpc";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useDeleteTag";
@@ -28,7 +29,7 @@ export const useDeleteTag = ({ id }: { id: string }) => {
           );
         }
       }
-    },
+    }
   });
 
   const del = () => {
@@ -38,6 +39,6 @@ export const useDeleteTag = ({ id }: { id: string }) => {
   return {
     isMutating,
     mutate,
-    del,
+    del
   };
 };

@@ -1,9 +1,11 @@
 import type { Prisma, PrismaClient, Tag } from "@prisma/client";
+
 import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+
 import { buildSearchIDList } from "../buildSearchIDList";
 import { populateRemainingIds } from "../populateRemainingIds";
 import { type UpsertReturnType } from "../types";
-import { upsertTag, type UpsertTagData } from "./upsertTag";
+import { type UpsertTagData, upsertTag } from "./upsertTag";
 
 export type UpsertTagsReturnType = UpsertReturnType<Tag>;
 
@@ -11,7 +13,7 @@ export const upsertTags = async ({
   data,
   prisma,
   userId,
-  userIsAdmin,
+  userIsAdmin
 }: {
   data: BulkUpgradeAccountGroupingValidationType;
   prisma: PrismaClient | PrismaClient | Prisma.TransactionClient;
@@ -23,7 +25,7 @@ export const upsertTags = async ({
   const returnData: UpsertTagsReturnType = {
     idLookup: {},
     nameLookup: {},
-    allLookup: {},
+    allLookup: {}
   };
 
   const listData: UpsertTagData[] = data.createTagTitles
@@ -35,9 +37,9 @@ export const upsertTags = async ({
 
   const upsertData = data.upsertTags ? data.upsertTags : [];
 
-  const list: (typeof upsertData[0] | UpsertTagData)[] = [
+  const list: ((typeof upsertData)[0] | UpsertTagData)[] = [
     ...upsertData,
-    ...listData,
+    ...listData
   ];
   if (list) {
     await Promise.all(
@@ -50,7 +52,7 @@ export const upsertTags = async ({
           data: currentItem,
           userId,
           userAdmin: userIsAdmin,
-          action: "Upsert",
+          action: "Upsert"
         });
         returnData.idLookup[upsertedTag.id] = upsertedTag;
         if ("id" in currentItem && currentItem.id) {
@@ -69,8 +71,8 @@ export const upsertTags = async ({
     itemsType: "Tags",
     getMatching: async (ids) =>
       await prisma.tag.findMany({
-        where: { id: { in: ids }, accountGroupingId },
-      }),
+        where: { id: { in: ids }, accountGroupingId }
+      })
   });
 
   return returnData;

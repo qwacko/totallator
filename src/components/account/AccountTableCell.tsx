@@ -3,14 +3,16 @@ import { DatePicker } from "@mantine/dates";
 import type { PrismaAccountEnum, PrismaStatusEnum } from "@prisma/client";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
+
 import type { AccountsReturnType } from "src/server/trpc/router/_app";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useUpdateAccount } from "src/utils/hooks/accounts/useUpdateAccount";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateAccountDataValidationType } from "src/utils/validation/account/updateAccountValidation";
-import { AccountCommandButtons } from "./AccountCommandButtons";
+
 import { DateCell } from "../table/cells/DateCell";
 import { TextCell } from "../table/cells/TextCell";
+import { AccountCommandButtons } from "./AccountCommandButtons";
 
 export type AccountRowColumns =
   | keyof updateAccountDataValidationType
@@ -43,7 +45,7 @@ export const displayAccountCell = (
 export const AccountTableCell = ({
   id,
   column,
-  data,
+  data
 }: {
   id: string;
   column: AccountRowColumns;
@@ -56,7 +58,7 @@ export const AccountTableCell = ({
   const { form, runMutate, mutate } = useUpdateAccount({
     id,
     keys: [columnUse],
-    data,
+    data
   });
   const { data: accountGroupings } = useAccountGroupings();
   const { dayjsFormat, dateFormat } = useLoggedInUser();
@@ -178,7 +180,7 @@ export const AccountTableCell = ({
 
 export const AccountTableCellView = ({
   column,
-  data,
+  data
 }: {
   column: AccountRowColumns;
   data: AccountsReturnType;

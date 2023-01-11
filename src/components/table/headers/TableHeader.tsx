@@ -1,5 +1,6 @@
 import { Group, Stack, Title } from "@mantine/core";
 import { type Header, type Table as TableType } from "@tanstack/react-table";
+
 import { SortButtonReactTable } from "./SortButtonReactTable";
 import { type FilterTypes, TableFilterInput } from "./TableFilterInput";
 
@@ -8,7 +9,7 @@ export const TableHeader = <T extends Record<string, unknown>>({
   table,
   title,
   filterType,
-  sortKey,
+  sortKey
 }: {
   header: Header<T, unknown>;
   table: TableType<T>;

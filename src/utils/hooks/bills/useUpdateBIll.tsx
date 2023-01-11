@@ -1,12 +1,14 @@
 import { useForm, zodResolver } from "@mantine/form";
+
 import type { BillsReturnType } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
   updateBillDataValidation,
-  type updateBillDataValidationType,
+  type updateBillDataValidationType
 } from "src/utils/validation/bill/updateBillValidation";
-import { useFormHandler } from "../useFormHandler";
+
 import { notifyTemplate } from "../notifyTemplate";
+import { useFormHandler } from "../useFormHandler";
 
 const id = "useUpdateBill";
 const notifications = notifyTemplate(id, "Bill", "Update");
@@ -16,14 +18,14 @@ type keysType = keyof updateBillDataValidationType;
 export const useUpdateBill = ({
   id,
   keys,
-  data,
+  data
 }: {
   id: string;
   keys: keysType[];
   data: BillsReturnType;
 }) => {
   const form = useForm<updateBillDataValidationType>({
-    validate: zodResolver(updateBillDataValidation),
+    validate: zodResolver(updateBillDataValidation)
   });
 
   const utils = trpc.useContext();
@@ -50,7 +52,7 @@ export const useUpdateBill = ({
           })
         );
       }
-    },
+    }
   });
 
   const { resetForm, runMutate } = useFormHandler({
@@ -59,7 +61,7 @@ export const useUpdateBill = ({
     keys,
     id,
     mutate,
-    formDataToMutateData: (id, data) => ({ id, data }),
+    formDataToMutateData: (id, data) => ({ id, data })
   });
 
   return {
@@ -68,6 +70,6 @@ export const useUpdateBill = ({
     mutate,
     form,
     runMutate,
-    resetForm,
+    resetForm
   };
 };

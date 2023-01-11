@@ -1,10 +1,12 @@
 import { useForm, zodResolver } from "@mantine/form";
+
 import type { AccountsReturnType } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
   updateAccountDataValidation,
-  type updateAccountDataValidationType,
+  type updateAccountDataValidationType
 } from "src/utils/validation/account/updateAccountValidation";
+
 import { notifyTemplate } from "../notifyTemplate";
 import { useFormHandler } from "../useFormHandler";
 
@@ -17,14 +19,14 @@ type keysType = keyof updateAccountDataValidationType &
 export const useUpdateAccount = ({
   id,
   keys,
-  data,
+  data
 }: {
   id: string;
   keys: keysType[];
   data: AccountsReturnType;
 }) => {
   const form = useForm<updateAccountDataValidationType>({
-    validate: zodResolver(updateAccountDataValidation),
+    validate: zodResolver(updateAccountDataValidation)
   });
 
   const utils = trpc.useContext();
@@ -51,7 +53,7 @@ export const useUpdateAccount = ({
           })
         );
       }
-    },
+    }
   });
 
   const { resetForm, runMutate } = useFormHandler({
@@ -60,7 +62,7 @@ export const useUpdateAccount = ({
     keys,
     id,
     mutate,
-    formDataToMutateData: (id, data) => ({ id, data }),
+    formDataToMutateData: (id, data) => ({ id, data })
   });
 
   return {
@@ -68,6 +70,6 @@ export const useUpdateAccount = ({
     mutate,
     form,
     runMutate,
-    resetForm,
+    resetForm
   };
 };

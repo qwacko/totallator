@@ -1,6 +1,7 @@
 import type { BillsReturnType } from "src/server/trpc/router/_app";
 import { useCloneBill } from "src/utils/hooks/bills/useCloneBill";
 import { useDeleteBill } from "src/utils/hooks/bills/useDeleteBill";
+
 import { CommandButtons } from "../table/CommandButtons";
 
 export const BillCommandButtons = ({ data }: { data: BillsReturnType }) => {
@@ -13,13 +14,13 @@ export const BillCommandButtons = ({ data }: { data: BillsReturnType }) => {
       cloneButton={{
         hidden: false,
         disabled: !data.userIsAdmin,
-        action: clone,
+        action: clone
       }}
       deleteButton={{
         hidden: false,
         disabled: !data.userIsAdmin || data._count.journalEntries > 0,
         action: del,
-        message: `Delete ${data.title}?`,
+        message: `Delete ${data.title}?`
       }}
     />
   );

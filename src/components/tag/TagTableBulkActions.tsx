@@ -1,8 +1,10 @@
 import { Button, Menu } from "@mantine/core";
 import { IconMenu2 } from "@tabler/icons";
 import type { HeaderContext } from "@tanstack/react-table";
-import { SelectionColumnHeader } from "../table/selectionColumnHeader";
+
 import type { TagsReturnType } from "src/server/trpc/router/_app";
+
+import { SelectionColumnHeader } from "../table/selectionColumnHeader";
 
 export const TagTableBulkActions = <T,>(
   column: HeaderContext<TagsReturnType, T>

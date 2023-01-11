@@ -1,9 +1,11 @@
 import type { Budget, Prisma, PrismaClient } from "@prisma/client";
+
 import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+
 import { buildSearchIDList } from "../buildSearchIDList";
 import { populateRemainingIds } from "../populateRemainingIds";
 import { type UpsertReturnType } from "../types";
-import { upsertBudget, type UpsertBudgetData } from "./upsertBudget";
+import { type UpsertBudgetData, upsertBudget } from "./upsertBudget";
 
 export type UpsertBudgetsReturnType = UpsertReturnType<Budget>;
 
@@ -11,7 +13,7 @@ export const upsertBudgets = async ({
   data,
   prisma,
   userId,
-  userIsAdmin,
+  userIsAdmin
 }: {
   data: BulkUpgradeAccountGroupingValidationType;
   prisma: PrismaClient | PrismaClient | Prisma.TransactionClient;
@@ -23,7 +25,7 @@ export const upsertBudgets = async ({
   const returnData: UpsertBudgetsReturnType = {
     idLookup: {},
     nameLookup: {},
-    allLookup: {},
+    allLookup: {}
   };
 
   const listData: UpsertBudgetData[] = data.createBudgetTitles
@@ -32,9 +34,9 @@ export const upsertBudgets = async ({
 
   const upsertData = data.upsertBudgets ? data.upsertBudgets : [];
 
-  const list: (typeof upsertData[0] | UpsertBudgetData)[] = [
+  const list: ((typeof upsertData)[0] | UpsertBudgetData)[] = [
     ...upsertData,
-    ...listData,
+    ...listData
   ];
   if (list) {
     await Promise.all(
@@ -47,7 +49,7 @@ export const upsertBudgets = async ({
           data: currentItem,
           userId,
           userAdmin: userIsAdmin,
-          action: "Upsert",
+          action: "Upsert"
         });
         returnData.idLookup[upsertedBudget.id] = upsertedBudget;
         if ("id" in currentItem && currentItem.id) {
@@ -66,8 +68,8 @@ export const upsertBudgets = async ({
     itemsType: "Budgets",
     getMatching: async (ids) =>
       await prisma.budget.findMany({
-        where: { id: { in: ids }, accountGroupingId },
-      }),
+        where: { id: { in: ids }, accountGroupingId }
+      })
   });
 
   return returnData;

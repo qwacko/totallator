@@ -1,11 +1,12 @@
 import { trpc } from "src/utils/trpc";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useUpdateUser";
 const notifications = notifyTemplate(id, "User Settings", "Update");
 
 export const useUpdateUser = ({
-  onComplete,
+  onComplete
 }: { onComplete?: () => void } = {}) => {
   const utils = trpc.useContext();
   const { mutate: updateUser, isLoading } = trpc.user.updateUser.useMutation({
@@ -25,7 +26,7 @@ export const useUpdateUser = ({
       notifications.onSuccess();
       utils.user.invalidate();
       onComplete && onComplete();
-    },
+    }
   });
 
   return { updateUser, isUpdatingUser: isLoading };

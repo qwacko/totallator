@@ -1,17 +1,19 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
-import {
-  basicStatusToDB,
-  basicStatusToDBRequired,
-} from "src/utils/validation/basicStatusToDB";
+import { TRPCError } from "@trpc/server";
+
 import type { createAccountValidationType } from "src/utils/validation/account/createAccountValidation";
 import type { updateAccountDataValidationType } from "src/utils/validation/account/updateAccountValidation";
 import {
-  createAccountGroupTitle,
-  updateAccountGroupTitle,
-} from "./accountTitleGroupHandling";
-import { TRPCError } from "@trpc/server";
-import { defaultIncExp } from "./defaultIncExp";
+  basicStatusToDB,
+  basicStatusToDBRequired
+} from "src/utils/validation/basicStatusToDB";
+
 import type { UpsertActions } from "../types";
+import {
+  createAccountGroupTitle,
+  updateAccountGroupTitle
+} from "./accountTitleGroupHandling";
+import { defaultIncExp } from "./defaultIncExp";
 
 type UpsertAccountData =
   | createAccountValidationType
@@ -24,7 +26,7 @@ export const upsertAccount = async ({
   userId,
   userAdmin = false,
   prisma,
-  action,
+  action
 }: {
   data: UpsertAccountData;
   id?: string | undefined;
@@ -41,13 +43,13 @@ export const upsertAccount = async ({
         accountGroupingId,
         ...(!userAdmin
           ? { accountGrouping: { adminUsers: { some: { id: userId } } } }
-          : {}),
-      },
+          : {})
+      }
     });
     if (foundAccount && action === "Create") {
       throw new TRPCError({
         message: "Account Found But Action Is Only Create, cannot update",
-        code: "BAD_REQUEST",
+        code: "BAD_REQUEST"
       });
     } else if (foundAccount) {
       const finalType = data.type || foundAccount.type;
@@ -62,8 +64,8 @@ export const upsertAccount = async ({
             accountGroup: null,
             accountGroup2: null,
             accountGroup3: null,
-            accountTitleCombined: data.title,
-          },
+            accountTitleCombined: data.title
+          }
         });
       }
       return prisma.transactionAccount.update({
@@ -80,16 +82,16 @@ export const upsertAccount = async ({
               "accountGroupCombined" in data
                 ? data.accountGroupCombined
                 : undefined,
-            existing: foundAccount,
-          }),
-        },
+            existing: foundAccount
+          })
+        }
       });
     }
   }
   if (action === "Update") {
     throw new TRPCError({
       message: "No account found to update",
-      code: "BAD_REQUEST",
+      code: "BAD_REQUEST"
     });
   }
   if (accountGroupingId && data.title) {
@@ -103,8 +105,8 @@ export const upsertAccount = async ({
           ...other,
           ...basicStatusToDBRequired(data.status || "Active"),
           ...defaultIncExp(title),
-          accountGroupingId,
-        },
+          accountGroupingId
+        }
       });
     }
 
@@ -117,13 +119,13 @@ export const upsertAccount = async ({
           accountGroup,
           accountGroup2,
           accountGroup3,
-          title,
-        }),
-      },
+          title
+        })
+      }
     });
   }
   throw new TRPCError({
     message: "Cannot Create Account Without Account Grouping or Title",
-    code: "BAD_REQUEST",
+    code: "BAD_REQUEST"
   });
 };

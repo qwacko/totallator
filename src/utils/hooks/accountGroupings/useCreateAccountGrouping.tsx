@@ -1,21 +1,23 @@
-import { trpc } from "src/utils/trpc";
 import { useForm, zodResolver } from "@mantine/form";
-import { notifyTemplate } from "../notifyTemplate";
+
+import { trpc } from "src/utils/trpc";
 import {
   createAccountGroupingValidation,
-  type createAccountGroupingValidationType,
+  type createAccountGroupingValidationType
 } from "src/utils/validation/accountGrouping/createAccountGroupingValidation";
+
+import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useCreateAccountGrouping";
 const notifications = notifyTemplate(id, "Account Grouping", "Create");
 
 export function useCreateAccountGrouping({
-  onMutate,
+  onMutate
 }: {
   onMutate?: () => void;
 }) {
   const form = useForm<createAccountGroupingValidationType>({
-    validate: zodResolver(createAccountGroupingValidation),
+    validate: zodResolver(createAccountGroupingValidation)
   });
   const utils = trpc.useContext();
   const mutate = trpc.accountGroupings.create.useMutation({
@@ -38,8 +40,8 @@ export function useCreateAccountGrouping({
             createdAt: new Date(),
             updatedAt: new Date(),
             deleted: false,
-            disabled: false,
-          },
+            disabled: false
+          }
         ]);
       }
     },
@@ -50,7 +52,7 @@ export function useCreateAccountGrouping({
     onSuccess: () => {
       utils.accountGroupings.invalidate();
       notifications.onSuccess();
-    },
+    }
   });
   return { form, mutate };
 }

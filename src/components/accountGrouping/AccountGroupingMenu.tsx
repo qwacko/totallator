@@ -9,9 +9,11 @@ import {
   IconTableImport,
   IconTrash,
   IconTree,
-  IconUnlink,
+  IconUnlink
 } from "@tabler/icons";
+
 import { useSeedAccountGrouping } from "src/utils/hooks/accountGroupings/useSeedAccountGrouping";
+
 import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 import { AccountGroupingDelete } from "./AccountGroupingDelete";
 import { AccountGroupingDeleteLinked } from "./AccountGroupingDeleteLinked";
@@ -19,11 +21,12 @@ import { AccountGroupingEditPopup } from "./AccountGroupingEditForm";
 import { AccountGroupingImportExcel } from "./AccountGroupingImportExcel";
 import { AccountGroupingSeed } from "./AccountGroupingSeed";
 import { AccountGroupingAddUserPopup } from "./AcountGroupingAddUsrer";
-4;
 import { useExportData } from "./helpers/useExportData";
 
+4;
+
 export const AccountGroupingMenu = ({
-  data,
+  data
 }: {
   data: AccountGroupingReturnSingle;
 }) => {

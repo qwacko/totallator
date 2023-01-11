@@ -9,6 +9,6 @@ export const defaultIncExp = (title: string) => {
     startDate: undefined,
     endDate: undefined,
     isCash: true,
-    isNetWorth: true,
+    isNetWorth: true
   };
 };

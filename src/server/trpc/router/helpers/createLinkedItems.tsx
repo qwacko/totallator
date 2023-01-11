@@ -1,12 +1,14 @@
 import type { Prisma } from "@prisma/client";
+
 import { basicStatusToDBRequired } from "src/utils/validation/basicStatusToDB";
+
 import { createGroupSingleTitle } from "./groupSingleHandling";
 
 export const createLinkedItems = ({
   createTags,
   createCategories,
   createBills,
-  createBudgets,
+  createBudgets
 }: {
   createTags?: string[] | undefined;
   createCategories?: string[] | undefined;
@@ -20,8 +22,8 @@ export const createLinkedItems = ({
           ...basicStatusToDBRequired("Active"),
           ...createGroupSingleTitle({
             group: group || "",
-            single: single || "",
-          }),
+            single: single || ""
+          })
         };
       })
     : [];
@@ -34,8 +36,8 @@ export const createLinkedItems = ({
             ...basicStatusToDBRequired("Active"),
             ...createGroupSingleTitle({
               group: group || "",
-              single: single || "",
-            }),
+              single: single || ""
+            })
           };
         })
       : [];
@@ -45,7 +47,7 @@ export const createLinkedItems = ({
       ? createBills.map((item) => {
           return {
             ...basicStatusToDBRequired("Active"),
-            title: item,
+            title: item
           };
         })
       : [];
@@ -55,7 +57,7 @@ export const createLinkedItems = ({
       ? createBudgets.map((item) => {
           return {
             ...basicStatusToDBRequired("Active"),
-            title: item,
+            title: item
           };
         })
       : [];
@@ -64,6 +66,6 @@ export const createLinkedItems = ({
     tagCreationAll,
     categoryCreationAll,
     billCreationAll,
-    budgetCreationAll,
+    budgetCreationAll
   };
 };

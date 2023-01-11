@@ -1,16 +1,18 @@
-import { router, protectedProcedure } from "../trpc";
-import { getUserInfo } from "./helpers/getUserInfo";
+import { TRPCError } from "@trpc/server";
+import { omit } from "lodash";
+import { z } from "zod";
+
+import { createAccountValidation } from "src/utils/validation/account/createAccountValidation";
+import { accountGetValidation } from "src/utils/validation/account/readAccountValidation";
+import { updateAccountValidation } from "src/utils/validation/account/updateAccountValidation";
+
+import { protectedProcedure, router } from "../trpc";
+import { upsertAccount } from "./helpers/accounts/upsertAccount";
 import {
   accountGroupingFilter,
-  checkAccountGroupingAccess,
+  checkAccountGroupingAccess
 } from "./helpers/checkAccountGroupingAccess";
-import { TRPCError } from "@trpc/server";
-import { createAccountValidation } from "src/utils/validation/account/createAccountValidation";
-import { updateAccountValidation } from "src/utils/validation/account/updateAccountValidation";
-import { z } from "zod";
-import { upsertAccount } from "./helpers/accounts/upsertAccount";
-import { omit } from "lodash";
-import { accountGetValidation } from "src/utils/validation/account/readAccountValidation";
+import { getUserInfo } from "./helpers/getUserInfo";
 
 export const accountRouter = router({
   get: protectedProcedure
@@ -20,12 +22,12 @@ export const accountRouter = router({
 
       const accounts = await ctx.prisma.transactionAccount.findMany({
         where: {
-          accountGrouping: { viewUsers: { some: { id: user.id } } },
+          accountGrouping: { viewUsers: { some: { id: user.id } } }
         },
         include: {
           accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-          _count: { select: { journalEntries: true } },
-        },
+          _count: { select: { journalEntries: true } }
+        }
       });
 
       return accounts.map((account) => {
@@ -37,7 +39,7 @@ export const accountRouter = router({
 
         return {
           ...pickedAccount,
-          userIsAdmin,
+          userIsAdmin
         };
       });
     }),
@@ -50,7 +52,7 @@ export const accountRouter = router({
         accountGroupingId: input.accountGroupingId,
         prisma: ctx.prisma,
         user,
-        adminRequired: true,
+        adminRequired: true
       });
 
       await upsertAccount({
@@ -59,7 +61,7 @@ export const accountRouter = router({
         action: "Create",
         data: input,
         accountGroupingId: input.accountGroupingId,
-        prisma: ctx.prisma,
+        prisma: ctx.prisma
       });
 
       return true;
@@ -75,7 +77,7 @@ export const accountRouter = router({
         action: "Update",
         prisma: ctx.prisma,
         data: input.data,
-        id: input.id,
+        id: input.id
       });
 
       return true;
@@ -88,14 +90,14 @@ export const accountRouter = router({
       const targetAccount = await ctx.prisma.transactionAccount.findFirst({
         where: {
           id: input.id,
-          ...accountGroupingFilter(user.id),
-        },
+          ...accountGroupingFilter(user.id)
+        }
       });
 
       if (!targetAccount) {
         throw new TRPCError({
           message: "Cannot find account or user doesn't have admin accces",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
 
@@ -115,13 +117,13 @@ export const accountRouter = router({
       await upsertAccount({
         data: {
           ...targetAccountProps,
-          title: `${targetAccountProps.title} (Clone)`,
+          title: `${targetAccountProps.title} (Clone)`
         },
         action: "Create",
         prisma: ctx.prisma,
         userId: user.id,
         userAdmin: user.admin,
-        accountGroupingId: targetAccount.accountGroupingId,
+        accountGroupingId: targetAccount.accountGroupingId
       });
 
       return true;
@@ -134,27 +136,27 @@ export const accountRouter = router({
       const targetAccount = await ctx.prisma.transactionAccount.findFirst({
         where: {
           id: input.id,
-          ...accountGroupingFilter(user.id),
+          ...accountGroupingFilter(user.id)
         },
-        include: { _count: { select: { journalEntries: true } } },
+        include: { _count: { select: { journalEntries: true } } }
       });
 
       if (!targetAccount) {
         throw new TRPCError({
           message: "Cannot find account or user doesn't have admin accces",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       if (targetAccount._count.journalEntries > 0) {
         throw new TRPCError({
           message: "Cannot remove account that has journal entries associated",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       await ctx.prisma.transactionAccount.delete({
-        where: { id: targetAccount.id },
+        where: { id: targetAccount.id }
       });
 
       return true;
-    }),
+    })
 });

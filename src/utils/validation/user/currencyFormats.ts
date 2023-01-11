@@ -9,27 +9,27 @@ export const currencyFormatter = (currencyFormat: currencyFormatTypes) => {
   if (currencyFormat === "USD") {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "USD"
     });
   } else if (currencyFormat === "EUR") {
     return new Intl.NumberFormat("de-DE", {
       style: "currency",
-      currency: "EUR",
+      currency: "EUR"
     });
   } else if (currencyFormat === "GBP") {
     return new Intl.NumberFormat("en-UK", {
       style: "currency",
-      currency: "GBP",
+      currency: "GBP"
     });
   } else if (currencyFormat === "JPY") {
     return new Intl.NumberFormat("ja-JP", {
       style: "currency",
-      currency: "JPY",
+      currency: "JPY"
     });
   }
   return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "USD",
+    currency: "USD"
   });
 };
 
@@ -74,5 +74,5 @@ export const currencyFormatsSelectOptions: {
   { value: "USD", label: currencyFormatter("USD").format(1234.56) },
   { value: "GBP", label: currencyFormatter("GBP").format(1234.56) },
   { value: "JPY", label: currencyFormatter("JPY").format(1234.56) },
-  { value: "EUR", label: currencyFormatter("EUR").format(1234.56) },
+  { value: "EUR", label: currencyFormatter("EUR").format(1234.56) }
 ];

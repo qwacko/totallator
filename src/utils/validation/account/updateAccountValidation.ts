@@ -1,5 +1,7 @@
 import { z } from "zod";
+
 import { PrismaStatusEnumValidation } from "src/utils/validation/PrismaStatusEnumValidation";
+
 import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidation";
 
 export const updateAccountDataValidation = z
@@ -14,7 +16,7 @@ export const updateAccountDataValidation = z
     startDate: z.date().nullable().optional(),
     endDate: z.date().nullable().optional(),
     type: PrismaAccountTypeEnumValidation.optional(),
-    status: PrismaStatusEnumValidation.optional(),
+    status: PrismaStatusEnumValidation.optional()
   })
   .refine(
     (args) => {
@@ -27,7 +29,7 @@ export const updateAccountDataValidation = z
     },
     {
       message: "Cannot set accountGroupCombined and account group options",
-      path: ["accountGroupCombined"],
+      path: ["accountGroupCombined"]
     }
   );
 
@@ -37,7 +39,7 @@ export type updateAccountDataValidationType = z.infer<
 
 export const updateAccountValidation = z.object({
   id: z.string().cuid(),
-  data: updateAccountDataValidation,
+  data: updateAccountDataValidation
 });
 
 export type updateAccountValidationType = z.infer<

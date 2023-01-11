@@ -1,4 +1,4 @@
-import { initTRPC, TRPCError } from "@trpc/server";
+import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 
 import { type Context } from "./context";
@@ -7,7 +7,7 @@ const t = initTRPC.context<Context>().create({
   transformer: superjson,
   errorFormatter({ shape }) {
     return shape;
-  },
+  }
 });
 
 export const router = t.router;
@@ -28,8 +28,8 @@ const isAuthed = t.middleware(({ ctx, next }) => {
   return next({
     ctx: {
       // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
-    },
+      session: { ...ctx.session, user: ctx.session.user }
+    }
   });
 });
 
@@ -44,7 +44,7 @@ const isNotAuthed = t.middleware(({ ctx, next }) => {
   }
   throw new TRPCError({
     code: "UNAUTHORIZED",
-    message: "Only logged out users can do this",
+    message: "Only logged out users can do this"
   });
 });
 export const unprotectedProcedure = t.procedure.use(isNotAuthed);

@@ -4,12 +4,13 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
+  useReactTable
 } from "@tanstack/react-table";
 
 import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
-import { accountColumns } from "./accountColumns";
+
 import { TableDisplay } from "../table/TableDisplay";
+import { accountColumns } from "./accountColumns";
 
 export const AccountTable = () => {
   const data = useAccounts();
@@ -34,10 +35,10 @@ export const AccountTable = () => {
         accountGroup2: false,
         accountGroup3: false,
         createdAt: false,
-        updatedAt: false,
-      },
+        updatedAt: false
+      }
     },
-    autoResetPageIndex: false,
+    autoResetPageIndex: false
   });
 
   if (!data.data || data.isLoading) {

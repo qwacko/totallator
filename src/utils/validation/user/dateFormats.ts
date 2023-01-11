@@ -22,44 +22,44 @@ export const dateFormats: dateFormatType[] = [
   {
     dbValue: "DashDDMMYYYY",
     dateFnFormat: "dd-MM-yyyy",
-    dayjsFormat: "DD-MM-YYYY",
+    dayjsFormat: "DD-MM-YYYY"
   },
   {
     dbValue: "DashMMDDYYYY",
     dateFnFormat: "MM-dd-yyyy",
-    dayjsFormat: "MM-DD-YYYY",
+    dayjsFormat: "MM-DD-YYYY"
   },
   {
     dbValue: "SlashDDMMYY",
     dateFnFormat: "dd/MM/yyyy",
-    dayjsFormat: "DD/MM/YYYY",
+    dayjsFormat: "DD/MM/YYYY"
   },
   {
     dbValue: "SlashMMDDYY",
     dateFnFormat: "MM/dd/yyyy",
-    dayjsFormat: "MM/DD/YYYY",
+    dayjsFormat: "MM/DD/YYYY"
   },
   {
     dbValue: "TextWithDOW",
     dateFnFormat: "EEE do LLL ''yy",
-    dayjsFormat: "ddd D MMM 'YY",
+    dayjsFormat: "ddd D MMM 'YY"
   },
   {
     dbValue: "TextShort",
     dateFnFormat: "do LLL ''yy",
-    dayjsFormat: "DD-MM-YYYY",
+    dayjsFormat: "DD-MM-YYYY"
   },
   {
     dbValue: "TextShortest",
     dateFnFormat: "dd LLL yy",
-    dayjsFormat: "DD-MM-YYYY",
+    dayjsFormat: "DD-MM-YYYY"
   },
   {
     dbValue: "DashYYYYMMDD",
     dateFnFormat: "yyyy-MM-dd",
-    dayjsFormat: "DD-MM-YYYY",
+    dayjsFormat: "DD-MM-YYYY"
   },
-  { dbValue: "YYYYMMDD", dateFnFormat: "yyyyMMdd", dayjsFormat: "YYYYMMDD" },
+  { dbValue: "YYYYMMDD", dateFnFormat: "yyyyMMdd", dayjsFormat: "YYYYMMDD" }
 ];
 
 export const DBDateList = [
@@ -71,7 +71,7 @@ export const DBDateList = [
   "TextShort",
   "TextShortest",
   "DashYYYYMMDD",
-  "YYYYMMDD",
+  "YYYYMMDD"
 ] as const;
 
 export const dbDateFormatValidation = z.enum(DBDateList);
@@ -93,5 +93,5 @@ export const dateFormatter = (input: DBDateFormatTypes) => {
 export const dateFormatOptions: { value: DBDateFormatTypes; label: string }[] =
   dateFormats.map((item) => ({
     value: item.dbValue,
-    label: format(new Date(2015, 2, 25), dateFormatter(item.dbValue)),
+    label: format(new Date(2015, 2, 25), dateFormatter(item.dbValue))
   }));

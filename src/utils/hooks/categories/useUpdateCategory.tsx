@@ -1,10 +1,12 @@
 import { useForm, zodResolver } from "@mantine/form";
+
 import type { CategoriesReturnType } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
   updateCategoryDataValidation,
-  type updateCategoryDataValidationType,
+  type updateCategoryDataValidationType
 } from "src/utils/validation/category/updateCategoryValidation";
+
 import { notifyTemplate } from "../notifyTemplate";
 import { useFormHandler } from "../useFormHandler";
 
@@ -16,14 +18,14 @@ type keysType = keyof updateCategoryDataValidationType;
 export const useUpdateCategory = ({
   id,
   keys,
-  data,
+  data
 }: {
   id: string;
   keys: keysType[];
   data: CategoriesReturnType;
 }) => {
   const form = useForm<updateCategoryDataValidationType>({
-    validate: zodResolver(updateCategoryDataValidation),
+    validate: zodResolver(updateCategoryDataValidation)
   });
 
   const utils = trpc.useContext();
@@ -50,7 +52,7 @@ export const useUpdateCategory = ({
           })
         );
       }
-    },
+    }
   });
 
   const { resetForm, runMutate } = useFormHandler({
@@ -59,7 +61,7 @@ export const useUpdateCategory = ({
     keys,
     id,
     mutate,
-    formDataToMutateData: (id, data) => ({ id, data }),
+    formDataToMutateData: (id, data) => ({ id, data })
   });
 
   return {
@@ -68,6 +70,6 @@ export const useUpdateCategory = ({
     mutate,
     form,
     runMutate,
-    resetForm,
+    resetForm
   };
 };

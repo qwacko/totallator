@@ -1,4 +1,5 @@
 import { Center, Group, Stack, Title } from "@mantine/core";
+
 import { AccountTableView } from "src/components/account/AccountTableView";
 import { CreateAccountPopup } from "src/components/account/CreateAccount";
 import { AppLayout } from "src/components/layout/App";

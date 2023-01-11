@@ -16,7 +16,7 @@ export const importJournalEntrySingleValidation = z.object({
   tagId: z.string().optional().nullable(),
   transactionId: z.string(),
   createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  updatedAt: z.date().optional()
 });
 
 export type importJournalEntrySingleValidationType = z.infer<

@@ -1,4 +1,5 @@
 import { trpc } from "src/utils/trpc";
+
 import { notifyTemplate } from "../notifyTemplate";
 
 const id = "useDeleteTransactions";
@@ -10,7 +11,7 @@ export const useDeleteTransactions = ({
   deleteComplete = false,
   onSuccess,
   onError,
-  onMutate,
+  onMutate
 }: {
   ids?: string[];
   maxDeleted?: number;
@@ -36,7 +37,7 @@ export const useDeleteTransactions = ({
       onMutate: () => {
         notifications.onLoading();
         onMutate && onMutate();
-      },
+      }
     });
 
   const deleteTrans = () => {
@@ -46,6 +47,6 @@ export const useDeleteTransactions = ({
   return {
     isMutating,
     mutate,
-    deleteTrans,
+    deleteTrans
   };
 };

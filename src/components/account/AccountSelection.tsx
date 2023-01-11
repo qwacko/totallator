@@ -2,14 +2,15 @@ import {
   MultiSelect,
   type MultiSelectProps,
   Select,
-  type SelectProps,
+  type SelectProps
 } from "@mantine/core";
 import { useMemo } from "react";
+
 import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
 
 export const useAccountsDropdown = ({
   accountGroupingId,
-  showAccountGroup,
+  showAccountGroup
 }: {
   accountGroupingId?: string;
   showAccountGroup: boolean;
@@ -32,7 +33,7 @@ export const useAccountsDropdown = ({
                 item.type === "Asset" || item.type === "Liability"
                   ? item.accountGroupCombined || undefined
                   : item.type,
-              value: item.id,
+              value: item.id
             }))
         : [],
     [accounts.data, accountGroupingId, showAccountGroup]
@@ -51,7 +52,7 @@ export const AccountSelection = ({
 }) => {
   const { filteredAccounts } = useAccountsDropdown({
     accountGroupingId,
-    showAccountGroup,
+    showAccountGroup
   });
 
   return <Select {...props} data={filteredAccounts} />;
@@ -67,7 +68,7 @@ export const AccountMultiSelection = ({
 }) => {
   const { filteredAccounts } = useAccountsDropdown({
     accountGroupingId,
-    showAccountGroup,
+    showAccountGroup
   });
 
   return <MultiSelect {...props} data={filteredAccounts} />;

@@ -1,10 +1,12 @@
 import { Button, Group, Modal, Stack, TextInput } from "@mantine/core";
+
 import { useAddUserToAG } from "src/utils/hooks/accountGroupings/useAddUserTOAG";
+
 import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 
 export const AccountGroupingAddUserForm = ({
   accountGroupingId,
-  onSuccess,
+  onSuccess
 }: {
   accountGroupingId: string;
   onSuccess: () => void;
@@ -32,7 +34,7 @@ export const AccountGroupingAddUserForm = ({
 export const AccountGroupingAddUserPopup = ({
   data,
   opened,
-  close,
+  close
 }: {
   data: AccountGroupingReturnSingle;
   opened: boolean;

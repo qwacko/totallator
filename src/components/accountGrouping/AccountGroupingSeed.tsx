@@ -5,22 +5,24 @@ import {
   Group,
   Modal,
   NumberInput,
-  Stack,
+  Stack
 } from "@mantine/core";
+
 import { useSeedAccountGrouping } from "src/utils/hooks/accountGroupings/useSeedAccountGrouping";
+
 import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 
 export const AccountGroupingSeed = ({
   data,
   opened,
-  close,
+  close
 }: {
   data: AccountGroupingReturnSingle;
   opened: boolean;
   close: () => void;
 }) => {
   const { isLoading, canSeed, form, mutate, reset } = useSeedAccountGrouping({
-    accountGroupingId: data.id,
+    accountGroupingId: data.id
   });
 
   if (isLoading || !canSeed) {

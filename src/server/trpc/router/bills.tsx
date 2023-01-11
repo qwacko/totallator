@@ -1,15 +1,17 @@
-import { router, protectedProcedure } from "../trpc";
-import { getUserInfo } from "./helpers/getUserInfo";
-import {
-  accountGroupingFilter,
-  checkAccountGroupingAccess,
-} from "./helpers/checkAccountGroupingAccess";
-import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
-import { updateBillValidation } from "src/utils/validation/bill/updateBillValidation";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { upsertBill } from "./helpers/bills/upsertBill";
+
+import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
 import { billGetValidation } from "src/utils/validation/bill/readBillValidation";
+import { updateBillValidation } from "src/utils/validation/bill/updateBillValidation";
+
+import { protectedProcedure, router } from "../trpc";
+import { upsertBill } from "./helpers/bills/upsertBill";
+import {
+  accountGroupingFilter,
+  checkAccountGroupingAccess
+} from "./helpers/checkAccountGroupingAccess";
+import { getUserInfo } from "./helpers/getUserInfo";
 
 export const billRouter = router({
   get: protectedProcedure.output(billGetValidation).query(async ({ ctx }) => {
@@ -17,12 +19,12 @@ export const billRouter = router({
 
     const bills = await ctx.prisma.bill.findMany({
       where: {
-        accountGrouping: { viewUsers: { some: { id: user.id } } },
+        accountGrouping: { viewUsers: { some: { id: user.id } } }
       },
       include: {
         accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-        _count: { select: { journalEntries: true } },
-      },
+        _count: { select: { journalEntries: true } }
+      }
     });
 
     return bills.map((bill) => {
@@ -43,7 +45,7 @@ export const billRouter = router({
         accountGroupingId: input.accountGroupingId,
         prisma: ctx.prisma,
         user,
-        adminRequired: true,
+        adminRequired: true
       });
 
       await upsertBill({
@@ -52,7 +54,7 @@ export const billRouter = router({
         userAdmin: user.admin,
         action: "Create",
         data: input,
-        accountGroupingId: input.accountGroupingId,
+        accountGroupingId: input.accountGroupingId
       });
 
       return true;
@@ -68,7 +70,7 @@ export const billRouter = router({
         userAdmin: user.admin,
         data: input.data,
         id: input.id,
-        action: "Update",
+        action: "Update"
       });
 
       return true;
@@ -81,14 +83,14 @@ export const billRouter = router({
       const targetBill = await ctx.prisma.bill.findFirst({
         where: {
           id: input.id,
-          ...accountGroupingFilter(user.id),
-        },
+          ...accountGroupingFilter(user.id)
+        }
       });
 
       if (!targetBill) {
         throw new TRPCError({
           message: "Cannot find bill or user doesn't have admin accces",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
 
@@ -98,7 +100,7 @@ export const billRouter = router({
         prisma: ctx.prisma,
         data: { ...targetBill, title: `${targetBill.title} (Clone)` },
         action: "Create",
-        accountGroupingId: targetBill.accountGroupingId,
+        accountGroupingId: targetBill.accountGroupingId
       });
 
       return true;
@@ -111,27 +113,27 @@ export const billRouter = router({
       const targetBill = await ctx.prisma.bill.findFirst({
         where: {
           id: input.id,
-          ...accountGroupingFilter(user.id),
+          ...accountGroupingFilter(user.id)
         },
-        include: { _count: { select: { journalEntries: true } } },
+        include: { _count: { select: { journalEntries: true } } }
       });
 
       if (!targetBill) {
         throw new TRPCError({
           message: "Cannot find bill or user doesn't have admin accces",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       if (targetBill._count.journalEntries > 0) {
         throw new TRPCError({
           message: "Cannot remove bill that has journal entries associated",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       await ctx.prisma.bill.delete({
-        where: { id: targetBill.id },
+        where: { id: targetBill.id }
       });
 
       return true;
-    }),
+    })
 });

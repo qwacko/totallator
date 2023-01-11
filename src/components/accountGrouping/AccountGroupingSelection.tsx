@@ -2,13 +2,14 @@ import {
   MultiSelect,
   type MultiSelectProps,
   Select,
-  type SelectProps,
+  type SelectProps
 } from "@mantine/core";
 import { useMemo } from "react";
+
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 
 export const useAccountGroupingsDropdown = ({
-  adminOnly = false,
+  adminOnly = false
 }: {
   adminOnly?: boolean;
 }) => {
@@ -21,7 +22,7 @@ export const useAccountGroupingsDropdown = ({
             .map((item) => ({
               label: item.title,
 
-              value: item.id,
+              value: item.id
             }))
         : [],
     [accountGroupings.data, adminOnly]

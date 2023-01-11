@@ -5,7 +5,7 @@ const options: PrismaStatusEnum[] = ["Active", "Disabled", "Deleted"];
 
 export const FilterStatus = ({
   filter,
-  setFilter,
+  setFilter
 }: {
   filter: PrismaStatusEnum[] | PrismaStatusEnum | undefined | null;
   setFilter: (

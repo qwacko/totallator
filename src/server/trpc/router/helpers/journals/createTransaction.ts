@@ -1,6 +1,8 @@
 import type { Prisma, PrismaClient } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
+
 import type { createTransactionValidationType } from "src/utils/validation/journalEntries/createJournalValidation";
+
 import { checkAccountGroupingAccess } from "../checkAccountGroupingAccess";
 import { checkLinkedItems } from "../checkLinkedItems";
 import type { UserInfo } from "../getUserInfo";
@@ -8,7 +10,7 @@ import type { UserInfo } from "../getUserInfo";
 export const createTransaction = async ({
   input,
   prisma,
-  user,
+  user
 }: {
   input: createTransactionValidationType;
   prisma: PrismaClient | Prisma.TransactionClient;
@@ -19,7 +21,7 @@ export const createTransaction = async ({
   if (accountGroupingId === "error") {
     throw new TRPCError({
       message: "Account Grouping Error",
-      code: "INTERNAL_SERVER_ERROR",
+      code: "INTERNAL_SERVER_ERROR"
     });
   }
 
@@ -27,7 +29,7 @@ export const createTransaction = async ({
     accountGroupingId,
     prisma,
     user,
-    adminRequired: true,
+    adminRequired: true
   });
 
   await checkLinkedItems({
@@ -37,10 +39,10 @@ export const createTransaction = async ({
     billIds: input.map((item) => item.billId),
     budgetIds: input.map((item) => item.budgetId),
     categoryIds: input.map((item) => item.categoryId),
-    tagIds: input.map((item) => item.tagId),
+    tagIds: input.map((item) => item.tagId)
   });
 
   await prisma.transaction.create({
-    data: { journalEntries: { createMany: { data: input } } },
+    data: { journalEntries: { createMany: { data: input } } }
   });
 };

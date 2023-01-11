@@ -1,6 +1,7 @@
 import { Box, Container, Group, Stack, Tabs } from "@mantine/core";
 import { useRouter } from "next/router";
 import type { ReactNode } from "react";
+
 import { UserDarkMode } from "../user/UserDarkMode";
 import { UserDisplay } from "../user/UserDisplay";
 
@@ -16,6 +17,7 @@ export const AppLayout = ({ children }: { children: ReactNode }) => {
           variant="pills"
         >
           <Tabs.List>
+            <Tabs.Tab value="/">Home</Tabs.Tab>
             <Tabs.Tab value="/journals">Journals</Tabs.Tab>
             <Tabs.Tab value="/accountGroupings">Account Grouping</Tabs.Tab>
             <Tabs.Tab value="/accounts">Accounts</Tabs.Tab>

@@ -21,7 +21,7 @@ export type SeedInputData = {
 export const mergeSeedItems = ({
   sample,
   data,
-  includeAccounts,
+  includeAccounts
 }: {
   sample: boolean;
   includeAccounts: boolean;
@@ -42,50 +42,50 @@ export const mergeSeedItems = ({
       data: data.assetAccounts,
       sampleData: data.assetAccountsSample,
       sample,
-      include: includeAccounts,
+      include: includeAccounts
     }),
     createLiabilityAccountTitles: singleMerge({
       data: data.liabilityAccounts,
       sampleData: data.liabilityAccountsSample,
       sample,
-      include: includeAccounts,
+      include: includeAccounts
     }),
     createIncomeAccountTitles: singleMerge({
       data: data.incomeAccounts,
       sampleData: data.incomeAccountsSample,
       sample,
-      include: includeAccounts,
+      include: includeAccounts
     }),
     createExpenseAccountTitles: singleMerge({
       data: data.expenseAccounts,
       sampleData: data.expenseAccountsSample,
       sample,
-      include: includeAccounts,
+      include: includeAccounts
     }),
     createBillTitles: singleMerge({
       data: data.bills,
       sampleData: data.billsSample,
       sample,
-      include: true,
+      include: true
     }),
     createBudgetTitles: singleMerge({
       data: data.budgets,
       sampleData: data.budgetsSample,
       sample,
-      include: true,
+      include: true
     }),
     createCategoryTitles: singleMerge({
       data: data.categories,
       sampleData: data.categoriesSample,
       sample,
-      include: true,
+      include: true
     }),
     createTagTitles: singleMerge({
       data: data.tags,
       sampleData: data.tagsSample,
       sample,
-      include: true,
-    }),
+      include: true
+    })
   };
 };
 
@@ -93,7 +93,7 @@ const singleMerge = ({
   data,
   sampleData,
   sample,
-  include,
+  include
 }: {
   data: string[] | readonly string[] | undefined;
   sampleData: string[] | readonly string[] | undefined;

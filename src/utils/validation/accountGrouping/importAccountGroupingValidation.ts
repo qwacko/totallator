@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { importAccountSingleValidation } from "../account/importAccountValidation";
 import { importBillSingleValidation } from "../bill/importBillValidation";
 import { importBudgetSingleValidation } from "../budget/importBudgetValidation";
@@ -13,7 +14,7 @@ export const accountGroupingImportValidation = z.object({
   categories: z.array(importCategorySingleValidation).optional(),
   bills: z.array(importBillSingleValidation).optional(),
   budgets: z.array(importBudgetSingleValidation).optional(),
-  tags: z.array(importTagSingleValidation).optional(),
+  tags: z.array(importTagSingleValidation).optional()
 });
 
 export type AccountGroupingImportValidationType = z.infer<

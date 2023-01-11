@@ -7,9 +7,9 @@ import { appRouter } from "../../../server/trpc/router/_app";
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: "16mb", // Set desired value here
-    },
-  },
+      sizeLimit: "16mb" // Set desired value here
+    }
+  }
 };
 
 // export API handler
@@ -21,5 +21,5 @@ export default createNextApiHandler({
       ? ({ path, error }) => {
           console.error(`❌ tRPC failed on ${path}: ${error}`);
         }
-      : undefined,
+      : undefined
 });

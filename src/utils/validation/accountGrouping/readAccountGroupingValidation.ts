@@ -1,14 +1,15 @@
 import { z } from "zod";
+
 import {
-  statusReturnValidation,
   createdUpdatedValidation,
-  userIsAdminValidation,
+  statusReturnValidation,
+  userIsAdminValidation
 } from "../returnValidationHelpers";
 
 export const accountGroupingSingleValidation = z
   .object({
     id: z.string().cuid(),
-    title: z.string(),
+    title: z.string()
   })
   .merge(statusReturnValidation)
   .merge(createdUpdatedValidation);
@@ -28,9 +29,9 @@ export const accountGroupingGetValidation = z.array(
             name: z.string().nullable(),
             username: z.string(),
             isUser: z.boolean(),
-            admin: z.boolean(),
+            admin: z.boolean()
           })
-        ),
+        )
       })
     )
     .strict()

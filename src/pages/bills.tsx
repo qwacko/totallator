@@ -1,6 +1,7 @@
 import { Center, Group, Stack, Title } from "@mantine/core";
-import { CreateBillPopup } from "src/components/bill/CreateBill";
+
 import { BillTable } from "src/components/bill/BillTable";
+import { CreateBillPopup } from "src/components/bill/CreateBill";
 import { AppLayout } from "src/components/layout/App";
 
 const BillsPage = () => {

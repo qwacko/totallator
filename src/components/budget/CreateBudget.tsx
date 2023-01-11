@@ -1,8 +1,9 @@
 import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
-import { IconPlus } from "@tabler/icons";
 import { useDisclosure } from "@mantine/hooks";
-import { useCreateBudget } from "src/utils/hooks/budgets/useCreateBudget";
+import { IconPlus } from "@tabler/icons";
+
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
+import { useCreateBudget } from "src/utils/hooks/budgets/useCreateBudget";
 
 export const CreateBudgetForm = ({ onClose }: { onClose?: () => void }) => {
   const { data: accountGroupings } = useAccountGroupings();
@@ -10,7 +11,7 @@ export const CreateBudgetForm = ({ onClose }: { onClose?: () => void }) => {
   const createBudget = useCreateBudget({
     onMutate: () => {
       onClose && onClose();
-    },
+    }
   });
 
   return (
@@ -28,7 +29,7 @@ export const CreateBudgetForm = ({ onClose }: { onClose?: () => void }) => {
             accountGroupings
               ? accountGroupings.map((ag) => ({
                   value: ag.id,
-                  label: ag.title,
+                  label: ag.title
                 }))
               : []
           }

@@ -1,10 +1,11 @@
 import { Center, Group, Pagination, Select, Stack, Table } from "@mantine/core";
-import { flexRender, type Table as TableType } from "@tanstack/react-table";
+import { type Table as TableType, flexRender } from "@tanstack/react-table";
+
 import type { AllReturnTypes } from "src/server/trpc/router/_app";
 import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 
 export const TableDisplay = <T extends AllReturnTypes | JournalsMergedType>({
-  table,
+  table
 }: {
   table: TableType<T>;
 }) => {
@@ -68,7 +69,7 @@ export const TableDisplay = <T extends AllReturnTypes | JournalsMergedType>({
             data={[
               { label: "1 Row", value: "1" },
               { label: "10 Rows", value: "10" },
-              { label: "20 Rows", value: "20" },
+              { label: "20 Rows", value: "20" }
             ]}
             onChange={(newValue) => table.setPageSize(Number(newValue))}
           />

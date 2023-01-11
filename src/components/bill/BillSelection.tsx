@@ -2,13 +2,14 @@ import {
   MultiSelect,
   type MultiSelectProps,
   Select,
-  type SelectProps,
+  type SelectProps
 } from "@mantine/core";
 import { useMemo } from "react";
+
 import { useBills } from "src/utils/hooks/bills/useBills";
 
 const useBillsDropdown = ({
-  accountGroupingId,
+  accountGroupingId
 }: {
   accountGroupingId?: string;
 }) => {
@@ -24,7 +25,7 @@ const useBillsDropdown = ({
             )
             .map((item) => ({
               label: item.title,
-              value: item.id,
+              value: item.id
             }))
         : [],
     [bills.data, accountGroupingId]

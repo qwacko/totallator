@@ -10,7 +10,7 @@ export const notifyTemplate = (id: string, title: string, action: string) => {
       message: "",
       color: "blue",
       autoClose: false,
-      disallowClose: true,
+      disallowClose: true
     });
   };
   const clearLoading = () => {
@@ -24,7 +24,7 @@ export const notifyTemplate = (id: string, title: string, action: string) => {
       message: "Successfull",
       autoClose: 2000,
       color: "green",
-      icon: <IconCheck />,
+      icon: <IconCheck />
     });
   };
 
@@ -34,7 +34,7 @@ export const notifyTemplate = (id: string, title: string, action: string) => {
       title: `${title} ${action} Error`,
       message: error.message,
       color: "red",
-      icon: <IconX />,
+      icon: <IconX />
     });
   };
 

@@ -1,11 +1,12 @@
-import { Group, Text, Container } from "@mantine/core";
-import { AccountGroupingPermissionButtons } from "./AccountGroupingPermissionButtons";
+import { Container, Group, Text } from "@mantine/core";
+
 import type { AccountGroupingReturnUser } from "./AccountGroupingCard";
+import { AccountGroupingPermissionButtons } from "./AccountGroupingPermissionButtons";
 
 export const DisplayAGUser = ({
   user,
   isAdmin,
-  accountGroupingId,
+  accountGroupingId
 }: {
   user: AccountGroupingReturnUser;
   isAdmin: boolean;

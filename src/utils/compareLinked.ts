@@ -26,7 +26,7 @@ export const extractLinked = <T extends linkedProperties>(input: T) => {
     "tagId",
     "reconciled",
     "dataChecked",
-    "complete",
+    "complete"
   ]);
 };
 

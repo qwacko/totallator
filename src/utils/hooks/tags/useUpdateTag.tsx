@@ -1,10 +1,12 @@
 import { useForm, zodResolver } from "@mantine/form";
+
 import type { TagsReturnType } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
   updateTagDataValidation,
-  type updateTagDataValidationType,
+  type updateTagDataValidationType
 } from "src/utils/validation/tag/updateTagValidation";
+
 import { notifyTemplate } from "../notifyTemplate";
 import { useFormHandler } from "../useFormHandler";
 
@@ -16,14 +18,14 @@ type keysType = keyof updateTagDataValidationType;
 export const useUpdateTag = ({
   id,
   keys,
-  data,
+  data
 }: {
   id: string;
   keys: keysType[];
   data: TagsReturnType;
 }) => {
   const form = useForm<updateTagDataValidationType>({
-    validate: zodResolver(updateTagDataValidation),
+    validate: zodResolver(updateTagDataValidation)
   });
 
   const utils = trpc.useContext();
@@ -50,7 +52,7 @@ export const useUpdateTag = ({
           })
         );
       }
-    },
+    }
   });
   const { resetForm, runMutate } = useFormHandler({
     data,
@@ -58,7 +60,7 @@ export const useUpdateTag = ({
     keys,
     id,
     mutate,
-    formDataToMutateData: (id, data) => ({ id, data }),
+    formDataToMutateData: (id, data) => ({ id, data })
   });
 
   return {
@@ -67,6 +69,6 @@ export const useUpdateTag = ({
     mutate,
     form,
     runMutate,
-    resetForm,
+    resetForm
   };
 };

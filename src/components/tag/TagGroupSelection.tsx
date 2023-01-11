@@ -1,5 +1,6 @@
 import { Autocomplete, type AutocompleteProps } from "@mantine/core";
 import { useMemo } from "react";
+
 import { useTags } from "src/utils/hooks/tags/useTags";
 
 export const TagGroupSelection = (
@@ -16,7 +17,7 @@ export const TagGroupSelection = (
                 .filter((tag) => tag.accountGroupingId === accountGroupingId)
                 .map((tag) => tag.group)
             : []
-        ),
+        )
       ].sort((a, b) =>
         a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())
       ),

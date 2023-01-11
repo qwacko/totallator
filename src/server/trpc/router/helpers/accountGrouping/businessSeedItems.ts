@@ -1,25 +1,24 @@
 import type {
   businessTransactionSeedingConfig,
-  businessTransactionSeedingSampleConfig,
+  businessTransactionSeedingSampleConfig
 } from "./businessSeedItemsTypes";
-import type { SeedInputData } from "./mergeSeedItems";
 
 export const businessSeedData = {
   assetAccounts: [
     "Business/Bank/Transactional",
-    "Business/Inventory/On Premise",
+    "Business/Inventory/On Premise"
   ],
   assetAccountsSample: [],
   liabilityAccounts: [
     "Business/Bank/Short Term Loan",
     "Business/Bank/Capex Loan",
-    "Business/Bank/Credit Card",
+    "Business/Bank/Credit Card"
   ],
   liabilityAccountsSample: [],
   incomeAccounts: [
     "Business Customer 1",
     "Business Customer 2",
-    "Business Customer 3",
+    "Business Customer 3"
   ],
   incomeAccountsSample: [],
   expenseAccounts: [
@@ -27,7 +26,7 @@ export const businessSeedData = {
     "Supplier B",
     "Transportation Company",
     "Logistics Company",
-    "Skrinkage",
+    "Skrinkage"
   ],
   expenseAccountsSample: [],
   bills: ["Lease", "Transportation"],
@@ -37,8 +36,8 @@ export const businessSeedData = {
   categories: ["Business Category/Number 1", "Business Category/Number 2"],
   categoriesSample: [],
   tags: [],
-  tagsSample: [],
-} as const satisfies SeedInputData;
+  tagsSample: []
+} as const;
 
 export const businessTransactionSeeding: businessTransactionSeedingConfig[] = [
   {
@@ -47,8 +46,8 @@ export const businessTransactionSeeding: businessTransactionSeedingConfig[] = [
     amountMax: 200,
     amountMin: 0,
     descriptions: ["Test Description 1", "Test Description 2"],
-    weighting: 10,
-  },
+    weighting: 10
+  }
 ];
 
 export const businessTransactionSampleSeeding: businessTransactionSeedingSampleConfig[] =
@@ -60,6 +59,6 @@ export const businessTransactionSampleSeeding: businessTransactionSeedingSampleC
       amountMax: 200,
       amountMin: 0,
       descriptions: ["Who Knows", "Random Transactions"],
-      weighting: 10,
-    },
+      weighting: 10
+    }
   ];

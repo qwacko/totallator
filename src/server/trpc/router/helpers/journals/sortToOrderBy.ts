@@ -1,4 +1,5 @@
 import type { Prisma } from "@prisma/client";
+
 import { type JournalSortValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 
 export const sortToOrderBy = (
@@ -11,7 +12,7 @@ export const sortToOrderBy = (
       { date: "desc" },
       { amount: "desc" },
       { createdAt: "desc" },
-      { id: "asc" },
+      { id: "asc" }
     ];
   }
 

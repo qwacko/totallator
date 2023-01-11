@@ -6,27 +6,31 @@ import {
   NumberInput,
   Stack,
   Text,
-  TextInput,
+  TextInput
 } from "@mantine/core";
+import { DatePicker } from "@mantine/dates";
+import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconMenu2 } from "@tabler/icons";
 import type { HeaderContext, Row } from "@tanstack/react-table";
 import { useState } from "react";
+
 import { useCloneTransactions } from "src/utils/hooks/journals/useCloneTransactions";
 import { useDeleteTransactions } from "src/utils/hooks/journals/useDeleteTransactions";
-import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
 import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
-import { SelectionColumnHeader } from "../table/selectionColumnHeader";
-import { useForm, zodResolver } from "@mantine/form";
-import type { UpdateJournalDataInputType } from "src/utils/validation/journalEntries/updateJournalValidation";
-import { updateJournalInputData } from "src/utils/validation/journalEntries/updateJournalValidation";
-import { DatePicker } from "@mantine/dates";
+import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
+import {
+  type UpdateJournalDataInputType,
+  updateJournalInputData
+} from "src/utils/validation/journalEntries/updateJournalValidation";
+
 import { AccountSelection } from "../account/AccountSelection";
-import { InputCurrency } from "../reusable/InputCurrency";
-import { CategorySelection } from "../category/CategorySelection";
-import { TagSelection } from "../tag/TagSelection";
 import { BillSelection } from "../bill/BillSelection";
 import { BudgetSelection } from "../budget/BudgetSelection";
+import { CategorySelection } from "../category/CategorySelection";
+import { InputCurrency } from "../reusable/InputCurrency";
+import { SelectionColumnHeader } from "../table/selectionColumnHeader";
+import { TagSelection } from "../tag/TagSelection";
 
 export const JournalTableBulkActions = <T,>(
   column: HeaderContext<JournalsMergedType, T>
@@ -91,7 +95,7 @@ export const JournalTableBulkActions = <T,>(
                 updateJournals({
                   data: { reconciled: true },
                   maxUpdated: journalIds.length,
-                  filters: [{ id: { in: journalIds } }],
+                  filters: [{ id: { in: journalIds } }]
                 })
               }
             >
@@ -102,7 +106,7 @@ export const JournalTableBulkActions = <T,>(
                 updateJournals({
                   data: { dataChecked: true },
                   maxUpdated: journalIds.length,
-                  filters: [{ id: { in: journalIds } }],
+                  filters: [{ id: { in: journalIds } }]
                 })
               }
             >
@@ -113,7 +117,7 @@ export const JournalTableBulkActions = <T,>(
                 updateJournals({
                   data: { complete: true },
                   maxUpdated: journalIds.length,
-                  filters: [{ id: { in: journalIds } }],
+                  filters: [{ id: { in: journalIds } }]
                 })
               }
             >
@@ -124,7 +128,7 @@ export const JournalTableBulkActions = <T,>(
                 updateJournals({
                   data: { complete: true, reconciled: true, dataChecked: true },
                   maxUpdated: journalIds.length,
-                  filters: [{ id: { in: journalIds } }],
+                  filters: [{ id: { in: journalIds } }]
                 })
               }
             >
@@ -135,7 +139,7 @@ export const JournalTableBulkActions = <T,>(
                 updateJournals({
                   data: { dataChecked: false, reconciled: false },
                   maxUpdated: journalIds.length,
-                  filters: [{ id: { in: journalIds } }],
+                  filters: [{ id: { in: journalIds } }]
                 })
               }
             >
@@ -147,7 +151,7 @@ export const JournalTableBulkActions = <T,>(
                   data: { complete: false },
                   maxUpdated: journalIds.length,
                   updateCompleteJournals: true,
-                  filters: [{ id: { in: journalIds } }],
+                  filters: [{ id: { in: journalIds } }]
                 })
               }
             >
@@ -184,7 +188,7 @@ export const JournalTableBulkActions = <T,>(
 const DeleteModal = ({
   opened,
   close,
-  rows,
+  rows
 }: {
   opened: boolean;
   close: () => void;
@@ -218,7 +222,7 @@ const DeleteModal = ({
 const CloneModal = ({
   opened,
   close,
-  rows,
+  rows
 }: {
   opened: boolean;
   close: () => void;
@@ -259,7 +263,7 @@ const CloneModal = ({
 const UpdateBulkModal = ({
   opened,
   close,
-  rows,
+  rows
 }: {
   opened: boolean;
   close: () => void;
@@ -268,7 +272,7 @@ const UpdateBulkModal = ({
   console.log("UpdateBulkModal");
   const ids = rows.map((item) => item.original.id);
   const accountGroupings = [
-    ...new Set(rows.map((item) => item.original.accountGroupingId)),
+    ...new Set(rows.map((item) => item.original.accountGroupingId))
   ];
   const multipleAccountGroupings = accountGroupings.length > 1;
   const accountGroupingId = accountGroupings[0];
@@ -276,7 +280,7 @@ const UpdateBulkModal = ({
   const { mutate } = useUpdateJournals({ onSuccess: close });
 
   const form = useForm<UpdateJournalDataInputType>({
-    validate: zodResolver(updateJournalInputData),
+    validate: zodResolver(updateJournalInputData)
   });
 
   console.log("Form Values", form.values);
@@ -297,7 +301,7 @@ const UpdateBulkModal = ({
           mutate({
             filters: [{ id: { in: ids } }],
             data: value,
-            maxUpdated: ids.length,
+            maxUpdated: ids.length
           })
         )}
       >

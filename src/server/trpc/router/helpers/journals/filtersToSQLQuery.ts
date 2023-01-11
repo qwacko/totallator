@@ -1,17 +1,18 @@
 import { Prisma, type PrismaClient } from "@prisma/client";
+
 import type { JournalFilterValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 
 export const filtersToSQLQuery = async ({
   prisma,
   filters,
-  userId,
+  userId
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   filters: JournalFilterValidation[] | undefined;
   userId: string;
 }) => {
   const accountGroupings = await prisma.accountGrouping.findMany({
-    where: { viewUsers: { some: { id: userId } } },
+    where: { viewUsers: { some: { id: userId } } }
   });
   const accountGroupingIds = accountGroupings.map((item) => item.id);
 
@@ -61,8 +62,8 @@ export const filtersToSQLQuery = async ({
           const accounts = await prisma.transactionAccount.findMany({
             where: {
               accountGroupingId: { in: accountGroupingIds },
-              ...filter.account,
-            },
+              ...filter.account
+            }
           });
           returnSQL = Prisma.sql`${returnSQL} AND "JournalEntryView"."accountId" IN (${Prisma.join(
             accounts.map((item) => item.id)

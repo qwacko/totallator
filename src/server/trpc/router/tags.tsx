@@ -1,15 +1,17 @@
-import { router, protectedProcedure } from "../trpc";
-import { getUserInfo } from "./helpers/getUserInfo";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+
+import { createTagValidation } from "src/utils/validation/tag/createTagValidation";
+import { tagGetValidation } from "src/utils/validation/tag/readTagValidation";
+import { updateTagValidation } from "src/utils/validation/tag/updateTagValidation";
+
+import { protectedProcedure, router } from "../trpc";
 import {
   accountGroupingFilter,
-  checkAccountGroupingAccess,
+  checkAccountGroupingAccess
 } from "./helpers/checkAccountGroupingAccess";
-import { TRPCError } from "@trpc/server";
-import { createTagValidation } from "src/utils/validation/tag/createTagValidation";
-import { updateTagValidation } from "src/utils/validation/tag/updateTagValidation";
-import { z } from "zod";
+import { getUserInfo } from "./helpers/getUserInfo";
 import { upsertTag } from "./helpers/tags/upsertTag";
-import { tagGetValidation } from "src/utils/validation/tag/readTagValidation";
 
 export const tagRouter = router({
   get: protectedProcedure.output(tagGetValidation).query(async ({ ctx }) => {
@@ -17,12 +19,12 @@ export const tagRouter = router({
 
     const tags = await ctx.prisma.tag.findMany({
       where: {
-        accountGrouping: { viewUsers: { some: { id: user.id } } },
+        accountGrouping: { viewUsers: { some: { id: user.id } } }
       },
       include: {
         accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-        _count: { select: { journalEntries: true } },
-      },
+        _count: { select: { journalEntries: true } }
+      }
     });
 
     return tags.map((tag) => {
@@ -43,7 +45,7 @@ export const tagRouter = router({
         accountGroupingId: input.accountGroupingId,
         prisma: ctx.prisma,
         user,
-        adminRequired: true,
+        adminRequired: true
       });
 
       await upsertTag({
@@ -52,7 +54,7 @@ export const tagRouter = router({
         userAdmin: user.admin,
         action: "Create",
         data: input,
-        accountGroupingId: input.accountGroupingId,
+        accountGroupingId: input.accountGroupingId
       });
 
       return true;
@@ -68,7 +70,7 @@ export const tagRouter = router({
         userAdmin: user.admin,
         data: input.data,
         id: input.id,
-        action: "Update",
+        action: "Update"
       });
 
       return true;
@@ -81,14 +83,14 @@ export const tagRouter = router({
       const targetTag = await ctx.prisma.tag.findFirst({
         where: {
           id: input.id,
-          ...accountGroupingFilter(user.id),
-        },
+          ...accountGroupingFilter(user.id)
+        }
       });
 
       if (!targetTag) {
         throw new TRPCError({
           message: "Cannot find tag or user doesn't have admin accces",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       await upsertTag({
@@ -97,7 +99,7 @@ export const tagRouter = router({
         prisma: ctx.prisma,
         data: { ...targetTag, single: `${targetTag.single} (Clone)` },
         action: "Create",
-        accountGroupingId: targetTag.accountGroupingId,
+        accountGroupingId: targetTag.accountGroupingId
       });
 
       return true;
@@ -110,27 +112,27 @@ export const tagRouter = router({
       const targetTag = await ctx.prisma.tag.findFirst({
         where: {
           id: input.id,
-          ...accountGroupingFilter(user.id),
+          ...accountGroupingFilter(user.id)
         },
-        include: { _count: { select: { journalEntries: true } } },
+        include: { _count: { select: { journalEntries: true } } }
       });
 
       if (!targetTag) {
         throw new TRPCError({
           message: "Cannot find tag or user doesn't have admin accces",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       if (targetTag._count.journalEntries > 0) {
         throw new TRPCError({
           message: "Cannot remove tag that has journal entries associated",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
       await ctx.prisma.tag.delete({
-        where: { id: targetTag.id },
+        where: { id: targetTag.id }
       });
 
       return true;
-    }),
+    })
 });

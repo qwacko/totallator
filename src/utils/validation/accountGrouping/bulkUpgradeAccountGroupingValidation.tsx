@@ -1,13 +1,15 @@
+import { z } from "zod";
+
 import { createAccountValidation } from "src/utils/validation/account/createAccountValidation";
 import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
 import { createBudgetValidation } from "src/utils/validation/budget/createBudgetValidation";
 import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
 import {
   createSimpleTransactionValidation,
-  createTransactionValidation,
+  createTransactionValidation
 } from "src/utils/validation/journalEntries/createJournalValidation";
 import { createTagValidation } from "src/utils/validation/tag/createTagValidation";
-import { z } from "zod";
+
 import { upsertJournalsValidation } from "../journalEntries/upsertJournalValidation";
 
 export const bulkUpdateAccountGroupingValidation = z.object({
@@ -64,7 +66,7 @@ export const bulkUpdateAccountGroupingValidation = z.object({
   createSimpleTransactions: z
     .array(createSimpleTransactionValidation.strip())
     .optional(),
-  upsertJournalEntries: upsertJournalsValidation.optional(),
+  upsertJournalEntries: upsertJournalsValidation.optional()
 });
 
 export type BulkUpgradeAccountGroupingValidationType = z.infer<

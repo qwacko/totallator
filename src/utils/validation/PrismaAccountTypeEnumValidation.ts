@@ -4,5 +4,5 @@ export const PrismaAccountTypeEnumValidation = z.enum([
   "Income",
   "Expense",
   "Asset",
-  "Liability",
+  "Liability"
 ]);

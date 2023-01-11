@@ -1,10 +1,10 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import bcrypt from "bcrypt";
+import NextAuth, { type NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 import { prisma } from "../../../server/db/client";
-import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt";
 
 export const authOptions: NextAuthOptions = {
   pages: { signIn: "/user/signin" },
@@ -15,12 +15,12 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.sub;
       }
       return session;
-    },
+    }
   },
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   session: {
-    strategy: "jwt",
+    strategy: "jwt"
   },
   jwt: {},
   providers: [
@@ -35,9 +35,9 @@ export const authOptions: NextAuthOptions = {
         username: {
           label: "Username",
           type: "text",
-          placeholder: "Username",
+          placeholder: "Username"
         },
-        password: { label: "Password", type: "password" },
+        password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
         //Must have credentials.
@@ -46,7 +46,7 @@ export const authOptions: NextAuthOptions = {
         const username = credentials.username.toLowerCase();
 
         const user = await prisma.user.findUnique({
-          where: { username: username.toLowerCase() },
+          where: { username: username.toLowerCase() }
         });
 
         if (!user || !user.passwordHash) {
@@ -67,14 +67,13 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           admin: user.admin,
-          image: null,
+          image: null
         };
 
         return userOut;
-      },
-    }),
-  ],
+      }
+    })
+  ]
 };
 
 export default NextAuth(authOptions);
-

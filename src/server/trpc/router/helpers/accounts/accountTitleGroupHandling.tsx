@@ -2,7 +2,7 @@ export const createAccountGroupTitle = ({
   title,
   accountGroup,
   accountGroup2,
-  accountGroup3,
+  accountGroup3
 }: {
   title: string;
   accountGroup: string | null | undefined;
@@ -19,7 +19,7 @@ export const createAccountGroupTitle = ({
       .join("/"),
     accountTitleCombined: [accountGroup, accountGroup2, accountGroup3, title]
       .filter((item) => item)
-      .join("/"),
+      .join("/")
   };
 };
 
@@ -36,7 +36,7 @@ export const updateAccountGroupTitle = <
   accountGroup3,
   accountGroupCombined,
   title,
-  existing,
+  existing
 }: {
   title: string | undefined;
   accountGroup: string | undefined | null;
@@ -81,6 +81,6 @@ export const updateAccountGroupTitle = <
     accountGroup2: useGroup2,
     accountGroup3: useGroup3,
     accountGroupCombined: useAccountGroupCombined,
-    accountTitleCombined,
+    accountTitleCombined
   };
 };

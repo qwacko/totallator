@@ -1,8 +1,9 @@
 import { z } from "zod";
+
 import {
-  createdUpdatedValidation,
   accountGroupingIdValidation,
-  userIsAdminValidation,
+  createdUpdatedValidation,
+  userIsAdminValidation
 } from "../returnValidationHelpers";
 
 export const journalEntrySingleValidation = z
@@ -20,7 +21,7 @@ export const journalEntrySingleValidation = z
     budgetId: z.string().cuid().optional().nullable(),
     categoryId: z.string().cuid().optional().nullable(),
     tagId: z.string().cuid().optional().nullable(),
-    transactionId: z.string().cuid(),
+    transactionId: z.string().cuid()
   })
   .merge(createdUpdatedValidation)
   .merge(accountGroupingIdValidation);
@@ -41,14 +42,14 @@ export const journalEntryGetValidation = z
               z.object({
                 amount: z.number(),
                 accountId: z.string().cuid(),
-                id: z.string().cuid(),
+                id: z.string().cuid()
               })
-            ),
+            )
           })
         )
         .strict()
     ),
-    count: z.number(),
+    count: z.number()
   })
   .strict();
 

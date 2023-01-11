@@ -1,11 +1,13 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { displayCategoryCell } from "./CategoryTableCell";
-import { statusFilter } from "../table/filters/statusFilter";
-import { dateFilter } from "../table/filters/dateFilter";
+
 import type { CategoriesReturnType } from "src/server/trpc/router/_app";
+
+import { dateFilter } from "../table/filters/dateFilter";
+import { statusFilter } from "../table/filters/statusFilter";
 import { displayHeader } from "../table/headers/displayHeader";
 import { selectionCell } from "../table/selectionCell";
 import { CategoryTableBulkActions } from "./CategoryTableBulkActions";
+import { displayCategoryCell } from "./CategoryTableCell";
 
 const columnHelper = createColumnHelper<CategoriesReturnType>();
 
@@ -14,48 +16,48 @@ export const categoryColumns = [
     id: "selection",
     header: CategoryTableBulkActions,
     cell: selectionCell,
-    enableColumnFilter: false,
+    enableColumnFilter: false
   }),
   columnHelper.display({
     id: "commands",
     header: displayHeader({ title: "Commands" }),
     cell: displayCategoryCell,
-    enableColumnFilter: false,
+    enableColumnFilter: false
   }),
   columnHelper.accessor("title", {
     header: displayHeader({ title: "Title", filterType: "string" }),
     cell: displayCategoryCell,
     enableColumnFilter: true,
-    filterFn: "includesString",
+    filterFn: "includesString"
   }),
   columnHelper.accessor("group", {
     header: displayHeader({ title: "Group", filterType: "string" }),
     cell: displayCategoryCell,
     enableColumnFilter: true,
-    filterFn: "includesString",
+    filterFn: "includesString"
   }),
   columnHelper.accessor("single", {
     header: displayHeader({ title: "Single", filterType: "string" }),
     cell: displayCategoryCell,
     enableColumnFilter: true,
-    filterFn: "includesString",
+    filterFn: "includesString"
   }),
   columnHelper.accessor("status", {
     header: displayHeader({ title: "Status", filterType: "status" }),
     cell: displayCategoryCell,
     enableColumnFilter: true,
-    filterFn: statusFilter("status"),
+    filterFn: statusFilter("status")
   }),
   columnHelper.accessor("createdAt", {
     header: displayHeader({ title: "Created At", filterType: "date" }),
     enableColumnFilter: true,
     filterFn: dateFilter("createdAt"),
-    cell: displayCategoryCell,
+    cell: displayCategoryCell
   }),
   columnHelper.accessor("updatedAt", {
     header: displayHeader({ title: "Updated At", filterType: "date" }),
     enableColumnFilter: true,
     filterFn: dateFilter("updatedAt"),
-    cell: displayCategoryCell,
-  }),
+    cell: displayCategoryCell
+  })
 ];

@@ -2,11 +2,13 @@ import { Center, Select, Text, TextInput } from "@mantine/core";
 import type { PrismaStatusEnum } from "@prisma/client";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
+
 import type { TagsReturnType } from "src/server/trpc/router/_app";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useUpdateTag } from "src/utils/hooks/tags/useUpdateTag";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateTagDataValidationType } from "src/utils/validation/tag/updateTagValidation";
+
 import { DateCell } from "../table/cells/DateCell";
 import { TextCell } from "../table/cells/TextCell";
 import { TagCommandButtons } from "./TagCommandButtons";
@@ -40,7 +42,7 @@ export const displayTagCell = (props: CellContext<TagsReturnType, unknown>) => {
 export const TagTableCell = ({
   id,
   column,
-  data,
+  data
 }: {
   id: string;
   column: TagRowColumns;
@@ -54,7 +56,7 @@ export const TagTableCell = ({
   const { form, runMutate, mutate } = useUpdateTag({
     id,
     keys: [columnUse],
-    data,
+    data
   });
   const { data: accountGroupings } = useAccountGroupings();
   const { dateFormat } = useLoggedInUser();
@@ -112,7 +114,7 @@ export const TagTableCell = ({
 
 export const TagTableCellView = ({
   column,
-  data,
+  data
 }: {
   column: TagRowColumns;
   data: TagsReturnType;

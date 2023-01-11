@@ -6,10 +6,11 @@ import {
   SegmentedControl,
   Select,
   Stack,
-  TextInput,
+  TextInput
 } from "@mantine/core";
-import { IconPlus } from "@tabler/icons";
 import { useDisclosure } from "@mantine/hooks";
+import { IconPlus } from "@tabler/icons";
+
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useCreateAccount } from "src/utils/hooks/accounts/useCreateAccount";
 
@@ -19,7 +20,7 @@ export const CreateAccountForm = ({ onClose }: { onClose?: () => void }) => {
   const createAccount = useCreateAccount({
     onMutate: () => {
       onClose && onClose();
-    },
+    }
   });
 
   return (
@@ -37,7 +38,7 @@ export const CreateAccountForm = ({ onClose }: { onClose?: () => void }) => {
             accountGroupings
               ? accountGroupings.map((ag) => ({
                   value: ag.id,
-                  label: ag.title,
+                  label: ag.title
                 }))
               : []
           }

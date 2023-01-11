@@ -1,9 +1,10 @@
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import { currencyFormatter } from "src/utils/validation/user/currencyFormats";
+
 import { TextCell } from "./TextCell";
 
 export const CurrencyCell = ({
-  amount,
+  amount
 }: {
   amount: string | number | null | undefined;
 }) => {

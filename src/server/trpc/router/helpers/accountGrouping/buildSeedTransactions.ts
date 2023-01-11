@@ -1,9 +1,11 @@
+import { faker } from "@faker-js/faker";
 import { TRPCError } from "@trpc/server";
+import { addDays, differenceInDays, subYears } from "date-fns";
+
 import type { SeedAccountGroupingValidationType } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
 import type { createSimpleTransactionValidationType } from "src/utils/validation/journalEntries/createJournalValidation";
-import { mergeSeedItems, type SeedInputData } from "./mergeSeedItems";
-import { faker } from "@faker-js/faker";
-import { addDays, differenceInDays, subYears } from "date-fns";
+
+import { type SeedInputData, mergeSeedItems } from "./mergeSeedItems";
 
 export type DefaultTransactionSeedingConfig<
   Accounts extends string,
@@ -40,7 +42,7 @@ type DefaultTransactionSeedingConfigString = DefaultTransactionSeedingConfig<
 export const buildSeedTransactions = ({
   inputConfig,
   transConfig,
-  queryConfig,
+  queryConfig
 }: {
   inputConfig: SeedInputData;
   transConfig: DefaultTransactionSeedingConfigString[];
@@ -88,7 +90,7 @@ export const buildSeedTransactions = ({
         amount: faker.datatype.number({
           min: "amountMin" in config ? config.amountMin : 0,
           max: "amountMax" in config ? config.amountMax : 1000,
-          precision: 0.01,
+          precision: 0.01
         }),
         date: transDate,
         fromAccountId: faker.helpers.arrayElement(config.fromAccounts),
@@ -107,7 +109,7 @@ export const buildSeedTransactions = ({
           : undefined,
         reconciled: daysSinceTrans > (config.daysSinceReconciled || 0),
         dataChecked: daysSinceTrans > (config.daysSinceChecked || 0),
-        complete: daysSinceTrans > (config.daysSinceComplete || 0),
+        complete: daysSinceTrans > (config.daysSinceComplete || 0)
       });
     }
   });
@@ -118,7 +120,7 @@ export const buildSeedTransactions = ({
 const checkSeedTransactionConfig = ({
   inputConfig,
   transConfig,
-  queryConfig,
+  queryConfig
 }: {
   inputConfig: SeedInputData;
   transConfig: DefaultTransactionSeedingConfigString[];
@@ -129,14 +131,14 @@ const checkSeedTransactionConfig = ({
   const combinedSeedData = mergeSeedItems({
     sample: queryConfig.seedAsSample,
     data: inputConfig,
-    includeAccounts: queryConfig.includeAccounts,
+    includeAccounts: queryConfig.includeAccounts
   });
 
   const checkAccounts = [
     ...(combinedSeedData.createAssetAccountTitles || []),
     ...(combinedSeedData.createLiabilityAccountTitles || []),
     ...(combinedSeedData.createIncomeAccountTitles || []),
-    ...(combinedSeedData.createExpenseAccountTitles || []),
+    ...(combinedSeedData.createExpenseAccountTitles || [])
   ];
   const checkBills = combinedSeedData.createBillTitles || [];
   const checkBudgets = combinedSeedData.createBudgetTitles || [];
@@ -147,7 +149,7 @@ const checkSeedTransactionConfig = ({
     const checkSingle = ({
       data,
       options,
-      title,
+      title
     }: {
       data: (string | undefined)[] | undefined;
       options: string[];
@@ -165,32 +167,32 @@ const checkSeedTransactionConfig = ({
     checkSingle({
       data: trans.fromAccounts,
       options: checkAccounts,
-      title: "From Account",
+      title: "From Account"
     });
     checkSingle({
       data: trans.toAccounts,
       options: checkAccounts,
-      title: "To Account",
+      title: "To Account"
     });
     checkSingle({
       data: trans.bills,
       options: checkBills,
-      title: "Bill",
+      title: "Bill"
     });
     checkSingle({
       data: trans.budgets,
       options: checkBudgets,
-      title: "Budget",
+      title: "Budget"
     });
     checkSingle({
       data: trans.categories,
       options: checkCategories,
-      title: "Category",
+      title: "Category"
     });
     checkSingle({
       data: trans.tags,
       options: checkTags,
-      title: "Tag",
+      title: "Tag"
     });
   });
 
@@ -198,7 +200,7 @@ const checkSeedTransactionConfig = ({
     console.log("Seeding Errors Found", errors);
     throw new TRPCError({
       message: "Errors with seeding config",
-      code: "INTERNAL_SERVER_ERROR",
+      code: "INTERNAL_SERVER_ERROR"
     });
   }
 };

@@ -6,16 +6,17 @@ import {
   Switch,
   Text,
   TextInput,
-  Title,
+  Title
 } from "@mantine/core";
+
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import {
-  currencyFormatsSelectOptions,
   type currencyFormatTypes,
+  currencyFormatsSelectOptions
 } from "src/utils/validation/user/currencyFormats";
 import {
-  dateFormatOptions,
   type DBDateFormatTypes,
+  dateFormatOptions
 } from "src/utils/validation/user/dateFormats";
 
 export const UserSettingsForm = () => {
@@ -56,7 +57,7 @@ export const UserSettingsForm = () => {
           { value: "9", label: "September" },
           { value: "10", label: "October" },
           { value: "11", label: "November" },
-          { value: "12", label: "December" },
+          { value: "12", label: "December" }
         ]}
         onChange={(e) =>
           e ? updateUser({ firstMonthFY: Number(e) }) : undefined

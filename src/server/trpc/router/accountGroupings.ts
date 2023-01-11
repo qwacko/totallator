@@ -1,21 +1,23 @@
-import { router, protectedProcedure } from "../trpc";
-import { z } from "zod";
-import { basicStatusToDB } from "src/utils/validation/basicStatusToDB";
-import { getUserInfo } from "./helpers/getUserInfo";
-import { PrismaStatusEnumValidation } from "src/utils/validation/PrismaStatusEnumValidation";
 import { TRPCError } from "@trpc/server";
-import { checkAccountGroupingAccess } from "./helpers/checkAccountGroupingAccess";
-import { createAccountGroupingValidation } from "src/utils/validation/accountGrouping/createAccountGroupingValidation";
-import {
-  createPersonalItems,
-  createBusinessItems,
-} from "./helpers/accountGrouping/seedAccountGroupingItems";
-import { accountGroupingGetValidation } from "src/utils/validation/accountGrouping/readAccountGroupingValidation";
-import { accountGroupingExportValidation } from "src/utils/validation/accountGrouping/exportAccountGroupingValidation";
-import { checkCanSeed } from "./helpers/accountGrouping/checkCanSeed";
-import { seedAccountGroupingValidation } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
+import { z } from "zod";
+
+import { PrismaStatusEnumValidation } from "src/utils/validation/PrismaStatusEnumValidation";
 import { bulkUpdateAccountGroupingValidation } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+import { createAccountGroupingValidation } from "src/utils/validation/accountGrouping/createAccountGroupingValidation";
+import { accountGroupingExportValidation } from "src/utils/validation/accountGrouping/exportAccountGroupingValidation";
+import { accountGroupingGetValidation } from "src/utils/validation/accountGrouping/readAccountGroupingValidation";
+import { seedAccountGroupingValidation } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
+import { basicStatusToDB } from "src/utils/validation/basicStatusToDB";
+
+import { protectedProcedure, router } from "../trpc";
+import { checkCanSeed } from "./helpers/accountGrouping/checkCanSeed";
+import {
+  createBusinessItems,
+  createPersonalItems
+} from "./helpers/accountGrouping/seedAccountGroupingItems";
 import { bulkUpdateAccountGrouping } from "./helpers/bulkUpdateAccountGrouping";
+import { checkAccountGroupingAccess } from "./helpers/checkAccountGroupingAccess";
+import { getUserInfo } from "./helpers/getUserInfo";
 
 export const accountGroupingRouter = router({
   get: protectedProcedure
@@ -25,7 +27,7 @@ export const accountGroupingRouter = router({
 
       const data = await ctx.prisma.accountGrouping.findMany({
         //   where: user.admin ? { viewUsers: { some: { id: user.id } } } : {},
-        include: { viewUsers: true, adminUsers: true },
+        include: { viewUsers: true, adminUsers: true }
       });
 
       return data.map((item) => {
@@ -39,15 +41,15 @@ export const accountGroupingRouter = router({
             name: item.name,
             username: item.username,
             isUser: item.id === user.id,
-            admin: true,
+            admin: true
           })),
           ...filteredViewUsers.map((item) => ({
             id: item.id,
             name: item.name,
             username: item.username,
             isUser: item.id === user.id,
-            admin: false,
-          })),
+            admin: false
+          }))
         ];
 
         const pickedItems = {
@@ -59,7 +61,7 @@ export const accountGroupingRouter = router({
           updatedAt: item.updatedAt,
           deleted: item.deleted,
           disabled: item.disabled,
-          title: item.title,
+          title: item.title
         };
         const userIsAdmin = item.adminUsers
           .map((item) => item.id)
@@ -75,8 +77,8 @@ export const accountGroupingRouter = router({
           title: input.title,
           ...basicStatusToDB("Active"),
           adminUsers: { connect: { id: ctx.session.user.id } },
-          viewUsers: { connect: { id: ctx.session.user.id } },
-        },
+          viewUsers: { connect: { id: ctx.session.user.id } }
+        }
       });
       return true;
     }),
@@ -86,8 +88,8 @@ export const accountGroupingRouter = router({
         id: z.string().cuid(),
         data: z.object({
           title: z.string().optional(),
-          status: PrismaStatusEnumValidation.optional(),
-        }),
+          status: PrismaStatusEnumValidation.optional()
+        })
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -96,18 +98,18 @@ export const accountGroupingRouter = router({
       const result = await ctx.prisma.accountGrouping.updateMany({
         where: {
           id: input.id,
-          ...(user.admin ? {} : { adminUsers: { some: { id: user.id } } }),
+          ...(user.admin ? {} : { adminUsers: { some: { id: user.id } } })
         },
         data: {
           title: input.data.title,
-          ...basicStatusToDB(input.data.status),
-        },
+          ...basicStatusToDB(input.data.status)
+        }
       });
 
       if (result.count === 0) {
         throw new TRPCError({
           message: "No Account Grouping Updated",
-          code: "BAD_REQUEST",
+          code: "BAD_REQUEST"
         });
       }
 
@@ -119,11 +121,11 @@ export const accountGroupingRouter = router({
         .object({
           userId: z.string().cuid().optional(),
           username: z.string().optional(),
-          accountGroupingId: z.string().cuid(),
+          accountGroupingId: z.string().cuid()
         })
         .refine((data) => data.userId || data.username, {
           message: "Must have either a userId or username",
-          path: ["userId"],
+          path: ["userId"]
         })
     )
     .mutation(async ({ ctx, input }) => {
@@ -132,11 +134,11 @@ export const accountGroupingRouter = router({
       await checkAccountGroupingAccess({
         prisma: ctx.prisma,
         accountGroupingId: input.accountGroupingId,
-        user,
+        user
       });
 
       const targetUser = await ctx.prisma.user.findFirst({
-        where: { id: input.userId, username: input.username },
+        where: { id: input.userId, username: input.username }
       });
 
       if (!targetUser) {
@@ -147,9 +149,9 @@ export const accountGroupingRouter = router({
         where: { id: input.accountGroupingId },
         data: {
           viewUsers: {
-            connect: { id: targetUser.id },
-          },
-        },
+            connect: { id: targetUser.id }
+          }
+        }
       });
 
       return true;
@@ -158,7 +160,7 @@ export const accountGroupingRouter = router({
     .input(
       z.object({
         userId: z.string().cuid(),
-        accountGroupingId: z.string().cuid(),
+        accountGroupingId: z.string().cuid()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -166,22 +168,22 @@ export const accountGroupingRouter = router({
       if (input.userId === user.id) {
         throw new TRPCError({
           message: "User Cannot Edit Their Own Permissions",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
 
       await checkAccountGroupingAccess({
         prisma: ctx.prisma,
         accountGroupingId: input.accountGroupingId,
-        user,
+        user
       });
 
       await ctx.prisma.accountGrouping.update({
         where: { id: input.accountGroupingId },
         data: {
           viewUsers: { disconnect: { id: input.userId } },
-          adminUsers: { disconnect: { id: input.userId } },
-        },
+          adminUsers: { disconnect: { id: input.userId } }
+        }
       });
 
       return true;
@@ -190,7 +192,7 @@ export const accountGroupingRouter = router({
     .input(
       z.object({
         userId: z.string().cuid(),
-        accountGroupingId: z.string().cuid(),
+        accountGroupingId: z.string().cuid()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -198,22 +200,22 @@ export const accountGroupingRouter = router({
       if (input.userId === user.id) {
         throw new TRPCError({
           message: "User Cannot Edit Their Own Permissions",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
 
       await checkAccountGroupingAccess({
         prisma: ctx.prisma,
         accountGroupingId: input.accountGroupingId,
-        user,
+        user
       });
 
       await ctx.prisma.accountGrouping.update({
         where: { id: input.accountGroupingId },
         data: {
           viewUsers: { connect: { id: input.userId } },
-          adminUsers: { connect: { id: input.userId } },
-        },
+          adminUsers: { connect: { id: input.userId } }
+        }
       });
 
       return true;
@@ -225,32 +227,30 @@ export const accountGroupingRouter = router({
       await checkAccountGroupingAccess({
         prisma: ctx.prisma,
         accountGroupingId: input.accountGroupingId,
-        user,
+        user
       });
 
       //Delete All The Linked Items. All done in parallel
-      await ctx.prisma.$transaction(async (prisma) => {
-        await Promise.all([
-          prisma.journalEntry.deleteMany({
-            where: { accountGroupingId: input.accountGroupingId },
-          }),
-          prisma.transactionAccount.deleteMany({
-            where: { accountGroupingId: input.accountGroupingId },
-          }),
-          prisma.category.deleteMany({
-            where: { accountGroupingId: input.accountGroupingId },
-          }),
-          prisma.bill.deleteMany({
-            where: { accountGroupingId: input.accountGroupingId },
-          }),
-          prisma.budget.deleteMany({
-            where: { accountGroupingId: input.accountGroupingId },
-          }),
-          prisma.tag.deleteMany({
-            where: { accountGroupingId: input.accountGroupingId },
-          }),
-        ]);
-      });
+      await ctx.prisma.$transaction([
+        ctx.prisma.journalEntry.deleteMany({
+          where: { accountGroupingId: input.accountGroupingId }
+        }),
+        ctx.prisma.transactionAccount.deleteMany({
+          where: { accountGroupingId: input.accountGroupingId }
+        }),
+        ctx.prisma.category.deleteMany({
+          where: { accountGroupingId: input.accountGroupingId }
+        }),
+        ctx.prisma.bill.deleteMany({
+          where: { accountGroupingId: input.accountGroupingId }
+        }),
+        ctx.prisma.budget.deleteMany({
+          where: { accountGroupingId: input.accountGroupingId }
+        }),
+        ctx.prisma.tag.deleteMany({
+          where: { accountGroupingId: input.accountGroupingId }
+        })
+      ]);
 
       return true;
     }),
@@ -261,22 +261,22 @@ export const accountGroupingRouter = router({
       await checkAccountGroupingAccess({
         prisma: ctx.prisma,
         accountGroupingId: input.accountGroupingId,
-        user,
+        user
       });
       const accountGrouping = await checkCanSeed({
         prisma: ctx.prisma,
-        accountGroupingId: input.accountGroupingId,
+        accountGroupingId: input.accountGroupingId
       });
 
       if (!accountGrouping) {
         throw new TRPCError({
           message: "Cannot Delete Account Grouping With Linked Items",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
 
       await ctx.prisma.accountGrouping.delete({
-        where: { id: input.accountGroupingId },
+        where: { id: input.accountGroupingId }
       });
 
       return true;
@@ -285,7 +285,7 @@ export const accountGroupingRouter = router({
     .input(
       z.object({
         userId: z.string().cuid(),
-        accountGroupingId: z.string().cuid(),
+        accountGroupingId: z.string().cuid()
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -293,22 +293,22 @@ export const accountGroupingRouter = router({
       if (input.userId === user.id) {
         throw new TRPCError({
           message: "User Cannot Edit Their Own Permissions",
-          code: "FORBIDDEN",
+          code: "FORBIDDEN"
         });
       }
 
       await checkAccountGroupingAccess({
         prisma: ctx.prisma,
         accountGroupingId: input.accountGroupingId,
-        user,
+        user
       });
 
       await ctx.prisma.accountGrouping.update({
         where: { id: input.accountGroupingId },
         data: {
           viewUsers: { disconnect: { id: input.userId } },
-          adminUsers: { connect: { id: input.userId } },
-        },
+          adminUsers: { connect: { id: input.userId } }
+        }
       });
 
       return true;
@@ -321,12 +321,12 @@ export const accountGroupingRouter = router({
         prisma: ctx.prisma,
         accountGroupingId: input.accountGroupingId,
         user,
-        adminRequired: false,
+        adminRequired: false
       });
 
       const seedingPossible = await checkCanSeed({
         prisma: ctx.prisma,
-        accountGroupingId: input.accountGroupingId,
+        accountGroupingId: input.accountGroupingId
       });
 
       return seedingPossible ? true : false;
@@ -339,19 +339,19 @@ export const accountGroupingRouter = router({
         prisma: ctx.prisma,
         accountGroupingId: input.accountGroupingId,
         user,
-        adminRequired: true,
+        adminRequired: true
       });
 
       const accountGrouping = await checkCanSeed({
         prisma: ctx.prisma,
-        accountGroupingId: input.accountGroupingId,
+        accountGroupingId: input.accountGroupingId
       });
 
       if (!accountGrouping) {
         throw new TRPCError({
           message:
             "Cannot find account grouping, or account grouping has existing accounts / journal entries / categories / bills / budgets / tags",
-          code: "BAD_REQUEST",
+          code: "BAD_REQUEST"
         });
       }
       await ctx.prisma.$transaction(
@@ -360,13 +360,13 @@ export const accountGroupingRouter = router({
             user,
             prisma,
             accountGroupingId: accountGrouping.id,
-            input,
+            input
           });
           await createBusinessItems({
             user,
             prisma,
             accountGroupingId: accountGrouping.id,
-            input,
+            input
           });
         },
         { timeout: 120000 }
@@ -380,7 +380,7 @@ export const accountGroupingRouter = router({
         accountGroupingId: input.accountGroupingId,
         prisma: ctx.prisma,
         user,
-        adminRequired: true,
+        adminRequired: true
       });
 
       await ctx.prisma.$transaction(
@@ -400,7 +400,7 @@ export const accountGroupingRouter = router({
         accountGroupingId: input.accountGroupingId,
         prisma: ctx.prisma,
         user,
-        adminRequired: false,
+        adminRequired: false
       });
 
       const data = await ctx.prisma.accountGrouping.findFirstOrThrow({
@@ -411,12 +411,12 @@ export const accountGroupingRouter = router({
           budgets: true,
           categories: true,
           accounts: true,
-          journalEntries: true,
-        },
+          journalEntries: true
+        }
       });
       const accountGrouping = await ctx.prisma.accountGrouping.findFirstOrThrow(
         {
-          where: { id: input.accountGroupingId },
+          where: { id: input.accountGroupingId }
         }
       );
 
@@ -429,8 +429,8 @@ export const accountGroupingRouter = router({
         tags: data.tags,
         journalEntries: data.journalEntries.map((item) => ({
           ...item,
-          amount: item.amount.toNumber(),
-        })),
+          amount: item.amount.toNumber()
+        }))
       };
-    }),
+    })
 });

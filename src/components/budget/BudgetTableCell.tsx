@@ -2,11 +2,13 @@ import { Center, Select, Text, TextInput } from "@mantine/core";
 import type { PrismaStatusEnum } from "@prisma/client";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
+
 import type { BudgetsReturnType } from "src/server/trpc/router/_app";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useUpdateBudget } from "src/utils/hooks/budgets/useUpdateBudget";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { updateBudgetDataValidationType } from "src/utils/validation/budget/updateBudgetValidation";
+
 import { DateCell } from "../table/cells/DateCell";
 import { TextCell } from "../table/cells/TextCell";
 import { BudgetCommandButtons } from "./BudgetCommandButtons";
@@ -42,7 +44,7 @@ export const displayBudgetCell = (
 export const BudgetTableCell = ({
   id,
   column,
-  data,
+  data
 }: {
   id: string;
   column: BudgetRowColumns;
@@ -56,7 +58,7 @@ export const BudgetTableCell = ({
   const { form, runMutate, mutate } = useUpdateBudget({
     id,
     keys: [columnUse],
-    data,
+    data
   });
   const { data: accountGroupings } = useAccountGroupings();
   const { dateFormat } = useLoggedInUser();
@@ -114,7 +116,7 @@ export const BudgetTableCell = ({
 
 export const BudgetTableCellView = ({
   column,
-  data,
+  data
 }: {
   column: BudgetRowColumns;
   data: BudgetsReturnType;

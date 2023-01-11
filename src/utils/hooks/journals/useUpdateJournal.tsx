@@ -1,9 +1,11 @@
 import { useForm, zodResolver } from "@mantine/form";
+
 import { trpc } from "src/utils/trpc";
 import {
   type UpdateJournalDataInputType,
-  updateJournalInputData,
+  updateJournalInputData
 } from "src/utils/validation/journalEntries/updateJournalValidation";
+
 import { notifyTemplate } from "../notifyTemplate";
 import { useFormHandler } from "../useFormHandler";
 import type { JournalsMergedType } from "./useJournals";
@@ -16,7 +18,7 @@ type keysType = keyof UpdateJournalDataInputType;
 export const useUpdateJournals = ({
   onSuccess,
   onError,
-  onMutate,
+  onMutate
 }: {
   onSuccess?: () => void;
   onError?: () => void;
@@ -39,12 +41,12 @@ export const useUpdateJournals = ({
       onMutate: () => {
         notifications.onLoading();
         onMutate && onMutate();
-      },
+      }
     });
 
   return {
     isMutating,
-    mutate,
+    mutate
   };
 };
 
@@ -52,7 +54,7 @@ export const useUpdateJournal = ({
   id,
   keys,
   data,
-  updateCompleted = false,
+  updateCompleted = false
 }: {
   id: string;
   keys: keysType[];
@@ -60,7 +62,7 @@ export const useUpdateJournal = ({
   updateCompleted?: boolean;
 }) => {
   const form = useForm<UpdateJournalDataInputType>({
-    validate: zodResolver(updateJournalInputData),
+    validate: zodResolver(updateJournalInputData)
   });
 
   const { mutate, isMutating } = useUpdateJournals();
@@ -78,13 +80,13 @@ export const useUpdateJournal = ({
           ...processedData,
           otherJournals: processedData.otherJournals
             ? processedData.otherJournals.filter((item) => item.id !== id)
-            : undefined,
+            : undefined
         },
         filters: [{ id: { in: [id] } }],
         maxUpdated: 1,
-        updateCompleteJournals: updateCompleted,
+        updateCompleteJournals: updateCompleted
       };
-    },
+    }
   });
 
   return {
@@ -93,6 +95,6 @@ export const useUpdateJournal = ({
     mutate,
     form,
     runMutate,
-    resetForm,
+    resetForm
   };
 };

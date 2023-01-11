@@ -1,12 +1,14 @@
 import type { FileWithPath } from "@mantine/dropzone";
-import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 import { useState } from "react";
-import { handleExcelUpload } from "./handleExcelUpload";
+
 import { useBulkUpdateAccountGrouping } from "src/utils/hooks/accountGroupings/useBulkUpdateAccountGrouping";
+import { type BulkUpgradeAccountGroupingValidationType } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
+
+import { handleExcelUpload } from "./handleExcelUpload";
 
 export const useImportExcel = ({
   accountGroupingId,
-  onComplete,
+  onComplete
 }: {
   accountGroupingId: string;
   onComplete?: () => void;
@@ -20,7 +22,7 @@ export const useImportExcel = ({
 
   const { mutate } = useBulkUpdateAccountGrouping({
     setMutating: setLoading,
-    onMutate: onComplete,
+    onMutate: onComplete
   });
 
   const runMutation = () => {
@@ -37,7 +39,7 @@ export const useImportExcel = ({
       setError,
       setFilename,
       accountGroupingId,
-      files,
+      files
     });
   };
 
@@ -55,6 +57,6 @@ export const useImportExcel = ({
     errorText,
     handleUpload,
     reset,
-    runMutation,
+    runMutation
   };
 };

@@ -2,9 +2,11 @@ import { Center, Group, Stack, Text, TextInput } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
+
 import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 import { useUpdateJournal } from "src/utils/hooks/journals/useUpdateJournal";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
+
 import { AccountSelection } from "../account/AccountSelection";
 import { BillSelection } from "../bill/BillSelection";
 import { BudgetSelection } from "../budget/BudgetSelection";
@@ -57,7 +59,7 @@ export const displayJournalCell = (
 export const JournalTableCell = ({
   id,
   column,
-  data,
+  data
 }: {
   id: string;
   column: JournalRowColumns;
@@ -75,7 +77,7 @@ export const JournalTableCell = ({
     id,
     data,
     keys: [columnUse],
-    updateCompleted: false,
+    updateCompleted: false
   });
   const formatter = useDisplayCurrency();
   const { dayjsFormat } = useLoggedInUser();
@@ -292,7 +294,7 @@ export const JournalTableCell = ({
                             journal.id === item.id
                               ? {
                                   ...journal,
-                                  amount: e === undefined ? undefined : e,
+                                  amount: e === undefined ? undefined : e
                                 }
                               : journal
                           )
@@ -327,7 +329,7 @@ export const JournalTableCell = ({
 
 export const JournalTableCellView = ({
   column,
-  data,
+  data
 }: {
   column: JournalRowColumns;
   data: JournalsMergedType;

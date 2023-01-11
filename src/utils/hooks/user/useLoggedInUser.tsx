@@ -1,12 +1,14 @@
-import { useSession, signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useContext, useEffect } from "react";
+
 import { type AppRouterOutputs } from "src/server/trpc/router/_app";
 import { trpc } from "src/utils/trpc";
 import {
   dateFormatter,
-  dayjsFormatter,
+  dayjsFormatter
 } from "src/utils/validation/user/dateFormats";
+
 import { useUpdateUser } from "./useUpdateUser";
 
 type UserType = AppRouterOutputs["user"]["get"];
@@ -49,6 +51,6 @@ export const useLoggedInUser = () => {
     isLoading: data === undefined,
     updateUser,
     isUpdatingUser,
-    signOut: userSignOut,
+    signOut: userSignOut
   };
 };
