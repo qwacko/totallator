@@ -43,6 +43,11 @@ export const JournalTableBulkActions = <T,>(
   const { mutate: updateJournals } = useUpdateJournals();
   const journalIds = selection.map((item) => item.id);
 
+  const hasComplete = selection.reduce(
+    (prev, current) => (prev ? prev : current.original.complete),
+    false
+  );
+
   return (
     <>
       <SelectionColumnHeader>
@@ -76,7 +81,7 @@ export const JournalTableBulkActions = <T,>(
             <Menu.Label>Bulk Modify {selection.length} Transactions</Menu.Label>
             <Menu.Item
               onClick={deleteActions.open}
-              disabled={selection.length === 0}
+              disabled={selection.length === 0 || hasComplete}
               color="red"
             >
               Delete
@@ -87,7 +92,9 @@ export const JournalTableBulkActions = <T,>(
             >
               Clone
             </Menu.Item>
-            <Menu.Item onClick={updateActions.open}>Update</Menu.Item>
+            <Menu.Item onClick={updateActions.open} disabled={hasComplete}>
+              Update
+            </Menu.Item>
             <Menu.Divider />
             <Menu.Label>Bulk Update</Menu.Label>
             <Menu.Item
@@ -98,6 +105,7 @@ export const JournalTableBulkActions = <T,>(
                   filters: [{ id: { in: journalIds } }]
                 })
               }
+              disabled={hasComplete}
             >
               Mark Reconciled
             </Menu.Item>
@@ -109,6 +117,7 @@ export const JournalTableBulkActions = <T,>(
                   filters: [{ id: { in: journalIds } }]
                 })
               }
+              disabled={hasComplete}
             >
               Mark Data Checked
             </Menu.Item>
@@ -120,6 +129,7 @@ export const JournalTableBulkActions = <T,>(
                   filters: [{ id: { in: journalIds } }]
                 })
               }
+              disabled={hasComplete}
             >
               Mark Complete
             </Menu.Item>
@@ -131,6 +141,7 @@ export const JournalTableBulkActions = <T,>(
                   filters: [{ id: { in: journalIds } }]
                 })
               }
+              disabled={hasComplete}
             >
               Mark Complete/Reconciled/Checked
             </Menu.Item>
@@ -142,6 +153,7 @@ export const JournalTableBulkActions = <T,>(
                   filters: [{ id: { in: journalIds } }]
                 })
               }
+              disabled={hasComplete}
             >
               Clear Status
             </Menu.Item>
@@ -154,6 +166,7 @@ export const JournalTableBulkActions = <T,>(
                   filters: [{ id: { in: journalIds } }]
                 })
               }
+              disabled={!hasComplete}
             >
               Mark Incomplete
             </Menu.Item>
@@ -318,7 +331,7 @@ const UpdateBulkModal = ({
           />
           <InputCurrency
             {...form.getInputProps("amount")}
-            value={form.values.amount || null}
+            value={form.values.amount || undefined}
             label="Amount"
           />
           {multipleAccountGroupings && <Text>Multiple Account Groupings</Text>}
