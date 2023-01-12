@@ -15,7 +15,7 @@ export const useUpdateUser = ({
       const currentData = utils.user.get.getData();
       if (currentData) {
         const updatedData = { ...currentData, ...data };
-        utils.user.get.setData(updatedData);
+        utils.user.get.setData(undefined, updatedData);
       }
     },
     onError: (err) => {

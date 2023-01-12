@@ -25,6 +25,7 @@ export const useDeleteAccount = ({ id }: { id: string }) => {
         );
         if (targetAccount && targetAccount._count.journalEntries === 0) {
           utils.accounts.get.setData(
+            undefined,
             currentAccounts.filter((item) => item.id !== data.id)
           );
         }

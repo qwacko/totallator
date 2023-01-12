@@ -44,6 +44,7 @@ export const useUpdateTag = ({
       const currentTags = utils.tags.get.getData();
       if (currentTags) {
         utils.tags.get.setData(
+          undefined,
           currentTags.map((tag) => {
             if (tag.id === id) {
               return { ...tag, ...data };

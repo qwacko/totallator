@@ -44,6 +44,7 @@ export const useUpdateBill = ({
       const currentBills = utils.bills.get.getData();
       if (currentBills) {
         utils.bills.get.setData(
+          undefined,
           currentBills.map((bill) => {
             if (bill.id === id) {
               return { ...bill, ...data };

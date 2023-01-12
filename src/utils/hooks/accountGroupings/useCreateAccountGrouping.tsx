@@ -27,7 +27,7 @@ export function useCreateAccountGrouping({
       const currentAG = utils.accountGroupings.get.getData();
 
       if (currentAG) {
-        utils.accountGroupings.get.setData([
+        utils.accountGroupings.get.setData(undefined, [
           ...currentAG,
           {
             id: "New",
