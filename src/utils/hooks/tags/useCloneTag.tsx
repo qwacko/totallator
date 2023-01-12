@@ -24,7 +24,7 @@ export const useCloneTag = ({ id }: { id: string }) => {
       if (current) {
         const target = current.find((item) => item.id === data.id);
         if (target) {
-          targetUtils.get.setData([
+          targetUtils.get.setData(undefined, [
             ...current,
             {
               ...target,

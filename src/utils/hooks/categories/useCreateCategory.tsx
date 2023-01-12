@@ -23,7 +23,7 @@ export function useCreateCategory({ onMutate }: { onMutate?: () => void }) {
       const currentCategories = utils.categories.get.getData();
 
       if (currentCategories) {
-        utils.categories.get.setData([
+        utils.categories.get.setData(undefined, [
           ...currentCategories,
           {
             accountGroupingId: data.accountGroupingId,

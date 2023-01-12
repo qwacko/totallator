@@ -45,6 +45,7 @@ export const useUpdateAccount = ({
       const currentAccounts = utils.accounts.get.getData();
       if (currentAccounts) {
         utils.accounts.get.setData(
+          undefined,
           currentAccounts.map((account) => {
             if (account.id === id) {
               return { ...account, ...data };

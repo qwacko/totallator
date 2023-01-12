@@ -23,7 +23,7 @@ export function useCreateBill({ onMutate }: { onMutate?: () => void }) {
       const currentBills = utils.bills.get.getData();
 
       if (currentBills) {
-        utils.bills.get.setData([
+        utils.bills.get.setData(undefined, [
           ...currentBills,
           {
             accountGroupingId: data.accountGroupingId,

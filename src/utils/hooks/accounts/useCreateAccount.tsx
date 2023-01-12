@@ -23,7 +23,7 @@ export function useCreateAccount({ onMutate }: { onMutate?: () => void }) {
       const currentAccounts = utils.accounts.get.getData();
 
       if (currentAccounts) {
-        utils.accounts.get.setData([
+        utils.accounts.get.setData(undefined, [
           ...currentAccounts,
           {
             accountGroupingId: data.accountGroupingId,

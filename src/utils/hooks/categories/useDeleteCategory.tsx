@@ -25,6 +25,7 @@ export const useDeleteCategory = ({ id }: { id: string }) => {
         const target = current.find((item) => item.id === data.id);
         if (target && target._count.journalEntries === 0) {
           targetUtils.get.setData(
+            undefined,
             current.filter((item) => item.id !== data.id)
           );
         }
