@@ -1,4 +1,11 @@
-import { Center, Group, Stack, Text, TextInput } from "@mantine/core";
+import {
+  Center,
+  Group,
+  NumberInput,
+  Stack,
+  Text,
+  TextInput
+} from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -115,12 +122,13 @@ export const JournalTableCell = ({
           runMutate();
         }}
       >
-        <InputCurrency
+        <NumberInput
           {...form.getInputProps("amount")}
           onBlur={runMutate}
           disabled={!isAdmin || isComplete}
           size="xs"
           styles={{ input: { textAlign: "right", paddingRight: 25 } }}
+          precision={2}
         />
       </form>
     );
