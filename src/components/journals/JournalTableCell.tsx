@@ -176,6 +176,8 @@ export const JournalTableCell = ({
           onBlur={runMutate}
           size="xs"
           searchable
+          createExpenseOption
+          onCreateSuccess={(newId) => form.setFieldValue(column, newId)}
         />
       </form>
     );
@@ -290,6 +292,17 @@ export const JournalTableCell = ({
                   }}
                   size="xs"
                   disabled={!isAdmin || isComplete}
+                  createExpenseOption
+                  onCreateSuccess={(newId) => {
+                    const newOtherJournals = form.values.otherJournals
+                      ? form.values.otherJournals.map((journal) =>
+                          journal.id === item.id
+                            ? { ...journal, accountId: newId || undefined }
+                            : journal
+                        )
+                      : undefined;
+                    form.setFieldValue("otherJournals", newOtherJournals);
+                  }}
                 />
                 {showAmounts && (
                   <InputCurrency

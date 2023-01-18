@@ -88,6 +88,10 @@ export const CreateTransactionSimpleForm = ({
               searchable
               accountGroupingId={createTrans.form.values.accountGroupingId}
               size={size}
+              createExpenseOption
+              onCreateSuccess={(newId) =>
+                createTrans.form.setFieldValue("fromAccountId", newId)
+              }
             />
             <AccountSelection
               {...createTrans.form.getInputProps("toAccountId")}
@@ -95,6 +99,10 @@ export const CreateTransactionSimpleForm = ({
               searchable
               accountGroupingId={createTrans.form.values.accountGroupingId}
               size={size}
+              createExpenseOption
+              onCreateSuccess={(newId) =>
+                createTrans.form.setFieldValue("toAccountId", newId)
+              }
             />
             <TagSelection
               {...createTrans.form.getInputProps("tagId")}
