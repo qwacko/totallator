@@ -80,7 +80,7 @@ export const JournalTableCell = ({
       ? "description"
       : column;
   const { dateFormat } = useLoggedInUser();
-  const { form, runMutate } = useUpdateJournal({
+  const { form, runMutate, mutate } = useUpdateJournal({
     id,
     data,
     keys: [columnUse],
@@ -178,9 +178,11 @@ export const JournalTableCell = ({
           searchable
           createExpenseOption
           onCreateSuccess={(newId) => {
-            console.log("New ID", newId);
             form.setFieldValue(column, newId);
-            runMutate();
+            mutate({
+              filters: [{ id: { in: [id] } }],
+              data: { accountId: newId }
+            });
           }}
         />
       </form>
@@ -284,6 +286,7 @@ export const JournalTableCell = ({
                   accountGroupingId={data.accountGroupingId}
                   value={item.accountId}
                   onBlur={runMutate}
+                  searchable
                   onChange={(e) => {
                     const newOtherJournals = form.values.otherJournals
                       ? form.values.otherJournals.map((journal) =>
@@ -306,6 +309,14 @@ export const JournalTableCell = ({
                         )
                       : undefined;
                     form.setFieldValue("otherJournals", newOtherJournals);
+                    mutate({
+                      filters: [{ id: { in: [id] } }],
+                      data: {
+                        otherJournals: newOtherJournals
+                          ? newOtherJournals.filter((item) => item.id !== id)
+                          : undefined
+                      }
+                    });
                   }}
                 />
                 {showAmounts && (
