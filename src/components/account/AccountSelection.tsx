@@ -7,7 +7,6 @@ import {
 import { useMemo } from "react";
 
 import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
-import { useCreateAccount } from "src/utils/hooks/accounts/useCreateAccount";
 
 export const useAccountsDropdown = ({
   accountGroupingId,
@@ -46,50 +45,15 @@ export const useAccountsDropdown = ({
 export const AccountSelection = ({
   accountGroupingId,
   showAccountGroup = false,
-  createExpenseOption = false,
-  onCreateSuccess,
   ...props
 }: Omit<SelectProps, "data"> & {
   accountGroupingId?: string;
   showAccountGroup?: boolean;
-  createExpenseOption?: boolean;
-  onCreateSuccess?: (newAccountId: string) => void;
 }) => {
   const { filteredAccounts } = useAccountsDropdown({
     accountGroupingId,
     showAccountGroup
   });
-
-  const { mutate } = useCreateAccount({
-    onSuccess: (newAccount) => {
-      onCreateSuccess && onCreateSuccess(newAccount.id);
-    }
-  });
-
-  if (createExpenseOption) {
-    return (
-      <Select
-        {...props}
-        data={filteredAccounts}
-        creatable
-        getCreateLabel={(val) => (
-          <>
-            <i>Create Expense</i> {val}
-          </>
-        )}
-        onCreate={(title) => {
-          if (accountGroupingId) {
-            mutate.mutate({
-              accountGroupingId,
-              title,
-              type: "Expense"
-            });
-          }
-          return undefined;
-        }}
-      />
-    );
-  }
 
   return <Select {...props} data={filteredAccounts} />;
 };
