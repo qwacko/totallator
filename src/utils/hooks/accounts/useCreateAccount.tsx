@@ -1,4 +1,5 @@
 import { useForm, zodResolver } from "@mantine/form";
+import type { TransactionAccount } from "@prisma/client";
 
 import { trpc } from "src/utils/trpc";
 import {
@@ -11,7 +12,13 @@ import { notifyTemplate } from "../notifyTemplate";
 const id = "useCreateAccount";
 const notifications = notifyTemplate(id, "Account", "Create");
 
-export function useCreateAccount({ onMutate }: { onMutate?: () => void }) {
+export function useCreateAccount({
+  onMutate,
+  onSuccess
+}: {
+  onMutate?: () => void;
+  onSuccess?: (data: TransactionAccount) => void;
+}) {
   const form = useForm<createAccountValidationType>({
     validate: zodResolver(createAccountValidation)
   });
@@ -56,10 +63,11 @@ export function useCreateAccount({ onMutate }: { onMutate?: () => void }) {
       utils.accounts.invalidate();
       notifications.onError(e);
     },
-    onSuccess: () => {
+    onSuccess: (newAccount) => {
       form.reset();
       utils.accounts.invalidate();
       notifications.onSuccess();
+      onSuccess && onSuccess(newAccount);
     }
   });
   return { form, mutate };

@@ -80,7 +80,7 @@ export const JournalTableCell = ({
       ? "description"
       : column;
   const { dateFormat } = useLoggedInUser();
-  const { form, runMutate } = useUpdateJournal({
+  const { form, runMutate, mutate } = useUpdateJournal({
     id,
     data,
     keys: [columnUse],
@@ -176,6 +176,14 @@ export const JournalTableCell = ({
           onBlur={runMutate}
           size="xs"
           searchable
+          createExpenseOption
+          onCreateSuccess={(newId) => {
+            form.setFieldValue(column, newId);
+            mutate({
+              filters: [{ id: { in: [id] } }],
+              data: { accountId: newId }
+            });
+          }}
         />
       </form>
     );
@@ -278,6 +286,7 @@ export const JournalTableCell = ({
                   accountGroupingId={data.accountGroupingId}
                   value={item.accountId}
                   onBlur={runMutate}
+                  searchable
                   onChange={(e) => {
                     const newOtherJournals = form.values.otherJournals
                       ? form.values.otherJournals.map((journal) =>
@@ -290,6 +299,25 @@ export const JournalTableCell = ({
                   }}
                   size="xs"
                   disabled={!isAdmin || isComplete}
+                  createExpenseOption
+                  onCreateSuccess={(newId) => {
+                    const newOtherJournals = form.values.otherJournals
+                      ? form.values.otherJournals.map((journal) =>
+                          journal.id === item.id
+                            ? { ...journal, accountId: newId || undefined }
+                            : journal
+                        )
+                      : undefined;
+                    form.setFieldValue("otherJournals", newOtherJournals);
+                    mutate({
+                      filters: [{ id: { in: [id] } }],
+                      data: {
+                        otherJournals: newOtherJournals
+                          ? newOtherJournals.filter((item) => item.id !== id)
+                          : undefined
+                      }
+                    });
+                  }}
                 />
                 {showAmounts && (
                   <InputCurrency
