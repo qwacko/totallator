@@ -55,7 +55,7 @@ export const accountRouter = router({
         adminRequired: true
       });
 
-      const newAccount = await upsertAccount({
+      await upsertAccount({
         userId: user.id,
         userAdmin: user.admin,
         action: "Create",
@@ -64,7 +64,7 @@ export const accountRouter = router({
         prisma: ctx.prisma
       });
 
-      return newAccount;
+      return true;
     }),
   update: protectedProcedure
     .input(updateAccountValidation)
