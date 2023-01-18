@@ -177,7 +177,11 @@ export const JournalTableCell = ({
           size="xs"
           searchable
           createExpenseOption
-          onCreateSuccess={(newId) => form.setFieldValue(column, newId)}
+          onCreateSuccess={(newId) => {
+            console.log("New ID", newId);
+            form.setFieldValue(column, newId);
+            runMutate();
+          }}
         />
       </form>
     );
