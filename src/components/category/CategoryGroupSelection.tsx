@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useCategories } from "src/utils/hooks/categories/useCategories";
 
 export const CategoryGroupSelection = (
-  input: AutocompleteProps & { accountGroupingId: string }
+  input: Omit<AutocompleteProps, "data"> & { accountGroupingId: string }
 ) => {
   const { accountGroupingId, ...autocompleteInput } = input;
   const categories = useCategories();

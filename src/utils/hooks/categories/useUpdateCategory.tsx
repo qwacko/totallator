@@ -44,6 +44,7 @@ export const useUpdateCategory = ({
       const currentCategories = utils.categories.get.getData();
       if (currentCategories) {
         utils.categories.get.setData(
+          undefined,
           currentCategories.map((category) => {
             if (category.id === id) {
               return { ...category, ...data };

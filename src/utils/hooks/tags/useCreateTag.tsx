@@ -23,7 +23,7 @@ export function useCreateTag({ onMutate }: { onMutate?: () => void }) {
       const currentTags = utils.tags.get.getData();
 
       if (currentTags) {
-        utils.tags.get.setData([
+        utils.tags.get.setData(undefined, [
           ...currentTags,
           {
             accountGroupingId: data.accountGroupingId,

@@ -2,6 +2,7 @@ import {
   Button,
   Checkbox,
   Group,
+  Input,
   Modal,
   SegmentedControl,
   Select,
@@ -44,12 +45,15 @@ export const CreateAccountForm = ({ onClose }: { onClose?: () => void }) => {
           }
           {...createAccount.form.getInputProps("accountGroupingId")}
         />
-        <SegmentedControl
-          {...createAccount.form.getInputProps("type")}
-          required
-          label="Account Type"
-          data={["Asset", "Liability", "Income", "Expense"]}
-        />
+        <Stack spacing={0}>
+          <Input.Wrapper label="Account Type" required>
+            <></>
+          </Input.Wrapper>
+          <SegmentedControl
+            {...createAccount.form.getInputProps("type")}
+            data={["Asset", "Liability", "Income", "Expense"]}
+          />
+        </Stack>
         <TextInput
           {...createAccount.form.getInputProps("title")}
           required

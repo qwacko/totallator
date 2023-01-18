@@ -31,6 +31,7 @@ export function useUpdateAccountGrouping({
 
       if (currentAG) {
         utils.accountGroupings.get.setData(
+          undefined,
           currentAG.map((ag) => {
             if (ag.id === data.id) {
               return { ...ag, ...data.data };

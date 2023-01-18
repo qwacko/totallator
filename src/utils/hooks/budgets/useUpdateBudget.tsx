@@ -44,6 +44,7 @@ export const useUpdateBudget = ({
       const currentBudgets = utils.budgets.get.getData();
       if (currentBudgets) {
         utils.budgets.get.setData(
+          undefined,
           currentBudgets.map((budget) => {
             if (budget.id === id) {
               return { ...budget, ...data };

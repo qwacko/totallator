@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { env } from "src/env/server.mjs";
 import { PrismaStatusEnumValidation } from "src/utils/validation/PrismaStatusEnumValidation";
 import { bulkUpdateAccountGroupingValidation } from "src/utils/validation/accountGrouping/bulkUpgradeAccountGroupingValidation";
 import { createAccountGroupingValidation } from "src/utils/validation/accountGrouping/createAccountGroupingValidation";
@@ -369,7 +370,7 @@ export const accountGroupingRouter = router({
             input
           });
         },
-        { timeout: 120000 }
+        { timeout: env.BULK_TIMEOUT }
       );
     }),
   bulkUpdate: protectedProcedure
@@ -386,7 +387,7 @@ export const accountGroupingRouter = router({
       await ctx.prisma.$transaction(
         async (prisma) =>
           await bulkUpdateAccountGrouping({ prisma, user, input }),
-        { timeout: 120000 }
+        { timeout: env.BULK_TIMEOUT }
       );
 
       return true;

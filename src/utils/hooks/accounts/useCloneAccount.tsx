@@ -24,7 +24,7 @@ export const useCloneAccount = ({ id }: { id: string }) => {
           (item) => item.id === data.id
         );
         if (targetAccount) {
-          utils.accounts.get.setData([
+          utils.accounts.get.setData(undefined, [
             ...currentAccounts,
             {
               ...targetAccount,

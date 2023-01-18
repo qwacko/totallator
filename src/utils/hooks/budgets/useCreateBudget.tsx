@@ -23,7 +23,7 @@ export function useCreateBudget({ onMutate }: { onMutate?: () => void }) {
       const currentBudgets = utils.budgets.get.getData();
 
       if (currentBudgets) {
-        utils.budgets.get.setData([
+        utils.budgets.get.setData(undefined, [
           ...currentBudgets,
           {
             accountGroupingId: data.accountGroupingId,

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useTags } from "src/utils/hooks/tags/useTags";
 
 export const TagSingleSelection = (
-  input: AutocompleteProps & { accountGroupingId: string }
+  input: Omit<AutocompleteProps, "data"> & { accountGroupingId: string }
 ) => {
   const { accountGroupingId, ...autocompleteInput } = input;
   const tags = useTags();
