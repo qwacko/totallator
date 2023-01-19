@@ -1,5 +1,4 @@
 import { useForm, zodResolver } from "@mantine/form";
-import { useEffect } from "react";
 
 import { trpc } from "src/utils/trpc";
 import {
@@ -21,11 +20,6 @@ export function useCreateTransactionSimple({
     validate: zodResolver(createSimpleTransactionValidation)
   });
 
-  //Initialise the date. Better than using the form initial
-  //values as that expects every value to be set
-  useEffect(() => {
-    form.setFieldValue("date", new Date());
-  }, [form, form.setFieldValue]);
   const utils = trpc.useContext();
   const mutate = trpc.journals.createSimpleTransaction.useMutation({
     onMutate: () => {
