@@ -81,6 +81,7 @@ export const CreateTransactionSimpleForm = ({
               required
               label="Amount"
               size={size}
+              precision={2}
             />
             <AccountSelection
               {...createTrans.form.getInputProps("fromAccountId")}
