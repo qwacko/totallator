@@ -224,7 +224,7 @@ export const journalsRouter = router({
               return {
                 ...journalSelected,
                 complete: false,
-                description: `${journalSelected.description} (Clone)`
+                description: journalSelected.description
               };
             });
 
