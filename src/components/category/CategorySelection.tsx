@@ -33,6 +33,7 @@ const useCategoryDropdown = ({
                   }
                 : { label: item.single, value: item.id, group: item.group }
             )
+            .sort((a, b) => a.label.localeCompare(b.label))
         : [],
     [categories.data, accountGroupingId, showCombined]
   );

@@ -27,6 +27,7 @@ const useBillsDropdown = ({
               label: item.title,
               value: item.id
             }))
+            .sort((a, b) => a.label.localeCompare(b.label))
         : [],
     [bills.data, accountGroupingId]
   );

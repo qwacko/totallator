@@ -36,6 +36,9 @@ export const useAccountsDropdown = ({
                   : item.type,
               value: item.id
             }))
+            .sort((a, b) =>
+              `${a.group}-${a.label}`.localeCompare(`${b.group}-${b.label}`)
+            )
         : [],
     [accounts.data, accountGroupingId, showAccountGroup]
   );
