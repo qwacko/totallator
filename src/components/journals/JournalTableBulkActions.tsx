@@ -342,30 +342,39 @@ const UpdateBulkModal = ({
                 value={form.values.accountId || null}
                 label="Account"
                 accountGroupingId={accountGroupingId}
+                searchable
+                createExpenseOption
+                onCreateSuccess={(newId) =>
+                  form.setFieldValue("accountId", newId)
+                }
               />
               <CategorySelection
                 {...form.getInputProps("categoryId")}
                 value={form.values.categoryId || null}
                 label="Category"
                 accountGroupingId={accountGroupingId}
+                searchable
               />
               <TagSelection
                 {...form.getInputProps("tagId")}
                 value={form.values.tagId || null}
                 label="Tag"
                 accountGroupingId={accountGroupingId}
+                searchable
               />
               <BillSelection
                 {...form.getInputProps("billId")}
                 value={form.values.billId || null}
                 label="Bill"
                 accountGroupingId={accountGroupingId}
+                searchable
               />
               <BudgetSelection
                 {...form.getInputProps("budgetId")}
                 value={form.values.budgetId || null}
                 label="Budget"
                 accountGroupingId={accountGroupingId}
+                searchable
               />
             </>
           )}
