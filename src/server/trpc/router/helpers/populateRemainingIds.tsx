@@ -32,11 +32,12 @@ export const populateRemainingIds = async <
     );
 
     returnData.allLookup = { ...returnData.allLookup, ...otherItems };
+    const allLookupKeys = Object.keys(returnData.allLookup);
     const newRemainingIds = filteredIdList.filter(
-      (item) => !allFound.includes(item)
+      (item) => !allLookupKeys.includes(item)
     );
 
-    if (remainingIds.length > 0) {
+    if (newRemainingIds.length > 0) {
       throw new TRPCError({
         message: `Not All ${itemsType} Found. Remaining Ids = ${newRemainingIds}`,
         code: "INTERNAL_SERVER_ERROR"
