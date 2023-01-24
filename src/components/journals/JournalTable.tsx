@@ -5,6 +5,7 @@ import { useJournals } from "src/utils/hooks/journals/useJournals";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 
 import { TableDisplay } from "../table/TableDisplay";
+import { JournalSelectProvider } from "./JournalSelectCell";
 import { journalColumns } from "./journalColumns";
 
 export const JournalTable = ({
@@ -71,5 +72,9 @@ export const JournalTable = ({
       </Group>
     );
   }
-  return <TableDisplay table={table} />;
+  return (
+    <JournalSelectProvider>
+      <TableDisplay table={table} />
+    </JournalSelectProvider>
+  );
 };

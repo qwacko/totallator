@@ -22,7 +22,7 @@ import {
 import { filtersToPrismaFilters } from "./helpers/filtersToPrismaFilters";
 import { sortingStateToPrismaSort } from "./helpers/sortingStateToPrismaSort";
 
-export const useJournals = ({
+export const useJournalsSimple = ({
   externalFilters
 }: {
   externalFilters: JournalFilterValidationInputType[];
@@ -93,17 +93,15 @@ export const useJournals = ({
   return {
     data: { ...data, mergedData },
     combinedFilters,
-    tableState: {
-      sorting,
-      setSorting,
-      filters,
-      setFilters,
-      pagination,
-      setPagination,
-      pageCount,
-      setRowSelection,
-      rowSelection
-    }
+    sorting,
+    setSorting,
+    filters,
+    setFilters,
+    pagination,
+    setPagination,
+    pageCount,
+    setRowSelection,
+    rowSelection
   };
 };
 

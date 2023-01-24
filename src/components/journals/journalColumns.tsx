@@ -5,8 +5,12 @@ import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 import { dateFilter } from "../table/filters/dateFilter";
 import { displayHeader } from "../table/headers/displayHeader";
 import { selectionCell } from "../table/selectionCell";
+import {
+  JournalEditingColumnHeader,
+  JournalSelectCell
+} from "./JournalSelectCell";
 import { JournalTableBulkActions } from "./JournalTableBulkActions";
-import { displayJournalCell } from "./JournalTableCell";
+import { DisplayJournalCell } from "./JournalTableCell";
 
 const columnHelper = createColumnHelper<JournalsMergedType>();
 
@@ -18,14 +22,20 @@ export const journalColumns = [
     enableColumnFilter: false
   }),
   columnHelper.display({
+    id: "selection2",
+    header: JournalEditingColumnHeader,
+    cell: JournalSelectCell,
+    enableColumnFilter: false
+  }),
+  columnHelper.display({
     id: "commands",
     header: displayHeader({ title: "Commands" }),
-    cell: displayJournalCell,
+    cell: DisplayJournalCell,
     enableColumnFilter: false
   }),
   columnHelper.accessor("date", {
     header: displayHeader({ title: "Date", filterType: "date" }),
-    cell: displayJournalCell,
+    cell: DisplayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString"
   }),
@@ -34,31 +44,31 @@ export const journalColumns = [
       title: "Account",
       sortKey: "account"
     }),
-    cell: displayJournalCell,
+    cell: DisplayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString"
   }),
   columnHelper.accessor("otherJournals", {
     header: displayHeader({ title: "Payee(s)" }),
-    cell: displayJournalCell,
+    cell: DisplayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString"
   }),
   columnHelper.accessor("description", {
     header: displayHeader({ title: "Description", filterType: "string" }),
-    cell: displayJournalCell,
+    cell: DisplayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString"
   }),
   columnHelper.accessor("amount", {
     header: displayHeader({ title: "Amount" }),
-    cell: displayJournalCell,
+    cell: DisplayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString"
   }),
   columnHelper.accessor("total", {
     header: displayHeader({ title: "Total" }),
-    cell: displayJournalCell,
+    cell: DisplayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString",
     enableSorting: false
@@ -68,13 +78,13 @@ export const journalColumns = [
       title: "Category",
       sortKey: "category"
     }),
-    cell: displayJournalCell,
+    cell: DisplayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString"
   }),
   columnHelper.accessor("tagId", {
     header: displayHeader({ title: "Tag", sortKey: "tag" }),
-    cell: displayJournalCell,
+    cell: DisplayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString"
   }),
@@ -83,7 +93,7 @@ export const journalColumns = [
       title: "Bill",
       sortKey: "bill"
     }),
-    cell: displayJournalCell,
+    cell: DisplayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString"
   }),
@@ -92,7 +102,7 @@ export const journalColumns = [
       title: "Budget",
       sortKey: "budget"
     }),
-    cell: displayJournalCell,
+    cell: DisplayJournalCell,
     enableColumnFilter: true,
     filterFn: "includesString"
   }),
@@ -100,12 +110,12 @@ export const journalColumns = [
     header: displayHeader({ title: "Created At", filterType: "date" }),
     enableColumnFilter: true,
     filterFn: dateFilter("createdAt"),
-    cell: displayJournalCell
+    cell: DisplayJournalCell
   }),
   columnHelper.accessor("updatedAt", {
     header: displayHeader({ title: "Updated At", filterType: "date" }),
     enableColumnFilter: true,
     filterFn: dateFilter("updatedAt"),
-    cell: displayJournalCell
+    cell: DisplayJournalCell
   })
 ];

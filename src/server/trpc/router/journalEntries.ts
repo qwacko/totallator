@@ -21,6 +21,18 @@ import { sortToOrderBy } from "./helpers/journals/sortToOrderBy";
 import { updateSingleJournal } from "./helpers/journals/updateSingleJournal";
 
 export const journalsRouter = router({
+  getAccountGroupingIds: protectedProcedure
+    .input(getJournalValidation.omit({ pagination: true, sort: true }))
+    .query(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+      const accountGroupings = await ctx.prisma.accountGrouping.findMany({
+        where: {
+          viewUsers: { some: { id: user.id } },
+          journalEntries: { some: { AND: input.filters } }
+        }
+      });
+      return accountGroupings.map((item) => item.id);
+    }),
   get: protectedProcedure
     .input(getJournalValidation)
     .output(journalEntryGetValidation)

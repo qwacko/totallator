@@ -25,6 +25,7 @@ import { DateCell } from "../table/cells/DateCell";
 import { TextCell } from "../table/cells/TextCell";
 import { TagSelection } from "../tag/TagSelection";
 import { JournalCommandButtons } from "./JournalCommandButtons";
+import { useIDSelected } from "./JournalSelectCell";
 
 export type JournalRowColumns =
   | "description"
@@ -41,12 +42,14 @@ export type JournalRowColumns =
   | "budgetId"
   | "commands";
 
-export const displayJournalCell = (
+export const DisplayJournalCell = (
   props: CellContext<JournalsMergedType, unknown>
 ) => {
-  const selected = props.row.getIsSelected();
+  // const selected = props.row.getIsSelected();
 
-  if (selected) {
+  const [selected2] = useIDSelected(props.row.id);
+
+  if (selected2) {
     return (
       <JournalTableCell
         id={props.row.id}
@@ -156,6 +159,7 @@ export const JournalTableCell = ({
           onBlur={runMutate}
           size="xs"
           clearable={false}
+          transitionDuration={0}
         />
       </form>
     );

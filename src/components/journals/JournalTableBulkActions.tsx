@@ -19,6 +19,7 @@ import { useCloneTransactions } from "src/utils/hooks/journals/useCloneTransacti
 import { useDeleteTransactions } from "src/utils/hooks/journals/useDeleteTransactions";
 import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
+import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 import {
   type UpdateJournalDataInputType,
   updateJournalInputData
@@ -188,7 +189,7 @@ export const JournalTableBulkActions = <T,>(
         />
       )}
       {updateOpened && (
-        <UpdateBulkModal
+        <UpdateSelectedModal
           opened={updateOpened}
           close={updateActions.close}
           rows={selection}
@@ -273,7 +274,7 @@ const CloneModal = ({
   );
 };
 
-const UpdateBulkModal = ({
+const UpdateSelectedModal = ({
   opened,
   close,
   rows
@@ -290,6 +291,36 @@ const UpdateBulkModal = ({
   const multipleAccountGroupings = accountGroupings.length > 1;
   const accountGroupingId = accountGroupings[0];
 
+  const filter: JournalFilterValidationInputType[] = [{ id: { in: ids } }];
+  const maxUpdated = ids.length;
+
+  return (
+    <UpdateBulkModal
+      opened={opened}
+      close={close}
+      filters={filter}
+      maxUpdated={maxUpdated}
+      multipleAccountGroupings={multipleAccountGroupings}
+      accountGroupingId={accountGroupingId}
+    />
+  );
+};
+
+const UpdateBulkModal = ({
+  opened,
+  close,
+  filters,
+  maxUpdated,
+  multipleAccountGroupings,
+  accountGroupingId
+}: {
+  opened: boolean;
+  close: () => void;
+  filters: JournalFilterValidationInputType[];
+  maxUpdated: number;
+  multipleAccountGroupings: boolean;
+  accountGroupingId: string | undefined;
+}) => {
   const { mutate } = useUpdateJournals({ onSuccess: close });
 
   const form = useForm<UpdateJournalDataInputType>({
@@ -307,14 +338,14 @@ const UpdateBulkModal = ({
     <Modal
       opened={opened}
       onClose={close}
-      title={`Update ${rows.length} Transactions?`}
+      title={`Update ${maxUpdated} Transactions?`}
     >
       <form
         onSubmit={form.onSubmit((value) =>
           mutate({
-            filters: [{ id: { in: ids } }],
+            filters,
             data: value,
-            maxUpdated: ids.length
+            maxUpdated
           })
         )}
       >
