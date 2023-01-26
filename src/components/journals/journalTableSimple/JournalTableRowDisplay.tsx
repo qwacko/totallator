@@ -7,12 +7,17 @@ import { selectAtom } from "jotai/utils";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 
 import { AccountSelection } from "src/components/account/AccountSelection";
+import { BillSelection } from "src/components/bill/BillSelection";
+import { BudgetSelection } from "src/components/budget/BudgetSelection";
+import { CategorySelection } from "src/components/category/CategorySelection";
+import { TagSelection } from "src/components/tag/TagSelection";
 import type { JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJournalsSimple";
 import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 import type { UpdateJournalDataInputType } from "src/utils/validation/journalEntries/updateJournalValidation";
 import { currencyFormatter } from "src/utils/validation/user/currencyFormats";
 
+import { JournalCommandButtons } from "../JournalCommandButtons";
 import type { CombinedJournalDataAtomType } from "./CombinedJournalDataAtomType";
 
 export const JournalTableRowDisplay = ({
@@ -45,6 +50,8 @@ export const JournalTableRowDisplay = ({
     accountId: string;
     tagId?: string | null | undefined;
     billId?: string | null | undefined;
+    budgetId?: string | null | undefined;
+    categoryId?: string | null | undefined;
   }>({ accountId: "" });
 
   const resetRowData = () => {
@@ -55,7 +62,9 @@ export const JournalTableRowDisplay = ({
       setCurrentRowData({
         accountId: rowData.accountId,
         tagId: rowData.tagId,
-        billId: rowData.billId
+        billId: rowData.billId,
+        categoryId: rowData.categoryId,
+        budgetId: rowData.budgetId
       });
     }
   };
@@ -99,6 +108,9 @@ export const JournalTableRowDisplay = ({
           />
         </CustomTd>
         <CustomTd>
+          <JournalCommandButtons data={rowData} />
+        </CustomTd>
+        <CustomTd>
           <Text>{format(date, dateFormat)}</Text>
         </CustomTd>
         <CustomTd>
@@ -116,10 +128,14 @@ export const JournalTableRowDisplay = ({
           <Text>{rowData.description || ""}</Text>
         </CustomTd>
         <CustomTd>
-          <Text>{formatter.format(rowData.amount)}</Text>
+          <Text color={rowData.amount < 0 ? "red" : undefined}>
+            {formatter.format(rowData.amount)}
+          </Text>
         </CustomTd>
         <CustomTd>
-          <Text>{formatter.format(rowData.total)}</Text>
+          <Text fw={700} color={rowData.total < 0 ? "red" : undefined}>
+            {formatter.format(rowData.total)}
+          </Text>
         </CustomTd>
         <CustomTd>
           <Text>{rowData.category ? rowData.category.title : ""}</Text>
@@ -146,6 +162,9 @@ export const JournalTableRowDisplay = ({
         />
       </CustomTd>
       <CustomTd>
+        <JournalCommandButtons data={rowData} />
+      </CustomTd>
+      <CustomTd>
         <DatePicker
           value={date}
           disabled={disableEditing}
@@ -166,7 +185,15 @@ export const JournalTableRowDisplay = ({
           onChange={(e) =>
             e && setCurrentRowData({ ...currentRowData, accountId: e })
           }
-          onBlur={() => updateJournal(currentRowData)}
+          onBlur={() =>
+            rowData.accountId !== currentRowData.accountId &&
+            updateJournal(currentRowData)
+          }
+          createExpenseOption
+          onCreateSuccess={(e) =>
+            setCurrentRowData({ ...currentRowData, accountId: e })
+          }
+          searchable
         />
       </CustomTd>
       <CustomTd>
@@ -200,25 +227,77 @@ export const JournalTableRowDisplay = ({
         />
       </CustomTd>
       <CustomTd>
-        <Text>{formatter.format(rowData.total)}</Text>
+        <Text fw={700} color={rowData.total < 0 ? "red" : undefined}>
+          {formatter.format(rowData.total)}
+        </Text>
       </CustomTd>
       <CustomTd>
-        <Text>{rowData.category ? rowData.category.title : ""}</Text>
+        <CategorySelection
+          accountGroupingId={rowData.accountGroupingId || ""}
+          value={currentRowData.categoryId}
+          size="xs"
+          disabled={disableEditing}
+          onChange={(e) => {
+            console.log("New Category", e);
+            e && setCurrentRowData({ ...currentRowData, categoryId: e });
+          }}
+          onBlur={() =>
+            rowData.categoryId !== currentRowData.categoryId &&
+            updateJournal(currentRowData)
+          }
+          searchable
+        />
       </CustomTd>
       <CustomTd>
-        <Text>{rowData.tag ? rowData.tag.title : ""}</Text>
+        <TagSelection
+          accountGroupingId={rowData.accountGroupingId || ""}
+          value={currentRowData.tagId}
+          size="xs"
+          disabled={disableEditing}
+          onChange={(e) =>
+            e && setCurrentRowData({ ...currentRowData, tagId: e })
+          }
+          onBlur={() =>
+            rowData.tagId !== currentRowData.tagId &&
+            updateJournal(currentRowData)
+          }
+        />
       </CustomTd>
       <CustomTd>
-        <Text>{rowData.bill ? rowData.bill.title : ""}</Text>
+        <BillSelection
+          accountGroupingId={rowData.accountGroupingId || ""}
+          value={currentRowData.billId}
+          size="xs"
+          disabled={disableEditing}
+          onChange={(e) =>
+            e && setCurrentRowData({ ...currentRowData, billId: e })
+          }
+          onBlur={() =>
+            rowData.billId !== currentRowData.billId &&
+            updateJournal(currentRowData)
+          }
+        />
       </CustomTd>
       <CustomTd>
-        <Text>{rowData.budget ? rowData.budget.title : ""}</Text>
+        <BudgetSelection
+          accountGroupingId={rowData.accountGroupingId || ""}
+          value={currentRowData.budgetId}
+          size="xs"
+          disabled={disableEditing}
+          onChange={(e) =>
+            e && setCurrentRowData({ ...currentRowData, budgetId: e })
+          }
+          onBlur={() =>
+            rowData.budgetId !== currentRowData.budgetId &&
+            updateJournal(currentRowData)
+          }
+        />
       </CustomTd>
     </>
   );
 };
 
-export const CustomTd = ({ children }: { children: ReactNode }) => {
+export const CustomTd = ({ children }: { children?: ReactNode }) => {
   return (
     <td>
       <Center>{children}</Center>

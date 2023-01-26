@@ -1,4 +1,4 @@
-import { Stack } from "@mantine/core";
+import { ScrollArea, Stack } from "@mantine/core";
 import { useMemo } from "react";
 
 import { journalTableConfigAtom } from "src/utils/hooks/journals/useJournalsSimple";
@@ -42,11 +42,13 @@ export const JournalTableSimple = ({
       />
       <Stack>
         <AtomPagination paginationAtom={configData.paginationAtom} />
-        <TableSimpleAtom
-          header={header}
-          row={RowDisplay}
-          rowsAtom={journalData.rowIdAtom}
-        />
+        <ScrollArea pb="lg">
+          <TableSimpleAtom
+            header={header}
+            row={RowDisplay}
+            rowsAtom={journalData.rowIdAtom}
+          />
+        </ScrollArea>
         <AtomPagination paginationAtom={configData.paginationAtom} />
       </Stack>
     </>

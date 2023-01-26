@@ -14,7 +14,7 @@ export const TableSimpleAtom = ({
   const [rowIds] = useAtom(rowsAtom);
 
   return (
-    <Stack>
+    <Stack style={{ width: 3000 }}>
       <Table horizontalSpacing={2} verticalSpacing={2}>
         <thead>{header}</thead>
         <tbody>

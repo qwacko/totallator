@@ -19,6 +19,18 @@ export const filtersToPrismaFilters = <T extends string>({
       if (item.id === "accountId" && item.value) {
         return { account: { title: { contains: item.value } } };
       }
+      if (item.id === "billId" && item.value) {
+        return { bill: { title: { contains: item.value } } };
+      }
+      if (item.id === "budgetId" && item.value) {
+        return { budget: { title: { contains: item.value } } };
+      }
+      if (item.id === "categoryId" && item.value) {
+        return { category: { title: { contains: item.value } } };
+      }
+      if (item.id === "tagId" && item.value) {
+        return { tag: { title: { contains: item.value } } };
+      }
       return undefined;
     })
   );

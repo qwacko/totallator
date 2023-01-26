@@ -32,6 +32,9 @@ export const JournalTableHeaderDisplay = ({
           <Text fw={700}>Edit</Text>
         </CustomTd>
         <CustomTd>
+          <Text fw={700}>Info</Text>
+        </CustomTd>
+        <CustomTd>
           <Group>
             <Text fw={700}>Date</Text>
             <TableSortButton sortAtom={config.sortingAtom} columnId="date" />
@@ -121,10 +124,30 @@ export const JournalTableHeaderDisplay = ({
         </CustomTd>
         <CustomTd />
         <CustomTd />
-        <CustomTd />
-        <CustomTd />
-        <CustomTd />
-        <CustomTd />
+        <CustomTd>
+          <TableFilterInputAtom
+            filterAtom={config.filtersAtom}
+            columnId="categoryId"
+          />
+        </CustomTd>
+        <CustomTd>
+          <TableFilterInputAtom
+            filterAtom={config.filtersAtom}
+            columnId="tagId"
+          />
+        </CustomTd>
+        <CustomTd>
+          <TableFilterInputAtom
+            filterAtom={config.filtersAtom}
+            columnId="billId"
+          />
+        </CustomTd>
+        <CustomTd>
+          <TableFilterInputAtom
+            filterAtom={config.filtersAtom}
+            columnId="budgetId"
+          />
+        </CustomTd>
       </tr>
     </>
   );

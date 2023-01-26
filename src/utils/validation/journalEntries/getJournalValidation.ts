@@ -68,6 +68,50 @@ export const journalFilter = z.object({
   primaryJournalId: idFilter,
   transaction: transactionFilter,
 
+  bill: z
+    .object({
+      title: z
+        .object({
+          contains: z.string(),
+          mode: z.enum(["default", "insensitive"]).default("insensitive")
+        })
+        .optional()
+    })
+    .optional(),
+
+  budget: z
+    .object({
+      title: z
+        .object({
+          contains: z.string(),
+          mode: z.enum(["default", "insensitive"]).default("insensitive")
+        })
+        .optional()
+    })
+    .optional(),
+
+  category: z
+    .object({
+      title: z
+        .object({
+          contains: z.string(),
+          mode: z.enum(["default", "insensitive"]).default("insensitive")
+        })
+        .optional()
+    })
+    .optional(),
+
+  tag: z
+    .object({
+      title: z
+        .object({
+          contains: z.string(),
+          mode: z.enum(["default", "insensitive"]).default("insensitive")
+        })
+        .optional()
+    })
+    .optional(),
+
   account: z
     .object({
       isCash: z.object({ equals: z.boolean().optional() }).optional(),
