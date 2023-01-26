@@ -1,12 +1,12 @@
-import type { ColumnFiltersState } from "@tanstack/react-table";
-
 import { removeUndefined } from "src/utils/arrayHelpers";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 
-export const filtersToPrismaFilters = ({
+import { type TableFilterType } from "../../table/useTableFilterAtom";
+
+export const filtersToPrismaFilters = <T extends string>({
   filters
 }: {
-  filters: ColumnFiltersState;
+  filters: TableFilterType<T>[];
 }): JournalFilterValidationInputType[] | undefined => {
   const processedFilters: JournalFilterValidationInputType[] = removeUndefined(
     filters.map((item): JournalFilterValidationInputType | undefined => {
@@ -15,6 +15,9 @@ export const filtersToPrismaFilters = ({
       }
       if (item.id === "date" && item.value) {
         return { date: item.value as { gte?: Date; lte?: Date } };
+      }
+      if (item.id === "accountId" && item.value) {
+        return { account: { title: { contains: item.value } } };
       }
       return undefined;
     })

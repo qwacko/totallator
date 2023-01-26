@@ -75,7 +75,13 @@ export const journalFilter = z.object({
       type: z
         .object({ in: z.array(PrismaAccountTypeEnumValidation).optional() })
         .optional(),
-      id: z.object({ in: z.array(z.string().cuid()).optional() }).optional()
+      id: z.object({ in: z.array(z.string().cuid()).optional() }).optional(),
+      title: z
+        .object({
+          contains: z.string(),
+          mode: z.enum(["default", "insensitive"]).default("insensitive")
+        })
+        .optional()
     })
     .optional(),
 
@@ -122,3 +128,4 @@ export const getJournalValidation = z.object({
 });
 
 export type GetJournalValidation = z.infer<typeof getJournalValidation>;
+export type GetJournalValidationInput = z.input<typeof getJournalValidation>;
