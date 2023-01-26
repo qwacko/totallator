@@ -22,8 +22,6 @@ export const TableSortButton = <T extends string>({
   const sortDirectionDesc = sortState?.value ? sortState.value.desc : undefined;
   const sortDirectionIndex = sortState ? sortState.index + 1 : undefined;
 
-  console.log("Sort Index", sortDirectionIndex);
-
   return (
     <Indicator
       label={<Text size="xs">{sortDirectionIndex}</Text>}

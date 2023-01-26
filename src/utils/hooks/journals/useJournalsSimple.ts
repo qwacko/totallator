@@ -1,4 +1,6 @@
+import deepEquals from "fast-deep-equal";
 import { atom } from "jotai";
+import { selectAtom } from "jotai/utils";
 
 import type {
   GetJournalValidationInput,
@@ -38,6 +40,35 @@ type JournalFilterKeys =
   | "budgetId"
   | "categoryId";
 
+const idSelectionAtom = () => {
+  const selectionAtom = atom<string[]>([]);
+
+  const selectionAtomById = (id: string) => {
+    const isSelectedAtom = selectAtom(
+      selectionAtom,
+      (data) => data.includes(id),
+      deepEquals
+    );
+
+    return atom(
+      (get) => get(isSelectedAtom),
+      (get, set) => {
+        const currentEditing = get(selectionAtom);
+        if (currentEditing.includes(id)) {
+          set(
+            selectionAtom,
+            currentEditing.filter((item) => item !== id)
+          );
+        } else {
+          set(selectionAtom, [...currentEditing, id]);
+        }
+      }
+    );
+  };
+
+  return { selectionAtom, selectionAtomById };
+};
+
 export const journalTableConfigAtom = ({
   initialSort,
   initialFilter
@@ -52,22 +83,13 @@ export const journalTableConfigAtom = ({
     pageSize: 10,
     rowCount: 0
   });
-  const editingRowsAtom = atom<string[]>([]);
-  const editingByIdAtom = (id: string) =>
-    atom(
-      (get) => get(editingRowsAtom).includes(id),
-      (get, set) => {
-        const currentEditing = get(editingRowsAtom);
-        if (currentEditing.includes(id)) {
-          set(
-            editingRowsAtom,
-            currentEditing.filter((item) => item !== id)
-          );
-        } else {
-          set(editingRowsAtom, [...currentEditing, id]);
-        }
-      }
-    );
+  const { selectionAtom: editingRowsAtom, selectionAtomById: editingByIdAtom } =
+    idSelectionAtom();
+
+  const {
+    selectionAtom: selectedRowsAtom,
+    selectionAtomById: selectedByIdAtom
+  } = idSelectionAtom();
 
   const configForTRPC = (externalFilters: JournalFilterValidationInputType[]) =>
     atom((get) => {
@@ -75,7 +97,6 @@ export const journalTableConfigAtom = ({
       const filtersToUse = filtersToPrismaFilters({
         filters: get(filtersAtom) || []
       });
-      console.log("TRPC Filters", filtersToUse);
 
       const combinedFilters = filtersToUse
         ? [...filtersToUse, ...externalFilters]
@@ -100,6 +121,8 @@ export const journalTableConfigAtom = ({
     paginationAtom,
     editingRowsAtom,
     editingByIdAtom,
+    selectedRowsAtom,
+    selectedByIdAtom,
     configForTRPC
   };
 };

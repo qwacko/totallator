@@ -3,7 +3,9 @@ import { useAtom } from "jotai";
 
 import { type JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJournalsSimple";
 
+import { JournalTableBulkActions } from "../JournalTableBulkActions";
 import type { CombinedJournalDataAtomType } from "./CombinedJournalDataAtomType";
+import { JournalTableBulkActionsAtom } from "./JournalTableBulkActionsAtom";
 import { CustomTd } from "./JournalTableRowDisplay";
 import { TableFilterInputAtom } from "./TableFilterInput";
 import { TableSortButton } from "./TableSortButton";
@@ -25,9 +27,23 @@ export const JournalTableHeaderDisplay = ({
       setEditingRows(rowIds);
     }
   };
+
+  const [selectedRows, setSelectedRows] = useAtom(config.selectedRowsAtom);
+  const selecting = selectedRows.length > 0;
+  const toggleSelection = () => {
+    if (selecting) {
+      setSelectedRows([]);
+    } else {
+      setSelectedRows(rowIds);
+    }
+  };
+
   return (
     <>
       <tr>
+        <CustomTd>
+          <Text fw={700}>Select</Text>
+        </CustomTd>
         <CustomTd>
           <Text fw={700}>Edit</Text>
         </CustomTd>
@@ -105,6 +121,15 @@ export const JournalTableHeaderDisplay = ({
         </CustomTd>
       </tr>
       <tr>
+        <CustomTd>
+          <Group>
+            <Checkbox checked={selecting} onChange={toggleSelection} />
+            <JournalTableBulkActionsAtom
+              config={config}
+              journalData={journalData}
+            />
+          </Group>
+        </CustomTd>
         <CustomTd>
           <Checkbox checked={editing} onChange={toggleEditing} />
         </CustomTd>

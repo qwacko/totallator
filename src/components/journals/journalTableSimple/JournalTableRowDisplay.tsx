@@ -1,5 +1,16 @@
-import { Center, Checkbox, NumberInput, Text, TextInput } from "@mantine/core";
+import {
+  Center,
+  Checkbox,
+  Container,
+  Group,
+  HoverCard,
+  NumberInput,
+  Popover,
+  Text,
+  TextInput
+} from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
+import { IconCheck, IconEyeCheck, IconReport } from "@tabler/icons";
 import { format } from "date-fns";
 import deepEquals from "fast-deep-equal";
 import { useAtom } from "jotai";
@@ -80,6 +91,12 @@ export const JournalTableRowDisplay = ({
   );
   const [editing, toggleEditing] = useAtom(editingAtom);
 
+  const selectedAtom = useMemo(
+    () => config.selectedByIdAtom(rowId),
+    [rowId, config]
+  );
+  const [selected, toggleSelected] = useAtom(selectedAtom);
+
   const { mutate } = useUpdateJournals({
     onError: () => resetRowData()
   });
@@ -97,9 +114,32 @@ export const JournalTableRowDisplay = ({
     : true;
 
   if (!rowData) return <></>;
+
+  const EditDescription = () => (
+    <TextInput
+      value={description}
+      onChange={(e) => {
+        console.log("New Description Value", e.target.value);
+        setDescription(e.target.value);
+      }}
+      size="xs"
+      disabled={disableEditing}
+      onBlur={() =>
+        description !== rowData.description && updateJournal({ description })
+      }
+    />
+  );
+
   if (!editing) {
     return (
       <>
+        <CustomTd>
+          <Checkbox
+            checked={selected}
+            onChange={() => toggleSelected()}
+            transitionDuration={0}
+          />
+        </CustomTd>
         <CustomTd>
           <Checkbox
             checked={editing}
@@ -108,13 +148,38 @@ export const JournalTableRowDisplay = ({
           />
         </CustomTd>
         <CustomTd>
-          <JournalCommandButtons data={rowData} />
+          <HoverCard shadow="md" openDelay={100}>
+            <HoverCard.Target>
+              <Group>
+                {!rowData.complete &&
+                  !rowData.dataChecked &&
+                  !rowData.reconciled && <Container w={14} h={14} />}
+                {rowData.complete && <IconCheck size={14} color="green" />}
+                {!rowData.complete && rowData.dataChecked && (
+                  <IconEyeCheck size={14} color="blue" />
+                )}
+                {!rowData.complete && rowData.reconciled && (
+                  <IconReport size={14} color="blue" />
+                )}
+              </Group>
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <JournalCommandButtons data={rowData} />
+            </HoverCard.Dropdown>
+          </HoverCard>
         </CustomTd>
         <CustomTd>
           <Text>{format(date, dateFormat)}</Text>
         </CustomTd>
         <CustomTd>
-          <Text>{rowData.account?.title}</Text>
+          <Popover trapFocus>
+            <Popover.Target>
+              <Text>{rowData.account?.title}</Text>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <EditDescription />
+            </Popover.Dropdown>
+          </Popover>
         </CustomTd>
         <CustomTd>
           <Text>
@@ -125,7 +190,32 @@ export const JournalTableRowDisplay = ({
           </Text>
         </CustomTd>
         <CustomTd>
-          <Text>{rowData.description || ""}</Text>
+          <Popover
+            trapFocus
+            onClose={() =>
+              description !== rowData.description &&
+              updateJournal({ description })
+            }
+          >
+            <Popover.Target>
+              <Text>{rowData.description || ""}</Text>
+            </Popover.Target>
+            <Popover.Dropdown>
+              <TextInput
+                value={description}
+                onChange={(e) => {
+                  console.log("New Description Value", e.target.value);
+                  setDescription(e.target.value);
+                }}
+                size="xs"
+                disabled={disableEditing}
+                onBlur={() =>
+                  description !== rowData.description &&
+                  updateJournal({ description })
+                }
+              />
+            </Popover.Dropdown>
+          </Popover>
         </CustomTd>
         <CustomTd>
           <Text color={rowData.amount < 0 ? "red" : undefined}>
@@ -154,6 +244,13 @@ export const JournalTableRowDisplay = ({
   }
   return (
     <>
+      <CustomTd>
+        <Checkbox
+          checked={selected}
+          onChange={() => toggleSelected()}
+          transitionDuration={0}
+        />
+      </CustomTd>
       <CustomTd>
         <Checkbox
           checked={editing}
@@ -205,16 +302,7 @@ export const JournalTableRowDisplay = ({
         </Text>
       </CustomTd>
       <CustomTd>
-        <TextInput
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          size="xs"
-          disabled={disableEditing}
-          onBlur={() =>
-            description !== rowData.description &&
-            updateJournal({ description })
-          }
-        />
+        <EditDescription />
       </CustomTd>
       <CustomTd>
         <NumberInput

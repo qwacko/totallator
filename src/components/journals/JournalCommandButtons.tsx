@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { useCloneTransactions } from "src/utils/hooks/journals/useCloneTransactions";
 import { useDeleteTransactions } from "src/utils/hooks/journals/useDeleteTransactions";
 import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
@@ -21,9 +23,9 @@ export const JournalCommandButtons = ({
   });
   const { mutate: updateJournal } = useUpdateJournals();
 
-  return (
-    <CommandButtons
-      completeButton={{
+  const buttonConfig = useMemo(
+    () => ({
+      completeButton: {
         hidden: false,
         disabled: !data.userIsAdmin,
         highlight: data.complete,
@@ -39,8 +41,8 @@ export const JournalCommandButtons = ({
                 filters: [{ id: { in: [data.id] } }]
               });
         }
-      }}
-      reconciledButton={{
+      },
+      reconciledButton: {
         hidden: false,
         disabled: !data.userIsAdmin || data.complete,
         highlight: data.reconciled,
@@ -55,8 +57,8 @@ export const JournalCommandButtons = ({
                 filters: [{ id: { in: [data.id] } }]
               });
         }
-      }}
-      dataCheckedButton={{
+      },
+      dataCheckedButton: {
         hidden: false,
         disabled: !data.userIsAdmin || data.complete,
         highlight: data.dataChecked,
@@ -71,18 +73,31 @@ export const JournalCommandButtons = ({
                 filters: [{ id: { in: [data.id] } }]
               });
         }
-      }}
-      cloneButton={{
+      },
+      cloneButton: {
         hidden: false,
         disabled: !data.userIsAdmin,
         action: () => clone(1)
-      }}
-      deleteButton={{
+      },
+      deleteButton: {
         hidden: false,
         disabled: !data.userIsAdmin || data.complete,
         action: deleteTrans,
         message: `Delete Transaction ${data.description}?`
-      }}
-    />
+      }
+    }),
+    [
+      data.userIsAdmin,
+      data.complete,
+      data.dataChecked,
+      data.id,
+      data.description,
+      data.reconciled,
+      clone,
+      deleteTrans,
+      updateJournal
+    ]
   );
+
+  return <CommandButtons {...buttonConfig} />;
 };
