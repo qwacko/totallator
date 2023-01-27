@@ -2,7 +2,7 @@ import type { Prisma, PrismaClient } from "@prisma/client";
 
 import type { JournalFilterValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 
-const filtersToQuery = async ({
+export const filtersToQuery = async ({
   prisma,
   filters,
   userId
@@ -45,6 +45,7 @@ const filtersToQuery = async ({
 
   return returnFilters;
 };
+
 export const journalsWithStats = async ({
   prisma,
   orderBy,
@@ -62,21 +63,11 @@ export const journalsWithStats = async ({
   filters: JournalFilterValidation[] | undefined;
   userId: string;
 }) => {
-  const accountGroupings = await prisma.accountGrouping.findMany({
-    where: { viewUsers: { some: { id: userId } } }
-  });
-  const accountGroupingIds = accountGroupings.map((item) => item.id);
-
   const [allJournals, journalCountDefault, journalTotalDefault] =
     await Promise.all([
       prisma.journalEntry.findMany({
         where: {
-          AND: [
-            ...(await filtersToQuery({ prisma, userId, filters })),
-            {
-              accountGroupingId: { in: accountGroupingIds }
-            }
-          ]
+          AND: await filtersToQuery({ prisma, userId, filters })
         },
         include: {
           accountGrouping: { include: { viewUsers: true, adminUsers: true } },
@@ -88,22 +79,12 @@ export const journalsWithStats = async ({
       }),
       prisma.journalEntry.count({
         where: {
-          AND: [
-            ...(await filtersToQuery({ prisma, userId, filters })),
-            {
-              accountGroupingId: { in: accountGroupingIds }
-            }
-          ]
+          AND: await filtersToQuery({ prisma, userId, filters })
         }
       }),
       prisma.journalEntry.aggregate({
         where: {
-          AND: [
-            ...(await filtersToQuery({ prisma, userId, filters })),
-            {
-              accountGroupingId: { in: accountGroupingIds }
-            }
-          ]
+          AND: await filtersToQuery({ prisma, userId, filters })
         },
         orderBy,
         _sum: { amount: true },

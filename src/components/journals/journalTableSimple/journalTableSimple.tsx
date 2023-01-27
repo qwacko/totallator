@@ -19,10 +19,6 @@ export const JournalTableSimple = ({
   const configData = useMemo(() => journalTableConfigAtom(), []);
   const journalData = useMemo(() => combinedJournalDataAtom(), []);
 
-  const header = (
-    <JournalTableHeaderDisplay config={configData} journalData={journalData} />
-  );
-
   const RowDisplay = (rowId: string) => {
     return (
       <JournalTableRowDisplay
@@ -44,7 +40,13 @@ export const JournalTableSimple = ({
         <AtomPagination paginationAtom={configData.paginationAtom} />
         <ScrollArea pb="lg">
           <TableSimpleAtom
-            header={header}
+            header={
+              <JournalTableHeaderDisplay
+                config={configData}
+                journalData={journalData}
+                externalFilters={filters}
+              />
+            }
             row={RowDisplay}
             rowsAtom={journalData.rowIdAtom}
           />

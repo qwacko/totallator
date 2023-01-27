@@ -13,13 +13,13 @@ import { useForm, zodResolver } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
 import { IconMenu2 } from "@tabler/icons";
 import { useAtom } from "jotai";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import type { JournalsMergedType } from "src/utils/hooks/journals/helpers/buildMergedData";
 import { useCloneTransactions } from "src/utils/hooks/journals/useCloneTransactions";
 import { useDeleteTransactions } from "src/utils/hooks/journals/useDeleteTransactions";
 import type { JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJournalsSimple";
 import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
+import { trpc } from "src/utils/trpc";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 import {
   type UpdateJournalDataInputType,
@@ -36,28 +36,13 @@ import type { CombinedJournalDataAtomType } from "./CombinedJournalDataAtomType"
 
 export const JournalTableBulkActionsAtom = ({
   config,
-  journalData
+  journalData,
+  externalFilters
 }: {
   config: JournalTableConfigAtomReturn;
   journalData: CombinedJournalDataAtomType;
+  externalFilters: JournalFilterValidationInputType[];
 }) => {
-  const [deleteOpened, deleteActions] = useDisclosure(false);
-  const [cloneOpened, cloneActions] = useDisclosure(false);
-  const [updateOpened, updateActions] = useDisclosure(false);
-
-  const [selectionIds, updateSelection] = useAtom(config.selectedRowsAtom);
-  const [journals] = useAtom(journalData.mergedJournalDataAtom);
-  const [journalIds] = useAtom(journalData.rowIdAtom);
-
-  const selection = journals.filter((item) => selectionIds.includes(item.id));
-
-  const { mutate: updateJournals } = useUpdateJournals();
-
-  const hasComplete = selection.reduce(
-    (prev, current) => (prev ? prev : current.complete),
-    false
-  );
-
   return (
     <>
       <Menu withinPortal={true}>
@@ -67,159 +52,284 @@ export const JournalTableBulkActionsAtom = ({
           </Button>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Label>Selection</Menu.Label>
-          <Menu.Item
-            closeMenuOnClick={false}
-            onClick={() => {
-              updateSelection(journalIds);
-            }}
-          >
-            Select All
-          </Menu.Item>
-          <Menu.Item
-            closeMenuOnClick={false}
-            onClick={() => {
-              const incompleteIds = journals
-                .filter((item) => !item.complete)
-                .map((item) => item.id);
-              updateSelection(incompleteIds);
-            }}
-          >
-            Select Incomplete
-          </Menu.Item>
-          <Menu.Item
-            closeMenuOnClick={false}
-            onClick={() => {
-              const incompleteIds = journals
-                .filter((item) => item.complete)
-                .map((item) => item.id);
-              updateSelection(incompleteIds);
-            }}
-          >
-            Select Complete
-          </Menu.Item>
-          <Menu.Item
-            closeMenuOnClick={false}
-            onClick={() => {
-              updateSelection([]);
-            }}
-          >
-            Clear Selection
-          </Menu.Item>
-          <Menu.Divider />
-          <Menu.Label>Bulk Modify {selection.length} Transactions</Menu.Label>
-          <Menu.Item
-            onClick={deleteActions.open}
-            disabled={selection.length === 0 || hasComplete}
-            color="red"
-          >
-            Delete
-          </Menu.Item>
-          <Menu.Item
-            onClick={cloneActions.open}
-            disabled={selection.length === 0}
-          >
-            Clone
-          </Menu.Item>
-          <Menu.Item onClick={updateActions.open} disabled={hasComplete}>
-            Update
-          </Menu.Item>
-          <Menu.Divider />
-          <Menu.Label>Bulk Update</Menu.Label>
-          <Menu.Item
-            onClick={() =>
-              updateJournals({
-                data: { reconciled: true },
-                maxUpdated: selectionIds.length,
-                filters: [{ id: { in: selectionIds } }]
-              })
-            }
-            disabled={hasComplete}
-          >
-            Mark Reconciled
-          </Menu.Item>
-          <Menu.Item
-            onClick={() =>
-              updateJournals({
-                data: { dataChecked: true },
-                maxUpdated: selectionIds.length,
-                filters: [{ id: { in: selectionIds } }]
-              })
-            }
-            disabled={hasComplete}
-          >
-            Mark Data Checked
-          </Menu.Item>
-          <Menu.Item
-            onClick={() =>
-              updateJournals({
-                data: { complete: true },
-                maxUpdated: selectionIds.length,
-                filters: [{ id: { in: selectionIds } }]
-              })
-            }
-            disabled={hasComplete}
-          >
-            Mark Complete
-          </Menu.Item>
-          <Menu.Item
-            onClick={() =>
-              updateJournals({
-                data: { complete: true, reconciled: true, dataChecked: true },
-                maxUpdated: selectionIds.length,
-                filters: [{ id: { in: selectionIds } }]
-              })
-            }
-            disabled={hasComplete}
-          >
-            Mark Complete/Reconciled/Checked
-          </Menu.Item>
-          <Menu.Item
-            onClick={() =>
-              updateJournals({
-                data: { dataChecked: false, reconciled: false },
-                maxUpdated: selectionIds.length,
-                filters: [{ id: { in: selectionIds } }]
-              })
-            }
-            disabled={hasComplete}
-          >
-            Clear Status
-          </Menu.Item>
-          <Menu.Item
-            onClick={() =>
-              updateJournals({
-                data: { complete: false },
-                maxUpdated: journalIds.length,
-                updateCompleteJournals: true,
-                filters: [{ id: { in: selectionIds } }]
-              })
-            }
-            disabled={!hasComplete}
-          >
-            Mark Incomplete
-          </Menu.Item>
+          <JournalTableBulkActionsDropdownAtom
+            config={config}
+            journalData={journalData}
+            externalFilters={externalFilters}
+          />
         </Menu.Dropdown>
       </Menu>
+    </>
+  );
+};
+
+const JournalTableBulkActionsDropdownAtom = ({
+  config,
+  journalData,
+  externalFilters
+}: {
+  config: JournalTableConfigAtomReturn;
+  journalData: CombinedJournalDataAtomType;
+  externalFilters: JournalFilterValidationInputType[];
+}) => {
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [hasComplete, setHasComplete] = useState<boolean>(true);
+  const [accountGroupingIds, setAccountGroupingIds] = useState<string[]>([]);
+
+  const trpcUtils = trpc.useContext();
+
+  const [updatingAllMatching, setUpdatingAllMatching] = useState(false);
+
+  const [deleteOpened, deleteActions] = useDisclosure(false);
+  const [cloneOpened, cloneActions] = useDisclosure(false);
+  const [updateOpened, updateActions] = useDisclosure(false);
+
+  const [atomSelectionIds, updateSelection] = useAtom(config.selectedRowsAtom);
+  const configAtomToUse = useMemo(() => {
+    return config.configForTRPC(externalFilters);
+  }, [externalFilters, config]);
+  const [configData] = useAtom(configAtomToUse);
+
+  const [journals] = useAtom(journalData.mergedJournalDataAtom);
+  const [journalIds] = useAtom(journalData.rowIdAtom);
+
+  const { mutate: updateJournals } = useUpdateJournals();
+
+  const getAllItems = async (
+    type: "Complete" | "Incomplete" | "All" = "All"
+  ) => {
+    const data = await trpcUtils.journals.getSelectionInfo.fetch({
+      type,
+      filters: configData.filters
+    });
+
+    setUpdatingAllMatching(true);
+    setSelectedIds(data.ids);
+    setHasComplete(data.hasComplete);
+    setAccountGroupingIds(data.accountGroupingIds);
+  };
+
+  useEffect(() => {
+    if (!updatingAllMatching) {
+      const selection = journals.filter((item) =>
+        atomSelectionIds.includes(item.id)
+      );
+      const newHasComplete = selection.reduce(
+        (prev, current) => (prev ? true : current.complete),
+        false
+      );
+      const accountGroupingIds = [
+        ...new Set(selection.map((item) => item.accountGroupingId))
+      ];
+
+      setSelectedIds(selection.map((item) => item.id));
+      setHasComplete(newHasComplete);
+      setAccountGroupingIds(accountGroupingIds);
+    }
+  }, [journals, atomSelectionIds, updatingAllMatching]);
+
+  // const hasComplete = selection.reduce(
+  //   (prev, current) => (prev ? prev : current.complete),
+  //   false
+  // );
+
+  return (
+    <>
+      <Menu.Label>
+        <Text
+          fw={updatingAllMatching ? 700 : undefined}
+          td={updatingAllMatching ? "underline" : undefined}
+        >
+          All Matching Selection
+        </Text>
+      </Menu.Label>
+      <Menu.Item
+        closeMenuOnClick={false}
+        onClick={() => {
+          getAllItems("All");
+        }}
+      >
+        Select All
+      </Menu.Item>
+      <Menu.Item
+        closeMenuOnClick={false}
+        onClick={() => {
+          getAllItems("Incomplete");
+        }}
+      >
+        Select Incomplete
+      </Menu.Item>
+      <Menu.Item
+        closeMenuOnClick={false}
+        onClick={() => {
+          getAllItems("Complete");
+        }}
+      >
+        Select Complete
+      </Menu.Item>
+      <Menu.Label>
+        <Text
+          fw={!updatingAllMatching ? 700 : undefined}
+          td={!updatingAllMatching ? "underline" : undefined}
+        >
+          Page Selection
+        </Text>
+      </Menu.Label>
+      <Menu.Item
+        closeMenuOnClick={false}
+        onClick={() => {
+          setUpdatingAllMatching(false);
+          updateSelection(journalIds);
+        }}
+      >
+        Select All
+      </Menu.Item>
+      <Menu.Item
+        closeMenuOnClick={false}
+        onClick={() => {
+          setUpdatingAllMatching(false);
+          const incompleteIds = journals
+            .filter((item) => !item.complete)
+            .map((item) => item.id);
+          updateSelection(incompleteIds);
+        }}
+      >
+        Select Incomplete
+      </Menu.Item>
+      <Menu.Item
+        closeMenuOnClick={false}
+        onClick={() => {
+          setUpdatingAllMatching(false);
+          const incompleteIds = journals
+            .filter((item) => item.complete)
+            .map((item) => item.id);
+          updateSelection(incompleteIds);
+        }}
+      >
+        Select Complete
+      </Menu.Item>
+      <Menu.Item
+        closeMenuOnClick={false}
+        onClick={() => {
+          setUpdatingAllMatching(false);
+          updateSelection([]);
+        }}
+      >
+        Clear Selection
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Label>Bulk Modify {selectedIds.length} Transactions</Menu.Label>
+      <Menu.Item
+        onClick={deleteActions.open}
+        disabled={selectedIds.length === 0 || hasComplete}
+        color="red"
+      >
+        Delete
+      </Menu.Item>
+      <Menu.Item
+        onClick={cloneActions.open}
+        disabled={selectedIds.length === 0}
+      >
+        Clone
+      </Menu.Item>
+      <Menu.Item onClick={updateActions.open} disabled={hasComplete}>
+        Update
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Label>Bulk Update</Menu.Label>
+      <Menu.Item
+        onClick={() =>
+          updateJournals({
+            data: { reconciled: true },
+            maxUpdated: selectedIds.length,
+            filters: [{ id: { in: selectedIds } }]
+          })
+        }
+        disabled={hasComplete}
+      >
+        Mark Reconciled
+      </Menu.Item>
+      <Menu.Item
+        onClick={() =>
+          updateJournals({
+            data: { dataChecked: true },
+            maxUpdated: selectedIds.length,
+            filters: [{ id: { in: selectedIds } }]
+          })
+        }
+        disabled={hasComplete}
+      >
+        Mark Data Checked
+      </Menu.Item>
+      <Menu.Item
+        onClick={() =>
+          updateJournals({
+            data: { complete: true },
+            maxUpdated: selectedIds.length,
+            filters: [{ id: { in: selectedIds } }]
+          })
+        }
+        disabled={hasComplete}
+      >
+        Mark Complete
+      </Menu.Item>
+      <Menu.Item
+        onClick={() =>
+          updateJournals({
+            data: { complete: true, reconciled: true, dataChecked: true },
+            maxUpdated: selectedIds.length,
+            filters: [{ id: { in: selectedIds } }]
+          })
+        }
+        disabled={hasComplete}
+      >
+        Mark Complete/Reconciled/Checked
+      </Menu.Item>
+      <Menu.Item
+        onClick={() =>
+          updateJournals({
+            data: { dataChecked: false, reconciled: false },
+            maxUpdated: selectedIds.length,
+            filters: [{ id: { in: selectedIds } }]
+          })
+        }
+        disabled={hasComplete}
+      >
+        Clear Status
+      </Menu.Item>
+      <Menu.Item
+        onClick={() =>
+          updateJournals({
+            data: { complete: false },
+            maxUpdated: journalIds.length,
+            updateCompleteJournals: true,
+            filters: [{ id: { in: selectedIds } }]
+          })
+        }
+        disabled={!hasComplete}
+      >
+        Mark Incomplete
+      </Menu.Item>
       {deleteOpened && (
         <DeleteModal
           opened={deleteOpened}
           close={deleteActions.close}
-          rows={selection}
+          rows={selectedIds}
         />
       )}
       {cloneOpened && (
         <CloneModal
           opened={cloneOpened}
           close={cloneActions.close}
-          rows={selection}
+          rows={selectedIds}
         />
       )}
       {updateOpened && (
         <UpdateSelectedModal
           opened={updateOpened}
           close={updateActions.close}
-          rows={selection}
+          rows={selectedIds}
+          accountGroupingIds={accountGroupingIds}
         />
       )}
     </>
@@ -233,12 +343,9 @@ const DeleteModal = ({
 }: {
   opened: boolean;
   close: () => void;
-  rows: JournalsMergedType[];
+  rows: string[];
 }) => {
-  const ids = rows.map((item) => {
-    const rowData = item;
-    return rowData.transactionId;
-  });
+  const ids = rows;
 
   const { deleteTrans } = useDeleteTransactions({ ids, onSuccess: close });
 
@@ -267,12 +374,9 @@ const CloneModal = ({
 }: {
   opened: boolean;
   close: () => void;
-  rows: JournalsMergedType[];
+  rows: string[];
 }) => {
-  const ids = rows.map((item) => {
-    const rowData = item;
-    return rowData.transactionId;
-  });
+  const ids = rows;
 
   const [count, setCount] = useState<number>(1);
   const { clone } = useCloneTransactions({ ids, onSuccess: close });
@@ -304,19 +408,19 @@ const CloneModal = ({
 const UpdateSelectedModal = ({
   opened,
   close,
-  rows
+  rows,
+  accountGroupingIds
 }: {
   opened: boolean;
   close: () => void;
-  rows: JournalsMergedType[];
+  rows: string[];
+  accountGroupingIds: string[];
 }) => {
   console.log("UpdateBulkModal");
-  const ids = rows.map((item) => item.id);
-  const accountGroupings = [
-    ...new Set(rows.map((item) => item.accountGroupingId))
-  ];
-  const multipleAccountGroupings = accountGroupings.length > 1;
-  const accountGroupingId = accountGroupings[0];
+  const ids = rows;
+
+  const multipleAccountGroupings = accountGroupingIds.length > 1;
+  const accountGroupingId = accountGroupingIds[0];
 
   const filter: JournalFilterValidationInputType[] = [{ id: { in: ids } }];
   const maxUpdated = ids.length;

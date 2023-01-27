@@ -1,6 +1,8 @@
 import { TRPCError } from "@trpc/server";
 import { omit } from "lodash";
+import { z } from "zod";
 
+import { removeUndefinedAndDuplicates } from "src/utils/arrayHelpers";
 import { cloneTransactionInput } from "src/utils/validation/journalEntries/cloneTransactionsValidation";
 import {
   createSimpleTransactionValidation,
@@ -16,22 +18,56 @@ import { getUserInfo } from "./helpers/getUserInfo";
 import { checkTransactions } from "./helpers/journals/checkTransactions";
 import { createSimpleTranasction } from "./helpers/journals/createSimpleTranasction";
 import { createTransaction } from "./helpers/journals/createTransaction";
-import { journalsWithStats } from "./helpers/journals/journalsWithStats";
+import {
+  filtersToQuery,
+  journalsWithStats
+} from "./helpers/journals/journalsWithStats";
 import { sortToOrderBy } from "./helpers/journals/sortToOrderBy";
 import { updateSingleJournal } from "./helpers/journals/updateSingleJournal";
 
 export const journalsRouter = router({
-  getAccountGroupingIds: protectedProcedure
-    .input(getJournalValidation.omit({ pagination: true, sort: true }))
+  getSelectionInfo: protectedProcedure
+    .input(
+      getJournalValidation.omit({ pagination: true, sort: true }).merge(
+        z.object({
+          type: z.enum(["All", "Incomplete", "Complete"])
+        })
+      )
+    )
     .query(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
-      const accountGroupings = await ctx.prisma.accountGrouping.findMany({
+
+      const journals = await ctx.prisma.journalEntry.findMany({
         where: {
-          viewUsers: { some: { id: user.id } },
-          journalEntries: { some: { AND: input.filters } }
-        }
+          AND: [
+            ...(await filtersToQuery({
+              prisma: ctx.prisma,
+              userId: user.id,
+              filters: input.filters
+            })),
+            input.type === "Complete"
+              ? { complete: true }
+              : input.type === "Incomplete"
+              ? { complete: false }
+              : {}
+          ]
+        },
+        select: { id: true, complete: true, accountGroupingId: true }
       });
-      return accountGroupings.map((item) => item.id);
+
+      const accountGroupingIds = removeUndefinedAndDuplicates(
+        journals.map((item) => item.accountGroupingId)
+      );
+
+      const hasComplete = removeUndefinedAndDuplicates(
+        journals.map((item) => item.complete)
+      ).includes(true);
+
+      return {
+        ids: journals.map((item) => item.id),
+        accountGroupingIds,
+        hasComplete
+      };
     }),
   get: protectedProcedure
     .input(getJournalValidation)
