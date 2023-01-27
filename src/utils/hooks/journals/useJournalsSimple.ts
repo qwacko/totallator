@@ -38,7 +38,8 @@ type JournalFilterKeys =
   | "date"
   | "billId"
   | "budgetId"
-  | "categoryId";
+  | "categoryId"
+  | "payee";
 
 const idSelectionAtom = () => {
   const selectionAtom = atom<string[]>([]);

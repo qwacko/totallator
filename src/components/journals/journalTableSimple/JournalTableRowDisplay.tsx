@@ -26,6 +26,7 @@ import { BudgetSelectionWithPopoverEdit } from "./cells/BudgetSelectionWithPopov
 import { CategorySelectionWithPopoverEdit } from "./cells/CategorySelectionWithPopoverEdit";
 import { DatePickerWithPopoverEdit } from "./cells/DatePickerWithPopoverEdit";
 import { NumberCellWithPopoverEdit } from "./cells/NumberCellWithPopoverEdit";
+import { OtherJournalsCellDisplay } from "./cells/OtherJournalsCellDisplay";
 import { TagSelectionWithPopoverEdit } from "./cells/TagSelectionWithPopoverEdit";
 import { TextCellWithPopoverEdit } from "./cells/TextCellWithPopoverEdit";
 
@@ -192,12 +193,12 @@ export const JournalTableRowDisplay = ({
         />
       </CustomTd>
       <CustomTd>
-        <Text>
-          {rowData.otherJournals
-            .filter((item) => item.id !== rowData.id)
-            .map((item) => (item.account ? item.account.title : ""))
-            .join(", ")}
-        </Text>
+        <OtherJournalsCellDisplay
+          rowData={rowData}
+          editing={editing}
+          disableEditing={disableEditing}
+          currencyFormat={formatter.format}
+        />
       </CustomTd>
       <CustomTd>
         <TextCellWithPopoverEdit

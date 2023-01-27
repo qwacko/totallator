@@ -31,6 +31,15 @@ export const filtersToPrismaFilters = <T extends string>({
       if (item.id === "tagId" && item.value) {
         return { tag: { title: { contains: item.value } } };
       }
+      if (item.id === "payee" && item.value) {
+        return {
+          transaction: {
+            journalEntries: {
+              some: { account: { title: { contains: item.value } } }
+            }
+          }
+        };
+      }
       return undefined;
     })
   );

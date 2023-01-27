@@ -140,7 +140,12 @@ export const JournalTableHeaderDisplay = ({
             columnId="accountId"
           />
         </CustomTd>
-        <CustomTd />
+        <CustomTd>
+          <TableFilterInputAtom
+            filterAtom={config.filtersAtom}
+            columnId="payee"
+          />
+        </CustomTd>
         <CustomTd>
           <TableFilterInputAtom
             filterAtom={config.filtersAtom}
