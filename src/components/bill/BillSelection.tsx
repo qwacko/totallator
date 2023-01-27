@@ -35,12 +35,14 @@ const useBillsDropdown = ({
   return filteredBills;
 };
 
+export type BillSelectionProps = Omit<SelectProps, "data"> & {
+  accountGroupingId?: string;
+};
+
 export const BillSelection = ({
   accountGroupingId,
   ...props
-}: Omit<SelectProps, "data"> & {
-  accountGroupingId?: string;
-}) => {
+}: BillSelectionProps) => {
   const filteredBills = useBillsDropdown({ accountGroupingId });
 
   return <Select {...props} data={filteredBills} />;

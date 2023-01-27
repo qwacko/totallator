@@ -3,7 +3,6 @@ import { useAtom } from "jotai";
 
 import { type JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJournalsSimple";
 
-import { JournalTableBulkActions } from "../JournalTableBulkActions";
 import type { CombinedJournalDataAtomType } from "./CombinedJournalDataAtomType";
 import { JournalTableBulkActionsAtom } from "./JournalTableBulkActionsAtom";
 import { CustomTd } from "./JournalTableRowDisplay";
@@ -133,6 +132,7 @@ export const JournalTableHeaderDisplay = ({
         <CustomTd>
           <Checkbox checked={editing} onChange={toggleEditing} />
         </CustomTd>
+        <CustomTd />
         <CustomTd />
         <CustomTd>
           <TableFilterInputAtom

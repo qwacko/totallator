@@ -4,24 +4,14 @@ import {
   Container,
   Group,
   HoverCard,
-  NumberInput,
-  Popover,
-  Text,
-  TextInput
+  Text
 } from "@mantine/core";
-import { DatePicker } from "@mantine/dates";
 import { IconCheck, IconEyeCheck, IconReport } from "@tabler/icons";
-import { format } from "date-fns";
 import deepEquals from "fast-deep-equal";
 import { useAtom } from "jotai";
 import { selectAtom } from "jotai/utils";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 
-import { AccountSelection } from "src/components/account/AccountSelection";
-import { BillSelection } from "src/components/bill/BillSelection";
-import { BudgetSelection } from "src/components/budget/BudgetSelection";
-import { CategorySelection } from "src/components/category/CategorySelection";
-import { TagSelection } from "src/components/tag/TagSelection";
 import type { JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJournalsSimple";
 import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
@@ -30,6 +20,14 @@ import { currencyFormatter } from "src/utils/validation/user/currencyFormats";
 
 import { JournalCommandButtons } from "../JournalCommandButtons";
 import type { CombinedJournalDataAtomType } from "./CombinedJournalDataAtomType";
+import { AccountSelectionWithPopoverEdit } from "./cells/AccountSelectionWithPopoverEdit";
+import { BillSelectionWithPopoverEdit } from "./cells/BillSelectionWithPopoverEdit";
+import { BudgetSelectionWithPopoverEdit } from "./cells/BudgetSelectionWithPopoverEdit";
+import { CategorySelectionWithPopoverEdit } from "./cells/CategorySelectionWithPopoverEdit";
+import { DatePickerWithPopoverEdit } from "./cells/DatePickerWithPopoverEdit";
+import { NumberCellWithPopoverEdit } from "./cells/NumberCellWithPopoverEdit";
+import { TagSelectionWithPopoverEdit } from "./cells/TagSelectionWithPopoverEdit";
+import { TextCellWithPopoverEdit } from "./cells/TextCellWithPopoverEdit";
 
 export const JournalTableRowDisplay = ({
   rowId,
@@ -115,39 +113,25 @@ export const JournalTableRowDisplay = ({
 
   if (!rowData) return <></>;
 
-  const EditDescription = () => (
-    <TextInput
-      value={description}
-      onChange={(e) => {
-        console.log("New Description Value", e.target.value);
-        setDescription(e.target.value);
-      }}
-      size="xs"
-      disabled={disableEditing}
-      onBlur={() =>
-        description !== rowData.description && updateJournal({ description })
-      }
-    />
-  );
-
-  if (!editing) {
-    return (
-      <>
-        <CustomTd>
-          <Checkbox
-            checked={selected}
-            onChange={() => toggleSelected()}
-            transitionDuration={0}
-          />
-        </CustomTd>
-        <CustomTd>
-          <Checkbox
-            checked={editing}
-            onChange={() => toggleEditing()}
-            transitionDuration={0}
-          />
-        </CustomTd>
-        <CustomTd>
+  return (
+    <>
+      <CustomTd>
+        <Checkbox
+          checked={selected}
+          onChange={() => toggleSelected()}
+          transitionDuration={0}
+        />
+      </CustomTd>
+      <CustomTd>
+        <Checkbox
+          checked={editing}
+          onChange={() => toggleEditing()}
+          transitionDuration={0}
+        />
+      </CustomTd>
+      <CustomTd>
+        {editing && <JournalCommandButtons data={rowData} />}
+        {!editing && (
           <HoverCard shadow="md" openDelay={100}>
             <HoverCard.Target>
               <Group>
@@ -167,102 +151,10 @@ export const JournalTableRowDisplay = ({
               <JournalCommandButtons data={rowData} />
             </HoverCard.Dropdown>
           </HoverCard>
-        </CustomTd>
-        <CustomTd>
-          <Text>{format(date, dateFormat)}</Text>
-        </CustomTd>
-        <CustomTd>
-          <Popover trapFocus>
-            <Popover.Target>
-              <Text>{rowData.account?.title}</Text>
-            </Popover.Target>
-            <Popover.Dropdown>
-              <EditDescription />
-            </Popover.Dropdown>
-          </Popover>
-        </CustomTd>
-        <CustomTd>
-          <Text>
-            {rowData.otherJournals
-              .filter((item) => item.id !== rowData.id)
-              .map((item) => (item.account ? item.account.title : ""))
-              .join(", ")}
-          </Text>
-        </CustomTd>
-        <CustomTd>
-          <Popover
-            trapFocus
-            onClose={() =>
-              description !== rowData.description &&
-              updateJournal({ description })
-            }
-          >
-            <Popover.Target>
-              <Text>{rowData.description || ""}</Text>
-            </Popover.Target>
-            <Popover.Dropdown>
-              <TextInput
-                value={description}
-                onChange={(e) => {
-                  console.log("New Description Value", e.target.value);
-                  setDescription(e.target.value);
-                }}
-                size="xs"
-                disabled={disableEditing}
-                onBlur={() =>
-                  description !== rowData.description &&
-                  updateJournal({ description })
-                }
-              />
-            </Popover.Dropdown>
-          </Popover>
-        </CustomTd>
-        <CustomTd>
-          <Text color={rowData.amount < 0 ? "red" : undefined}>
-            {formatter.format(rowData.amount)}
-          </Text>
-        </CustomTd>
-        <CustomTd>
-          <Text fw={700} color={rowData.total < 0 ? "red" : undefined}>
-            {formatter.format(rowData.total)}
-          </Text>
-        </CustomTd>
-        <CustomTd>
-          <Text>{rowData.category ? rowData.category.title : ""}</Text>
-        </CustomTd>
-        <CustomTd>
-          <Text>{rowData.tag ? rowData.tag.title : ""}</Text>
-        </CustomTd>
-        <CustomTd>
-          <Text>{rowData.bill ? rowData.bill.title : ""}</Text>
-        </CustomTd>
-        <CustomTd>
-          <Text>{rowData.budget ? rowData.budget.title : ""}</Text>
-        </CustomTd>
-      </>
-    );
-  }
-  return (
-    <>
-      <CustomTd>
-        <Checkbox
-          checked={selected}
-          onChange={() => toggleSelected()}
-          transitionDuration={0}
-        />
+        )}
       </CustomTd>
       <CustomTd>
-        <Checkbox
-          checked={editing}
-          onChange={() => toggleEditing()}
-          transitionDuration={0}
-        />
-      </CustomTd>
-      <CustomTd>
-        <JournalCommandButtons data={rowData} />
-      </CustomTd>
-      <CustomTd>
-        <DatePicker
+        <DatePickerWithPopoverEdit
           value={date}
           disabled={disableEditing}
           size="xs"
@@ -270,11 +162,15 @@ export const JournalTableRowDisplay = ({
           transitionDuration={0}
           inputFormat={dayjsFormat}
           onChange={(e) => (e ? setDate(e) : undefined)}
-          onBlur={() => updateJournal({ date })}
+          onComplete={() => updateJournal({ date })}
+          editing={editing}
+          dateFnsFormat={dateFormat || ""}
+          modalProps={{ withinPortal: true }}
+          withinPortal
         />
       </CustomTd>
       <CustomTd>
-        <AccountSelection
+        <AccountSelectionWithPopoverEdit
           accountGroupingId={rowData.accountGroupingId || ""}
           value={currentRowData.accountId}
           size="xs"
@@ -291,6 +187,8 @@ export const JournalTableRowDisplay = ({
             setCurrentRowData({ ...currentRowData, accountId: e })
           }
           searchable
+          title={rowData.account?.title || ""}
+          editing={editing}
         />
       </CustomTd>
       <CustomTd>
@@ -302,16 +200,31 @@ export const JournalTableRowDisplay = ({
         </Text>
       </CustomTd>
       <CustomTd>
-        <EditDescription />
+        <TextCellWithPopoverEdit
+          value={description}
+          onChange={(e) => {
+            console.log("New Description Value", e.target.value);
+            setDescription(e.target.value);
+          }}
+          size="xs"
+          disabled={disableEditing}
+          onComplete={() =>
+            description !== rowData.description &&
+            updateJournal({ description })
+          }
+          editing={editing}
+        />
       </CustomTd>
       <CustomTd>
-        <NumberInput
+        <NumberCellWithPopoverEdit
           value={amount}
           onChange={(e) => setAmount(e || 0)}
           size="xs"
           disabled={disableEditing}
           onBlur={() => amount !== rowData.amount && updateJournal({ amount })}
           precision={2}
+          format={formatter.format}
+          editing={editing}
         />
       </CustomTd>
       <CustomTd>
@@ -320,7 +233,7 @@ export const JournalTableRowDisplay = ({
         </Text>
       </CustomTd>
       <CustomTd>
-        <CategorySelection
+        <CategorySelectionWithPopoverEdit
           accountGroupingId={rowData.accountGroupingId || ""}
           value={currentRowData.categoryId}
           size="xs"
@@ -334,10 +247,12 @@ export const JournalTableRowDisplay = ({
             updateJournal(currentRowData)
           }
           searchable
+          title={rowData.category?.title || ""}
+          editing={editing}
         />
       </CustomTd>
       <CustomTd>
-        <TagSelection
+        <TagSelectionWithPopoverEdit
           accountGroupingId={rowData.accountGroupingId || ""}
           value={currentRowData.tagId}
           size="xs"
@@ -349,10 +264,12 @@ export const JournalTableRowDisplay = ({
             rowData.tagId !== currentRowData.tagId &&
             updateJournal(currentRowData)
           }
+          title={rowData.tag?.title || ""}
+          editing={editing}
         />
       </CustomTd>
       <CustomTd>
-        <BillSelection
+        <BillSelectionWithPopoverEdit
           accountGroupingId={rowData.accountGroupingId || ""}
           value={currentRowData.billId}
           size="xs"
@@ -364,10 +281,12 @@ export const JournalTableRowDisplay = ({
             rowData.billId !== currentRowData.billId &&
             updateJournal(currentRowData)
           }
+          title={rowData.bill?.title || ""}
+          editing={editing}
         />
       </CustomTd>
       <CustomTd>
-        <BudgetSelection
+        <BudgetSelectionWithPopoverEdit
           accountGroupingId={rowData.accountGroupingId || ""}
           value={currentRowData.budgetId}
           size="xs"
@@ -379,6 +298,8 @@ export const JournalTableRowDisplay = ({
             rowData.budgetId !== currentRowData.budgetId &&
             updateJournal(currentRowData)
           }
+          title={rowData.budget?.title || ""}
+          editing={editing}
         />
       </CustomTd>
     </>
