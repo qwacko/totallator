@@ -1,6 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
 
-import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
+import type { JournalsMergedType } from "src/utils/hooks/journals/helpers/buildMergedData";
 
 import { dateFilter } from "../table/filters/dateFilter";
 import { displayHeader } from "../table/headers/displayHeader";

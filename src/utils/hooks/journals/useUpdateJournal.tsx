@@ -1,5 +1,6 @@
 import { useForm, zodResolver } from "@mantine/form";
 
+import type { JournalsMergedType } from "src/utils/hooks/journals/helpers/buildMergedData";
 import { trpc } from "src/utils/trpc";
 import {
   type UpdateJournalDataInputType,
@@ -8,7 +9,6 @@ import {
 
 import { notifyTemplate } from "../notifyTemplate";
 import { useFormHandler } from "../useFormHandler";
-import type { JournalsMergedType } from "./useJournals";
 
 const id = "useUpdateJournal";
 const notifications = notifyTemplate(id, "Journal", "Update");

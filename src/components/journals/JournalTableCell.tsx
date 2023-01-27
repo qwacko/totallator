@@ -10,7 +10,7 @@ import { DatePicker } from "@mantine/dates";
 import type { CellContext } from "@tanstack/react-table";
 import { format } from "date-fns";
 
-import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
+import type { JournalsMergedType } from "src/utils/hooks/journals/helpers/buildMergedData";
 import { useUpdateJournal } from "src/utils/hooks/journals/useUpdateJournal";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
 

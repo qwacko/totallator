@@ -3,7 +3,7 @@ import type { CellContext, HeaderContext } from "@tanstack/react-table";
 import { Provider as JotaiProvider, atom, useAtom } from "jotai";
 import { type ReactNode, useMemo } from "react";
 
-import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
+import type { JournalsMergedType } from "src/utils/hooks/journals/helpers/buildMergedData";
 
 const scope = Symbol();
 export const selectionIdsAtom = atom<string[]>([]);

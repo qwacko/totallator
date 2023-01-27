@@ -15,9 +15,9 @@ import { IconMenu2 } from "@tabler/icons";
 import { useAtom } from "jotai";
 import { useState } from "react";
 
+import type { JournalsMergedType } from "src/utils/hooks/journals/helpers/buildMergedData";
 import { useCloneTransactions } from "src/utils/hooks/journals/useCloneTransactions";
 import { useDeleteTransactions } from "src/utils/hooks/journals/useDeleteTransactions";
-import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 import type { JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJournalsSimple";
 import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";

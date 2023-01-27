@@ -15,9 +15,9 @@ import { IconMenu2 } from "@tabler/icons";
 import type { HeaderContext, Row } from "@tanstack/react-table";
 import { useState } from "react";
 
+import type { JournalsMergedType } from "src/utils/hooks/journals/helpers/buildMergedData";
 import { useCloneTransactions } from "src/utils/hooks/journals/useCloneTransactions";
 import { useDeleteTransactions } from "src/utils/hooks/journals/useDeleteTransactions";
-import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
 import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 import {
