@@ -16,15 +16,6 @@ export type TableFilterAtomType<T extends string> = ReturnType<
   typeof tableFilterAtom<T>
 >;
 
-export const useMemoTableFilterAtom = <T extends string>(
-  initialFilter: TableFilterType<T>[] = []
-) => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const sort = useMemo(() => tableFilterAtom(initialFilter), []);
-
-  return sort;
-};
-
 export const useFilterAtom = <T extends string>(
   targetAtom: TableFilterAtomType<T>,
   key: T

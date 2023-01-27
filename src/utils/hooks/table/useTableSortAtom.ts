@@ -16,15 +16,6 @@ export type TableSortAtomType<T extends string> = ReturnType<
   typeof tableSortAtom<T>
 >;
 
-export const useMemoTableSortAtom = <T extends string>(
-  initialSort: TableSortType<T>[] = []
-) => {
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const sort = useMemo(() => tableSortAtom(initialSort), []);
-
-  return sort;
-};
-
 export const useToggleSort = <T extends string>(
   targetAtom: TableSortAtomType<T>,
   key: T
