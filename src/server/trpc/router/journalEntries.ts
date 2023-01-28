@@ -2,6 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { omit } from "lodash";
 import { z } from "zod";
 
+import { env } from "src/env/server.mjs";
 import { removeUndefinedAndDuplicates } from "src/utils/arrayHelpers";
 import { cloneTransactionInput } from "src/utils/validation/journalEntries/cloneTransactionsValidation";
 import {
@@ -30,7 +31,15 @@ export const journalsRouter = router({
     .input(
       getJournalValidation.omit({ pagination: true, sort: true }).merge(
         z.object({
-          type: z.enum(["All", "Incomplete", "Complete"])
+          type: z.enum([
+            "All",
+            "Incomplete",
+            "Complete",
+            "Reconciled",
+            "Unreconciled",
+            "DataChecked",
+            "NotDataChecked"
+          ])
         })
       )
     )
@@ -49,6 +58,14 @@ export const journalsRouter = router({
               ? { complete: true }
               : input.type === "Incomplete"
               ? { complete: false }
+              : input.type === "Reconciled"
+              ? { reconciled: true, complete: false }
+              : input.type === "Unreconciled"
+              ? { reconciled: false, complete: false }
+              : input.type === "DataChecked"
+              ? { dataChecked: true, complete: false }
+              : input.type === "NotDataChecked"
+              ? { dataChecked: false, complete: false }
               : {}
           ]
         },
@@ -177,46 +194,49 @@ export const journalsRouter = router({
         });
       }
 
-      await ctx.prisma.$transaction(async (prisma) => {
-        await Promise.all(
-          data.map(async (journal) => {
-            await updateSingleJournal({
-              prisma,
-              journal,
-              data: input.data,
-              dontUpdateOtherAmounts: !updateOtherAmounts,
-              updateCompleted: input.updateCompleteJournals
-            });
+      await ctx.prisma.$transaction(
+        async (prisma) => {
+          await Promise.all(
+            data.map(async (journal) => {
+              await updateSingleJournal({
+                prisma,
+                journal,
+                data: input.data,
+                dontUpdateOtherAmounts: !updateOtherAmounts,
+                updateCompleted: input.updateCompleteJournals
+              });
 
-            //Update the referenced other journal information
-            await Promise.all(
-              otherData.map(async (journal) => {
-                if (input.data.otherJournals) {
-                  const targetData = input.data.otherJournals.find(
-                    (item) => item.id === journal.id
-                  );
-                  if (targetData) {
-                    const otherJournalData = omit(targetData, ["id"]);
-                    await updateSingleJournal({
-                      prisma,
-                      journal,
-                      data: otherJournalData,
-                      dontUpdateOtherAmounts: !updateOtherAmounts,
-                      updateCompleted: input.updateCompleteJournals
-                    });
+              //Update the referenced other journal information
+              await Promise.all(
+                otherData.map(async (journal) => {
+                  if (input.data.otherJournals) {
+                    const targetData = input.data.otherJournals.find(
+                      (item) => item.id === journal.id
+                    );
+                    if (targetData) {
+                      const otherJournalData = omit(targetData, ["id"]);
+                      await updateSingleJournal({
+                        prisma,
+                        journal,
+                        data: otherJournalData,
+                        dontUpdateOtherAmounts: !updateOtherAmounts,
+                        updateCompleted: input.updateCompleteJournals
+                      });
+                    }
                   }
-                }
-              })
-            );
-          })
-        );
+                })
+              );
+            })
+          );
 
-        //Check Transactions
-        await checkTransactions({
-          prisma,
-          transactionIds: data.map((item) => item.transactionId)
-        });
-      });
+          //Check Transactions
+          await checkTransactions({
+            prisma,
+            transactionIds: data.map((item) => item.transactionId)
+          });
+        },
+        { timeout: env.BULK_TIMEOUT }
+      );
     }),
   cloneTransactions: protectedProcedure
     .input(cloneTransactionInput)

@@ -5,10 +5,10 @@ import { type JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJ
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 
 import type { CombinedJournalDataAtomType } from "./CombinedJournalDataAtomType";
-import { JournalTableBulkActionsAtom } from "./JournalTableBulkActionsAtom";
 import { CustomTd } from "./JournalTableRowDisplay";
 import { TableFilterInputAtom } from "./TableFilterInput";
 import { TableSortButton } from "./TableSortButton";
+import { JournalTableBulkActionsAtom } from "./bulkActions/JournalTableBulkActionsAtom";
 
 export const JournalTableHeaderDisplay = ({
   config,
