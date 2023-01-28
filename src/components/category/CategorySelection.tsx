@@ -33,20 +33,23 @@ const useCategoryDropdown = ({
                   }
                 : { label: item.single, value: item.id, group: item.group }
             )
+            .sort((a, b) => a.label.localeCompare(b.label))
         : [],
     [categories.data, accountGroupingId, showCombined]
   );
   return filteredCategories;
 };
 
+export type CategorySelectionProps = Omit<SelectProps, "data"> & {
+  accountGroupingId?: string;
+  showCombined?: boolean;
+};
+
 export const CategorySelection = ({
   accountGroupingId,
   showCombined = true,
   ...props
-}: Omit<SelectProps, "data"> & {
-  accountGroupingId?: string;
-  showCombined?: boolean;
-}) => {
+}: CategorySelectionProps) => {
   const filteredCategories = useCategoryDropdown({
     accountGroupingId,
     showCombined

@@ -50,3 +50,4 @@ export const buildMergedData = ({
   }));
 };
 export type MergedDataType = ReturnType<typeof buildMergedData>;
+export type JournalsMergedType = MergedDataType[0];

@@ -36,11 +36,21 @@ export const useAccountsDropdown = ({
                   : item.type,
               value: item.id
             }))
+            .sort((a, b) =>
+              `${a.group}-${a.label}`.localeCompare(`${b.group}-${b.label}`)
+            )
         : [],
     [accounts.data, accountGroupingId, showAccountGroup]
   );
 
   return { accounts, filteredAccounts };
+};
+
+export type AccountSelectionProps = Omit<SelectProps, "data"> & {
+  accountGroupingId?: string;
+  showAccountGroup?: boolean;
+  createExpenseOption?: boolean;
+  onCreateSuccess?: (newAccountId: string) => void;
 };
 
 export const AccountSelection = ({
@@ -49,12 +59,7 @@ export const AccountSelection = ({
   createExpenseOption = false,
   onCreateSuccess,
   ...props
-}: Omit<SelectProps, "data"> & {
-  accountGroupingId?: string;
-  showAccountGroup?: boolean;
-  createExpenseOption?: boolean;
-  onCreateSuccess?: (newAccountId: string) => void;
-}) => {
+}: AccountSelectionProps) => {
   const { filteredAccounts } = useAccountsDropdown({
     accountGroupingId,
     showAccountGroup

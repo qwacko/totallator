@@ -27,6 +27,7 @@ const useBillsDropdown = ({
               label: item.title,
               value: item.id
             }))
+            .sort((a, b) => a.label.localeCompare(b.label))
         : [],
     [bills.data, accountGroupingId]
   );
@@ -34,12 +35,14 @@ const useBillsDropdown = ({
   return filteredBills;
 };
 
+export type BillSelectionProps = Omit<SelectProps, "data"> & {
+  accountGroupingId?: string;
+};
+
 export const BillSelection = ({
   accountGroupingId,
   ...props
-}: Omit<SelectProps, "data"> & {
-  accountGroupingId?: string;
-}) => {
+}: BillSelectionProps) => {
   const filteredBills = useBillsDropdown({ accountGroupingId });
 
   return <Select {...props} data={filteredBills} />;

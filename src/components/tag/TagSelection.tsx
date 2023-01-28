@@ -33,20 +33,23 @@ const useTagDropdown = ({
                   }
                 : { label: item.single, value: item.id, group: item.group }
             )
+            .sort((a, b) => a.label.localeCompare(b.label))
         : [],
     [tags.data, accountGroupingId, showCombined]
   );
   return filteredTags;
 };
 
+export type TagSelectionProps = Omit<SelectProps, "data"> & {
+  accountGroupingId?: string;
+  showCombined?: boolean;
+};
+
 export const TagSelection = ({
   accountGroupingId,
   showCombined = true,
   ...props
-}: Omit<SelectProps, "data"> & {
-  accountGroupingId?: string;
-  showCombined?: boolean;
-}) => {
+}: TagSelectionProps) => {
   const filteredTags = useTagDropdown({
     accountGroupingId,
     showCombined

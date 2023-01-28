@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { CreateTransactionSimplePopup } from "src/components/journals/CreateTransactionSimple";
 import { JournalFilterModal } from "src/components/journals/JournalFiltersDropdown";
-import { JournalTable } from "src/components/journals/JournalTable";
+import { JournalTableSimple } from "src/components/journals/journalTableSimple/journalTableSimple";
 import { AppLayout } from "src/components/layout/App";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 
@@ -27,7 +27,7 @@ const JournalsPage = () => {
             <JournalFilterModal filters={filters} setFilters={setFilters} />
           </Group>
         </Center>
-        <JournalTable filters={[filters]} />
+        <JournalTableSimple filters={[filters]} />
       </Stack>
     </AppLayout>
   );
