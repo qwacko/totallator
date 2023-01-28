@@ -71,7 +71,7 @@ const OtherJournalsSingleDisplay = ({
       setAmount(data.amount);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.accountId]);
+  }, [data.amount]);
 
   const mutation = useUpdateJournals({});
   const updateTargetJournal = (updatedData: UpdateJournalDataInputType) => {
@@ -88,7 +88,7 @@ const OtherJournalsSingleDisplay = ({
         value={accountId}
         size="xs"
         disabled={disableEditing}
-        onChange={(e) => e && setAccountId(e)}
+        onChange={(e) => e && accountId !== data.accountId && setAccountId(e)}
         onBlur={() =>
           accountId !== data.accountId && updateTargetJournal({ accountId })
         }
