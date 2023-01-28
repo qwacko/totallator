@@ -31,13 +31,29 @@ const numberFilter = z
   .object({ gte: z.number().optional(), lte: z.number().optional() })
   .optional();
 
+const accountFilter = z.object({
+  isCash: z.object({ equals: z.boolean().optional() }).optional(),
+  isNetWorth: z.object({ equals: z.boolean().optional() }).optional(),
+  type: z
+    .object({ in: z.array(PrismaAccountTypeEnumValidation).optional() })
+    .optional(),
+  id: z.object({ in: z.array(z.string().cuid()).optional() }).optional(),
+  title: z
+    .object({
+      contains: z.string(),
+      mode: z.enum(["default", "insensitive"]).default("insensitive")
+    })
+    .optional()
+});
+
 export const transactionFilter = z
   .object({
     journalEntries: z
       .object({
         some: z
           .object({
-            accountId: idFilter
+            accountId: idFilter,
+            account: accountFilter.optional()
           })
           .optional()
       })
@@ -68,16 +84,51 @@ export const journalFilter = z.object({
   primaryJournalId: idFilter,
   transaction: transactionFilter,
 
-  account: z
+  bill: z
     .object({
-      isCash: z.object({ equals: z.boolean().optional() }).optional(),
-      isNetWorth: z.object({ equals: z.boolean().optional() }).optional(),
-      type: z
-        .object({ in: z.array(PrismaAccountTypeEnumValidation).optional() })
-        .optional(),
-      id: z.object({ in: z.array(z.string().cuid()).optional() }).optional()
+      title: z
+        .object({
+          contains: z.string(),
+          mode: z.enum(["default", "insensitive"]).default("insensitive")
+        })
+        .optional()
     })
     .optional(),
+
+  budget: z
+    .object({
+      title: z
+        .object({
+          contains: z.string(),
+          mode: z.enum(["default", "insensitive"]).default("insensitive")
+        })
+        .optional()
+    })
+    .optional(),
+
+  category: z
+    .object({
+      title: z
+        .object({
+          contains: z.string(),
+          mode: z.enum(["default", "insensitive"]).default("insensitive")
+        })
+        .optional()
+    })
+    .optional(),
+
+  tag: z
+    .object({
+      title: z
+        .object({
+          contains: z.string(),
+          mode: z.enum(["default", "insensitive"]).default("insensitive")
+        })
+        .optional()
+    })
+    .optional(),
+
+  account: accountFilter.optional(),
 
   //Dates
   updatedAt: dateFilter,
@@ -122,3 +173,4 @@ export const getJournalValidation = z.object({
 });
 
 export type GetJournalValidation = z.infer<typeof getJournalValidation>;
+export type GetJournalValidationInput = z.input<typeof getJournalValidation>;

@@ -46,18 +46,20 @@ export const useAccountsDropdown = ({
   return { accounts, filteredAccounts };
 };
 
+export type AccountSelectionProps = Omit<SelectProps, "data"> & {
+  accountGroupingId?: string;
+  showAccountGroup?: boolean;
+  createExpenseOption?: boolean;
+  onCreateSuccess?: (newAccountId: string) => void;
+};
+
 export const AccountSelection = ({
   accountGroupingId,
   showAccountGroup = false,
   createExpenseOption = false,
   onCreateSuccess,
   ...props
-}: Omit<SelectProps, "data"> & {
-  accountGroupingId?: string;
-  showAccountGroup?: boolean;
-  createExpenseOption?: boolean;
-  onCreateSuccess?: (newAccountId: string) => void;
-}) => {
+}: AccountSelectionProps) => {
   const { filteredAccounts } = useAccountsDropdown({
     accountGroupingId,
     showAccountGroup

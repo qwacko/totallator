@@ -13,7 +13,7 @@ import { useUpdateUser } from "./useUpdateUser";
 
 type UserType = AppRouterOutputs["user"]["get"];
 
-export const UserContext = React.createContext<UserType | undefined>(undefined);
+const UserContext = React.createContext<UserType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { data: user, refetch } = trpc.user.get.useQuery();

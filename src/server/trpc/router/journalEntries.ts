@@ -1,6 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import { omit } from "lodash";
+import { z } from "zod";
 
+import { env } from "src/env/server.mjs";
+import { removeUndefinedAndDuplicates } from "src/utils/arrayHelpers";
 import { cloneTransactionInput } from "src/utils/validation/journalEntries/cloneTransactionsValidation";
 import {
   createSimpleTransactionValidation,
@@ -16,22 +19,72 @@ import { getUserInfo } from "./helpers/getUserInfo";
 import { checkTransactions } from "./helpers/journals/checkTransactions";
 import { createSimpleTranasction } from "./helpers/journals/createSimpleTranasction";
 import { createTransaction } from "./helpers/journals/createTransaction";
-import { journalsWithStats } from "./helpers/journals/journalsWithStats";
+import {
+  filtersToQuery,
+  journalsWithStats
+} from "./helpers/journals/journalsWithStats";
 import { sortToOrderBy } from "./helpers/journals/sortToOrderBy";
 import { updateSingleJournal } from "./helpers/journals/updateSingleJournal";
 
 export const journalsRouter = router({
-  getAccountGroupingIds: protectedProcedure
-    .input(getJournalValidation.omit({ pagination: true, sort: true }))
+  getSelectionInfo: protectedProcedure
+    .input(
+      getJournalValidation.omit({ pagination: true, sort: true }).merge(
+        z.object({
+          type: z.enum([
+            "All",
+            "Incomplete",
+            "Complete",
+            "Reconciled",
+            "Unreconciled",
+            "DataChecked",
+            "NotDataChecked"
+          ])
+        })
+      )
+    )
     .query(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
-      const accountGroupings = await ctx.prisma.accountGrouping.findMany({
+
+      const journals = await ctx.prisma.journalEntry.findMany({
         where: {
-          viewUsers: { some: { id: user.id } },
-          journalEntries: { some: { AND: input.filters } }
-        }
+          AND: [
+            ...(await filtersToQuery({
+              prisma: ctx.prisma,
+              userId: user.id,
+              filters: input.filters
+            })),
+            input.type === "Complete"
+              ? { complete: true }
+              : input.type === "Incomplete"
+              ? { complete: false }
+              : input.type === "Reconciled"
+              ? { reconciled: true, complete: false }
+              : input.type === "Unreconciled"
+              ? { reconciled: false, complete: false }
+              : input.type === "DataChecked"
+              ? { dataChecked: true, complete: false }
+              : input.type === "NotDataChecked"
+              ? { dataChecked: false, complete: false }
+              : {}
+          ]
+        },
+        select: { id: true, complete: true, accountGroupingId: true }
       });
-      return accountGroupings.map((item) => item.id);
+
+      const accountGroupingIds = removeUndefinedAndDuplicates(
+        journals.map((item) => item.accountGroupingId)
+      );
+
+      const hasComplete = removeUndefinedAndDuplicates(
+        journals.map((item) => item.complete)
+      ).includes(true);
+
+      return {
+        ids: journals.map((item) => item.id),
+        accountGroupingIds,
+        hasComplete
+      };
     }),
   get: protectedProcedure
     .input(getJournalValidation)
@@ -141,46 +194,49 @@ export const journalsRouter = router({
         });
       }
 
-      await ctx.prisma.$transaction(async (prisma) => {
-        await Promise.all(
-          data.map(async (journal) => {
-            await updateSingleJournal({
-              prisma,
-              journal,
-              data: input.data,
-              dontUpdateOtherAmounts: !updateOtherAmounts,
-              updateCompleted: input.updateCompleteJournals
-            });
+      await ctx.prisma.$transaction(
+        async (prisma) => {
+          await Promise.all(
+            data.map(async (journal) => {
+              await updateSingleJournal({
+                prisma,
+                journal,
+                data: input.data,
+                dontUpdateOtherAmounts: !updateOtherAmounts,
+                updateCompleted: input.updateCompleteJournals
+              });
 
-            //Update the referenced other journal information
-            await Promise.all(
-              otherData.map(async (journal) => {
-                if (input.data.otherJournals) {
-                  const targetData = input.data.otherJournals.find(
-                    (item) => item.id === journal.id
-                  );
-                  if (targetData) {
-                    const otherJournalData = omit(targetData, ["id"]);
-                    await updateSingleJournal({
-                      prisma,
-                      journal,
-                      data: otherJournalData,
-                      dontUpdateOtherAmounts: !updateOtherAmounts,
-                      updateCompleted: input.updateCompleteJournals
-                    });
+              //Update the referenced other journal information
+              await Promise.all(
+                otherData.map(async (journal) => {
+                  if (input.data.otherJournals) {
+                    const targetData = input.data.otherJournals.find(
+                      (item) => item.id === journal.id
+                    );
+                    if (targetData) {
+                      const otherJournalData = omit(targetData, ["id"]);
+                      await updateSingleJournal({
+                        prisma,
+                        journal,
+                        data: otherJournalData,
+                        dontUpdateOtherAmounts: !updateOtherAmounts,
+                        updateCompleted: input.updateCompleteJournals
+                      });
+                    }
                   }
-                }
-              })
-            );
-          })
-        );
+                })
+              );
+            })
+          );
 
-        //Check Transactions
-        await checkTransactions({
-          prisma,
-          transactionIds: data.map((item) => item.transactionId)
-        });
-      });
+          //Check Transactions
+          await checkTransactions({
+            prisma,
+            transactionIds: data.map((item) => item.transactionId)
+          });
+        },
+        { timeout: env.BULK_TIMEOUT }
+      );
     }),
   cloneTransactions: protectedProcedure
     .input(cloneTransactionInput)

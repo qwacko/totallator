@@ -24,11 +24,7 @@ import { TagSelection } from "../tag/TagSelection";
 
 const size: MantineSize = "xs";
 
-export const CreateTransactionSimpleForm = ({
-  onClose
-}: {
-  onClose?: () => void;
-}) => {
+const CreateTransactionSimpleForm = ({ onClose }: { onClose?: () => void }) => {
   const { data: accountGroupings } = useAccountGroupings();
   const { dayjsFormat } = useLoggedInUser();
 

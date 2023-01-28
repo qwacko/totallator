@@ -1,7 +1,7 @@
 import { type HeaderContext } from "@tanstack/react-table";
 
 import type { AllReturnTypes } from "src/server/trpc/router/_app";
-import type { JournalsMergedType } from "src/utils/hooks/journals/useJournals";
+import type { JournalsMergedType } from "src/utils/hooks/journals/helpers/buildMergedData";
 
 import type { FilterTypes } from "./TableFilterInput";
 import { TableHeader } from "./TableHeader";

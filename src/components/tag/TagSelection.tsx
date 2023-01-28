@@ -40,14 +40,16 @@ const useTagDropdown = ({
   return filteredTags;
 };
 
+export type TagSelectionProps = Omit<SelectProps, "data"> & {
+  accountGroupingId?: string;
+  showCombined?: boolean;
+};
+
 export const TagSelection = ({
   accountGroupingId,
   showCombined = true,
   ...props
-}: Omit<SelectProps, "data"> & {
-  accountGroupingId?: string;
-  showCombined?: boolean;
-}) => {
+}: TagSelectionProps) => {
   const filteredTags = useTagDropdown({
     accountGroupingId,
     showCombined

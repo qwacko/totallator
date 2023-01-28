@@ -40,14 +40,16 @@ const useCategoryDropdown = ({
   return filteredCategories;
 };
 
+export type CategorySelectionProps = Omit<SelectProps, "data"> & {
+  accountGroupingId?: string;
+  showCombined?: boolean;
+};
+
 export const CategorySelection = ({
   accountGroupingId,
   showCombined = true,
   ...props
-}: Omit<SelectProps, "data"> & {
-  accountGroupingId?: string;
-  showCombined?: boolean;
-}) => {
+}: CategorySelectionProps) => {
   const filteredCategories = useCategoryDropdown({
     accountGroupingId,
     showCombined

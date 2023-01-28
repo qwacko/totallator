@@ -1,108 +1,133 @@
+import deepEquals from "fast-deep-equal";
+import { atom } from "jotai";
+import { selectAtom } from "jotai/utils";
+
 import type {
-  ColumnFiltersState,
-  OnChangeFn,
-  PaginationState,
-  SortingState
-} from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+  GetJournalValidationInput,
+  JournalFilterValidationInputType
+} from "src/utils/validation/journalEntries/getJournalValidation";
 
-import { trpc } from "src/utils/trpc";
-import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
-
-import { useAccountGroupings } from "../accountGroupings/useAccountGroupings";
-import { useAccounts } from "../accounts/useAccounts";
-import { useBills } from "../bills/useBills";
-import { useBudgets } from "../budgets/useBudgets";
-import { useCategories } from "../categories/useCategories";
-import { useTags } from "../tags/useTags";
 import {
-  type MergedDataType,
-  buildMergedData
-} from "./helpers/buildMergedData";
+  type TableFilterType,
+  tableFilterAtom
+} from "../table/useTableFilterAtom";
+import { type TableSortType, tableSortAtom } from "../table/useTableSortAtom";
 import { filtersToPrismaFilters } from "./helpers/filtersToPrismaFilters";
 import { sortingStateToPrismaSort } from "./helpers/sortingStateToPrismaSort";
 
-export const useJournalsSimple = ({
-  externalFilters
-}: {
-  externalFilters: JournalFilterValidationInputType[];
-}) => {
-  const [sorting, setSorting2] = useState<SortingState>([]);
-  const setSorting: OnChangeFn<SortingState> = (data) => {
-    setSorting2(data);
-  };
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10
-  });
+type JournalTableConfigPaginationType = {
+  pageIndex: number;
+  pageSize: number;
+  rowCount: number;
+};
 
-  const [filters, setFilters] = useState<ColumnFiltersState>([]);
-  const [rowCount, setRowCount] = useState<number>(0);
+type JournalSortKeys =
+  | "account"
+  | "tag"
+  | "category"
+  | "bill"
+  | "budget"
+  | "date"
+  | "description"
+  | "amount";
 
-  const [rowSelection, setRowSelection] = useState({});
-  const [mergedData, setMergedData] = useState<MergedDataType>([]);
+type JournalFilterKeys =
+  | "accountId"
+  | "tagId"
+  | "description"
+  | "date"
+  | "billId"
+  | "budgetId"
+  | "categoryId"
+  | "payee";
 
-  const sortingToUse = sortingStateToPrismaSort(sorting);
-  const filtersToUse = filtersToPrismaFilters({ filters });
+const idSelectionAtom = () => {
+  const selectionAtom = atom<string[]>([]);
 
-  const billData = useBills();
-  const budgetData = useBudgets();
-  const tagData = useTags();
-  const accountData = useAccounts();
-  const accountGroupingData = useAccountGroupings();
-  const categoryData = useCategories();
-
-  const combinedFilters = filtersToUse
-    ? [...filtersToUse, ...externalFilters]
-    : externalFilters;
-
-  const data = trpc.journals.get.useQuery({
-    sort: sortingToUse,
-    pagination: {
-      pageNo: pagination.pageIndex,
-      pageSize: pagination.pageSize
-    },
-    filters: combinedFilters
-  });
-
-  useEffect(() => {
-    setRowCount(data.data ? data.data.count : 0);
-    setMergedData(
-      buildMergedData({
-        input: data.data ? data.data.data : [],
-        bills: billData.data,
-        budgets: budgetData.data,
-        tags: tagData.data,
-        categories: categoryData.data,
-        accounts: accountData.data,
-        accountGroupings: accountGroupingData.data
-      })
+  const selectionAtomById = (id: string) => {
+    const isSelectedAtom = selectAtom(
+      selectionAtom,
+      (data) => data.includes(id),
+      deepEquals
     );
-  }, [
-    data.data,
-    accountData.data,
-    categoryData.data,
-    tagData.data,
-    billData.data,
-    budgetData.data,
-    accountGroupingData.data
-  ]);
 
-  const pageCount = Math.max(Math.ceil(rowCount / pagination.pageSize), 1);
+    return atom(
+      (get) => get(isSelectedAtom),
+      (get, set) => {
+        const currentEditing = get(selectionAtom);
+        if (currentEditing.includes(id)) {
+          set(
+            selectionAtom,
+            currentEditing.filter((item) => item !== id)
+          );
+        } else {
+          set(selectionAtom, [...currentEditing, id]);
+        }
+      }
+    );
+  };
+
+  return { selectionAtom, selectionAtomById };
+};
+
+export const journalTableConfigAtom = ({
+  initialSort,
+  initialFilter
+}: {
+  initialSort?: TableSortType<JournalSortKeys>[];
+  initialFilter?: TableFilterType<JournalFilterKeys>[];
+} = {}) => {
+  const sortingAtom = tableSortAtom<JournalSortKeys>(initialSort);
+  const filtersAtom = tableFilterAtom<JournalFilterKeys>(initialFilter);
+  const paginationAtom = atom<JournalTableConfigPaginationType>({
+    pageIndex: 0,
+    pageSize: 10,
+    rowCount: 0
+  });
+  const { selectionAtom: editingRowsAtom, selectionAtomById: editingByIdAtom } =
+    idSelectionAtom();
+
+  const {
+    selectionAtom: selectedRowsAtom,
+    selectionAtomById: selectedByIdAtom
+  } = idSelectionAtom();
+
+  const configForTRPC = (externalFilters: JournalFilterValidationInputType[]) =>
+    atom((get) => {
+      const sortingToUse = sortingStateToPrismaSort(get(sortingAtom) || []);
+      const filtersToUse = filtersToPrismaFilters({
+        filters: get(filtersAtom) || []
+      });
+
+      const combinedFilters = filtersToUse
+        ? [...filtersToUse, ...externalFilters]
+        : externalFilters;
+
+      const pagination = get(paginationAtom);
+
+      const returnData: GetJournalValidationInput = {
+        sort: sortingToUse,
+        pagination: {
+          pageNo: pagination.pageIndex,
+          pageSize: pagination.pageSize
+        },
+        filters: combinedFilters
+      };
+      return returnData;
+    });
 
   return {
-    data: { ...data, mergedData },
-    combinedFilters,
-    sorting,
-    setSorting,
-    filters,
-    setFilters,
-    pagination,
-    setPagination,
-    pageCount,
-    setRowSelection,
-    rowSelection
+    sortingAtom,
+    filtersAtom,
+    paginationAtom,
+    editingRowsAtom,
+    editingByIdAtom,
+    selectedRowsAtom,
+    selectedByIdAtom,
+    configForTRPC
   };
 };
 
-export type JournalsMergedType = MergedDataType[0];
+export type JournalTableConfigAtomReturn = ReturnType<
+  typeof journalTableConfigAtom
+>;
