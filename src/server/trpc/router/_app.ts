@@ -7,6 +7,7 @@ import { billRouter } from "./bills";
 import { budgetRouter } from "./budgets";
 import { categoryRouter } from "./categories";
 import { journalsRouter } from "./journalEntries";
+import { summaryRouter } from "./summary";
 import { tagRouter } from "./tags";
 import { userRouter } from "./user";
 
@@ -18,7 +19,8 @@ export const appRouter = router({
   tags: tagRouter,
   categories: categoryRouter,
   accounts: accountRouter,
-  journals: journalsRouter
+  journals: journalsRouter,
+  summary: summaryRouter
 });
 
 // export type definition of API
