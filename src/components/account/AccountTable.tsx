@@ -6,7 +6,7 @@ import {
   useReactTable
 } from "@tanstack/react-table";
 
-import { useAccountsWithStatsAtom } from "src/utils/hooks/accounts/useAccountsAtom";
+import { useAccountsWithStatsAtom } from "src/utils/hooks/accounts/useAccountsTableData";
 
 import { TableDisplay } from "../table/TableDisplay";
 import { accountColumns } from "./accountColumns";

@@ -2,7 +2,7 @@ import { removeUndefined } from "src/utils/arrayHelpers";
 import type { AccountFilterInputValidation } from "src/utils/validation/account/getAccountInputValidation";
 
 import type { TableFilterType } from "../table/useTableFilterAtom";
-import type { AccountFilterKeys } from "./useAccountsAtom";
+import type { AccountFilterKeys } from "./useAccountsTableData";
 
 export const accountFiltersToPrismaFilters = ({
   filters
@@ -20,6 +20,9 @@ export const accountFiltersToPrismaFilters = ({
         item.id === "accountTitleCombined"
       ) {
         return { title: { contains: item.value } };
+      }
+      if (item.id === "isCash" || item.id === "isNetWorth") {
+        return { [item.id]: { equals: item.value === "T" } };
       }
       return undefined;
     })

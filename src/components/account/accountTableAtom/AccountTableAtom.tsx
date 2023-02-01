@@ -1,7 +1,7 @@
 import { ScrollArea, Stack } from "@mantine/core";
 import { useMemo } from "react";
 
-import { useAccountsTableData } from "src/utils/hooks/accounts/useAccountsAtom";
+import { useAccountsTableData } from "src/utils/hooks/accounts/useAccountsTableData";
 
 import { AtomPagination } from "../../tableAtom/AtomPagination";
 import { TableSimpleAtom } from "../../tableAtom/TableSimpleAtom";

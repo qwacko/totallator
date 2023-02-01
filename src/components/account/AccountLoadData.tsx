@@ -1,7 +1,7 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 
-import type { useAccountsTableData } from "src/utils/hooks/accounts/useAccountsAtom";
+import type { useAccountsTableData } from "src/utils/hooks/accounts/useAccountsTableData";
 import { trpc } from "src/utils/trpc";
 
 export const AccountLoadData = ({

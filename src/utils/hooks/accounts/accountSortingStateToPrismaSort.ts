@@ -2,7 +2,7 @@ import { removeUndefined } from "src/utils/arrayHelpers";
 import type { AccountSortValidation } from "src/utils/validation/account/getAccountInputValidation";
 
 import type { TableSortType } from "../table/useTableSortAtom";
-import type { AccountSortKeys } from "./useAccountsAtom";
+import type { AccountSortKeys } from "./useAccountsTableData";
 
 export const accountSortingStateToPrismaSort = (
   input: TableSortType<AccountSortKeys>[]

@@ -1,7 +1,7 @@
 import { Center, Group, Stack, Title } from "@mantine/core";
 
-import { AccountTable } from "src/components/account/AccountTable";
 import { CreateAccountPopup } from "src/components/account/CreateAccount";
+import { AccountTableAtom } from "src/components/account/accountTableAtom/AccountTableAtom";
 import { AppLayout } from "src/components/layout/App";
 
 const AccountsPage = () => {
@@ -14,7 +14,7 @@ const AccountsPage = () => {
             <CreateAccountPopup />
           </Group>
         </Center>
-        <AccountTable />
+        <AccountTableAtom />
       </Stack>
     </AppLayout>
   );

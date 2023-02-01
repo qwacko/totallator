@@ -1,14 +1,26 @@
-import { Text } from "@mantine/core";
+import { Checkbox, Group, Text } from "@mantine/core";
+import { useAtom, useAtomValue } from "jotai";
 
 import { TableFilterInputAtom } from "src/components/journals/journalTableSimple/TableFilterInput";
 import { CustomTd } from "src/components/tableAtom/CustomTd";
-import type { AccountsTableDataType } from "src/utils/hooks/accounts/useAccountsAtom";
+import type { AccountsTableDataType } from "src/utils/hooks/accounts/useAccountsTableData";
 
 export const AccountTableHeaderDisplay = ({
   config
 }: {
   config: AccountsTableDataType;
 }) => {
+  const rowIds = useAtomValue(config.displayIds);
+  const [selectedRows, setSelectedRows] = useAtom(config.selectionAtom);
+  const selecting = selectedRows.length > 0;
+  const toggleSelection = () => {
+    if (selecting) {
+      setSelectedRows([]);
+    } else {
+      setSelectedRows(rowIds);
+    }
+  };
+
   //   const rowIds = useAtomValue(config.displayIds);
   //   const [editingRows, setEditingRows] = useAtom(config.editingRowsAtom);
   //   const [rowIds] = useAtom(journalData.rowIdAtom);
@@ -35,10 +47,18 @@ export const AccountTableHeaderDisplay = ({
     <>
       <tr>
         <CustomTd>
+          <Text fw={700}>Select</Text>
+        </CustomTd>
+        <CustomTd>
           <Text fw={700}>Title</Text>
         </CustomTd>
       </tr>
       <tr>
+        <CustomTd>
+          <Group>
+            <Checkbox checked={selecting} onChange={toggleSelection} />
+          </Group>
+        </CustomTd>
         <CustomTd>
           <TableFilterInputAtom filterAtom={config.filter} columnId="title" />
         </CustomTd>

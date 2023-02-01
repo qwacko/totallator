@@ -11,6 +11,7 @@ import type {
   GetAccountInputValidationType
 } from "src/utils/validation/account/getAccountInputValidation";
 
+import { idSelectionAtom } from "../journals/idSelectionAtom";
 import { tableFilterAtom } from "../table/useTableFilterAtom";
 import { tableSortAtom } from "../table/useTableSortAtom";
 import { accountFiltersToPrismaFilters } from "./accountFiltersToPrismaFilters";
@@ -26,6 +27,7 @@ export const useAccountsTableData = () => {
     const filter = tableFilterAtom<AccountFilterKeys>();
     const sort = tableSortAtom<AccountSortKeys>();
     const data = atom<RouterOutputs["accounts"]["get"]["data"]>([]);
+    const selection = idSelectionAtom();
 
     const displayIds = selectAtom(
       data,
@@ -92,7 +94,8 @@ export const useAccountsTableData = () => {
       data,
       configForTRPC,
       configForTRPCNext,
-      configForTRPCPrev
+      configForTRPCPrev,
+      ...selection
     };
   }, []);
 };
