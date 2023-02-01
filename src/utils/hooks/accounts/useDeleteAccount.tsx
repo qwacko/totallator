@@ -18,13 +18,13 @@ export const useDeleteAccount = ({ id }: { id: string }) => {
     },
     onMutate: (data) => {
       notifications.onLoading();
-      const currentAccounts = utils.accounts.get.getData();
+      const currentAccounts = utils.accounts.getDropdown.getData();
       if (currentAccounts) {
         const targetAccount = currentAccounts.find(
           (item) => item.id === data.id
         );
         if (targetAccount && targetAccount._count.journalEntries === 0) {
-          utils.accounts.get.setData(
+          utils.accounts.getDropdown.setData(
             undefined,
             currentAccounts.filter((item) => item.id !== data.id)
           );

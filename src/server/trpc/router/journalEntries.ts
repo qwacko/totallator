@@ -23,7 +23,7 @@ import {
   filtersToQuery,
   journalsWithStats
 } from "./helpers/journals/journalsWithStats";
-import { sortToOrderBy } from "./helpers/journals/sortToOrderBy";
+import { journalSortToOrderBy } from "./helpers/journals/sortToOrderBy";
 import { updateSingleJournal } from "./helpers/journals/updateSingleJournal";
 
 export const journalsRouter = router({
@@ -93,7 +93,7 @@ export const journalsRouter = router({
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
       //Sorting
-      const orderBy = sortToOrderBy(input.sort);
+      const orderBy = journalSortToOrderBy(input.sort);
 
       //Pagination
       const take = input.pagination.pageSize;

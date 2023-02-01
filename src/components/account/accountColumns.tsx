@@ -1,6 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
 
-import type { AccountsReturnType } from "src/server/trpc/router/_app";
+import type { useAccounts } from "src/utils/hooks/accounts/useAccounts";
 
 import { accountTypeFilter } from "../table/filters/accountTypeFilter";
 import { dateFilter } from "../table/filters/dateFilter";
@@ -10,7 +10,11 @@ import { selectionCell } from "../table/selectionCell";
 import { AccountTableBulkActions } from "./AccountTableBulkActions";
 import { displayAccountCell } from "./AccountTableCell";
 
-const columnHelper = createColumnHelper<AccountsReturnType>();
+export type AccountColumnDataType = ReturnType<
+  typeof useAccounts
+>["combinedData"][0];
+
+const columnHelper = createColumnHelper<AccountColumnDataType>();
 
 export const accountColumns = [
   columnHelper.display({
@@ -97,9 +101,10 @@ export const accountColumns = [
   }),
   columnHelper.accessor("endDate", {
     header: displayHeader({ title: "End Date", filterType: "date" }),
-    cell: displayAccountCell,
-    enableColumnFilter: true,
-    filterFn: dateFilter("startDate")
+    cell: displayAccountCell
+  }),
+  columnHelper.accessor("sum", {
+    header: displayHeader({ title: "Value" })
   }),
   columnHelper.accessor("createdAt", {
     header: displayHeader({ title: "Created At", filterType: "date" }),

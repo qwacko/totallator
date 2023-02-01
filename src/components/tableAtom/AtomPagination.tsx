@@ -1,12 +1,23 @@
 import { Group, Pagination, Select } from "@mantine/core";
-import { useAtom } from "jotai";
+import { type PrimitiveAtom, atom, useAtom } from "jotai";
 
-import { type JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJournalsSimple";
+export type TablePaginationType = {
+  pageIndex: number;
+  pageSize: number;
+  rowCount: number;
+};
+
+export const paginationAtomGenerator = (defaultSize = 10) =>
+  atom<TablePaginationType>({
+    pageIndex: 0,
+    pageSize: defaultSize,
+    rowCount: 0
+  });
 
 export const AtomPagination = ({
   paginationAtom
 }: {
-  paginationAtom: JournalTableConfigAtomReturn["paginationAtom"];
+  paginationAtom: PrimitiveAtom<TablePaginationType>;
 }) => {
   const [pagination, setPagination] = useAtom(paginationAtom);
 

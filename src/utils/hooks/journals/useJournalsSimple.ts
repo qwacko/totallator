@@ -2,6 +2,7 @@ import deepEquals from "fast-deep-equal";
 import { atom } from "jotai";
 import { selectAtom } from "jotai/utils";
 
+import { paginationAtomGenerator } from "src/components/tableAtom/AtomPagination";
 import type {
   GetJournalValidationInput,
   JournalFilterValidationInputType
@@ -12,14 +13,8 @@ import {
   tableFilterAtom
 } from "../table/useTableFilterAtom";
 import { type TableSortType, tableSortAtom } from "../table/useTableSortAtom";
-import { filtersToPrismaFilters } from "./helpers/filtersToPrismaFilters";
+import { journalsFiltersToPrismaFilters } from "./helpers/filtersToPrismaFilters";
 import { sortingStateToPrismaSort } from "./helpers/sortingStateToPrismaSort";
-
-type JournalTableConfigPaginationType = {
-  pageIndex: number;
-  pageSize: number;
-  rowCount: number;
-};
 
 type JournalSortKeys =
   | "account"
@@ -79,11 +74,7 @@ export const journalTableConfigAtom = ({
 } = {}) => {
   const sortingAtom = tableSortAtom<JournalSortKeys>(initialSort);
   const filtersAtom = tableFilterAtom<JournalFilterKeys>(initialFilter);
-  const paginationAtom = atom<JournalTableConfigPaginationType>({
-    pageIndex: 0,
-    pageSize: 10,
-    rowCount: 0
-  });
+  const paginationAtom = paginationAtomGenerator(10);
   const { selectionAtom: editingRowsAtom, selectionAtomById: editingByIdAtom } =
     idSelectionAtom();
 
@@ -95,7 +86,7 @@ export const journalTableConfigAtom = ({
   const configForTRPC = (externalFilters: JournalFilterValidationInputType[]) =>
     atom((get) => {
       const sortingToUse = sortingStateToPrismaSort(get(sortingAtom) || []);
-      const filtersToUse = filtersToPrismaFilters({
+      const filtersToUse = journalsFiltersToPrismaFilters({
         filters: get(filtersAtom) || []
       });
 
@@ -119,7 +110,7 @@ export const journalTableConfigAtom = ({
   return {
     sortingAtom,
     filtersAtom,
-    paginationAtom,
+    paginationAtom: paginationAtom,
     editingRowsAtom,
     editingByIdAtom,
     selectedRowsAtom,

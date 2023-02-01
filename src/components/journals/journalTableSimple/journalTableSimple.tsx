@@ -4,12 +4,12 @@ import { useMemo } from "react";
 import { journalTableConfigAtom } from "src/utils/hooks/journals/useJournalsSimple";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 
-import { AtomPagination } from "./AtomPagination";
+import { AtomPagination } from "../../tableAtom/AtomPagination";
+import { TableSimpleAtom } from "../../tableAtom/TableSimpleAtom";
 import { combinedJournalDataAtom } from "./CombinedJournalDataAtomType";
 import { JournalTableHeaderDisplay } from "./JournalTableHeaderDisplay";
 import { JournalTableLoadData } from "./JournalTableLoadData";
 import { JournalTableRowDisplay } from "./JournalTableRowDisplay";
-import { TableSimpleAtom } from "./TableSimpleAtom";
 
 export const JournalTableSimple = ({
   filters
@@ -19,15 +19,19 @@ export const JournalTableSimple = ({
   const configData = useMemo(() => journalTableConfigAtom(), []);
   const journalData = useMemo(() => combinedJournalDataAtom(), []);
 
-  const RowDisplay = (rowId: string) => {
-    return (
-      <JournalTableRowDisplay
-        rowId={rowId}
-        journalData={journalData}
-        config={configData}
-      />
-    );
-  };
+  const RowDisplay = useMemo(
+    () =>
+      function RowDisplay(rowId: string) {
+        return (
+          <JournalTableRowDisplay
+            rowId={rowId}
+            journalData={journalData}
+            config={configData}
+          />
+        );
+      },
+    [configData, journalData]
+  );
 
   return (
     <>

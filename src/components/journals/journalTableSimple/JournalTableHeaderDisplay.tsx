@@ -4,10 +4,10 @@ import { useAtom } from "jotai";
 import { type JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJournalsSimple";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 
+import { CustomTd } from "../../tableAtom/CustomTd";
+import { TableSortButton } from "../../tableAtom/TableSortButton";
 import type { CombinedJournalDataAtomType } from "./CombinedJournalDataAtomType";
-import { CustomTd } from "./JournalTableRowDisplay";
 import { TableFilterInputAtom } from "./TableFilterInput";
-import { TableSortButton } from "./TableSortButton";
 import { JournalTableBulkActionsAtom } from "./bulkActions/JournalTableBulkActionsAtom";
 
 export const JournalTableHeaderDisplay = ({

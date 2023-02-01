@@ -42,9 +42,9 @@ export const useUpdateAccount = ({
     },
     onMutate: (data) => {
       notifications.onLoading();
-      const currentAccounts = utils.accounts.get.getData();
+      const currentAccounts = utils.accounts.getDropdown.getData();
       if (currentAccounts) {
-        utils.accounts.get.setData(
+        utils.accounts.getDropdown.setData(
           undefined,
           currentAccounts.map((account) => {
             if (account.id === id) {

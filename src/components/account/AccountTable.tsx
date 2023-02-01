@@ -1,4 +1,3 @@
-import { Group, Loader, Text } from "@mantine/core";
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -7,16 +6,16 @@ import {
   useReactTable
 } from "@tanstack/react-table";
 
-import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
+import { useAccountsWithStatsAtom } from "src/utils/hooks/accounts/useAccountsAtom";
 
 import { TableDisplay } from "../table/TableDisplay";
 import { accountColumns } from "./accountColumns";
 
 export const AccountTable = () => {
-  const data = useAccounts();
+  const data = useAccountsWithStatsAtom();
 
   const table = useReactTable({
-    data: data.data ? data.data : [],
+    data,
     getRowId: (data) => data.id,
     columns: accountColumns,
     getCoreRowModel: getCoreRowModel(),
@@ -40,15 +39,6 @@ export const AccountTable = () => {
     },
     autoResetPageIndex: false
   });
-
-  if (!data.data || data.isLoading) {
-    return (
-      <Group>
-        <Loader />
-        <Text>Loading Accounts</Text>
-      </Group>
-    );
-  }
 
   return <TableDisplay table={table} />;
 };

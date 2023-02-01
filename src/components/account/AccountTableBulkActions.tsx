@@ -2,12 +2,11 @@ import { Button, Menu } from "@mantine/core";
 import { IconMenu2 } from "@tabler/icons";
 import type { HeaderContext } from "@tanstack/react-table";
 
-import type { AccountsReturnType } from "src/server/trpc/router/_app";
-
 import { SelectionColumnHeader } from "../table/selectionColumnHeader";
+import type { AccountColumnDataType } from "./accountColumns";
 
 export const AccountTableBulkActions = (
-  column: HeaderContext<AccountsReturnType, unknown>
+  column: HeaderContext<AccountColumnDataType, unknown>
 ) => {
   return (
     <>

@@ -27,10 +27,10 @@ export function useCreateAccount({
     onMutate: (data) => {
       notifications.onLoading();
       onMutate && onMutate();
-      const currentAccounts = utils.accounts.get.getData();
+      const currentAccounts = utils.accounts.getDropdown.getData();
 
       if (currentAccounts) {
-        utils.accounts.get.setData(undefined, [
+        utils.accounts.getDropdown.setData(undefined, [
           ...currentAccounts,
           {
             accountGroupingId: data.accountGroupingId,

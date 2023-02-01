@@ -13,15 +13,18 @@ import type { updateAccountDataValidationType } from "src/utils/validation/accou
 import { DateCell } from "../table/cells/DateCell";
 import { TextCell } from "../table/cells/TextCell";
 import { AccountCommandButtons } from "./AccountCommandButtons";
+import { AccountStats } from "./AccountStats";
+import type { AccountColumnDataType } from "./accountColumns";
 
 export type AccountRowColumns =
   | keyof updateAccountDataValidationType
   | "createdAt"
   | "updatedAt"
-  | "commands";
+  | "commands"
+  | "stats";
 
 export const displayAccountCell = (
-  props: CellContext<AccountsReturnType, unknown>
+  props: CellContext<AccountColumnDataType, unknown>
 ) => {
   const selected = props.row.getIsSelected();
 
@@ -52,7 +55,10 @@ export const AccountTableCell = ({
   data: AccountsReturnType;
 }) => {
   const columnUse =
-    column === "createdAt" || column === "updatedAt" || column === "commands"
+    column === "createdAt" ||
+    column === "updatedAt" ||
+    column === "commands" ||
+    column === "stats"
       ? "title"
       : column;
   const { form, runMutate, mutate } = useUpdateAccount({
@@ -175,6 +181,9 @@ export const AccountTableCell = ({
       </Center>
     );
   }
+  if (column === "stats") {
+    return <AccountStats id={id} />;
+  }
   return <></>;
 };
 
@@ -221,6 +230,9 @@ export const AccountTableCellView = ({
     column === "updatedAt"
   ) {
     return <DateCell displayDate={data[column]} />;
+  }
+  if (column === "stats") {
+    return <AccountStats id={data.id} />;
   }
 
   return <></>;
