@@ -37,7 +37,7 @@ const accountSortValidation = z.array(
 
 export type AccountSortValidation = z.infer<typeof accountSortValidation>;
 
-export const statusFilter = z
+const statusFilter = z
   .object({
     in: z.array(PrismaStatusEnumValidation).optional(),
     notIn: z.array(PrismaStatusEnumValidation).optional(),
@@ -46,7 +46,7 @@ export const statusFilter = z
   })
   .optional();
 
-export const accountTypeFilter = z
+const accountTypeFilter = z
   .object({ in: z.array(PrismaAccountTypeEnumValidation).optional() })
   .optional();
 

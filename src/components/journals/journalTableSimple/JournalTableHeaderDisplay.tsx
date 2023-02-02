@@ -7,7 +7,7 @@ import type { JournalFilterValidationInputType } from "src/utils/validation/jour
 import { CustomTd } from "../../tableAtom/CustomTd";
 import { TableSortButton } from "../../tableAtom/TableSortButton";
 import type { CombinedJournalDataAtomType } from "./CombinedJournalDataAtomType";
-import { TableFilterInputAtom } from "./TableFilterInput";
+import { TableFilterStringInput } from "../../tableAtom/TableFilterStringInput";
 import { JournalTableBulkActionsAtom } from "./bulkActions/JournalTableBulkActionsAtom";
 
 export const JournalTableHeaderDisplay = ({
@@ -139,19 +139,19 @@ export const JournalTableHeaderDisplay = ({
         <CustomTd />
         <CustomTd />
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="accountId"
           />
         </CustomTd>
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="payee"
           />
         </CustomTd>
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="description"
           />
@@ -159,25 +159,25 @@ export const JournalTableHeaderDisplay = ({
         <CustomTd />
         <CustomTd />
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="categoryId"
           />
         </CustomTd>
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="tagId"
           />
         </CustomTd>
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="billId"
           />
         </CustomTd>
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="budgetId"
           />

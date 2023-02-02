@@ -15,7 +15,7 @@ import { IconPlus } from "@tabler/icons";
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useCreateAccount } from "src/utils/hooks/accounts/useCreateAccount";
 
-export const CreateAccountForm = ({ onClose }: { onClose?: () => void }) => {
+const CreateAccountForm = ({ onClose }: { onClose?: () => void }) => {
   const { data: accountGroupings } = useAccountGroupings();
 
   const createAccount = useCreateAccount({

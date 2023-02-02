@@ -8,21 +8,6 @@ import {
 import { useCreateAccount } from "src/utils/hooks/accounts/useCreateAccount";
 import { trpc } from "src/utils/trpc";
 
-export const useAccountsDropdown = ({
-  accountGroupingId,
-  showAccountGroup
-}: {
-  accountGroupingId?: string;
-  showAccountGroup: boolean;
-}) => {
-  const { data: accounts } = trpc.accounts.getDropdown.useQuery({
-    accountGroupingId,
-    showAccountGroup
-  });
-
-  return { accounts };
-};
-
 export type AccountSelectionProps = Omit<SelectProps, "data"> & {
   accountGroupingId?: string;
   showAccountGroup?: boolean;
@@ -37,7 +22,7 @@ export const AccountSelection = ({
   onCreateSuccess,
   ...props
 }: AccountSelectionProps) => {
-  const { accounts } = useAccountsDropdown({
+  const { data: accounts } = trpc.accounts.getDropdown.useQuery({
     accountGroupingId,
     showAccountGroup
   });
@@ -84,7 +69,7 @@ export const AccountMultiSelection = ({
   accountGroupingId?: string;
   showAccountGroup?: boolean;
 }) => {
-  const { accounts } = useAccountsDropdown({
+  const { data: accounts } = trpc.accounts.getDropdown.useQuery({
     accountGroupingId,
     showAccountGroup
   });

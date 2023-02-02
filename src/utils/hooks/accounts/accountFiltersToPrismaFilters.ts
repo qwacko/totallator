@@ -1,3 +1,5 @@
+import { accountTypeFilterToArray } from "src/components/tableAtom/TableFilterAccountTypeSelect";
+import { dateRangeFilterToObject } from "src/components/tableAtom/TableFilterDateRangeInput";
 import { removeUndefined } from "src/utils/arrayHelpers";
 import type { AccountFilterInputValidation } from "src/utils/validation/account/getAccountInputValidation";
 
@@ -19,10 +21,22 @@ export const accountFiltersToPrismaFilters = ({
         item.id === "accountGroupCombined" ||
         item.id === "accountTitleCombined"
       ) {
-        return { title: { contains: item.value } };
+        const stringValue = item.value;
+        if (item.value.length > 0) {
+          return { [item.id]: { contains: stringValue } };
+        }
       }
       if (item.id === "isCash" || item.id === "isNetWorth") {
         return { [item.id]: { equals: item.value === "T" } };
+      }
+      if (item.id === "type") {
+        const accountTypeList = accountTypeFilterToArray(item.value);
+        if (accountTypeList.length > 0) {
+          return { type: { in: accountTypeFilterToArray(item.value) } };
+        }
+      }
+      if (item.id === "startDate" || item.id === "endDate") {
+        return { [item.id]: dateRangeFilterToObject(item.value) };
       }
       return undefined;
     })

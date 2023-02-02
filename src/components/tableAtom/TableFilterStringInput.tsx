@@ -8,7 +8,7 @@ import {
   useFilterAtom
 } from "src/utils/hooks/table/useTableFilterAtom";
 
-export const TableFilterInputAtom = <T extends string>({
+export const TableFilterStringInput = <T extends string>({
   filterAtom,
   columnId
 }: {

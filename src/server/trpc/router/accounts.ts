@@ -39,7 +39,8 @@ export const accountRouter = router({
         take,
         skip,
         include: {
-          accountGrouping: { include: { adminUsers: true } }
+          accountGrouping: { include: { adminUsers: true } },
+          _count: { select: { journalEntries: true } }
         }
       });
 

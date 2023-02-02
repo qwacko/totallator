@@ -38,7 +38,6 @@ export const useFilterAtom = <T extends string>(
         value: { action: "clear" } | { action: "update"; value: string }
       ) => {
         const current = get(targetAtom);
-        console.log("Updating Atom", { current, value });
         if (value.action === "clear") {
           set(
             targetAtom,
@@ -47,7 +46,6 @@ export const useFilterAtom = <T extends string>(
         }
         if (value.action === "update") {
           const exists = current.find((item) => item.id === key);
-          console.log("Exists", exists);
           if (exists) {
             set(
               targetAtom,
@@ -57,7 +55,6 @@ export const useFilterAtom = <T extends string>(
             );
           } else {
             const newValue = [...current, { id: key, value: value.value }];
-            console.log("New Value", newValue);
             set(targetAtom, newValue);
           }
         }

@@ -9,7 +9,7 @@ import { AccountLoadData } from "../AccountLoadData";
 import { AccountTableHeaderDisplay } from "./AccountTableHeaderDisplay";
 import { AccountTableRowDisplay } from "./AccountTableRowDisplay";
 
-export const AccountTableAtom = () => {
+export const AccountTable = () => {
   const tableAtoms = useAccountsTableData();
 
   const RowDisplay = useMemo(
