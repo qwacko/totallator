@@ -1,11 +1,13 @@
+import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
-import { categoryGetValidation } from "src/utils/validation/category/readCategoryValidation";
+import { getCategoryInputValidation } from "src/utils/validation/category/getCategoryInputValidation";
 import { updateCategoryValidation } from "src/utils/validation/category/updateCategoryValidation";
 
 import { protectedProcedure, router } from "../trpc";
+import { categorySortToOrderBy } from "./helpers/categories/categorySortToOrderBy";
 import { upsertCategory } from "./helpers/categories/upsertCategory";
 import {
   accountGroupingFilter,
@@ -15,28 +17,84 @@ import { getUserInfo } from "./helpers/getUserInfo";
 
 export const categoryRouter = router({
   get: protectedProcedure
-    .output(categoryGetValidation)
-    .query(async ({ ctx }) => {
+    .input(getCategoryInputValidation)
+    .query(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
+      //Pagination
+      const take = input.pagination.pageSize;
+      const skip = input.pagination.pageNo * input.pagination.pageSize;
+
+      const where: Prisma.CategoryWhereInput = {
+        AND: [
+          { accountGrouping: { viewUsers: { some: { id: user.id } } } },
+          ...(input.filters ? input.filters : [])
+        ]
+      };
+
       const categories = await ctx.prisma.category.findMany({
-        where: {
-          accountGrouping: { viewUsers: { some: { id: user.id } } }
-        },
+        where,
+        orderBy: categorySortToOrderBy(input.sort),
+        take,
+        skip,
         include: {
-          accountGrouping: { include: { viewUsers: true, adminUsers: true } },
+          accountGrouping: { include: { adminUsers: true } },
           _count: { select: { journalEntries: true } }
         }
       });
 
-      return categories.map((category) => {
-        const { accountGrouping, ...pickedCategory } = category;
-        const userIsAdmin =
-          user.admin ||
-          accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
+      const count = await ctx.prisma.category.count({ where });
 
-        return { ...pickedCategory, userIsAdmin };
+      const processedData = categories.map((category) => {
+        const { accountGrouping, ...otherData } = category;
+        return {
+          ...otherData,
+          userIsAdmin: Boolean(
+            accountGrouping.adminUsers.find((agUser) => agUser.id === user.id)
+          )
+        };
       });
+
+      return { data: processedData, count };
+    }),
+  getDropdown: protectedProcedure
+    .input(
+      z
+        .object({
+          accountGroupingId: z.string().optional(),
+          includeOnlyAdmin: z.boolean().optional().default(false),
+          showCombined: z.boolean().optional().default(true)
+        })
+        .optional()
+        .default({})
+    )
+    .query(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const categories = await ctx.prisma.category.findMany({
+        where: {
+          AND: [
+            {
+              accountGrouping: input.includeOnlyAdmin
+                ? { adminUsers: { some: { id: user.id } } }
+                : { viewUsers: { some: { id: user.id } } }
+            },
+            input?.accountGroupingId
+              ? { accountGroupingId: input.accountGroupingId }
+              : {}
+          ]
+        }
+      });
+
+      const returnData = categories
+        .sort((a, b) => a.title.localeCompare(b.title))
+        .map((item) =>
+          input.showCombined
+            ? { label: item.title, value: item.id }
+            : { label: item.single, group: item.group, value: item.id }
+        );
+
+      return returnData;
     }),
   create: protectedProcedure
     .input(createCategoryValidation)

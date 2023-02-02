@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidation";
-import { PrismaStatusEnumValidation } from "../PrismaStatusEnumValidation";
 import { booleanFilter } from "../journalEntries/booleanFilter";
 import { dateFilter } from "../journalEntries/dateFilter";
 import { idFilter } from "../journalEntries/idFilter";
 import { paginationValidation } from "../journalEntries/paginationValidation";
 import { stringFilter } from "../journalEntries/stringFilter";
+import { statusFilter } from "./statusFilter";
 
 const accountSortValidation = z.array(
   z.object({
@@ -36,15 +36,6 @@ const accountSortValidation = z.array(
 );
 
 export type AccountSortValidation = z.infer<typeof accountSortValidation>;
-
-const statusFilter = z
-  .object({
-    in: z.array(PrismaStatusEnumValidation).optional(),
-    notIn: z.array(PrismaStatusEnumValidation).optional(),
-    equals: PrismaStatusEnumValidation.optional(),
-    notEqual: PrismaStatusEnumValidation.optional()
-  })
-  .optional();
 
 const accountTypeFilter = z
   .object({ in: z.array(PrismaAccountTypeEnumValidation).optional() })

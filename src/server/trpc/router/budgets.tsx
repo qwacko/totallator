@@ -1,11 +1,13 @@
+import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createBudgetValidation } from "src/utils/validation/budget/createBudgetValidation";
-import { budgetGetValidation } from "src/utils/validation/budget/readBudgetValidation";
+import { getBudgetInputValidation } from "src/utils/validation/budget/getBudgetInputValidation";
 import { updateBudgetValidation } from "src/utils/validation/budget/updateBudgetValidation";
 
 import { protectedProcedure, router } from "../trpc";
+import { budgetSortToOrderBy } from "./helpers/budgets/budgetSortToOrderBy";
 import { upsertBudget } from "./helpers/budgets/upsertBudget";
 import {
   accountGroupingFilter,
@@ -14,28 +16,80 @@ import {
 import { getUserInfo } from "./helpers/getUserInfo";
 
 export const budgetRouter = router({
-  get: protectedProcedure.output(budgetGetValidation).query(async ({ ctx }) => {
-    const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+  get: protectedProcedure
+    .input(getBudgetInputValidation)
+    .query(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-    const budgets = await ctx.prisma.budget.findMany({
-      where: {
-        accountGrouping: { viewUsers: { some: { id: user.id } } }
-      },
-      include: {
-        accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-        _count: { select: { journalEntries: true } }
-      }
-    });
+      //Pagination
+      const take = input.pagination.pageSize;
+      const skip = input.pagination.pageNo * input.pagination.pageSize;
 
-    return budgets.map((budget) => {
-      const { accountGrouping, ...pickedBudget } = budget;
-      const userIsAdmin =
-        user.admin ||
-        accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
+      const where: Prisma.BudgetWhereInput = {
+        AND: [
+          { accountGrouping: { viewUsers: { some: { id: user.id } } } },
+          ...(input.filters ? input.filters : [])
+        ]
+      };
+      const budgets = await ctx.prisma.budget.findMany({
+        where,
+        orderBy: budgetSortToOrderBy(input.sort),
+        take,
+        skip,
+        include: {
+          accountGrouping: { include: { adminUsers: true } },
+          _count: { select: { journalEntries: true } }
+        }
+      });
 
-      return { ...pickedBudget, userIsAdmin };
-    });
-  }),
+      const count = await ctx.prisma.budget.count({ where });
+
+      const processedData = budgets.map((budget) => {
+        const { accountGrouping, ...otherData } = budget;
+        return {
+          ...otherData,
+          userIsAdmin: Boolean(
+            accountGrouping.adminUsers.find((agUser) => agUser.id === user.id)
+          )
+        };
+      });
+
+      return { data: processedData, count };
+    }),
+  getDropdown: protectedProcedure
+    .input(
+      z
+        .object({
+          accountGroupingId: z.string().optional(),
+          includeOnlyAdmin: z.boolean().optional().default(false)
+        })
+        .optional()
+        .default({})
+    )
+    .query(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const budgets = await ctx.prisma.budget.findMany({
+        where: {
+          AND: [
+            {
+              accountGrouping: input.includeOnlyAdmin
+                ? { adminUsers: { some: { id: user.id } } }
+                : { viewUsers: { some: { id: user.id } } }
+            },
+            input?.accountGroupingId
+              ? { accountGroupingId: input.accountGroupingId }
+              : {}
+          ]
+        }
+      });
+
+      const returnData = budgets
+        .map((item) => ({ label: item.title, value: item.id }))
+        .sort((a, b) => a.label.localeCompare(b.label));
+
+      return returnData;
+    }),
   create: protectedProcedure
     .input(createBudgetValidation)
     .mutation(async ({ ctx, input }) => {

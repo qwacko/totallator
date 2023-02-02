@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { accountFilterNew } from "../account/getAccountInputValidation";
+import { billFilter } from "../bill/billFilter";
 import { booleanFilter } from "./booleanFilter";
 import { dateFilter } from "./dateFilter";
 import { idFilter } from "./idFilter";
@@ -46,16 +47,7 @@ export const journalFilter = z.object({
   primaryJournalId: idFilter,
   transaction: transactionFilter,
 
-  bill: z
-    .object({
-      title: z
-        .object({
-          contains: z.string(),
-          mode: z.enum(["default", "insensitive"]).default("insensitive")
-        })
-        .optional()
-    })
-    .optional(),
+  bill: billFilter.optional(),
 
   budget: z
     .object({
