@@ -25,8 +25,16 @@ export const accountFiltersToPrismaFilters = ({
         if (item.value.length > 0) {
           return { [item.id]: { contains: stringValue } };
         }
+        return undefined;
       }
-      if (item.id === "isCash" || item.id === "isNetWorth") {
+      if (
+        item.id === "isCash" ||
+        item.id === "isNetWorth" ||
+        item.id === "active" ||
+        item.id === "allowUpdate" ||
+        item.id === "deleted" ||
+        item.id === "disabled"
+      ) {
         return { [item.id]: { equals: item.value === "T" } };
       }
       if (item.id === "type") {
@@ -34,8 +42,14 @@ export const accountFiltersToPrismaFilters = ({
         if (accountTypeList.length > 0) {
           return { type: { in: accountTypeFilterToArray(item.value) } };
         }
+        return undefined;
       }
-      if (item.id === "startDate" || item.id === "endDate") {
+      if (
+        item.id === "startDate" ||
+        item.id === "endDate" ||
+        item.id === "createdAt" ||
+        item.id === "updatedAt"
+      ) {
         return { [item.id]: dateRangeFilterToObject(item.value) };
       }
       return undefined;

@@ -17,3 +17,6 @@ export const budgetFilter = z.object({
   active: booleanFilter,
   disabled: booleanFilter
 });
+
+export type BudgetFilterValidation = z.infer<typeof budgetFilter>;
+export type BudgetFilterInputValidation = z.input<typeof budgetFilter>;

@@ -17,3 +17,6 @@ export const billFilter = z.object({
   active: booleanFilter,
   disabled: booleanFilter
 });
+
+export type BillFilterValidation = z.infer<typeof billFilter>;
+export type BillFilterInputValidation = z.input<typeof billFilter>;

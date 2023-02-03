@@ -19,3 +19,6 @@ export const categoryFilter = z.object({
   active: booleanFilter,
   disabled: booleanFilter
 });
+
+export type CategoryFilterValidation = z.infer<typeof categoryFilter>;
+export type CategoryFilterInputValidation = z.input<typeof categoryFilter>;

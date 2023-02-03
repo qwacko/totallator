@@ -19,3 +19,6 @@ export const tagFilter = z.object({
   active: booleanFilter,
   disabled: booleanFilter
 });
+
+export type TagFilterValidation = z.infer<typeof tagFilter>;
+export type TagFilterInputValidation = z.input<typeof tagFilter>;
