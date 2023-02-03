@@ -9,10 +9,10 @@ import type { JournalEntryGetValidationType } from "src/utils/validation/journal
 export const combinedJournalDataAtom = () => {
   const journalDataAtom = atom<JournalEntryGetValidationType["data"]>([]);
   const accountDataAtom = atom<RouterOutputs["accounts"]["getDropdown"]>([]);
-  const billDataAtom = atom<RouterOutputs["bills"]["get"]>([]);
-  const budgetDataAtom = atom<RouterOutputs["budgets"]["get"]>([]);
-  const categoryDataAtom = atom<RouterOutputs["categories"]["get"]>([]);
-  const tagDataAtom = atom<RouterOutputs["tags"]["get"]>([]);
+  const billDataAtom = atom<RouterOutputs["bills"]["get"]["data"]>([]);
+  const budgetDataAtom = atom<RouterOutputs["budgets"]["get"]["data"]>([]);
+  const categoryDataAtom = atom<RouterOutputs["categories"]["get"]["data"]>([]);
+  const tagDataAtom = atom<RouterOutputs["tags"]["get"]["data"]>([]);
   const accountGroupingsDataAtom = atom<
     RouterOutputs["accountGroupings"]["get"]
   >([]);

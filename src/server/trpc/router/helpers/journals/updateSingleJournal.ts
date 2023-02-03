@@ -5,6 +5,7 @@ import { omit } from "lodash";
 import { type UpdateJournalDataInputType } from "src/utils/validation/journalEntries/updateJournalValidation";
 
 import { checkLinkedItems } from "../checkLinkedItems";
+import { journalDateMoreData } from "./journalDateMoreData";
 
 export const updateSingleJournal = async ({
   prisma,
@@ -47,7 +48,7 @@ export const updateSingleJournal = async ({
   if (!journal.linked) {
     await prisma.journalEntry.update({
       where: { id: journal.id },
-      data: dataWithoutOther
+      data: journalDateMoreData(dataWithoutOther)
     });
   } else {
     const { amount, accountId, ...linkedProperties } = dataWithoutOther;
@@ -65,7 +66,7 @@ export const updateSingleJournal = async ({
     if (Object.keys(linkedProperties).length > 0) {
       await prisma.journalEntry.updateMany({
         where: { transactionId: journal.transactionId },
-        data: linkedProperties
+        data: journalDateMoreData(linkedProperties)
       });
     }
   }

@@ -24,6 +24,10 @@ import {
   journalsWithStats
 } from "./helpers/journals/journalsWithStats";
 import { journalSortToOrderBy } from "./helpers/journals/sortToOrderBy";
+import {
+  updateAllDateInfo,
+  updateDateInfo
+} from "./helpers/journals/updateDateInfo";
 import { updateSingleJournal } from "./helpers/journals/updateSingleJournal";
 
 export const journalsRouter = router({
@@ -124,7 +128,13 @@ export const journalsRouter = router({
           }
         );
         return {
-          ...pickedJournal,
+          ...omit(pickedJournal, [
+            "year",
+            "yearMonth",
+            "yearMonthDay",
+            "yearQuarter",
+            "yearWeek"
+          ]),
           amount: pickedJournal.amount.toNumber(),
           otherJournals,
           userIsAdmin
@@ -149,10 +159,15 @@ export const journalsRouter = router({
       await createTransaction({ user, prisma: ctx.prisma, input });
       return true;
     }),
+  updateDateInfo: protectedProcedure.query(async ({ ctx }) => {
+    updateAllDateInfo(ctx.prisma);
+  }),
   updateJournals: protectedProcedure
     .input(updateJournalInput)
     .mutation(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      await updateDateInfo(ctx.prisma);
 
       const { data, count } = await journalsWithStats({
         prisma: ctx.prisma,

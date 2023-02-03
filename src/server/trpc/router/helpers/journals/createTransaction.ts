@@ -6,6 +6,7 @@ import type { createTransactionValidationType } from "src/utils/validation/journ
 import { checkAccountGroupingAccess } from "../checkAccountGroupingAccess";
 import { checkLinkedItems } from "../checkLinkedItems";
 import type { UserInfo } from "../getUserInfo";
+import { journalDateArrayMoreData } from "./journalDateMoreData";
 
 export const createTransaction = async ({
   input,
@@ -43,6 +44,8 @@ export const createTransaction = async ({
   });
 
   await prisma.transaction.create({
-    data: { journalEntries: { createMany: { data: input } } }
+    data: {
+      journalEntries: { createMany: { data: journalDateArrayMoreData(input) } }
+    }
   });
 };

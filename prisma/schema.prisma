@@ -164,6 +164,13 @@ model JournalEntry {
   complete    Boolean  @default(false)
   amount      Decimal  @default(0) @db.Decimal(40, 8)
 
+  //Additional Date Information (used to help with data retrieval / grouping)
+  yearMonthDay String @default("")
+  yearWeek     String @default("")
+  yearMonth    String @default("")
+  yearQuarter  String @default("")
+  year         String @default("")
+
   //Relationships
   account       TransactionAccount @relation(fields: [accountId], references: [id], onDelete: Restrict, onUpdate: Restrict)
   accountId     String
