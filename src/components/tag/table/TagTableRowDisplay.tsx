@@ -97,7 +97,7 @@ export const TagTableRowDisplay = ({
           size="xs"
           disabled={disableEditing}
           editing={selected}
-          onComplete={() => single !== rowData.single && updateTag({ group })}
+          onComplete={() => single !== rowData.single && updateTag({ single })}
         />
       </CustomTd>
     </>

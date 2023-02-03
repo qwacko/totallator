@@ -11,17 +11,17 @@ import { useParsedSummary } from "../summary/useParsedSummary";
 
 const accountReturnValidation = z.array(
   summaryReturnCoreValidation.merge(
-    summaryReturnGroupingValidation.pick({ accountId: true })
+    summaryReturnGroupingValidation.pick({ billId: true })
   )
 );
 
 const accountIdGroupingList: SummaryInputValidationType["groupingList"] = [
-  "accountId"
+  "billId"
 ];
 const defaultValue: z.infer<typeof accountReturnValidation> = [];
 
-export const useAccountStats = ({ id }: { id: string }) => {
-  const memoFilters = useMemo(() => [{ accountId: { in: [id] } }], [id]);
+export const useBillStats = ({ id }: { id: string }) => {
+  const memoFilters = useMemo(() => [{ billId: { in: [id] } }], [id]);
 
   const returnData = useParsedSummary({
     filters: memoFilters,
@@ -31,7 +31,7 @@ export const useAccountStats = ({ id }: { id: string }) => {
   });
 
   const found = useMemo(
-    () => returnData.find((item) => item.accountId === id),
+    () => returnData.find((item) => item.billId === id),
     [id, returnData]
   );
 

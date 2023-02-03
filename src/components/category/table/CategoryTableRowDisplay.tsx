@@ -100,7 +100,7 @@ export const CategoryTableRowDisplay = ({
           disabled={disableEditing}
           editing={selected}
           onComplete={() =>
-            single !== rowData.single && updateCategory({ group })
+            single !== rowData.single && updateCategory({ single })
           }
         />
       </CustomTd>

@@ -2,6 +2,9 @@ import { z } from "zod";
 
 import { accountFilterNew } from "../account/getAccountInputValidation";
 import { billFilter } from "../bill/billFilter";
+import { budgetFilter } from "../budget/budgetFilter";
+import { categoryFilter } from "../category/categoryFilter";
+import { tagFilter } from "../tag/tagFilter";
 import { booleanFilter } from "./booleanFilter";
 import { dateFilter } from "./dateFilter";
 import { idFilter } from "./idFilter";
@@ -48,40 +51,9 @@ export const journalFilter = z.object({
   transaction: transactionFilter,
 
   bill: billFilter.optional(),
-
-  budget: z
-    .object({
-      title: z
-        .object({
-          contains: z.string(),
-          mode: z.enum(["default", "insensitive"]).default("insensitive")
-        })
-        .optional()
-    })
-    .optional(),
-
-  category: z
-    .object({
-      title: z
-        .object({
-          contains: z.string(),
-          mode: z.enum(["default", "insensitive"]).default("insensitive")
-        })
-        .optional()
-    })
-    .optional(),
-
-  tag: z
-    .object({
-      title: z
-        .object({
-          contains: z.string(),
-          mode: z.enum(["default", "insensitive"]).default("insensitive")
-        })
-        .optional()
-    })
-    .optional(),
-
+  budget: budgetFilter.optional(),
+  category: categoryFilter.optional(),
+  tag: tagFilter.optional(),
   account: accountFilterNew.optional(),
 
   //Dates
