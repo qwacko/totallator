@@ -25,7 +25,12 @@ export const summaryReturnGroupingValidation = z.object({
   budgetId: z.string().nullable(),
   categoryId: z.string().nullable(),
   tagId: z.string().nullable(),
-  accountGroupingId: z.string().nullable()
+  accountGroupingId: z.string().nullable(),
+  year: z.string().nullable(),
+  yearMonth: z.string().nullable(),
+  yearMonthDay: z.string().nullable(),
+  yearQuarter: z.string().nullable(),
+  yearWeek: z.string().nullable()
 });
 
 export type SummaryReturnGroupingValidation = z.infer<

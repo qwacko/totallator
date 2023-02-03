@@ -16,10 +16,15 @@ export const summaryInputValidation = z.object({
         "budgetId",
         "reconciled",
         "dataChecked",
-        "complete"
+        "complete",
+        "year",
+        "yearMonth",
+        "yearMonthDay",
+        "yearQuarter",
+        "yearWeek"
       ])
     )
-    .default(["date"])
+    .default(["yearMonthDay"])
 });
 
 export type SummaryInputValidationType = z.infer<typeof summaryInputValidation>;

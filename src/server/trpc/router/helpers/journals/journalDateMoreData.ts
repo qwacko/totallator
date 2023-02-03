@@ -10,11 +10,11 @@ type DateAdditionalInfo = {
 };
 
 export const additionalDateInfo = (input: Date): DateAdditionalInfo => {
-  const year = format(input, "YYYY");
-  const yearWeek = format(input, "YYYY-ll");
-  const yearMonth = format(input, "YYYY-MM");
-  const yearQuarter = format(input, "YYYY-QQ");
-  const yearMonthDay = format(input, "YYYY-MM-dd");
+  const year = format(input, "yyyy");
+  const yearWeek = format(input, "yyyy-II");
+  const yearMonth = format(input, "yyyy-MM");
+  const yearQuarter = format(input, "yyyy-QQ");
+  const yearMonthDay = format(input, "yyyy-MM-dd");
 
   return { year, yearWeek, yearMonth, yearQuarter, yearMonthDay };
 };

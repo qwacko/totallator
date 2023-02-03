@@ -21,8 +21,6 @@ export const AtomPagination = ({
 }) => {
   const [pagination, setPagination] = useAtom(paginationAtom);
 
-  console.log("Pagination Data", pagination);
-
   return (
     <Group>
       <Pagination
