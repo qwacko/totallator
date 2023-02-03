@@ -1,36 +1,36 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 
-import type { AccountsTableDataType } from "src/utils/hooks/accounts/useAccountsTableData";
+import type { CategoriesTableDataType } from "src/utils/hooks/categories/useCategoriesTableData";
 import { trpc } from "src/utils/trpc";
 
-export const AccountLoadData = ({
+export const CategoryLoadData = ({
   config
 }: {
-  config: AccountsTableDataType;
+  config: CategoriesTableDataType;
 }) => {
-  const setAccountData = useSetAtom(config.data);
+  const setCategoryData = useSetAtom(config.data);
   const setPagination = useSetAtom(config.pagination);
 
   //Load The Data
   const queryConfig = useAtomValue(config.configForTRPC);
-  const accountData = trpc.accounts.get.useQuery(queryConfig);
+  const categoryData = trpc.categories.get.useQuery(queryConfig);
   //Logic to pre-load the next and previous pages of data
   const queryConfigNext = useAtomValue(config.configForTRPCNext);
   const queryConfigPrev = useAtomValue(config.configForTRPCPrev);
-  trpc.accounts.get.useQuery(queryConfigNext);
-  trpc.accounts.get.useQuery(queryConfigPrev);
+  trpc.categories.get.useQuery(queryConfigNext);
+  trpc.categories.get.useQuery(queryConfigPrev);
 
   useEffect(() => {
-    if (accountData.data) {
-      setAccountData(accountData.data.data);
+    if (categoryData.data) {
+      setCategoryData(categoryData.data.data);
       setPagination((current) => ({
         ...current,
-        rowCount: accountData.data.count
+        rowCount: categoryData.data.count
       }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountData.data, setAccountData, setPagination]);
+  }, [categoryData.data, setCategoryData, setPagination]);
 
   return <></>;
 };
