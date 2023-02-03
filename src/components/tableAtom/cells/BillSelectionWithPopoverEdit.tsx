@@ -4,11 +4,15 @@ import {
   BillSelection,
   type BillSelectionProps
 } from "src/components/bill/BillSelection";
+import { trpc } from "src/utils/trpc";
 
 export const BillSelectionWithPopoverEdit = (
-  props: BillSelectionProps & { editing: boolean; title: string }
+  props: BillSelectionProps & { editing: boolean }
 ) => {
-  const { editing, title, ...otherProps } = props;
+  const { data: billInfo } = trpc.bills.get.useQuery({
+    filters: [{ id: { in: props.value ? [props.value] : [] } }]
+  });
+  const { editing, ...otherProps } = props;
 
   if (editing) {
     return <BillSelection {...otherProps} />;
@@ -17,7 +21,9 @@ export const BillSelectionWithPopoverEdit = (
   return (
     <Popover trapFocus>
       <Popover.Target>
-        <Text>{title}</Text>
+        <Text>
+          {billInfo?.data && billInfo.data[0] ? billInfo.data[0].title : ""}
+        </Text>
       </Popover.Target>
       <Popover.Dropdown>
         <BillSelection {...otherProps} />

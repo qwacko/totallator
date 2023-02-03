@@ -4,11 +4,15 @@ import {
   AccountSelection,
   type AccountSelectionProps
 } from "src/components/account/AccountSelection";
+import { trpc } from "src/utils/trpc";
 
 export const AccountSelectionWithPopoverEdit = (
-  props: AccountSelectionProps & { editing: boolean; title: string }
+  props: AccountSelectionProps & { editing: boolean }
 ) => {
-  const { editing, title, ...otherProps } = props;
+  const { data: accountInfo } = trpc.accounts.get.useQuery({
+    filters: [{ id: { in: props.value ? [props.value] : [] } }]
+  });
+  const { editing, ...otherProps } = props;
 
   if (editing) {
     return <AccountSelection {...otherProps} />;
@@ -17,7 +21,11 @@ export const AccountSelectionWithPopoverEdit = (
   return (
     <Popover trapFocus>
       <Popover.Target>
-        <Text>{title}</Text>
+        <Text>
+          {accountInfo?.data && accountInfo.data[0]
+            ? accountInfo.data[0].title
+            : ""}
+        </Text>
       </Popover.Target>
       <Popover.Dropdown>
         <AccountSelection {...otherProps} />

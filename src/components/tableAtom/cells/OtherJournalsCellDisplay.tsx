@@ -95,7 +95,6 @@ const OtherJournalsSingleDisplay = ({
         createExpenseOption
         onCreateSuccess={(e) => setAccountId(e)}
         searchable
-        title={data.account?.title || ""}
         editing={editing}
       />
       {showAmounts && (

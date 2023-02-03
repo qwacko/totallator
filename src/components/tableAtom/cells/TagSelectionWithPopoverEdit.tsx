@@ -4,11 +4,15 @@ import {
   TagSelection,
   type TagSelectionProps
 } from "src/components/tag/TagSelection";
+import { trpc } from "src/utils/trpc";
 
 export const TagSelectionWithPopoverEdit = (
-  props: TagSelectionProps & { editing: boolean; title: string }
+  props: TagSelectionProps & { editing: boolean }
 ) => {
-  const { editing, title, ...otherProps } = props;
+  const { data: tagInfo } = trpc.tags.get.useQuery({
+    filters: [{ id: { in: props.value ? [props.value] : [] } }]
+  });
+  const { editing, ...otherProps } = props;
 
   if (editing) {
     return <TagSelection {...otherProps} />;
@@ -17,7 +21,9 @@ export const TagSelectionWithPopoverEdit = (
   return (
     <Popover trapFocus>
       <Popover.Target>
-        <Text>{title}</Text>
+        <Text>
+          {tagInfo?.data && tagInfo.data[0] ? tagInfo.data[0].title : ""}
+        </Text>
       </Popover.Target>
       <Popover.Dropdown>
         <TagSelection {...otherProps} />

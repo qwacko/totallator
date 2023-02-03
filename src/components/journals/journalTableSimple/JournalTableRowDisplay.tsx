@@ -182,7 +182,6 @@ export const JournalTableRowDisplay = ({
             setCurrentRowData({ ...currentRowData, accountId: e })
           }
           searchable
-          title={rowData.account?.title || ""}
           editing={editing}
         />
       </CustomTd>
@@ -242,7 +241,6 @@ export const JournalTableRowDisplay = ({
             updateJournal(currentRowData)
           }
           searchable
-          title={rowData.category?.title || ""}
           editing={editing}
         />
       </CustomTd>
@@ -259,7 +257,6 @@ export const JournalTableRowDisplay = ({
             rowData.tagId !== currentRowData.tagId &&
             updateJournal(currentRowData)
           }
-          title={rowData.tag?.title || ""}
           editing={editing}
         />
       </CustomTd>
@@ -276,7 +273,6 @@ export const JournalTableRowDisplay = ({
             rowData.billId !== currentRowData.billId &&
             updateJournal(currentRowData)
           }
-          title={rowData.bill?.title || ""}
           editing={editing}
         />
       </CustomTd>
@@ -293,7 +289,6 @@ export const JournalTableRowDisplay = ({
             rowData.budgetId !== currentRowData.budgetId &&
             updateJournal(currentRowData)
           }
-          title={rowData.budget?.title || ""}
           editing={editing}
         />
       </CustomTd>
