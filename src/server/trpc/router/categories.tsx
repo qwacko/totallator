@@ -2,6 +2,7 @@ import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
+import { removeUndefinedAndDuplicates } from "src/utils/arrayHelpers";
 import { createCategoryValidation } from "src/utils/validation/category/createCategoryValidation";
 import { getCategoryInputValidation } from "src/utils/validation/category/getCategoryInputValidation";
 import { updateCategoryValidation } from "src/utils/validation/category/updateCategoryValidation";
@@ -95,6 +96,38 @@ export const categoryRouter = router({
         );
 
       return returnData;
+    }),
+  getGroups: protectedProcedure
+    .input(
+      z.object({
+        accountGroupingId: z.string().optional(),
+        includeOnlyAdmin: z.boolean().optional().default(true),
+        returnType: z.enum(["group", "single"])
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const categories = await ctx.prisma.category.findMany({
+        where: {
+          AND: [
+            {
+              accountGrouping: input.includeOnlyAdmin
+                ? { adminUsers: { some: { id: user.id } } }
+                : { viewUsers: { some: { id: user.id } } }
+            },
+            input?.accountGroupingId
+              ? { accountGroupingId: input.accountGroupingId }
+              : {}
+          ]
+        }
+      });
+
+      return removeUndefinedAndDuplicates(
+        categories.map((item) => item[input.returnType])
+      ).sort((a, b) =>
+        a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())
+      );
     }),
   create: protectedProcedure
     .input(createCategoryValidation)
