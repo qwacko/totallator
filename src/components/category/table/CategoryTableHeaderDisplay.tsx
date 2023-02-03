@@ -43,6 +43,11 @@ export const CategoryTableHeaderDisplay = ({
             <TableSortButton sortAtom={config.sort} columnId="single" />
           </Group>
         </CustomTd>
+        <CustomTd>
+          <Group>
+            <Text fw={700}>Stats</Text>
+          </Group>
+        </CustomTd>
       </tr>
       <tr>
         <CustomTd>
@@ -61,6 +66,9 @@ export const CategoryTableHeaderDisplay = ({
             filterAtom={config.filter}
             columnId="single"
           />
+        </CustomTd>
+        <CustomTd>
+          <span></span>
         </CustomTd>
       </tr>
     </>

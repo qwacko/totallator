@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { z } from "zod";
 
+import type { JournalFilterValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 import type { SummaryInputValidationType } from "src/utils/validation/summary/summaryInputValidation";
 import {
   summaryReturnCoreValidation,
@@ -21,7 +22,15 @@ const accountIdGroupingList: SummaryInputValidationType["groupingList"] = [
 const defaultValue: z.infer<typeof accountReturnValidation> = [];
 
 export const useBudgetStats = ({ id }: { id: string }) => {
-  const memoFilters = useMemo(() => [{ budgetId: { in: [id] } }], [id]);
+  const memoFilters = useMemo<JournalFilterValidation[]>(
+    () => [
+      {
+        budgetId: { in: [id] },
+        account: { type: { in: ["Asset", "Liability"] } }
+      }
+    ],
+    [id]
+  );
 
   const returnData = useParsedSummary({
     filters: memoFilters,

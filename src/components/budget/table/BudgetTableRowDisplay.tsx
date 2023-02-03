@@ -11,6 +11,7 @@ import { useUpdateBudget } from "src/utils/hooks/budgets/useUpdateBudget";
 import type { updateBudgetDataValidationType } from "src/utils/validation/budget/updateBudgetValidation";
 
 import { BudgetCommandButtons } from "../BudgetCommandButtons";
+import { BudgetStats } from "../BudgetStats";
 
 export const BudgetTableRowDisplay = ({
   rowId,
@@ -85,6 +86,9 @@ export const BudgetTableRowDisplay = ({
           editing={selected}
           onComplete={() => title !== rowData.title && updateBudget({ title })}
         />
+      </CustomTd>
+      <CustomTd>
+        <BudgetStats id={rowData.id} />
       </CustomTd>
     </>
   );

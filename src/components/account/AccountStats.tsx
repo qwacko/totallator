@@ -1,25 +1,9 @@
-import { Text } from "@mantine/core";
+import { useAccountStats } from "src/utils/hooks/accounts/useAccountStats";
 
-import { useDisplayCurrency } from "src/components/reusable/DisplayCurrency";
-
-import { useAccountStats } from "../../utils/hooks/accounts/useAccountStats";
+import { StatsDisplay } from "../reusable/StatsDisplay";
 
 export const AccountStats = ({ id }: { id: string }) => {
   const { data: stats } = useAccountStats({ id });
-  const formatter = useDisplayCurrency();
 
-  if (stats) {
-    return (
-      <>
-        {stats?._sum?.amount !== null ? (
-          <Text color={stats._sum.amount < 0 ? "red" : undefined}>
-            {formatter(stats._sum.amount)}
-          </Text>
-        ) : (
-          <></>
-        )}
-      </>
-    );
-  }
-  return <></>;
+  return <StatsDisplay stats={stats} />;
 };

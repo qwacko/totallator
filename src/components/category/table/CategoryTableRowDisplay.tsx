@@ -11,6 +11,7 @@ import { useUpdateCategory } from "src/utils/hooks/categories/useUpdateCategory"
 import type { updateCategoryDataValidationType } from "src/utils/validation/category/updateCategoryValidation";
 
 import { CategoryCommandButtons } from "../CategoryCommandButtons";
+import { CategoryStats } from "../CategoryStats";
 
 export const CategoryTableRowDisplay = ({
   rowId,
@@ -103,6 +104,9 @@ export const CategoryTableRowDisplay = ({
             single !== rowData.single && updateCategory({ single })
           }
         />
+      </CustomTd>
+      <CustomTd>
+        <CategoryStats id={rowData.id} />
       </CustomTd>
     </>
   );

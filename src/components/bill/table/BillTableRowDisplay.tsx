@@ -11,6 +11,7 @@ import { useUpdateBill } from "src/utils/hooks/bills/useUpdateBIll";
 import type { updateBillDataValidationType } from "src/utils/validation/bill/updateBillValidation";
 
 import { BillCommandButtons } from "../BillCommandButtons";
+import { BillStats } from "../BillStats";
 
 export const BillTableRowDisplay = ({
   rowId,
@@ -85,6 +86,9 @@ export const BillTableRowDisplay = ({
           editing={selected}
           onComplete={() => title !== rowData.title && updateBill({ title })}
         />
+      </CustomTd>
+      <CustomTd>
+        <BillStats id={rowData.id} />
       </CustomTd>
     </>
   );

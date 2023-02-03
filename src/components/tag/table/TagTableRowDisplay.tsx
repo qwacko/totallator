@@ -11,6 +11,7 @@ import { useUpdateTag } from "src/utils/hooks/tags/useUpdateTag";
 import type { updateTagDataValidationType } from "src/utils/validation/tag/updateTagValidation";
 
 import { TagCommandButtons } from "../TagCommandButtons";
+import { TagStats } from "../TagStats";
 
 export const TagTableRowDisplay = ({
   rowId,
@@ -99,6 +100,9 @@ export const TagTableRowDisplay = ({
           editing={selected}
           onComplete={() => single !== rowData.single && updateTag({ single })}
         />
+      </CustomTd>
+      <CustomTd>
+        <TagStats id={rowData.id} />
       </CustomTd>
     </>
   );

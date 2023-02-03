@@ -37,6 +37,11 @@ export const BudgetTableHeaderDisplay = ({
             <TableSortButton sortAtom={config.sort} columnId="title" />
           </Group>
         </CustomTd>
+        <CustomTd>
+          <Group>
+            <Text fw={700}>Stats</Text>
+          </Group>
+        </CustomTd>
       </tr>
       <tr>
         <CustomTd>
@@ -49,6 +54,9 @@ export const BudgetTableHeaderDisplay = ({
         </CustomTd>
         <CustomTd>
           <TableFilterStringInput filterAtom={config.filter} columnId="title" />
+        </CustomTd>
+        <CustomTd>
+          <span></span>
         </CustomTd>
       </tr>
     </>
