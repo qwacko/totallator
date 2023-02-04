@@ -7,8 +7,8 @@ import {
   summaryReturnGroupingValidation
 } from "src/utils/validation/summary/summaryReturnValidation";
 
-import { useParsedSummary } from "../summary/useParsedSummary";
 import { useHistoricalData } from "../summary/useHistoricalData";
+import { useParsedSummary } from "../summary/useParsedSummary";
 
 const accountReturnValidation = z.array(
   summaryReturnCoreValidation.merge(

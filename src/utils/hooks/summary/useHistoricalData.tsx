@@ -57,7 +57,7 @@ export const useHistoricalData = (
 
     const groupedWithTotals = groupedData.map((item, index) => {
       const posTotal = groupedData
-        .slice(0, index)
+        .slice(0, index + 1)
         .reduce((prev, current) => prev + current.positive, 0);
       const negTotal = groupedData
         .slice(0, index)

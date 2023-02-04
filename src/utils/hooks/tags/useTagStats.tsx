@@ -8,6 +8,7 @@ import {
   summaryReturnGroupingValidation
 } from "src/utils/validation/summary/summaryReturnValidation";
 
+import { useHistoricalData } from "../summary/useHistoricalData";
 import { useParsedSummary } from "../summary/useParsedSummary";
 
 const accountReturnValidation = z.array(
@@ -32,6 +33,8 @@ export const useTagStats = ({ id }: { id: string }) => {
     [id]
   );
 
+  const historicalData = useHistoricalData(memoFilters);
+
   const returnData = useParsedSummary({
     filters: memoFilters,
     groupingList: accountIdGroupingList,
@@ -44,5 +47,5 @@ export const useTagStats = ({ id }: { id: string }) => {
     [id, returnData]
   );
 
-  return { data: found };
+  return { data: found, historicalData };
 };

@@ -13,20 +13,20 @@ import { useParsedSummary } from "../summary/useParsedSummary";
 
 const accountReturnValidation = z.array(
   summaryReturnCoreValidation.merge(
-    summaryReturnGroupingValidation.pick({ categoryId: true })
+    summaryReturnGroupingValidation.pick({ accountGroupingId: true })
   )
 );
 
-const accountIdGroupingList: SummaryInputValidationType["groupingList"] = [
-  "categoryId"
-];
+const accountGroupingIdGroupingList: SummaryInputValidationType["groupingList"] =
+  ["accountGroupingId"];
+
 const defaultValue: z.infer<typeof accountReturnValidation> = [];
 
-export const useCategoryStats = ({ id }: { id: string }) => {
+export const useAccountGroupingStats = ({ id }: { id: string }) => {
   const memoFilters = useMemo<JournalFilterValidation[]>(
     () => [
       {
-        categoryId: { in: [id] },
+        accountGroupingId: { in: [id] },
         account: { type: { in: ["Asset", "Liability"] } }
       }
     ],
@@ -37,13 +37,13 @@ export const useCategoryStats = ({ id }: { id: string }) => {
 
   const returnData = useParsedSummary({
     filters: memoFilters,
-    groupingList: accountIdGroupingList,
+    groupingList: accountGroupingIdGroupingList,
     validation: accountReturnValidation,
     defaultValue
   });
 
   const found = useMemo(
-    () => returnData.find((item) => item.categoryId === id),
+    () => returnData.find((item) => item.accountGroupingId === id),
     [id, returnData]
   );
 

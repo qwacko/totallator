@@ -1,9 +1,17 @@
+import { Group } from "@mantine/core";
+
 import { useBillStats } from "src/utils/hooks/bills/useBillStats";
 
 import { StatsDisplay } from "../reusable/StatsDisplay";
+import { StatsGraphDisplay } from "../reusable/StatsGraphDisplay";
 
 export const BillStats = ({ id }: { id: string }) => {
-  const { data: stats } = useBillStats({ id });
+  const { data: stats, historicalData } = useBillStats({ id });
 
-  return <StatsDisplay stats={stats} />;
+  return (
+    <Group>
+      <StatsDisplay stats={stats} />
+      <StatsGraphDisplay data={historicalData} />
+    </Group>
+  );
 };
