@@ -12,7 +12,7 @@ import {
   dateFilterNonOptional
 } from "src/utils/validation/journalEntries/dateFilter";
 
-export const dateRangeFilterToString = (data: DateFilterNonOptionalType) =>
+const dateRangeFilterToString = (data: DateFilterNonOptionalType) =>
   SuperJSON.stringify(data);
 export const dateRangeFilterToObject = (data: string) => {
   const objectData = SuperJSON.parse(data);

@@ -8,6 +8,7 @@ import { createAccountGroupingValidation } from "src/utils/validation/accountGro
 import { accountGroupingExportValidation } from "src/utils/validation/accountGrouping/exportAccountGroupingValidation";
 import { accountGroupingGetValidation } from "src/utils/validation/accountGrouping/readAccountGroupingValidation";
 import { seedAccountGroupingValidation } from "src/utils/validation/accountGrouping/seedAccountGroupingValidation";
+import { updateAccountGroupingValidation } from "src/utils/validation/accountGrouping/updateAccountGroupingValidation";
 import { basicStatusToDB } from "src/utils/validation/basicStatusToDB";
 
 import { protectedProcedure, router } from "../trpc";
@@ -84,15 +85,7 @@ export const accountGroupingRouter = router({
       return true;
     }),
   update: protectedProcedure
-    .input(
-      z.object({
-        id: z.string().cuid(),
-        data: z.object({
-          title: z.string().optional(),
-          status: PrismaStatusEnumValidation.optional()
-        })
-      })
-    )
+    .input(updateAccountGroupingValidation)
     .mutation(async ({ ctx, input }) => {
       const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 

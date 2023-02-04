@@ -23,7 +23,7 @@ export type categorySingleValidationType = z.infer<
   typeof categorySingleValidation
 >;
 
-export const categoryGetValidation = z.array(
+const categoryGetValidation = z.array(
   categorySingleValidation
     .merge(journalCountValidation)
     .merge(userIsAdminValidation)

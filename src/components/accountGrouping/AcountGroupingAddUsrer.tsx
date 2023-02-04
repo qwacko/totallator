@@ -4,7 +4,7 @@ import { useAddUserToAG } from "src/utils/hooks/accountGroupings/useAddUserTOAG"
 
 import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 
-export const AccountGroupingAddUserForm = ({
+const AccountGroupingAddUserForm = ({
   accountGroupingId,
   onSuccess
 }: {

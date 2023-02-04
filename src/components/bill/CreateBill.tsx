@@ -2,12 +2,11 @@ import { Button, Group, Modal, Select, Stack, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons";
 
-import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useCreateBill } from "src/utils/hooks/bills/useCreateBill";
 
-export const CreateBillForm = ({ onClose }: { onClose?: () => void }) => {
-  const { data: accountGroupings } = useAccountGroupings();
+import { AccountGroupingSelection } from "../accountGrouping/AccountGroupingSelection";
 
+const CreateBillForm = ({ onClose }: { onClose?: () => void }) => {
   const createBill = useCreateBill({
     onMutate: () => {
       onClose && onClose();
@@ -21,18 +20,10 @@ export const CreateBillForm = ({ onClose }: { onClose?: () => void }) => {
       )}
     >
       <Stack>
-        <Select
+        <AccountGroupingSelection
           label="Account Grouping"
           required
           clearable
-          data={
-            accountGroupings
-              ? accountGroupings.map((ag) => ({
-                  value: ag.id,
-                  label: ag.title
-                }))
-              : []
-          }
           {...createBill.form.getInputProps("accountGroupingId")}
         />
         <TextInput

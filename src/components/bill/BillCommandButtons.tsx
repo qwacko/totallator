@@ -2,7 +2,7 @@ import type { BillsReturnType } from "src/server/trpc/router/_app";
 import { useCloneBill } from "src/utils/hooks/bills/useCloneBill";
 import { useDeleteBill } from "src/utils/hooks/bills/useDeleteBill";
 
-import { CommandButtons } from "../table/CommandButtons";
+import { CommandButtons } from "../tableAtom/CommandButtons";
 
 export const BillCommandButtons = ({ data }: { data: BillsReturnType }) => {
   const id = data.id;

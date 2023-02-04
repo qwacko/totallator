@@ -5,7 +5,7 @@ import { useCloneTransactions } from "src/utils/hooks/journals/useCloneTransacti
 import { useDeleteTransactions } from "src/utils/hooks/journals/useDeleteTransactions";
 import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
 
-import { CommandButtons } from "../table/CommandButtons";
+import { CommandButtons } from "../tableAtom/CommandButtons";
 
 export const JournalCommandButtons = ({
   data

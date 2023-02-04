@@ -8,7 +8,7 @@ import { useMemo } from "react";
 
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 
-export const useAccountGroupingsDropdown = ({
+const useAccountGroupingsDropdown = ({
   adminOnly = false
 }: {
   adminOnly?: boolean;

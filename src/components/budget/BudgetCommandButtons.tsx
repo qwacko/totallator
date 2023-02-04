@@ -2,7 +2,7 @@ import type { BudgetsReturnType } from "src/server/trpc/router/_app";
 import { useCloneBudget } from "src/utils/hooks/budgets/useCloneBudget";
 import { useDeleteBudget } from "src/utils/hooks/budgets/useDeleteBudget";
 
-import { CommandButtons } from "../table/CommandButtons";
+import { CommandButtons } from "../tableAtom/CommandButtons";
 
 export const BudgetCommandButtons = ({ data }: { data: BudgetsReturnType }) => {
   const id = data.id;

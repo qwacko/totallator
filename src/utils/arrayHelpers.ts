@@ -1,4 +1,4 @@
-export const notUndefinedGuard = <T>(item: T | undefined | null): item is T => {
+const notUndefinedGuard = <T>(item: T | undefined | null): item is T => {
   return !!item;
 };
 export const removeUndefined = <T>(item: (T | undefined | null)[]) => {

@@ -15,7 +15,7 @@ import { journalsFiltersToPrismaFilters } from "./helpers/filtersToPrismaFilters
 import { sortingStateToPrismaSort } from "./helpers/sortingStateToPrismaSort";
 import { idSelectionAtom } from "./idSelectionAtom";
 
-type JournalSortKeys =
+export type JournalSortKeys =
   | "account"
   | "tag"
   | "category"
@@ -23,7 +23,9 @@ type JournalSortKeys =
   | "budget"
   | "date"
   | "description"
-  | "amount";
+  | "amount"
+  | "updatedAt"
+  | "createdAt";
 
 type JournalFilterKeys =
   | "accountId"

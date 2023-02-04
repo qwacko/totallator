@@ -75,7 +75,3 @@ export const getAccountInputValidation = z.object({
     .optional()
     .default([{ key: "title", direction: "asc" }])
 });
-
-export type GetAccountInputValidationType = z.input<
-  typeof getAccountInputValidation
->;

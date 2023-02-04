@@ -14,7 +14,7 @@ type linkedProperties = {
   complete: boolean;
 };
 
-export const extractLinked = <T extends linkedProperties>(input: T) => {
+const extractLinked = <T extends linkedProperties>(input: T) => {
   return pick(input, [
     "date",
     "description",
