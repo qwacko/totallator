@@ -55,7 +55,7 @@ export const journalsRouter = router({
           AND: [
             ...(await filtersToQuery({
               prisma: ctx.prisma,
-              userId: user.id,
+              user: user,
               filters: input.filters
             })),
             input.type === "Complete"
@@ -109,7 +109,7 @@ export const journalsRouter = router({
         take,
         skip,
         filters: input.filters,
-        userId: user.id
+        user: user
       });
 
       const returnJournals = journals.map((journal) => {
@@ -174,7 +174,7 @@ export const journalsRouter = router({
         take: input.maxUpdated + 1,
         skip: 0,
         filters: input.filters,
-        userId: user.id
+        user: user
       });
 
       //Handle Other items
@@ -199,7 +199,7 @@ export const journalsRouter = router({
         take: input.maxUpdated + 1,
         skip: 0,
         filters: [{ id: { in: otherIds } }],
-        userId: user.id
+        user: user
       });
 
       if (count > input.maxUpdated) {

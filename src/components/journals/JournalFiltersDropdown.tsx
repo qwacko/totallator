@@ -18,6 +18,7 @@ import { BillMultiSelection } from "../bill/BillSelection";
 import { BudgetMultiSelection } from "../budget/BudgetSelection";
 import { CategoryMultiSelection } from "../category/CategorySelection";
 import { DateRangeInput } from "../reusable/DateRangeInput";
+import { DateRangeSelect } from "../reusable/DateRangeSelect";
 import { TagMultiSelection } from "../tag/TagSelection";
 
 export type FiltersStateType = {
@@ -49,7 +50,7 @@ export const JournalFilterModal = ({
         <Stack>
           <DateRangeInput
             size="xs"
-            label="Date Range"
+            label="Adjustable Date Range"
             value={[startDate, endDate]}
             onChange={(e) => {
               if (e) {
@@ -61,6 +62,21 @@ export const JournalFilterModal = ({
               }
             }}
             clearable
+          />
+          <DateRangeSelect
+            value={filters.dateRange}
+            label="Fixed Date Range"
+            searchable
+            clearable
+            size="xs"
+            onChange={(e) => {
+              console.log("New Date Range", e);
+              if (e !== null) {
+                updateFilter("dateRange", e);
+              } else {
+                updateFilter("dateRange", undefined);
+              }
+            }}
           />
           <AccountGroupingMultiSelection
             value={get(filters, "accountGroupingId.in")}
