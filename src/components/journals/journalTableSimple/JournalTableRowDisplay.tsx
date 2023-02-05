@@ -10,7 +10,7 @@ import { AccountSelectionWithPopoverEdit } from "src/components/tableAtom/cells/
 import { BillSelectionWithPopoverEdit } from "src/components/tableAtom/cells/BillSelectionWithPopoverEdit";
 import { BudgetSelectionWithPopoverEdit } from "src/components/tableAtom/cells/BudgetSelectionWithPopoverEdit";
 import { CategorySelectionWithPopoverEdit } from "src/components/tableAtom/cells/CategorySelectionWithPopoverEdit";
-import { DatePickerWithPopoverEdit } from "src/components/tableAtom/cells/DatePickerWithPopoverEdit";
+import { DatePickerWithPopoverEditNew } from "src/components/tableAtom/cells/DatePickerWithPopoverEdit";
 import { NumberCellWithPopoverEdit } from "src/components/tableAtom/cells/NumberCellWithPopoverEdit";
 import { OtherJournalsCellDisplay } from "src/components/tableAtom/cells/OtherJournalsCellDisplay";
 import { TagSelectionWithPopoverEdit } from "src/components/tableAtom/cells/TagSelectionWithPopoverEdit";
@@ -33,7 +33,7 @@ export const JournalTableRowDisplay = ({
   journalData: CombinedJournalDataAtomType;
   config: JournalTableConfigAtomReturn;
 }) => {
-  const { dateFormat, dayjsFormat, user } = useLoggedInUser();
+  const { dateFormat, user } = useLoggedInUser();
   const formatter = currencyFormatter(user ? user.currencyFormat : "USD");
 
   const rowDataAtom = useMemo(
@@ -152,19 +152,17 @@ export const JournalTableRowDisplay = ({
         )}
       </CustomTd>
       <CustomTd>
-        <DatePickerWithPopoverEdit
+        <DatePickerWithPopoverEditNew
           value={date}
           disabled={disableEditing}
-          size="xs"
           clearable={false}
-          transitionDuration={0}
-          inputFormat={dayjsFormat}
-          onChange={(e) => (e ? setDate(e) : undefined)}
-          onComplete={() => updateJournal({ date })}
-          editing={editing}
+          onChange={(e) => {
+            if (e) {
+              setDate(e);
+              updateJournal({ date: e });
+            }
+          }}
           dateFnsFormat={dateFormat || ""}
-          modalProps={{ withinPortal: true }}
-          withinPortal
         />
       </CustomTd>
       <CustomTd>

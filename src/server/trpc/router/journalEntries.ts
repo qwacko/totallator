@@ -262,12 +262,18 @@ export const journalsRouter = router({
         where: {
           AND: [
             {
-              OR: [
-                {
-                  id: { in: input.ids }
-                },
-                { journalEntries: { some: { id: { in: input.journalIds } } } }
-              ]
+              OR: removeUndefinedAndDuplicates([
+                input.ids
+                  ? {
+                      id: { in: input.ids }
+                    }
+                  : undefined,
+                input.journalIds
+                  ? {
+                      journalEntries: { some: { id: { in: input.journalIds } } }
+                    }
+                  : undefined
+              ])
             },
             {
               journalEntries: {
@@ -345,12 +351,18 @@ export const journalsRouter = router({
         where: {
           AND: [
             {
-              OR: [
-                {
-                  id: { in: input.ids }
-                },
-                { journalEntries: { some: { id: { in: input.journalIds } } } }
-              ]
+              OR: removeUndefinedAndDuplicates([
+                input.ids
+                  ? {
+                      id: { in: input.ids }
+                    }
+                  : undefined,
+                input.journalIds
+                  ? {
+                      journalEntries: { some: { id: { in: input.journalIds } } }
+                    }
+                  : undefined
+              ])
             },
             {
               journalEntries: {
