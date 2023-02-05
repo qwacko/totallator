@@ -1,7 +1,10 @@
 import { Card, Center, Group, Stack, Text, Title } from "@mantine/core";
 
 import type { AppRouterOutputs } from "src/server/trpc/router/_app";
+import { useAccountGroupingStats } from "src/utils/hooks/accountGroupings/useAccountGroupingStats";
 
+import { StatsDisplay } from "../reusable/StatsDisplay";
+import { StatsGraphDisplay } from "../reusable/StatsGraphDisplay";
 import { AccountGroupingMenu } from "./AccountGroupingMenu";
 import { DisplayAGUser } from "./DisplayAGUser";
 
@@ -15,6 +18,9 @@ export const AccountGroupingCard = ({
 }: {
   data: AccountGroupingReturnSingle;
 }) => {
+  const stats = useAccountGroupingStats({
+    id: data.id
+  });
   const sortedUsers = data.users.sort(
     (a, b) =>
       a.name?.localeCompare(b.name || "") || Number(a.admin) - Number(b.admin)
@@ -31,6 +37,13 @@ export const AccountGroupingCard = ({
         </Center>
         <Center>
           <Text size="xs">{data.status}</Text>
+        </Center>
+        <Center>
+          <Stack>
+            <StatsDisplay stats={stats.data} />
+            <StatsGraphDisplay data={stats.historicalData} hideBars />
+            <StatsGraphDisplay data={stats.historicalData} hideLine />
+          </Stack>
         </Center>
         <Stack spacing="xs">
           {sortedUsers.map((user) => (

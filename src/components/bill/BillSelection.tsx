@@ -4,57 +4,54 @@ import {
   Select,
   type SelectProps
 } from "@mantine/core";
-import { useMemo } from "react";
 
-import { useBills } from "src/utils/hooks/bills/useBills";
+import { trpc } from "src/utils/trpc";
 
 const useBillsDropdown = ({
-  accountGroupingId
+  accountGroupingId,
+  includeOnlyAdmin
 }: {
   accountGroupingId?: string;
+  includeOnlyAdmin?: boolean;
 }) => {
-  const bills = useBills();
-  const filteredBills = useMemo(
-    () =>
-      bills.data
-        ? bills.data
-            .filter((item) =>
-              accountGroupingId
-                ? item.accountGroupingId === accountGroupingId
-                : true
-            )
-            .map((item) => ({
-              label: item.title,
-              value: item.id
-            }))
-            .sort((a, b) => a.label.localeCompare(b.label))
-        : [],
-    [bills.data, accountGroupingId]
-  );
+  const { data: bills } = trpc.bills.getDropdown.useQuery({
+    accountGroupingId,
+    includeOnlyAdmin
+  });
 
-  return filteredBills;
+  return bills || [];
 };
 
 export type BillSelectionProps = Omit<SelectProps, "data"> & {
   accountGroupingId?: string;
+  includeOnlyAdmin?: boolean;
 };
 
 export const BillSelection = ({
   accountGroupingId,
+  includeOnlyAdmin,
   ...props
 }: BillSelectionProps) => {
-  const filteredBills = useBillsDropdown({ accountGroupingId });
+  const filteredBills = useBillsDropdown({
+    accountGroupingId,
+    includeOnlyAdmin
+  });
 
   return <Select {...props} data={filteredBills} />;
 };
 
 export const BillMultiSelection = ({
   accountGroupingId,
+  includeOnlyAdmin,
   ...props
 }: Omit<MultiSelectProps, "data"> & {
   accountGroupingId?: string;
+  includeOnlyAdmin?: boolean;
 }) => {
-  const filteredBills = useBillsDropdown({ accountGroupingId });
+  const filteredBills = useBillsDropdown({
+    accountGroupingId,
+    includeOnlyAdmin
+  });
 
   return <MultiSelect {...props} data={filteredBills} />;
 };

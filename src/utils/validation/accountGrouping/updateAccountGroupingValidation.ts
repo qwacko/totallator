@@ -15,7 +15,3 @@ export const updateAccountGroupingValidation = z.object({
   id: z.string().cuid(),
   data: updateAccountGroupingDataValidation
 });
-
-export type updateAccountGroupingValidationType = z.infer<
-  typeof updateAccountGroupingValidation
->;

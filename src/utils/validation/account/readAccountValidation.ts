@@ -4,9 +4,7 @@ import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidat
 import {
   accountGroupingIdValidation,
   createdUpdatedValidation,
-  journalCountValidation,
-  statusReturnValidation,
-  userIsAdminValidation
+  statusReturnValidation
 } from "../returnValidationHelpers";
 
 export const accountSingleValidation = z
@@ -27,16 +25,3 @@ export const accountSingleValidation = z
   .merge(statusReturnValidation)
   .merge(createdUpdatedValidation)
   .merge(accountGroupingIdValidation);
-
-export type accountSingleValidationType = z.infer<
-  typeof accountSingleValidation
->;
-
-export const accountGetValidation = z.array(
-  accountSingleValidation
-    .merge(journalCountValidation)
-    .merge(userIsAdminValidation)
-    .strict()
-);
-
-export type AccountGetValidationType = z.infer<typeof accountGetValidation>;

@@ -1,11 +1,13 @@
+import type { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { createBillValidation } from "src/utils/validation/bill/createBillValidation";
-import { billGetValidation } from "src/utils/validation/bill/readBillValidation";
+import { getBillInputValidation } from "src/utils/validation/bill/getBillInputValidation";
 import { updateBillValidation } from "src/utils/validation/bill/updateBillValidation";
 
 import { protectedProcedure, router } from "../trpc";
+import { billSortToOrderBy } from "./helpers/bills/billSortToOrderBy";
 import { upsertBill } from "./helpers/bills/upsertBill";
 import {
   accountGroupingFilter,
@@ -14,28 +16,80 @@ import {
 import { getUserInfo } from "./helpers/getUserInfo";
 
 export const billRouter = router({
-  get: protectedProcedure.output(billGetValidation).query(async ({ ctx }) => {
-    const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+  get: protectedProcedure
+    .input(getBillInputValidation)
+    .query(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
 
-    const bills = await ctx.prisma.bill.findMany({
-      where: {
-        accountGrouping: { viewUsers: { some: { id: user.id } } }
-      },
-      include: {
-        accountGrouping: { include: { viewUsers: true, adminUsers: true } },
-        _count: { select: { journalEntries: true } }
-      }
-    });
+      //Pagination
+      const take = input.pagination.pageSize;
+      const skip = input.pagination.pageNo * input.pagination.pageSize;
 
-    return bills.map((bill) => {
-      const { accountGrouping, ...pickedBill } = bill;
-      const userIsAdmin =
-        user.admin ||
-        accountGrouping.adminUsers.map((item) => item.id).includes(user.id);
+      const where: Prisma.BillWhereInput = {
+        AND: [
+          { accountGrouping: { viewUsers: { some: { id: user.id } } } },
+          ...(input.filters ? input.filters : [])
+        ]
+      };
+      const bills = await ctx.prisma.bill.findMany({
+        where,
+        orderBy: billSortToOrderBy(input.sort),
+        take,
+        skip,
+        include: {
+          accountGrouping: { include: { adminUsers: true } },
+          _count: { select: { journalEntries: true } }
+        }
+      });
 
-      return { ...pickedBill, userIsAdmin };
-    });
-  }),
+      const count = await ctx.prisma.bill.count({ where });
+
+      const processedData = bills.map((bill) => {
+        const { accountGrouping, ...otherData } = bill;
+        return {
+          ...otherData,
+          userIsAdmin: Boolean(
+            accountGrouping.adminUsers.find((agUser) => agUser.id === user.id)
+          )
+        };
+      });
+
+      return { data: processedData, count };
+    }),
+  getDropdown: protectedProcedure
+    .input(
+      z
+        .object({
+          accountGroupingId: z.string().optional(),
+          includeOnlyAdmin: z.boolean().optional().default(false)
+        })
+        .optional()
+        .default({})
+    )
+    .query(async ({ ctx, input }) => {
+      const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+
+      const bills = await ctx.prisma.bill.findMany({
+        where: {
+          AND: [
+            {
+              accountGrouping: input.includeOnlyAdmin
+                ? { adminUsers: { some: { id: user.id } } }
+                : { viewUsers: { some: { id: user.id } } }
+            },
+            input?.accountGroupingId
+              ? { accountGroupingId: input.accountGroupingId }
+              : {}
+          ]
+        }
+      });
+
+      const returnData = bills
+        .map((item) => ({ label: item.title, value: item.id }))
+        .sort((a, b) => a.label.localeCompare(b.label));
+
+      return returnData;
+    }),
   create: protectedProcedure
     .input(createBillValidation)
     .mutation(async ({ ctx, input }) => {

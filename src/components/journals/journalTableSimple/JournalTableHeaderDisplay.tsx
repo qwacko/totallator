@@ -4,10 +4,10 @@ import { useAtom } from "jotai";
 import { type JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJournalsSimple";
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 
+import { CustomTd } from "../../tableAtom/CustomTd";
+import { TableFilterStringInput } from "../../tableAtom/TableFilterStringInput";
+import { TableSortButton } from "../../tableAtom/TableSortButton";
 import type { CombinedJournalDataAtomType } from "./CombinedJournalDataAtomType";
-import { CustomTd } from "./JournalTableRowDisplay";
-import { TableFilterInputAtom } from "./TableFilterInput";
-import { TableSortButton } from "./TableSortButton";
 import { JournalTableBulkActionsAtom } from "./bulkActions/JournalTableBulkActionsAtom";
 
 export const JournalTableHeaderDisplay = ({
@@ -139,19 +139,19 @@ export const JournalTableHeaderDisplay = ({
         <CustomTd />
         <CustomTd />
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="accountId"
           />
         </CustomTd>
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="payee"
           />
         </CustomTd>
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="description"
           />
@@ -159,25 +159,25 @@ export const JournalTableHeaderDisplay = ({
         <CustomTd />
         <CustomTd />
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="categoryId"
           />
         </CustomTd>
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="tagId"
           />
         </CustomTd>
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="billId"
           />
         </CustomTd>
         <CustomTd>
-          <TableFilterInputAtom
+          <TableFilterStringInput
             filterAtom={config.filtersAtom}
             columnId="budgetId"
           />

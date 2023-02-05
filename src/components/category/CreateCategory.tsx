@@ -1,16 +1,14 @@
-import { Button, Group, Modal, Select, Stack } from "@mantine/core";
+import { Button, Group, Modal, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons";
 
-import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useCreateCategory } from "src/utils/hooks/categories/useCreateCategory";
 
+import { AccountGroupingSelection } from "../accountGrouping/AccountGroupingSelection";
 import { CategoryGroupSelection } from "./CategoryGroupSelection";
 import { CategorySingleSelection } from "./CategorySingleSelection";
 
-export const CreateCategoryForm = ({ onClose }: { onClose?: () => void }) => {
-  const { data: accountGroupings } = useAccountGroupings();
-
+const CreateCategoryForm = ({ onClose }: { onClose?: () => void }) => {
   const createCategory = useCreateCategory({
     onMutate: () => {
       onClose && onClose();
@@ -26,18 +24,10 @@ export const CreateCategoryForm = ({ onClose }: { onClose?: () => void }) => {
       )}
     >
       <Stack>
-        <Select
+        <AccountGroupingSelection
           label="Account Grouping"
           required
           clearable
-          data={
-            accountGroupings
-              ? accountGroupings.map((ag) => ({
-                  value: ag.id,
-                  label: ag.title
-                }))
-              : []
-          }
           {...createCategory.form.getInputProps("accountGroupingId")}
         />
         <CategoryGroupSelection

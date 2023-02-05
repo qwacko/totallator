@@ -4,47 +4,9 @@ import {
   Select,
   type SelectProps
 } from "@mantine/core";
-import { useMemo } from "react";
 
-import { useAccounts } from "src/utils/hooks/accounts/useAccounts";
 import { useCreateAccount } from "src/utils/hooks/accounts/useCreateAccount";
-
-export const useAccountsDropdown = ({
-  accountGroupingId,
-  showAccountGroup
-}: {
-  accountGroupingId?: string;
-  showAccountGroup: boolean;
-}) => {
-  const accounts = useAccounts();
-  const filteredAccounts = useMemo(
-    () =>
-      accounts.data
-        ? accounts.data
-            .filter((item) =>
-              accountGroupingId
-                ? item.accountGroupingId === accountGroupingId
-                : true
-            )
-            .map((item) => ({
-              label: showAccountGroup
-                ? item.accountTitleCombined || item.title
-                : item.title,
-              group:
-                item.type === "Asset" || item.type === "Liability"
-                  ? item.accountGroupCombined || undefined
-                  : item.type,
-              value: item.id
-            }))
-            .sort((a, b) =>
-              `${a.group}-${a.label}`.localeCompare(`${b.group}-${b.label}`)
-            )
-        : [],
-    [accounts.data, accountGroupingId, showAccountGroup]
-  );
-
-  return { accounts, filteredAccounts };
-};
+import { trpc } from "src/utils/trpc";
 
 export type AccountSelectionProps = Omit<SelectProps, "data"> & {
   accountGroupingId?: string;
@@ -60,7 +22,7 @@ export const AccountSelection = ({
   onCreateSuccess,
   ...props
 }: AccountSelectionProps) => {
-  const { filteredAccounts } = useAccountsDropdown({
+  const { data: accounts } = trpc.accounts.getDropdown.useQuery({
     accountGroupingId,
     showAccountGroup
   });
@@ -75,7 +37,7 @@ export const AccountSelection = ({
     return (
       <Select
         {...props}
-        data={filteredAccounts}
+        data={accounts || []}
         creatable
         getCreateLabel={(val) => (
           <>
@@ -96,7 +58,7 @@ export const AccountSelection = ({
     );
   }
 
-  return <Select {...props} data={filteredAccounts} />;
+  return <Select {...props} data={accounts || []} />;
 };
 
 export const AccountMultiSelection = ({
@@ -107,10 +69,10 @@ export const AccountMultiSelection = ({
   accountGroupingId?: string;
   showAccountGroup?: boolean;
 }) => {
-  const { filteredAccounts } = useAccountsDropdown({
+  const { data: accounts } = trpc.accounts.getDropdown.useQuery({
     accountGroupingId,
     showAccountGroup
   });
 
-  return <MultiSelect {...props} data={filteredAccounts} />;
+  return <MultiSelect {...props} data={accounts || []} />;
 };

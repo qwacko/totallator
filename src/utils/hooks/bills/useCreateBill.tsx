@@ -17,30 +17,9 @@ export function useCreateBill({ onMutate }: { onMutate?: () => void }) {
   });
   const utils = trpc.useContext();
   const mutate = trpc.bills.create.useMutation({
-    onMutate: (data) => {
+    onMutate: () => {
       notifications.onLoading();
       onMutate && onMutate();
-      const currentBills = utils.bills.get.getData();
-
-      if (currentBills) {
-        utils.bills.get.setData(undefined, [
-          ...currentBills,
-          {
-            accountGroupingId: data.accountGroupingId,
-            id: "New",
-            title: data.title,
-            userIsAdmin: false,
-            status: "Active",
-            active: true,
-            allowUpdate: false,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            deleted: false,
-            disabled: false,
-            _count: { journalEntries: 0 }
-          }
-        ]);
-      }
     },
     onError: (e) => {
       utils.bills.invalidate();

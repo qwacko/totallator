@@ -2,7 +2,7 @@ import type { CategoriesReturnType } from "src/server/trpc/router/_app";
 import { useCloneCategory } from "src/utils/hooks/categories/useCloneCategory";
 import { useDeleteCategory } from "src/utils/hooks/categories/useDeleteCategory";
 
-import { CommandButtons } from "../table/CommandButtons";
+import { CommandButtons } from "../tableAtom/CommandButtons";
 
 export const CategoryCommandButtons = ({
   data

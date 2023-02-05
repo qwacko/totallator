@@ -1,10 +1,11 @@
-import type { SortingState } from "@tanstack/react-table";
-
 import { removeUndefined } from "src/utils/arrayHelpers";
 import type { JournalSortValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 
+import type { TableSortType } from "../../table/useTableSortAtom";
+import type { JournalSortKeys } from "../useJournalsSimple";
+
 export const sortingStateToPrismaSort = (
-  input: SortingState
+  input: TableSortType<JournalSortKeys>[]
 ): JournalSortValidation => {
   const fixedSort: JournalSortValidation = [
     { key: "date", direction: "desc" },

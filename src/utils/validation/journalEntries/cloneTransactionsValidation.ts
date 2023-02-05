@@ -5,5 +5,3 @@ export const cloneTransactionInput = z.object({
   maxUpdated: z.number().optional().default(20),
   cloneCount: z.number().int().optional().default(1)
 });
-
-export type CloneTransactionInputType = z.infer<typeof cloneTransactionInput>;

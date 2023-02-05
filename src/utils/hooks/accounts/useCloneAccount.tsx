@@ -16,27 +16,8 @@ export const useCloneAccount = ({ id }: { id: string }) => {
       utils.accounts.invalidate();
       notifications.onSuccess();
     },
-    onMutate: (data) => {
+    onMutate: () => {
       notifications.onLoading();
-      const currentAccounts = utils.accounts.get.getData();
-      if (currentAccounts) {
-        const targetAccount = currentAccounts.find(
-          (item) => item.id === data.id
-        );
-        if (targetAccount) {
-          utils.accounts.get.setData(undefined, [
-            ...currentAccounts,
-            {
-              ...targetAccount,
-              id: "new",
-              title: `${targetAccount.title} (Clone)`,
-              accountTitleCombined: `${targetAccount.accountTitleCombined} (Clone)`,
-              createdAt: new Date(),
-              updatedAt: new Date()
-            }
-          ]);
-        }
-      }
     }
   });
 

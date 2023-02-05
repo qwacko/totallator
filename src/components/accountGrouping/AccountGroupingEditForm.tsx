@@ -12,7 +12,7 @@ import { useUpdateAccountGrouping } from "src/utils/hooks/accountGroupings/useUp
 
 import type { AccountGroupingReturnSingle } from "./AccountGroupingCard";
 
-export const AccountGroupingEditForm = ({
+const AccountGroupingEditForm = ({
   data,
   onSubmit
 }: {

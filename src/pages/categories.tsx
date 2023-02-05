@@ -1,7 +1,7 @@
 import { Center, Group, Stack, Title } from "@mantine/core";
 
-import { CategoryTable } from "src/components/category/CategoryTable";
 import { CreateCategoryPopup } from "src/components/category/CreateCategory";
+import { CategoryTable } from "src/components/category/table/CategoryTable";
 import { AppLayout } from "src/components/layout/App";
 
 const CategoriesPage = () => {

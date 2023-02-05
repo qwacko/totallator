@@ -4,55 +4,34 @@ import {
   Select,
   type SelectProps
 } from "@mantine/core";
-import { useMemo } from "react";
 
-import { useCategories } from "src/utils/hooks/categories/useCategories";
+import { trpc } from "src/utils/trpc";
 
-const useCategoryDropdown = ({
-  accountGroupingId,
-  showCombined
-}: {
+const useCategoryDropdown = (props: {
   accountGroupingId?: string;
   showCombined: boolean;
+  includeOnlyAdmin?: boolean;
 }) => {
-  const categories = useCategories();
-  const filteredCategories = useMemo(
-    () =>
-      categories.data
-        ? categories.data
-            .filter((item) =>
-              accountGroupingId
-                ? item.accountGroupingId === accountGroupingId
-                : true
-            )
-            .map((item) =>
-              showCombined
-                ? {
-                    label: item.title,
-                    value: item.id
-                  }
-                : { label: item.single, value: item.id, group: item.group }
-            )
-            .sort((a, b) => a.label.localeCompare(b.label))
-        : [],
-    [categories.data, accountGroupingId, showCombined]
-  );
-  return filteredCategories;
+  const { data } = trpc.categories.getDropdown.useQuery(props);
+  return data || [];
 };
 
 export type CategorySelectionProps = Omit<SelectProps, "data"> & {
   accountGroupingId?: string;
   showCombined?: boolean;
+  includeOnlyAdmin?: boolean;
 };
 
 export const CategorySelection = ({
   accountGroupingId,
   showCombined = true,
+  includeOnlyAdmin,
   ...props
 }: CategorySelectionProps) => {
   const filteredCategories = useCategoryDropdown({
     accountGroupingId,
-    showCombined
+    showCombined,
+    includeOnlyAdmin
   });
   return <Select {...props} data={filteredCategories} />;
 };
@@ -60,14 +39,17 @@ export const CategorySelection = ({
 export const CategoryMultiSelection = ({
   accountGroupingId,
   showCombined = true,
+  includeOnlyAdmin,
   ...props
 }: Omit<MultiSelectProps, "data"> & {
   accountGroupingId?: string;
   showCombined?: boolean;
+  includeOnlyAdmin?: boolean;
 }) => {
   const filteredCategories = useCategoryDropdown({
     accountGroupingId,
-    showCombined
+    showCombined,
+    includeOnlyAdmin
   });
   return <MultiSelect {...props} data={filteredCategories} />;
 };

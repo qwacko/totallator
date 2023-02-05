@@ -5,5 +5,3 @@ export const deleteTransactionInput = z.object({
   maxDeleted: z.number().optional().default(20),
   canDeleteComplete: z.boolean().optional().default(false)
 });
-
-export type DeleteTransactionInputType = z.infer<typeof deleteTransactionInput>;

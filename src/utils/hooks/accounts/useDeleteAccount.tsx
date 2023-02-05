@@ -16,20 +16,8 @@ export const useDeleteAccount = ({ id }: { id: string }) => {
       utils.accounts.invalidate();
       notifications.onSuccess();
     },
-    onMutate: (data) => {
+    onMutate: () => {
       notifications.onLoading();
-      const currentAccounts = utils.accounts.get.getData();
-      if (currentAccounts) {
-        const targetAccount = currentAccounts.find(
-          (item) => item.id === data.id
-        );
-        if (targetAccount && targetAccount._count.journalEntries === 0) {
-          utils.accounts.get.setData(
-            undefined,
-            currentAccounts.filter((item) => item.id !== data.id)
-          );
-        }
-      }
     }
   });
 

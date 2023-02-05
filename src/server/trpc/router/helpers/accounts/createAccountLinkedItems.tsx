@@ -52,7 +52,7 @@ export const createAccountLinkedItems = ({
   };
 };
 
-export const incAct = ({
+const incAct = ({
   title,
   accountGroupingId
 }: {
@@ -66,7 +66,7 @@ export const incAct = ({
     accountGroupingId
   };
 };
-export const expAct = ({
+const expAct = ({
   title,
   accountGroupingId
 }: {
@@ -80,7 +80,7 @@ export const expAct = ({
     accountGroupingId
   };
 };
-export const assAct = ({
+const assAct = ({
   title: combinedTitle,
   liab: isLiability = false,
   accountGroupingId

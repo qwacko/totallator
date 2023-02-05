@@ -5,19 +5,17 @@ import {
   Input,
   Modal,
   SegmentedControl,
-  Select,
   Stack,
   TextInput
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons";
 
-import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useCreateAccount } from "src/utils/hooks/accounts/useCreateAccount";
 
-export const CreateAccountForm = ({ onClose }: { onClose?: () => void }) => {
-  const { data: accountGroupings } = useAccountGroupings();
+import { AccountGroupingSelection } from "../accountGrouping/AccountGroupingSelection";
 
+const CreateAccountForm = ({ onClose }: { onClose?: () => void }) => {
   const createAccount = useCreateAccount({
     onMutate: () => {
       onClose && onClose();
@@ -31,18 +29,10 @@ export const CreateAccountForm = ({ onClose }: { onClose?: () => void }) => {
       )}
     >
       <Stack>
-        <Select
+        <AccountGroupingSelection
           label="Account Grouping"
           required
           clearable
-          data={
-            accountGroupings
-              ? accountGroupings.map((ag) => ({
-                  value: ag.id,
-                  label: ag.title
-                }))
-              : []
-          }
           {...createAccount.form.getInputProps("accountGroupingId")}
         />
         <Stack spacing={0}>

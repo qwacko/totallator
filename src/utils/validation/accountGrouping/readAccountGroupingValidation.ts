@@ -2,8 +2,7 @@ import { z } from "zod";
 
 import {
   createdUpdatedValidation,
-  statusReturnValidation,
-  userIsAdminValidation
+  statusReturnValidation
 } from "../returnValidationHelpers";
 
 export const accountGroupingSingleValidation = z
@@ -13,30 +12,3 @@ export const accountGroupingSingleValidation = z
   })
   .merge(statusReturnValidation)
   .merge(createdUpdatedValidation);
-
-export type accountGroupingSingleValidationType = z.infer<
-  typeof accountGroupingSingleValidation
->;
-
-export const accountGroupingGetValidation = z.array(
-  accountGroupingSingleValidation
-    .merge(userIsAdminValidation)
-    .merge(
-      z.object({
-        users: z.array(
-          z.object({
-            id: z.string().cuid(),
-            name: z.string().nullable(),
-            username: z.string(),
-            isUser: z.boolean(),
-            admin: z.boolean()
-          })
-        )
-      })
-    )
-    .strict()
-);
-
-export type AccountGroupingGetValidationType = z.infer<
-  typeof accountGroupingGetValidation
->;

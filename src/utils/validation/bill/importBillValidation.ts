@@ -9,7 +9,3 @@ export const importBillSingleValidation = z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional()
 });
-
-export type importBillSingleValidationType = z.infer<
-  typeof importBillSingleValidation
->;

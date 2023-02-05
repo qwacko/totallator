@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 
 import { type JournalSortValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 
-export const sortToOrderBy = (
+export const journalSortToOrderBy = (
   input: JournalSortValidation
 ):
   | Prisma.Enumerable<Prisma.JournalEntryOrderByWithRelationAndSearchRelevanceInput>
@@ -18,21 +18,6 @@ export const sortToOrderBy = (
 
   const returnData = input.map(
     (sort): Prisma.JournalEntryOrderByWithRelationAndSearchRelevanceInput => {
-      if (sort.key === "date") {
-        return { date: sort.direction };
-      }
-      if (sort.key === "description") {
-        return { description: sort.direction };
-      }
-      if (sort.key === "createdAt") {
-        return { createdAt: sort.direction };
-      }
-      if (sort.key === "updatedAt") {
-        return { updatedAt: sort.direction };
-      }
-      if (sort.key === "amount") {
-        return { amount: sort.direction };
-      }
       if (sort.key === "account") {
         return { account: { title: sort.direction } };
       }
@@ -48,8 +33,7 @@ export const sortToOrderBy = (
       if (sort.key === "tag") {
         return { tag: { title: sort.direction } };
       }
-
-      return {};
+      return { [sort.key]: sort.direction };
     }
   );
 

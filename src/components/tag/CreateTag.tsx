@@ -1,16 +1,14 @@
-import { Button, Group, Modal, Select, Stack } from "@mantine/core";
+import { Button, Group, Modal, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons";
 
-import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useCreateTag } from "src/utils/hooks/tags/useCreateTag";
 
+import { AccountGroupingSelection } from "../accountGrouping/AccountGroupingSelection";
 import { TagGroupSelection } from "./TagGroupSelection";
 import { TagSingleSelection } from "./TagSingleSelection";
 
-export const CreateTagForm = ({ onClose }: { onClose?: () => void }) => {
-  const { data: accountGroupings } = useAccountGroupings();
-
+const CreateTagForm = ({ onClose }: { onClose?: () => void }) => {
   const createTag = useCreateTag({
     onMutate: () => {
       onClose && onClose();
@@ -26,18 +24,10 @@ export const CreateTagForm = ({ onClose }: { onClose?: () => void }) => {
       )}
     >
       <Stack>
-        <Select
+        <AccountGroupingSelection
           label="Account Grouping"
           required
           clearable
-          data={
-            accountGroupings
-              ? accountGroupings.map((ag) => ({
-                  value: ag.id,
-                  label: ag.title
-                }))
-              : []
-          }
           {...createTag.form.getInputProps("accountGroupingId")}
         />
         <TagGroupSelection

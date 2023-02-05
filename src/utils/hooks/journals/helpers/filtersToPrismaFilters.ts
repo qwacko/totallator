@@ -3,7 +3,7 @@ import type { JournalFilterValidationInputType } from "src/utils/validation/jour
 
 import { type TableFilterType } from "../../table/useTableFilterAtom";
 
-export const filtersToPrismaFilters = <T extends string>({
+export const journalsFiltersToPrismaFilters = <T extends string>({
   filters
 }: {
   filters: TableFilterType<T>[];

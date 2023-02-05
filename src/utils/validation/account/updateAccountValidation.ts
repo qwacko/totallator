@@ -4,7 +4,7 @@ import { PrismaStatusEnumValidation } from "src/utils/validation/PrismaStatusEnu
 
 import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidation";
 
-export const updateAccountDataValidation = z
+const updateAccountDataValidation = z
   .object({
     title: z.string().min(2).optional(),
     accountGroup: z.string().min(2).nullable().optional(),
@@ -41,7 +41,3 @@ export const updateAccountValidation = z.object({
   id: z.string().cuid(),
   data: updateAccountDataValidation
 });
-
-export type updateAccountValidationType = z.infer<
-  typeof updateAccountValidation
->;

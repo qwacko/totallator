@@ -7,7 +7,7 @@ import { importCategorySingleValidation } from "../category/importCategoryValida
 import { importJournalEntrySingleValidation } from "../journalEntries/importJournalEntriesValidation";
 import { importTagSingleValidation } from "../tag/importTagValidation";
 
-export const accountGroupingImportValidation = z.object({
+const accountGroupingImportValidation = z.object({
   accountGroupingId: z.string().cuid(),
   journalEntries: z.array(importJournalEntrySingleValidation).optional(),
   accounts: z.array(importAccountSingleValidation).optional(),
