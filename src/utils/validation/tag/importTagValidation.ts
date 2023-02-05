@@ -10,7 +10,3 @@ export const importTagSingleValidation = z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional()
 });
-
-export type importTagSingleValidationType = z.infer<
-  typeof importTagSingleValidation
->;

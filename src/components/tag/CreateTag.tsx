@@ -1,4 +1,4 @@
-import { Button, Group, Modal, Select, Stack } from "@mantine/core";
+import { Button, Group, Modal, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons";
 

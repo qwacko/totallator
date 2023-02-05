@@ -12,7 +12,7 @@ import { numberFilter } from "./numberFilter";
 import { paginationValidation } from "./paginationValidation";
 import { stringFilter } from "./stringFilter";
 
-export const transactionFilter = z
+const transactionFilter = z
   .object({
     journalEntries: z
       .object({
@@ -94,5 +94,4 @@ export const getJournalValidation = z.object({
   sort
 });
 
-export type GetJournalValidation = z.infer<typeof getJournalValidation>;
 export type GetJournalValidationInput = z.input<typeof getJournalValidation>;

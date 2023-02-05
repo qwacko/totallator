@@ -17,32 +17,9 @@ export function useCreateTag({ onMutate }: { onMutate?: () => void }) {
   });
   const utils = trpc.useContext();
   const mutate = trpc.tags.create.useMutation({
-    onMutate: (data) => {
+    onMutate: () => {
       notifications.onLoading();
       onMutate && onMutate();
-      const currentTags = utils.tags.get.getData();
-
-      if (currentTags) {
-        utils.tags.get.setData(undefined, [
-          ...currentTags,
-          {
-            accountGroupingId: data.accountGroupingId,
-            id: "New",
-            title: `${data.group}/${data.single}`,
-            group: data.group,
-            single: data.single,
-            userIsAdmin: false,
-            status: "Active",
-            active: true,
-            allowUpdate: false,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            deleted: false,
-            disabled: false,
-            _count: { journalEntries: 0 }
-          }
-        ]);
-      }
     },
     onError: (e) => {
       utils.tags.invalidate();

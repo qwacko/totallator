@@ -10,5 +10,3 @@ export const updateUserValidation = z.object({
   dateFormat: dbDateFormatValidation.optional(),
   currencyFormat: currencyFormatValidation.optional()
 });
-
-export type UpdateUserValidationType = z.infer<typeof updateUserValidation>;

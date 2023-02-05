@@ -18,18 +18,8 @@ export const useDeleteCategory = ({ id }: { id: string }) => {
       targetUtils.invalidate();
       notifications.onSuccess();
     },
-    onMutate: (data) => {
+    onMutate: () => {
       notifications.onLoading();
-      const current = targetUtils.get.getData();
-      if (current) {
-        const target = current.find((item) => item.id === data.id);
-        if (target && target._count.journalEntries === 0) {
-          targetUtils.get.setData(
-            undefined,
-            current.filter((item) => item.id !== data.id)
-          );
-        }
-      }
     }
   });
 

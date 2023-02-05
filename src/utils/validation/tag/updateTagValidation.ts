@@ -38,5 +38,3 @@ export const updateTagValidation = z.object({
   id: z.string().cuid(),
   data: updateTagDataValidation
 });
-
-export type updateTagValidationType = z.infer<typeof updateTagValidation>;

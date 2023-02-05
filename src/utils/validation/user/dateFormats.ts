@@ -18,7 +18,7 @@ type dateFormatType = {
   dayjsFormat: string;
 };
 
-export const dateFormats: dateFormatType[] = [
+const dateFormats: dateFormatType[] = [
   {
     dbValue: "DashDDMMYYYY",
     dateFnFormat: "dd-MM-yyyy",
@@ -62,7 +62,7 @@ export const dateFormats: dateFormatType[] = [
   { dbValue: "YYYYMMDD", dateFnFormat: "yyyyMMdd", dayjsFormat: "YYYYMMDD" }
 ];
 
-export const DBDateList = [
+const DBDateList = [
   "DashDDMMYYYY",
   "DashMMDDYYYY",
   "SlashDDMMYY",

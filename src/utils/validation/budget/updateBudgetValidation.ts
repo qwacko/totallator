@@ -15,5 +15,3 @@ export const updateBudgetValidation = z.object({
   id: z.string().cuid(),
   data: updateBudgetDataValidation
 });
-
-export type updateBudgetValidationType = z.infer<typeof updateBudgetValidation>;

@@ -53,10 +53,6 @@ export const createSingleJournalValidation = z.object({
   complete: z.boolean().optional().default(false)
 });
 
-export type createSingleJournalValidationType = z.infer<
-  typeof createSingleJournalValidation
->;
-
 export const createTransactionValidation = z
   .array(createSingleJournalValidation.strip())
   .min(2)

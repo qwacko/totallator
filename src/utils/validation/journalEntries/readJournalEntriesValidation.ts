@@ -26,10 +26,6 @@ export const journalEntrySingleValidation = z
   .merge(createdUpdatedValidation)
   .merge(accountGroupingIdValidation);
 
-export type journalEntrySingleValidationType = z.infer<
-  typeof journalEntrySingleValidation
->;
-
 export const journalEntryGetValidation = z
   .object({
     data: z.array(

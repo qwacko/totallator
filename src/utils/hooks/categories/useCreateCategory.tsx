@@ -17,32 +17,9 @@ export function useCreateCategory({ onMutate }: { onMutate?: () => void }) {
   });
   const utils = trpc.useContext();
   const mutate = trpc.categories.create.useMutation({
-    onMutate: (data) => {
+    onMutate: () => {
       notifications.onLoading();
       onMutate && onMutate();
-      const currentCategories = utils.categories.get.getData();
-
-      if (currentCategories) {
-        utils.categories.get.setData(undefined, [
-          ...currentCategories,
-          {
-            accountGroupingId: data.accountGroupingId,
-            id: "New",
-            title: `${data.group}/${data.single}`,
-            group: data.group,
-            single: data.single,
-            userIsAdmin: false,
-            status: "Active",
-            active: true,
-            allowUpdate: false,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            deleted: false,
-            disabled: false,
-            _count: { journalEntries: 0 }
-          }
-        ]);
-      }
     },
     onError: (e) => {
       utils.categories.invalidate();

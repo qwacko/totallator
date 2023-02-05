@@ -5,7 +5,6 @@ import {
   Input,
   Modal,
   SegmentedControl,
-  Select,
   Stack,
   TextInput
 } from "@mantine/core";

@@ -2,8 +2,7 @@ import { z } from "zod";
 
 import {
   createdUpdatedValidation,
-  statusReturnValidation,
-  userIsAdminValidation
+  statusReturnValidation
 } from "../returnValidationHelpers";
 
 export const accountGroupingSingleValidation = z

@@ -9,7 +9,3 @@ export const importBudgetSingleValidation = z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional()
 });
-
-export type importBudgetSingleValidationType = z.infer<
-  typeof importBudgetSingleValidation
->;

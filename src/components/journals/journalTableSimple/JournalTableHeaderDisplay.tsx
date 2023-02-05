@@ -5,9 +5,9 @@ import { type JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJ
 import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
 
 import { CustomTd } from "../../tableAtom/CustomTd";
+import { TableFilterStringInput } from "../../tableAtom/TableFilterStringInput";
 import { TableSortButton } from "../../tableAtom/TableSortButton";
 import type { CombinedJournalDataAtomType } from "./CombinedJournalDataAtomType";
-import { TableFilterStringInput } from "../../tableAtom/TableFilterStringInput";
 import { JournalTableBulkActionsAtom } from "./bulkActions/JournalTableBulkActionsAtom";
 
 export const JournalTableHeaderDisplay = ({

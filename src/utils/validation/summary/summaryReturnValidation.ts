@@ -15,10 +15,6 @@ export const summaryReturnCoreValidation = z.object({
   _count: z.object({ _all: z.number().nullable() })
 });
 
-export type SummaryReturnCoreValidation = z.infer<
-  typeof summaryReturnCoreValidation
->;
-
 export const summaryReturnGroupingValidation = z.object({
   accountId: z.string().nullable(),
   billId: z.string().nullable(),
@@ -33,17 +29,9 @@ export const summaryReturnGroupingValidation = z.object({
   yearWeek: z.string().nullable()
 });
 
-export type SummaryReturnGroupingValidation = z.infer<
-  typeof summaryReturnGroupingValidation
->;
-
-export const summaryReturnSingleValidation = summaryReturnCoreValidation.merge(
+const summaryReturnSingleValidation = summaryReturnCoreValidation.merge(
   summaryReturnGroupingValidation.partial()
 );
-
-export type SummaryReturnSingleValidationType = z.infer<
-  typeof summaryReturnSingleValidation
->;
 
 export const summaryReturnValidation = z.array(summaryReturnSingleValidation);
 

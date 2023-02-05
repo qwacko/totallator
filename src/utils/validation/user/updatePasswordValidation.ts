@@ -17,5 +17,3 @@ export const updatePasswordResolver = z
     message: "Passwords Must Match",
     path: ["passwordCheck"]
   });
-
-export type UpdatePasswordResolvedType = z.infer<typeof updatePasswordResolver>;

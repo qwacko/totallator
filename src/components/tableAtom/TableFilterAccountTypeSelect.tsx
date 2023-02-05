@@ -8,8 +8,7 @@ import { PrismaAccountTypeEnumValidation } from "src/utils/validation/PrismaAcco
 
 import { AccountMultiSelect } from "../account/AccountSelect";
 
-const accountTypeFilterToString = (data: string[]) =>
-  JSON.stringify(data);
+const accountTypeFilterToString = (data: string[]) => JSON.stringify(data);
 export const accountTypeFilterToArray = (data: string) => {
   const arrayData = JSON.parse(data);
   const processedData = z
