@@ -70,7 +70,12 @@ export const journalsWithStats = async ({
           AND: await filtersToQuery({ prisma, userId, filters })
         },
         include: {
-          accountGrouping: { include: { viewUsers: true, adminUsers: true } },
+          accountGrouping: {
+            include: {
+              viewUsers: true,
+              adminUsers: true
+            }
+          },
           transaction: { select: { journalEntries: true } }
         },
         orderBy,

@@ -3,9 +3,7 @@ import { z } from "zod";
 import {
   accountGroupingIdValidation,
   createdUpdatedValidation,
-  journalCountValidation,
-  statusReturnValidation,
-  userIsAdminValidation
+  statusReturnValidation
 } from "../returnValidationHelpers";
 
 export const billSingleValidation = z
@@ -16,14 +14,3 @@ export const billSingleValidation = z
   .merge(statusReturnValidation)
   .merge(createdUpdatedValidation)
   .merge(accountGroupingIdValidation);
-
-export type billSingleValidationType = z.infer<typeof billSingleValidation>;
-
-export const billGetValidation = z.array(
-  billSingleValidation
-    .merge(journalCountValidation)
-    .merge(userIsAdminValidation)
-    .strict()
-);
-
-export type BillGetValidationType = z.infer<typeof billGetValidation>;

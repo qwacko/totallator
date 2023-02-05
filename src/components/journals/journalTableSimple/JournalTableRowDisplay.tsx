@@ -1,17 +1,20 @@
-import {
-  Center,
-  Checkbox,
-  Container,
-  Group,
-  HoverCard,
-  Text
-} from "@mantine/core";
+import { Checkbox, Container, Group, HoverCard, Text } from "@mantine/core";
 import { IconCheck, IconEyeCheck, IconReport } from "@tabler/icons";
 import deepEquals from "fast-deep-equal";
 import { useAtom } from "jotai";
 import { selectAtom } from "jotai/utils";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
+import { CustomTd } from "src/components/tableAtom/CustomTd";
+import { AccountSelectionWithPopoverEdit } from "src/components/tableAtom/cells/AccountSelectionWithPopoverEdit";
+import { BillSelectionWithPopoverEdit } from "src/components/tableAtom/cells/BillSelectionWithPopoverEdit";
+import { BudgetSelectionWithPopoverEdit } from "src/components/tableAtom/cells/BudgetSelectionWithPopoverEdit";
+import { CategorySelectionWithPopoverEdit } from "src/components/tableAtom/cells/CategorySelectionWithPopoverEdit";
+import { DatePickerWithPopoverEdit } from "src/components/tableAtom/cells/DatePickerWithPopoverEdit";
+import { NumberCellWithPopoverEdit } from "src/components/tableAtom/cells/NumberCellWithPopoverEdit";
+import { OtherJournalsCellDisplay } from "src/components/tableAtom/cells/OtherJournalsCellDisplay";
+import { TagSelectionWithPopoverEdit } from "src/components/tableAtom/cells/TagSelectionWithPopoverEdit";
+import { TextCellWithPopoverEdit } from "src/components/tableAtom/cells/TextCellWithPopoverEdit";
 import type { JournalTableConfigAtomReturn } from "src/utils/hooks/journals/useJournalsSimple";
 import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
@@ -20,15 +23,6 @@ import { currencyFormatter } from "src/utils/validation/user/currencyFormats";
 
 import { JournalCommandButtons } from "../JournalCommandButtons";
 import type { CombinedJournalDataAtomType } from "./CombinedJournalDataAtomType";
-import { AccountSelectionWithPopoverEdit } from "./cells/AccountSelectionWithPopoverEdit";
-import { BillSelectionWithPopoverEdit } from "./cells/BillSelectionWithPopoverEdit";
-import { BudgetSelectionWithPopoverEdit } from "./cells/BudgetSelectionWithPopoverEdit";
-import { CategorySelectionWithPopoverEdit } from "./cells/CategorySelectionWithPopoverEdit";
-import { DatePickerWithPopoverEdit } from "./cells/DatePickerWithPopoverEdit";
-import { NumberCellWithPopoverEdit } from "./cells/NumberCellWithPopoverEdit";
-import { OtherJournalsCellDisplay } from "./cells/OtherJournalsCellDisplay";
-import { TagSelectionWithPopoverEdit } from "./cells/TagSelectionWithPopoverEdit";
-import { TextCellWithPopoverEdit } from "./cells/TextCellWithPopoverEdit";
 
 export const JournalTableRowDisplay = ({
   rowId,
@@ -188,7 +182,6 @@ export const JournalTableRowDisplay = ({
             setCurrentRowData({ ...currentRowData, accountId: e })
           }
           searchable
-          title={rowData.account?.title || ""}
           editing={editing}
         />
       </CustomTd>
@@ -248,7 +241,6 @@ export const JournalTableRowDisplay = ({
             updateJournal(currentRowData)
           }
           searchable
-          title={rowData.category?.title || ""}
           editing={editing}
         />
       </CustomTd>
@@ -265,7 +257,6 @@ export const JournalTableRowDisplay = ({
             rowData.tagId !== currentRowData.tagId &&
             updateJournal(currentRowData)
           }
-          title={rowData.tag?.title || ""}
           editing={editing}
         />
       </CustomTd>
@@ -282,7 +273,6 @@ export const JournalTableRowDisplay = ({
             rowData.billId !== currentRowData.billId &&
             updateJournal(currentRowData)
           }
-          title={rowData.bill?.title || ""}
           editing={editing}
         />
       </CustomTd>
@@ -299,18 +289,9 @@ export const JournalTableRowDisplay = ({
             rowData.budgetId !== currentRowData.budgetId &&
             updateJournal(currentRowData)
           }
-          title={rowData.budget?.title || ""}
           editing={editing}
         />
       </CustomTd>
     </>
-  );
-};
-
-export const CustomTd = ({ children }: { children?: ReactNode }) => {
-  return (
-    <td>
-      <Center>{children}</Center>
-    </td>
   );
 };

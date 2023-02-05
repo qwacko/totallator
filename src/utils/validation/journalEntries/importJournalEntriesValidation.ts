@@ -18,7 +18,3 @@ export const importJournalEntrySingleValidation = z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional()
 });
-
-export type importJournalEntrySingleValidationType = z.infer<
-  typeof importJournalEntrySingleValidation
->;

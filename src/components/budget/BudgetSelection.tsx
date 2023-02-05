@@ -4,57 +4,54 @@ import {
   Select,
   type SelectProps
 } from "@mantine/core";
-import { useMemo } from "react";
 
-import { useBudgets } from "src/utils/hooks/budgets/useBudgets";
+import { trpc } from "src/utils/trpc";
 
 const useBudgetsDropdown = ({
-  accountGroupingId
+  accountGroupingId,
+  includeOnlyAdmin
 }: {
   accountGroupingId?: string;
+  includeOnlyAdmin?: boolean;
 }) => {
-  const budgets = useBudgets();
-  const filteredBudgets = useMemo(
-    () =>
-      budgets.data
-        ? budgets.data
-            .filter((item) =>
-              accountGroupingId
-                ? item.accountGroupingId === accountGroupingId
-                : true
-            )
-            .map((item) => ({
-              label: item.title,
-              value: item.id
-            }))
-            .sort((a, b) => a.label.localeCompare(b.label))
-        : [],
-    [budgets.data, accountGroupingId]
-  );
+  const { data } = trpc.budgets.getDropdown.useQuery({
+    accountGroupingId,
+    includeOnlyAdmin
+  });
 
-  return filteredBudgets;
+  return data || [];
 };
 
 export type BudgetSelectionProps = Omit<SelectProps, "data"> & {
   accountGroupingId?: string;
+  includeOnlyAdmin?: boolean;
 };
 
 export const BudgetSelection = ({
   accountGroupingId,
+  includeOnlyAdmin,
   ...props
 }: BudgetSelectionProps) => {
-  const filteredBills = useBudgetsDropdown({ accountGroupingId });
+  const filteredBills = useBudgetsDropdown({
+    accountGroupingId,
+    includeOnlyAdmin
+  });
 
   return <Select {...props} data={filteredBills} />;
 };
 
 export const BudgetMultiSelection = ({
   accountGroupingId,
+  includeOnlyAdmin,
   ...props
 }: Omit<MultiSelectProps, "data"> & {
   accountGroupingId?: string;
+  includeOnlyAdmin?: boolean;
 }) => {
-  const filteredBills = useBudgetsDropdown({ accountGroupingId });
+  const filteredBills = useBudgetsDropdown({
+    accountGroupingId,
+    includeOnlyAdmin
+  });
 
   return <MultiSelect {...props} data={filteredBills} />;
 };

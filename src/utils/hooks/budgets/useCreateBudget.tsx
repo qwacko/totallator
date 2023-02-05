@@ -17,30 +17,9 @@ export function useCreateBudget({ onMutate }: { onMutate?: () => void }) {
   });
   const utils = trpc.useContext();
   const mutate = trpc.budgets.create.useMutation({
-    onMutate: (data) => {
+    onMutate: () => {
       notifications.onLoading();
       onMutate && onMutate();
-      const currentBudgets = utils.budgets.get.getData();
-
-      if (currentBudgets) {
-        utils.budgets.get.setData(undefined, [
-          ...currentBudgets,
-          {
-            accountGroupingId: data.accountGroupingId,
-            id: "New",
-            title: data.title,
-            userIsAdmin: false,
-            status: "Active",
-            active: true,
-            allowUpdate: false,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            deleted: false,
-            disabled: false,
-            _count: { journalEntries: 0 }
-          }
-        ]);
-      }
     },
     onError: (e) => {
       utils.budgets.invalidate();

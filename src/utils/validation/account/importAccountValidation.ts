@@ -18,7 +18,3 @@ export const importAccountSingleValidation = z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional()
 });
-
-export type importAccountSingleValidationType = z.infer<
-  typeof importAccountSingleValidation
->;

@@ -2,7 +2,7 @@ import type { TagsReturnType } from "src/server/trpc/router/_app";
 import { useCloneTag } from "src/utils/hooks/tags/useCloneTag";
 import { useDeleteTag } from "src/utils/hooks/tags/useDeleteTag";
 
-import { CommandButtons } from "../table/CommandButtons";
+import { CommandButtons } from "../tableAtom/CommandButtons";
 
 export const TagCommandButtons = ({ data }: { data: TagsReturnType }) => {
   const id = data.id;

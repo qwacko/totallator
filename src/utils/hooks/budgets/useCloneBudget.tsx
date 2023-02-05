@@ -18,24 +18,8 @@ export const useCloneBudget = ({ id }: { id: string }) => {
       targetUtils.invalidate();
       notifications.onSuccess();
     },
-    onMutate: (data) => {
+    onMutate: () => {
       notifications.onLoading();
-      const current = targetUtils.get.getData();
-      if (current) {
-        const target = current.find((item) => item.id === data.id);
-        if (target) {
-          targetUtils.get.setData(undefined, [
-            ...current,
-            {
-              ...target,
-              id: "new",
-              title: `${target.title} (Clone)`,
-              createdAt: new Date(),
-              updatedAt: new Date()
-            }
-          ]);
-        }
-      }
     }
   });
 

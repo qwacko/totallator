@@ -4,55 +4,34 @@ import {
   Select,
   type SelectProps
 } from "@mantine/core";
-import { useMemo } from "react";
 
-import { useTags } from "src/utils/hooks/tags/useTags";
+import { trpc } from "src/utils/trpc";
 
-const useTagDropdown = ({
-  accountGroupingId,
-  showCombined
-}: {
+const useTagDropdown = (props: {
   accountGroupingId?: string;
   showCombined: boolean;
+  includeOnlyAdmin?: boolean;
 }) => {
-  const tags = useTags();
-  const filteredTags = useMemo(
-    () =>
-      tags.data
-        ? tags.data
-            .filter((item) =>
-              accountGroupingId
-                ? item.accountGroupingId === accountGroupingId
-                : true
-            )
-            .map((item) =>
-              showCombined
-                ? {
-                    label: item.title,
-                    value: item.id
-                  }
-                : { label: item.single, value: item.id, group: item.group }
-            )
-            .sort((a, b) => a.label.localeCompare(b.label))
-        : [],
-    [tags.data, accountGroupingId, showCombined]
-  );
-  return filteredTags;
+  const { data } = trpc.tags.getDropdown.useQuery(props);
+  return data || [];
 };
 
 export type TagSelectionProps = Omit<SelectProps, "data"> & {
   accountGroupingId?: string;
   showCombined?: boolean;
+  includeOnlyAdmin?: boolean;
 };
 
 export const TagSelection = ({
   accountGroupingId,
   showCombined = true,
+  includeOnlyAdmin,
   ...props
 }: TagSelectionProps) => {
   const filteredTags = useTagDropdown({
     accountGroupingId,
-    showCombined
+    showCombined,
+    includeOnlyAdmin
   });
   return <Select {...props} data={filteredTags} />;
 };
@@ -60,14 +39,17 @@ export const TagSelection = ({
 export const TagMultiSelection = ({
   accountGroupingId,
   showCombined = true,
+  includeOnlyAdmin,
   ...props
 }: Omit<MultiSelectProps, "data"> & {
   accountGroupingId?: string;
   showCombined?: boolean;
+  includeOnlyAdmin?: boolean;
 }) => {
   const filteredTags = useTagDropdown({
     accountGroupingId,
-    showCombined
+    showCombined,
+    includeOnlyAdmin
   });
   return <MultiSelect {...props} data={filteredTags} />;
 };

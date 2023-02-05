@@ -1,59 +1,25 @@
 import { z } from "zod";
 
-import { PrismaAccountTypeEnumValidation } from "../PrismaAccountTypeEnumValidation";
+import { accountFilterNew } from "../account/getAccountInputValidation";
+import { billFilter } from "../bill/billFilter";
+import { budgetFilter } from "../budget/budgetFilter";
+import { categoryFilter } from "../category/categoryFilter";
+import { tagFilter } from "../tag/tagFilter";
+import { booleanFilter } from "./booleanFilter";
+import { dateFilter } from "./dateFilter";
+import { idFilter } from "./idFilter";
+import { numberFilter } from "./numberFilter";
+import { paginationValidation } from "./paginationValidation";
+import { stringFilter } from "./stringFilter";
 
-const idFilter = z
-  .object({ in: z.array(z.string().cuid()).optional() })
-  .optional();
-
-const stringFilter = z
-  .object({
-    contains: z.string().optional(),
-    mode: z
-      .enum(["insensitive", "default"] as const)
-      .optional()
-      .default("insensitive")
-  })
-  .optional();
-
-const booleanFilter = z
-  .object({ equals: z.boolean().optional(), not: z.boolean().optional() })
-  .optional();
-
-const dateFilter = z
-  .object({
-    gte: z.date().optional(),
-    lte: z.date().optional()
-  })
-  .optional();
-
-const numberFilter = z
-  .object({ gte: z.number().optional(), lte: z.number().optional() })
-  .optional();
-
-const accountFilter = z.object({
-  isCash: z.object({ equals: z.boolean().optional() }).optional(),
-  isNetWorth: z.object({ equals: z.boolean().optional() }).optional(),
-  type: z
-    .object({ in: z.array(PrismaAccountTypeEnumValidation).optional() })
-    .optional(),
-  id: z.object({ in: z.array(z.string().cuid()).optional() }).optional(),
-  title: z
-    .object({
-      contains: z.string(),
-      mode: z.enum(["default", "insensitive"]).default("insensitive")
-    })
-    .optional()
-});
-
-export const transactionFilter = z
+const transactionFilter = z
   .object({
     journalEntries: z
       .object({
         some: z
           .object({
             accountId: idFilter,
-            account: accountFilter.optional()
+            account: accountFilterNew.optional()
           })
           .optional()
       })
@@ -84,51 +50,11 @@ export const journalFilter = z.object({
   primaryJournalId: idFilter,
   transaction: transactionFilter,
 
-  bill: z
-    .object({
-      title: z
-        .object({
-          contains: z.string(),
-          mode: z.enum(["default", "insensitive"]).default("insensitive")
-        })
-        .optional()
-    })
-    .optional(),
-
-  budget: z
-    .object({
-      title: z
-        .object({
-          contains: z.string(),
-          mode: z.enum(["default", "insensitive"]).default("insensitive")
-        })
-        .optional()
-    })
-    .optional(),
-
-  category: z
-    .object({
-      title: z
-        .object({
-          contains: z.string(),
-          mode: z.enum(["default", "insensitive"]).default("insensitive")
-        })
-        .optional()
-    })
-    .optional(),
-
-  tag: z
-    .object({
-      title: z
-        .object({
-          contains: z.string(),
-          mode: z.enum(["default", "insensitive"]).default("insensitive")
-        })
-        .optional()
-    })
-    .optional(),
-
-  account: accountFilter.optional(),
+  bill: billFilter.optional(),
+  budget: budgetFilter.optional(),
+  category: categoryFilter.optional(),
+  tag: tagFilter.optional(),
+  account: accountFilterNew.optional(),
 
   //Dates
   updatedAt: dateFilter,
@@ -161,16 +87,11 @@ const sort = z
 export type JournalSortValidation = z.infer<typeof sort>;
 
 export const getJournalValidation = z.object({
-  pagination: z
-    .object({
-      pageNo: z.number(),
-      pageSize: z.number()
-    })
+  pagination: paginationValidation
     .optional()
     .default({ pageNo: 0, pageSize: 10 }),
   filters: z.array(journalFilter).optional(),
   sort
 });
 
-export type GetJournalValidation = z.infer<typeof getJournalValidation>;
 export type GetJournalValidationInput = z.input<typeof getJournalValidation>;

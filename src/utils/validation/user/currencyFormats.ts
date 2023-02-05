@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const currencyFormats = ["EUR", "GBP", "JPY", "USD"] as const;
+const currencyFormats = ["EUR", "GBP", "JPY", "USD"] as const;
 export type currencyFormatTypes = "EUR" | "GBP" | "JPY" | "USD";
 
 export const currencyFormatValidation = z.enum(currencyFormats);
@@ -31,40 +31,6 @@ export const currencyFormatter = (currencyFormat: currencyFormatTypes) => {
     style: "currency",
     currency: "USD"
   });
-};
-
-export const currencyUnformatter = (currencyFormat: currencyFormatTypes) => {
-  return (value: string) => {
-    if (currencyFormat === "USD") {
-      return (
-        Math.floor(parseFloat(value.replace("$", "").replace(",", "")) * 100) /
-        100
-      );
-    }
-    if (currencyFormat === "EUR") {
-      return (
-        Math.floor(
-          parseFloat(
-            value
-              .replace("€", "")
-              .replace(".", "")
-              .replace(",", ".")
-              .replace(" ", "")
-          ) * 100
-        ) / 100
-      );
-    }
-    if (currencyFormat === "GBP") {
-      return (
-        Math.floor(parseFloat(value.replace("£", "").replace(",", "")) * 100) /
-        100
-      );
-    }
-    if (currencyFormat === "JPY") {
-      return Math.floor(parseFloat(value.replace("¥", "").replace(",", "")));
-    }
-    return 0;
-  };
 };
 
 export const currencyFormatsSelectOptions: {

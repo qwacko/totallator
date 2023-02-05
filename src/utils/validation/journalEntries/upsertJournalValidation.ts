@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { createSingleJournalValidation } from "./createJournalValidation";
 
-export const upsertJournalValidation = createSingleJournalValidation
+const upsertJournalValidation = createSingleJournalValidation
   .omit({ accountGroupingId: true })
   .merge(
     z.object({
@@ -13,10 +13,6 @@ export const upsertJournalValidation = createSingleJournalValidation
     })
   )
   .strip();
-
-export type UpsertJournalValidationType = z.infer<
-  typeof upsertJournalValidation
->;
 
 export const upsertJournalsValidation = z.array(upsertJournalValidation);
 
