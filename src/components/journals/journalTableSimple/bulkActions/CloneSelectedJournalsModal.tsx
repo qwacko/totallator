@@ -16,7 +16,7 @@ export const CloneSelectedJournalsModal = ({
   const ids = useAtomValue(rows);
 
   const [count, setCount] = useState<number>(1);
-  const { clone } = useCloneTransactions({ ids, onSuccess: close });
+  const { clone } = useCloneTransactions({ journalIds: ids, onSuccess: close });
 
   return (
     <Modal

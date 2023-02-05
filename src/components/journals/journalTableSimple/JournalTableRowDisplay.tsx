@@ -113,7 +113,10 @@ export const JournalTableRowDisplay = ({
       <CustomTd>
         <Checkbox
           checked={selected}
-          onChange={() => toggleSelected()}
+          onChange={() => {
+            console.log("Toggling Seleciton", rowId);
+            toggleSelected();
+          }}
           transitionDuration={0}
         />
       </CustomTd>

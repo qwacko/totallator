@@ -7,12 +7,14 @@ const notifications = notifyTemplate(id, "Transaction", "Clone");
 
 export const useCloneTransactions = ({
   ids,
+  journalIds,
   maxUpdated,
   onSuccess,
   onError,
   onMutate
 }: {
   ids?: string[];
+  journalIds?: string[];
   maxUpdated?: number;
   onSuccess?: () => void;
   onError?: () => void;
@@ -39,7 +41,7 @@ export const useCloneTransactions = ({
     });
 
   const clone = (cloneCount: number) => {
-    mutate({ ids, maxUpdated, cloneCount });
+    mutate({ ids, journalIds, maxUpdated, cloneCount });
   };
 
   return {
