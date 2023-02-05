@@ -7,6 +7,7 @@ const notifications = notifyTemplate(id, "Transaction", "Delete");
 
 export const useDeleteTransactions = ({
   ids,
+  journalIds,
   maxDeleted,
   deleteComplete = false,
   onSuccess,
@@ -14,6 +15,7 @@ export const useDeleteTransactions = ({
   onMutate
 }: {
   ids?: string[];
+  journalIds?: string[];
   maxDeleted?: number;
   deleteComplete?: boolean;
   onSuccess?: () => void;
@@ -41,7 +43,7 @@ export const useDeleteTransactions = ({
     });
 
   const deleteTrans = () => {
-    mutate({ ids, maxDeleted, canDeleteComplete: deleteComplete });
+    mutate({ ids, journalIds, maxDeleted, canDeleteComplete: deleteComplete });
   };
 
   return {

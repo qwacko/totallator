@@ -14,7 +14,10 @@ export const DeleteSelectedJournalsModal = ({
 }) => {
   const ids = useAtomValue(rows);
 
-  const { deleteTrans } = useDeleteTransactions({ ids, onSuccess: close });
+  const { deleteTrans } = useDeleteTransactions({
+    journalIds: ids,
+    onSuccess: close
+  });
 
   return (
     <Modal

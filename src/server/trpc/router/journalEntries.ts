@@ -260,12 +260,23 @@ export const journalsRouter = router({
 
       const transactions = await ctx.prisma.transaction.findMany({
         where: {
-          id: { in: input.ids },
-          journalEntries: {
-            some: {
-              accountGrouping: { adminUsers: { some: { id: user.id } } }
+          AND: [
+            {
+              OR: [
+                {
+                  id: { in: input.ids }
+                },
+                { journalEntries: { some: { id: { in: input.journalIds } } } }
+              ]
+            },
+            {
+              journalEntries: {
+                some: {
+                  accountGrouping: { adminUsers: { some: { id: user.id } } }
+                }
+              }
             }
-          }
+          ]
         },
         include: { journalEntries: true }
       });
@@ -332,17 +343,28 @@ export const journalsRouter = router({
 
       const transactions = await ctx.prisma.transaction.findMany({
         where: {
-          id: { in: input.ids },
-          journalEntries: {
-            some: {
-              accountGrouping: { adminUsers: { some: { id: user.id } } }
+          AND: [
+            {
+              OR: [
+                {
+                  id: { in: input.ids }
+                },
+                { journalEntries: { some: { id: { in: input.journalIds } } } }
+              ]
             },
-            every: input.canDeleteComplete
-              ? undefined
-              : {
-                  complete: false
-                }
-          }
+            {
+              journalEntries: {
+                some: {
+                  accountGrouping: { adminUsers: { some: { id: user.id } } }
+                },
+                every: input.canDeleteComplete
+                  ? undefined
+                  : {
+                      complete: false
+                    }
+              }
+            }
+          ]
         },
         include: { journalEntries: true }
       });
