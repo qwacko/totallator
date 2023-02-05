@@ -7,6 +7,7 @@ import { categoryFilter } from "../category/categoryFilter";
 import { tagFilter } from "../tag/tagFilter";
 import { booleanFilter } from "./booleanFilter";
 import { dateFilter } from "./dateFilter";
+import { dateRangeFilter } from "./dateRangeFilter";
 import { idFilter } from "./idFilter";
 import { numberFilter } from "./numberFilter";
 import { paginationValidation } from "./paginationValidation";
@@ -31,6 +32,7 @@ export const journalFilter = z.object({
   //Core Data
   id: idFilter,
   date: dateFilter,
+  dateRange: dateRangeFilter,
   amount: numberFilter,
   description: stringFilter,
 

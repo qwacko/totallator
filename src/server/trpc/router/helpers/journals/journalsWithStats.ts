@@ -1,23 +1,34 @@
-import type { Prisma, PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaClient, User } from "@prisma/client";
 
+import { dateRangeToDates } from "src/utils/validation/journalEntries/dateRangeToDates";
 import type { JournalFilterValidation } from "src/utils/validation/journalEntries/getJournalValidation";
 
 export const filtersToQuery = async ({
   prisma,
   filters,
-  userId
+  user
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   filters: JournalFilterValidation[] | undefined;
-  userId: string;
+  user: User;
 }) => {
   const accountGroupings = await prisma.accountGrouping.findMany({
-    where: { viewUsers: { some: { id: userId } } }
+    where: { viewUsers: { some: { id: user.id } } }
   });
   const accountGroupingIds = accountGroupings.map((item) => item.id);
   const returnFilters: JournalFilterValidation[] = filters
     ? await Promise.all(
         filters.map(async (filter) => {
+          if (filter.dateRange) {
+            const dateRange = dateRangeToDates({
+              dateRange: filter.dateRange,
+              user
+            });
+            if (dateRange) {
+              filter.date = { gte: dateRange.start, lte: dateRange.end };
+            }
+            delete filter.dateRange;
+          }
           if (filter.account) {
             const accounts = await prisma.transactionAccount.findMany({
               where: {
@@ -52,7 +63,7 @@ export const journalsWithStats = async ({
   take,
   skip,
   filters,
-  userId
+  user
 }: {
   prisma: PrismaClient | Prisma.TransactionClient;
   orderBy?:
@@ -61,13 +72,13 @@ export const journalsWithStats = async ({
   take: number;
   skip: number;
   filters: JournalFilterValidation[] | undefined;
-  userId: string;
+  user: User;
 }) => {
   const [allJournals, journalCountDefault, journalTotalDefault] =
     await Promise.all([
       prisma.journalEntry.findMany({
         where: {
-          AND: await filtersToQuery({ prisma, userId, filters })
+          AND: await filtersToQuery({ prisma, user, filters })
         },
         include: {
           accountGrouping: {
@@ -84,12 +95,12 @@ export const journalsWithStats = async ({
       }),
       prisma.journalEntry.count({
         where: {
-          AND: await filtersToQuery({ prisma, userId, filters })
+          AND: await filtersToQuery({ prisma, user, filters })
         }
       }),
       prisma.journalEntry.aggregate({
         where: {
-          AND: await filtersToQuery({ prisma, userId, filters })
+          AND: await filtersToQuery({ prisma, user, filters })
         },
         orderBy,
         _sum: { amount: true },

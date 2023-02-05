@@ -2,6 +2,7 @@ import type { PrismaClient } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import bcrypt from "bcrypt";
 
+import type { RouterOutputs } from "src/utils/trpc";
 import { createUserValidation } from "src/utils/validation/user/createUserValidation";
 import { currencyFormatValidation } from "src/utils/validation/user/currencyFormats";
 import { dbDateFormatValidation } from "src/utils/validation/user/dateFormats";
@@ -180,3 +181,5 @@ export const userRouter = router({
       return true;
     })
 });
+
+export type UserReturn = RouterOutputs["user"]["get"];
