@@ -28,12 +28,16 @@ export type FiltersStateType = {
 
 export const JournalFilterModal = ({
   filters: externalFilters,
-  setFilters: setExternalFilters
-}: FiltersStateType) => {
+  setFilters: setExternalFilters,
+  resetFilter: resetFilterExt
+}: FiltersStateType & {
+  resetFilter?: () => JournalFilterValidationInputType;
+}) => {
   const { filters, opened, close, open, updateFilter, resetFilter } =
     useJournalFilters({
       filters: externalFilters,
-      setFilters: setExternalFilters
+      setFilters: setExternalFilters,
+      resetFilters: resetFilterExt
     });
 
   const startDate = (get(filters, "date.gte") as Date | undefined) || null;
@@ -138,6 +142,16 @@ export const JournalFilterModal = ({
             clearable
             size="xs"
             label="Accounts"
+          />
+          <AccountMultiSelection
+            value={get(filters, "account.id.notIn")}
+            onChange={(e) =>
+              updateFilter("account.id.notIn", e.length === 0 ? undefined : e)
+            }
+            searchable
+            clearable
+            size="xs"
+            label="Excude Accounts"
           />
           <AccountMultiSelection
             value={get(filters, "transaction.journalEntries.some.accountId.in")}

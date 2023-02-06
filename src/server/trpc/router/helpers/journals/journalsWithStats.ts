@@ -30,6 +30,7 @@ export const filtersToQuery = async ({
             delete filter.dateRange;
           }
           if (filter.account) {
+            console.log("Account Filter", filter.account);
             const accounts = await prisma.transactionAccount.findMany({
               where: {
                 AND: [

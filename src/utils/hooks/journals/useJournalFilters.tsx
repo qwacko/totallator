@@ -8,8 +8,11 @@ import type { JournalFilterValidationInputType } from "src/utils/validation/jour
 
 export const useJournalFilters = ({
   filters: externalFilters,
-  setFilters: setExternalFilters
-}: FiltersStateType) => {
+  setFilters: setExternalFilters,
+  resetFilters
+}: FiltersStateType & {
+  resetFilters?: () => JournalFilterValidationInputType;
+}) => {
   const [opened, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [filters, setFilters] =
     useState<JournalFilterValidationInputType>(externalFilters);
@@ -24,15 +27,30 @@ export const useJournalFilters = ({
     closeModal();
   };
 
-  const updateFilter = (key: string, value: unknown) => {
+  const updateFilter = (
+    key: string,
+    value: unknown,
+    updateExternal = false
+  ) => {
     const newFilter = { ...filters };
     set(newFilter, key, value);
+    console.log("New Filter", newFilter);
 
     setFilters(newFilter);
+    if (updateExternal) {
+      setExternalFilters(newFilter);
+    }
   };
 
   const resetFilter = () => {
-    setFilters(cloneDeep(defaultJournalFilters));
+    if (resetFilters) {
+      console.log("Resetting Filters");
+      const newDefault = resetFilters();
+      console.log("New Default", newDefault);
+      setFilters(newDefault);
+    } else {
+      setFilters(cloneDeep(defaultJournalFilters));
+    }
   };
 
   return {
