@@ -4,19 +4,22 @@ import { useMemo } from "react";
 
 import { AppLayout } from "src/components/layout/App";
 import { SummaryDisplay } from "src/components/summary/SummaryDisplay";
-import { generateFiltersFromURLIds } from "src/utils/generateFiltersFromURLIds";
 import { trpc } from "src/utils/trpc";
 
-const AccountSummaryPage = () => {
+import { generateFiltersFromURLIds } from "../../../utils/generateFiltersFromURLIds";
+
+const TagSummaryPage = () => {
   const { query } = useRouter();
   const [filterAtom, id] = useMemo(
     () =>
       generateFiltersFromURLIds(query, (ids) => ({
-        account: { id: { in: ids } }
+        tagId: { in: ids },
+        account: { type: { in: ["Asset", "Liability"] } }
       })),
     [query]
   );
-  const accountsQuery = trpc.accounts.get.useQuery({
+
+  const tagsQuery = trpc.tags.get.useQuery({
     filters: [{ id: { in: [id || ""] } }]
   });
 
@@ -26,8 +29,8 @@ const AccountSummaryPage = () => {
         <Center>
           <Group>
             <Title>
-              {accountsQuery?.data?.data && accountsQuery?.data?.data[0]
-                ? `${accountsQuery?.data?.data[0].title} `
+              {tagsQuery?.data?.data && tagsQuery?.data?.data[0]
+                ? `${tagsQuery?.data?.data[0].title} `
                 : " "}
               Summary
             </Title>
@@ -39,4 +42,4 @@ const AccountSummaryPage = () => {
   );
 };
 
-export default AccountSummaryPage;
+export default TagSummaryPage;

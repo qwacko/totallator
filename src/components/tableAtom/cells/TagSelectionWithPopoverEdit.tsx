@@ -1,10 +1,12 @@
-import { Popover, Text } from "@mantine/core";
+import { Group, Popover, Text } from "@mantine/core";
 
 import {
   TagSelection,
   type TagSelectionProps
 } from "src/components/tag/TagSelection";
 import { trpc } from "src/utils/trpc";
+
+import { PopoverLinkButton } from "./PopoverLinkButton";
 
 export const TagSelectionWithPopoverEdit = (
   props: TagSelectionProps & { editing: boolean }
@@ -26,7 +28,10 @@ export const TagSelectionWithPopoverEdit = (
         </Text>
       </Popover.Target>
       <Popover.Dropdown>
-        <TagSelection {...otherProps} />
+        <Group>
+          <TagSelection {...otherProps} />
+          <PopoverLinkButton url={`/summary/tags/${props.value}`} />
+        </Group>
       </Popover.Dropdown>
     </Popover>
   );

@@ -1,10 +1,12 @@
-import { Popover, Text } from "@mantine/core";
+import { Group, Popover, Text } from "@mantine/core";
 
 import {
   AccountSelection,
   type AccountSelectionProps
 } from "src/components/account/AccountSelection";
 import { trpc } from "src/utils/trpc";
+
+import { PopoverLinkButton } from "./PopoverLinkButton";
 
 export const AccountSelectionWithPopoverEdit = (
   props: AccountSelectionProps & { editing: boolean }
@@ -28,7 +30,10 @@ export const AccountSelectionWithPopoverEdit = (
         </Text>
       </Popover.Target>
       <Popover.Dropdown>
-        <AccountSelection {...otherProps} />
+        <Group>
+          <AccountSelection {...otherProps} />
+          <PopoverLinkButton url={`/summary/accounts/${props.value}`} />
+        </Group>
       </Popover.Dropdown>
     </Popover>
   );

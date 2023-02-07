@@ -1,10 +1,12 @@
-import { Popover, Text } from "@mantine/core";
+import { Group, Popover, Text } from "@mantine/core";
 
 import {
   BillSelection,
   type BillSelectionProps
 } from "src/components/bill/BillSelection";
 import { trpc } from "src/utils/trpc";
+
+import { PopoverLinkButton } from "./PopoverLinkButton";
 
 export const BillSelectionWithPopoverEdit = (
   props: BillSelectionProps & { editing: boolean }
@@ -26,7 +28,10 @@ export const BillSelectionWithPopoverEdit = (
         </Text>
       </Popover.Target>
       <Popover.Dropdown>
-        <BillSelection {...otherProps} />
+        <Group>
+          <BillSelection {...otherProps} />
+          <PopoverLinkButton url={`/summary/bills/${props.value}`} />
+        </Group>
       </Popover.Dropdown>
     </Popover>
   );

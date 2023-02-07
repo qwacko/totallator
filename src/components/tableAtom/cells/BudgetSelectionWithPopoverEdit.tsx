@@ -1,10 +1,12 @@
-import { Popover, Text } from "@mantine/core";
+import { Group, Popover, Text } from "@mantine/core";
 
 import {
   BudgetSelection,
   type BudgetSelectionProps
 } from "src/components/budget/BudgetSelection";
 import { trpc } from "src/utils/trpc";
+
+import { PopoverLinkButton } from "./PopoverLinkButton";
 
 export const BudgetSelectionWithPopoverEdit = (
   props: BudgetSelectionProps & { editing: boolean }
@@ -28,7 +30,10 @@ export const BudgetSelectionWithPopoverEdit = (
         </Text>
       </Popover.Target>
       <Popover.Dropdown>
-        <BudgetSelection {...otherProps} />
+        <Group>
+          <BudgetSelection {...otherProps} />
+          <PopoverLinkButton url={`/summary/budgets/${props.value}`} />
+        </Group>
       </Popover.Dropdown>
     </Popover>
   );

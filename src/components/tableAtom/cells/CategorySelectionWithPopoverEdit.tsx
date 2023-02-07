@@ -1,10 +1,12 @@
-import { Popover, Text } from "@mantine/core";
+import { Group, Popover, Text } from "@mantine/core";
 
 import {
   CategorySelection,
   type CategorySelectionProps
 } from "src/components/category/CategorySelection";
 import { trpc } from "src/utils/trpc";
+
+import { PopoverLinkButton } from "./PopoverLinkButton";
 
 export const CategorySelectionWithPopoverEdit = (
   props: CategorySelectionProps & { editing: boolean }
@@ -29,7 +31,10 @@ export const CategorySelectionWithPopoverEdit = (
         </Text>
       </Popover.Target>
       <Popover.Dropdown>
-        <CategorySelection {...otherProps} />
+        <Group>
+          <CategorySelection {...otherProps} />
+          <PopoverLinkButton url={`/summary/categories/${props.value}`} />
+        </Group>
       </Popover.Dropdown>
     </Popover>
   );
