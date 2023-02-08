@@ -1,12 +1,15 @@
 import { Group } from "@mantine/core";
 import { type PrimitiveAtom, useAtom } from "jotai";
+
 import { dateRangeFilter } from "src/utils/validation/journalEntries/dateRangeFilter";
-import { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
+import type { JournalFilterValidationInputType } from "src/utils/validation/journalEntries/getJournalValidation";
+
 import { JournalFilterModal } from "../journals/JournalFiltersDropdown";
 import { DateRangeSelect } from "../reusable/DateRangeSelect";
 
 export const SummaryDisplayFilter = ({
-  filterAtom, resetFilter
+  filterAtom,
+  resetFilter
 }: {
   filterAtom: PrimitiveAtom<JournalFilterValidationInputType>;
   resetFilter?: () => JournalFilterValidationInputType;
@@ -27,11 +30,13 @@ export const SummaryDisplayFilter = ({
               dateRange: validated.data || undefined
             });
           }
-        }} />
+        }}
+      />
       <JournalFilterModal
         filters={extFilter}
         setFilters={setExtFilter}
-        resetFilter={resetFilter} />
+        resetFilter={resetFilter}
+      />
     </Group>
   );
 };
