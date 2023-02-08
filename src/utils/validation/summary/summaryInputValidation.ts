@@ -27,4 +27,4 @@ export const summaryInputValidation = z.object({
     .default(["yearMonthDay"])
 });
 
-export type SummaryInputValidationType = z.infer<typeof summaryInputValidation>;
+export type SummaryInputValidationType = z.input<typeof summaryInputValidation>;
