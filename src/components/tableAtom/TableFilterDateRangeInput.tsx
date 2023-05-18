@@ -45,7 +45,6 @@ export const TableFilterDateRangeInput = <T extends string>({
     <Stack>
       <DatePicker
         value={filter.gte || null}
-        allowFreeInput
         onChange={(e) => {
           updateFilter({
             action: "update",
@@ -55,11 +54,9 @@ export const TableFilterDateRangeInput = <T extends string>({
             })
           });
         }}
-        withinPortal
       />
       <DatePicker
         value={filter.lte || null}
-        allowFreeInput
         onChange={(e) => {
           updateFilter({
             action: "update",
@@ -69,7 +66,6 @@ export const TableFilterDateRangeInput = <T extends string>({
             })
           });
         }}
-        withinPortal
       />
     </Stack>
   );

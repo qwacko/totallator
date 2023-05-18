@@ -14,7 +14,7 @@ type CreateContextOptions = {
  * - trpc's `createSSGHelpers` where we don't have req/res
  * @see https://beta.create.t3.gg/en/usage/trpc#-servertrpccontextts
  **/
-export const createContextInner = async (opts: CreateContextOptions) => {
+const createContextInner = async (opts: CreateContextOptions) => {
   return {
     session: opts.session,
     prisma

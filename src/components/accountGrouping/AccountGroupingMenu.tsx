@@ -10,7 +10,7 @@ import {
   IconTrash,
   IconTree,
   IconUnlink
-} from "@tabler/icons";
+} from "@tabler/icons-react";
 
 import { useSeedAccountGrouping } from "src/utils/hooks/accountGroupings/useSeedAccountGrouping";
 

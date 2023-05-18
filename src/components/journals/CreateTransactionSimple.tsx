@@ -8,9 +8,9 @@ import {
   Stack,
   TextInput
 } from "@mantine/core";
-import { DatePicker } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPlus } from "@tabler/icons";
+import { IconPlus } from "@tabler/icons-react";
 
 import { useAccountGroupings } from "src/utils/hooks/accountGroupings/useAccountGroupings";
 import { useCreateTransactionSimple } from "src/utils/hooks/journals/useCreateTransactionSimple";
@@ -58,12 +58,11 @@ const CreateTransactionSimpleForm = ({ onClose }: { onClose?: () => void }) => {
         />
         {!!createTrans.form.values.accountGroupingId && (
           <>
-            <DatePicker
+            <DatePickerInput
               {...createTrans.form.getInputProps("date")}
               required
               label="Transaction Date"
-              inputFormat={dayjsFormat}
-              allowFreeInput
+              valueFormat={dayjsFormat}
               size={size}
             />
             <TextInput

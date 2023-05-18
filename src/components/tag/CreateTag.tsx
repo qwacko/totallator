@@ -1,6 +1,6 @@
 import { Button, Group, Modal, Stack } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPlus } from "@tabler/icons";
+import { IconPlus } from "@tabler/icons-react";
 
 import { useCreateTag } from "src/utils/hooks/tags/useCreateTag";
 

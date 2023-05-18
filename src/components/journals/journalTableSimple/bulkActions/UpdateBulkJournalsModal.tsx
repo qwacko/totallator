@@ -7,7 +7,7 @@ import {
   Text,
   TextInput
 } from "@mantine/core";
-import { DatePicker } from "@mantine/dates";
+import { DatePickerInput } from "@mantine/dates";
 import { useForm, zodResolver } from "@mantine/form";
 
 import { useUpdateJournals } from "src/utils/hooks/journals/useUpdateJournal";
@@ -69,7 +69,7 @@ export const UpdateBulkJournalsModal = ({
             value={form.values.description}
             label="Description"
           />
-          <DatePicker
+          <DatePickerInput
             {...form.getInputProps("date")}
             value={form.values.date || null}
             label="Date"
