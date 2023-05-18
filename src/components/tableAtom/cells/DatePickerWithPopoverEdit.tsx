@@ -1,5 +1,5 @@
 import { Box, Button, Stack } from "@mantine/core";
-import { Calendar } from "@mantine/dates";
+import { DatePicker } from "@mantine/dates";
 import { format } from "date-fns";
 
 import { PopoverEdit } from "./PopoverEdit";
@@ -42,9 +42,11 @@ export const DatePickerWithPopoverEditNew = ({
       editing={false}
     >
       <Stack>
-        <Calendar
+        <DatePicker
+          type="default"
           value={value}
-          initialMonth={value || new Date()}
+          defaultDate={value || new Date()}
+          defaultLevel="month"
           onChange={onChange}
         />
         {clearable && <Button onClick={() => onChange(null)}>Clear</Button>}

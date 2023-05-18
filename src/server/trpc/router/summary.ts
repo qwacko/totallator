@@ -31,7 +31,7 @@ export const summaryRouter = router({
           where: {
             AND: await filtersToQuery({
               prisma: ctx.prisma,
-              userId: user.id,
+              user: user,
               filters: input.filters
             })
           },

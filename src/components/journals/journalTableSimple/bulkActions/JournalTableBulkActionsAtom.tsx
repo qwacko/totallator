@@ -1,6 +1,6 @@
 import { Button, Menu } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconMenu2 } from "@tabler/icons";
+import { IconMenu2 } from "@tabler/icons-react";
 import { type PrimitiveAtom, atom, useAtom, useSetAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
 

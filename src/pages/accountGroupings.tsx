@@ -11,7 +11,7 @@ import {
   Title
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPlus } from "@tabler/icons";
+import { IconPlus } from "@tabler/icons-react";
 
 import { AccountGroupingCard } from "src/components/accountGrouping/AccountGroupingCard";
 import { AppLayout } from "src/components/layout/App";

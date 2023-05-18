@@ -1,5 +1,5 @@
 import { Button } from "@mantine/core";
-import { IconEdit, IconEye, IconTrash } from "@tabler/icons";
+import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react";
 
 import { trpc } from "src/utils/trpc";
 

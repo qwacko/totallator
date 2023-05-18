@@ -3,7 +3,7 @@ import {
   IconArrowsSort,
   IconSortAscending,
   IconSortDescending
-} from "@tabler/icons";
+} from "@tabler/icons-react";
 
 import {
   type TableSortAtomType,

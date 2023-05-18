@@ -17,8 +17,4 @@ export const accountGroupingIdValidation = z.object({
   accountGroupingId: z.string().cuid()
 });
 
-export const journalCountValidation = z.object({
-  _count: z.object({ journalEntries: z.number() })
-});
-
 export const userIsAdminValidation = z.object({ userIsAdmin: z.boolean() });

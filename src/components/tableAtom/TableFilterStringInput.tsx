@@ -1,6 +1,6 @@
 import { TextInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconX } from "@tabler/icons";
+import { IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 import {
