@@ -16,10 +16,6 @@ export const serverSchema = z.object({
     process.env.NODE_ENV === "production"
       ? z.string().min(1)
       : z.string().min(1).optional(),
-  PRISMA_SNGLE: z
-    .preprocess((val) => Boolean(val), z.boolean())
-    .optional()
-    .default(true),
   NEXTAUTH_URL: z.preprocess(
     // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
     // Since NextAuth automatically uses the VERCEL_URL if present.
