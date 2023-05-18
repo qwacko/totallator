@@ -88,7 +88,7 @@ const OtherJournalsSingleDisplay = ({
         value={accountId}
         size="xs"
         disabled={disableEditing}
-        onChange={(e) => e && accountId !== data.accountId && setAccountId(e)}
+        onChange={(e) => e && accountId !== e && setAccountId(e)}
         onBlur={() =>
           accountId !== data.accountId && updateTargetJournal({ accountId })
         }
