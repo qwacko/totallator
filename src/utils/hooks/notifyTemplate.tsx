@@ -1,25 +1,25 @@
-import { hideNotification, showNotification } from "@mantine/notifications";
-import { IconCheck, IconX } from "@tabler/icons";
+import { notifications } from "@mantine/notifications";
+import { IconCheck, IconX } from "@tabler/icons-react";
 
 export const notifyTemplate = (id: string, title: string, action: string) => {
   const onLoading = () => {
-    showNotification({
+    notifications.show({
       id: `${id}Loading`,
       loading: true,
       title: `Updating ${title}`,
       message: "",
       color: "blue",
       autoClose: false,
-      disallowClose: true
+      withCloseButton: false
     });
   };
   const clearLoading = () => {
-    hideNotification(`${id}Loading`);
+    notifications.hide(`${id}Loading`);
   };
 
   const onSuccess = () => {
     clearLoading();
-    showNotification({
+    notifications.show({
       title: `${title} ${action}`,
       message: "Successfull",
       autoClose: 2000,
@@ -30,7 +30,7 @@ export const notifyTemplate = (id: string, title: string, action: string) => {
 
   const onError = <T extends { message: string }>(error: T) => {
     clearLoading();
-    showNotification({
+    notifications.show({
       title: `${title} ${action} Error`,
       message: error.message,
       color: "red",

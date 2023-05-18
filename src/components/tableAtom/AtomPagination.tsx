@@ -24,7 +24,7 @@ export const AtomPagination = ({
   return (
     <Group>
       <Pagination
-        page={pagination.pageIndex + 1}
+        value={pagination.pageIndex + 1}
         total={Math.ceil((pagination.rowCount || 0) / pagination.pageSize)}
         onChange={(newValue) =>
           setPagination({

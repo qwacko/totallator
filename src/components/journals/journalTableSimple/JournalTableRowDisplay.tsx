@@ -1,5 +1,5 @@
 import { Checkbox, Container, Group, HoverCard, Text } from "@mantine/core";
-import { IconCheck, IconEyeCheck, IconReport } from "@tabler/icons";
+import { IconCheck, IconEyeCheck, IconReport } from "@tabler/icons-react";
 import deepEquals from "fast-deep-equal";
 import { useAtom } from "jotai";
 import { selectAtom } from "jotai/utils";

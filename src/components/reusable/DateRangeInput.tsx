@@ -1,6 +1,6 @@
 import { Button, Flex, Menu } from "@mantine/core";
-import { DateRangePicker, type DateRangePickerProps } from "@mantine/dates";
-import { IconArrowAutofitContent } from "@tabler/icons";
+import { DatePickerInput, type DatePickerInputProps } from "@mantine/dates";
+import { IconArrowAutofitContent } from "@tabler/icons-react";
 import { useMemo } from "react";
 
 import { useLoggedInUser } from "src/utils/hooks/user/useLoggedInUser";
@@ -13,17 +13,17 @@ const useDateRanges = () => {
   return dateRanges;
 };
 
-export const DateRangeInput = (props: DateRangePickerProps) => {
+export const DateRangeInput = (props: DatePickerInputProps<"range">) => {
   const dateRanges = useDateRanges();
   const { dayjsFormat } = useLoggedInUser();
 
   return (
     <Flex align="end" gap="sm">
-      <DateRangePicker
+      <DatePickerInput
         {...props}
-        inputFormat={dayjsFormat}
-        fullWidth
-        amountOfMonths={3}
+        valueFormat={dayjsFormat}
+        type="range"
+        defaultLevel="month"
         sx={{ flexGrow: 1 }}
       />
       <Menu shadow="md" width={200}>

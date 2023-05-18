@@ -1,5 +1,5 @@
 import { Checkbox, type CheckboxProps, Popover } from "@mantine/core";
-import { IconCheck, IconX } from "@tabler/icons";
+import { IconCheck, IconX } from "@tabler/icons-react";
 
 export const CheckboxCellWithPopoverEdit = (
   props: CheckboxProps & { editing: boolean }

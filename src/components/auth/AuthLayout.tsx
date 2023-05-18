@@ -1,5 +1,5 @@
 import { Alert, Card, Center, Stack, Title } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons";
+import { IconAlertCircle } from "@tabler/icons-react";
 import type { ReactNode } from "react";
 
 export const AuthLayout = ({

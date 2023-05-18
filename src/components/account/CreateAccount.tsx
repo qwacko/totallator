@@ -9,7 +9,7 @@ import {
   TextInput
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPlus } from "@tabler/icons";
+import { IconPlus } from "@tabler/icons-react";
 
 import { useCreateAccount } from "src/utils/hooks/accounts/useCreateAccount";
 

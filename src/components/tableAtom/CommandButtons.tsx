@@ -17,7 +17,7 @@ import {
   IconEyeCheck,
   IconReport,
   IconTrash
-} from "@tabler/icons";
+} from "@tabler/icons-react";
 import React, { type ReactNode } from "react";
 
 type buttonConfig = { hidden?: boolean; disabled: boolean; action: () => void };

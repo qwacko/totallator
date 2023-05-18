@@ -6,7 +6,7 @@ import {
   MultiSelect,
   Stack
 } from "@mantine/core";
-import { IconFilter } from "@tabler/icons";
+import { IconFilter } from "@tabler/icons-react";
 import { get } from "lodash";
 
 import { useJournalFilters } from "src/utils/hooks/journals/useJournalFilters";
@@ -42,7 +42,7 @@ export const JournalFilterModal = ({
   return (
     <>
       <Modal
-        transitionDuration={0}
+        transitionProps={{ duration: 0 }}
         opened={opened}
         onClose={close}
         title="Journal Filters"
