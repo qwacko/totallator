@@ -7,12 +7,17 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
+console.log(
+  "Prisma Being Created. Current State: ",
+  global.prisma ? "Exists" : "Doesn't Exist"
+);
+
 export const prisma =
   global.prisma ||
   new PrismaClient({
     log: env.NODE_ENV === "development" ? ["error", "warn"] : ["error"]
   });
 
-if (env.NODE_ENV !== "production" || env.PRISMA_SNGLE === true) {
+if (env.NODE_ENV !== "production") {
   global.prisma = prisma;
 }
