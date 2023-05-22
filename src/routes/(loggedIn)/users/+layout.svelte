@@ -10,7 +10,7 @@
 	$: console.log('layout data', data);
 </script>
 
-<CenterCard title="Users" maxWidthRem={30}>
+<CenterCard title="Users" >
 	{#if data.users.length === 0}
 		<div class="no-users">No users found</div>
 	{:else}

@@ -13,7 +13,7 @@
 	const { form, errors, constraints, message } = superForm<loginSchemaType>(data.form);
 </script>
 
-<CenterCard title="Login" maxWidthRem={30}>
+<CenterCard title="Login" >
 	<form method="POST" use:enhance>
 		<TextInput
 			title="Username"

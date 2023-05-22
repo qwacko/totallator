@@ -33,16 +33,16 @@
 	}
 </script>
 
-<CenterCard title="User" maxWidthRem={50}
+<CenterCard title="User" 
 	><DataWrapper>
-		<Title level={1}>User id:</Title>
+		<h1>User id:</h1>
 		<p>{data.user.user.userId}</p>
-		<Title level={1}>Username:</Title>
+		<h1>Username:</h1>
 		<p>{data.user.user.username}</p>
 	</DataWrapper>
 
 	<DataWrapper>
-		<Title level={1}>TRPC Data Sources</Title>
+		<h1>TRPC Data Sources</h1>
 		<p>Page Server Data : {data.trpcUser}</p>
 		<p>Page Data : {data.trpcClient}</p>
 		<p>

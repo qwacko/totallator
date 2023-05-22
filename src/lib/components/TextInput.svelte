@@ -6,32 +6,10 @@
 	export let name: string;
 </script>
 
-<div>
+<label class="label">
 	{#if title}
-		<label for={name}>{title}</label>
+		<span>{title}</span>
 	{/if}
-	<input {...$$restProps} {name} />
+	<input class="input" type="text" placeholder="Input" {...$$restProps} {name} />
 	<ErrorText message={errorMessage} />
-</div>
-
-<style>
-	div {
-		margin-bottom: 0.75rem;
-	}
-
-	label {
-		display: block;
-		font-size: 1rem;
-		font-weight: 600;
-		margin-bottom: 0.2rem;
-		color: rgb(51, 51, 51);
-	}
-
-	input {
-		border-width: 1px;
-		border-color: #d1d5db;
-		padding: 0.5rem;
-		width: 100%;
-		border-radius: 0.5rem;
-	}
-</style>
+</label>
