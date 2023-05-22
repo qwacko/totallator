@@ -2,8 +2,6 @@
 	import { enhance } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
 	import type { PageData } from './$types';
-	import { trpc } from '$lib/clientTRPC';
-	import { page } from '$app/stores';
 	import CenterCard from '$lib/components/CenterCard.svelte';
 	import DataWrapper from '$lib/components/DataWrapper.svelte';
 	import SpreadButtons from '$lib/components/SpreadButtons.svelte';
@@ -23,7 +21,7 @@
 
 	const loadData = async () => {
 		loading = true;
-		localData = await trpc($page).greetingProtected.query(3000);
+		localData = await 'Found The Data';
 		loading = false;
 	};
 
@@ -42,11 +40,6 @@
 
 	<DataWrapper>
 		<h1>TRPC Data Sources</h1>
-		<p>Page Server Data : {data.trpcUser}</p>
-		<p>Page Data : {data.trpcClient}</p>
-		<p>
-			Streaming Data : {#await data.streaming.trpcUserStreaming}Loading...{:then value}{value}{/await}
-		</p>
 		<p>
 			Local Request : {#if loading}Loading...{:else}{localData}
 			{/if}
