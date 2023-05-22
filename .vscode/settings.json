@@ -15,5 +15,8 @@
  
   "todo-tree.tree.showBadges": false,
   "editor.tabCompletion": "on",
-  "diffEditor.codeLens": true
+  "diffEditor.codeLens": true,
+  "[svelte]": {
+    "editor.defaultFormatter": "svelte.svelte-vscode"
+  }
 }

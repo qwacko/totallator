@@ -4,9 +4,9 @@ import { prisma } from './db';
 import { sveltekit } from 'lucia-auth/middleware';
 import { serverEnv } from './serverEnv';
 
-import { logging } from './logging';
+// import { logging } from './logging';
 
-logging.info('Server Environment:', serverEnv);
+// logging.info('Server Environment:', serverEnv);
 
 export const auth = lucia({
 	adapter: prismaAdapter(prisma),

@@ -1,6 +1,17 @@
 <script lang="ts">
-	import '../app.css';
+	// Your selected Skeleton theme:
+	import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
+
+	// This contains the bulk of Skeletons required styles:
+	// NOTE: this will be renamed skeleton.css in the v2.x release.
+	import '@skeletonlabs/skeleton/styles/skeleton.css';
+
+	import '../app.postcss';
 	import { page } from '$app/stores';
+
+	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
+	import { storePopup } from '@skeletonlabs/skeleton';
+	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	export let data;
 

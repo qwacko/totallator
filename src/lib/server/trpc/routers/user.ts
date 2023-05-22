@@ -12,7 +12,7 @@ import { z } from 'zod';
 
 const allowFirstUserCreation = async (prisma: PrismaClient) => {
 	const userCount = await prisma.authUser.count();
-	console.log('ALLOW_SIGNUP', env.ALLOW_SIGNUP);
+
 	const allowSignup = env.ALLOW_SIGNUP === 'true' || false;
 	return {
 		userCountZero: userCount === 0,
