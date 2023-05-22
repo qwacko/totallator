@@ -3,9 +3,10 @@ import type { Decimal } from '@prisma/client/runtime';
 import { summaryInputValidation } from '$lib/validation/summary/summaryInputValidation';
 import { summaryReturnValidation } from '$lib/validation/summary/summaryReturnValidation';
 
-import { protectedProcedure, router } from '../trpc';
-import { getUserInfo } from './helpers/getUserInfo';
-import { filtersToQuery } from './helpers/journals/journalsWithStats';
+import { t } from '../t';
+import { protectedProcedure } from '../middleware/auth';
+import { getUserInfo } from '../helpers/getUserInfo';
+import { filtersToQuery } from '../helpers/journals/journalsWithStats';
 
 const sumDecimalObjectToNumber = <T extends { amount: Decimal | null; [key: string]: unknown }>(
 	data: T
@@ -17,12 +18,12 @@ const sumDecimalObjectToNumber = <T extends { amount: Decimal | null; [key: stri
 	};
 };
 
-export const summaryRouter = router({
+export const summaryRouter = t.router({
 	getTimeData: protectedProcedure
 		.input(summaryInputValidation)
 		.output(summaryReturnValidation)
 		.query(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const groupedJournals = (
 				await ctx.prisma.journalEntry.groupBy({

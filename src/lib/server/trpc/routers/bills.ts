@@ -6,18 +6,19 @@ import { createBillValidation } from '$lib/validation/bill/createBillValidation'
 import { getBillInputValidation } from '$lib/validation/bill/getBillInputValidation';
 import { updateBillValidation } from '$lib/validation/bill/updateBillValidation';
 
-import { protectedProcedure, router } from '../trpc';
-import { billSortToOrderBy } from './helpers/bills/billSortToOrderBy';
-import { upsertBill } from './helpers/bills/upsertBill';
+import { t } from '../t';
+import { protectedProcedure } from '../middleware/auth';
+import { billSortToOrderBy } from '../helpers/bills/billSortToOrderBy';
+import { upsertBill } from '../helpers/bills/upsertBill';
 import {
 	accountGroupingFilter,
 	checkAccountGroupingAccess
-} from './helpers/checkAccountGroupingAccess';
-import { getUserInfo } from './helpers/getUserInfo';
+} from '../helpers/accountGrouping/checkAccountGroupingAccess';
+import { getUserInfo } from '../helpers/getUserInfo';
 
-export const billRouter = router({
+export const billRouter = t.router({
 	get: protectedProcedure.input(getBillInputValidation).query(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		//Pagination
 		const take = input.pagination.pageSize;
@@ -63,7 +64,7 @@ export const billRouter = router({
 				.default({})
 		)
 		.query(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const bills = await ctx.prisma.bill.findMany({
 				where: {
@@ -85,7 +86,7 @@ export const billRouter = router({
 			return returnData;
 		}),
 	create: protectedProcedure.input(createBillValidation).mutation(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		await checkAccountGroupingAccess({
 			accountGroupingId: input.accountGroupingId,
@@ -106,7 +107,7 @@ export const billRouter = router({
 		return true;
 	}),
 	update: protectedProcedure.input(updateBillValidation).mutation(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		await upsertBill({
 			prisma: ctx.prisma,
@@ -122,7 +123,7 @@ export const billRouter = router({
 	clone: protectedProcedure
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const targetBill = await ctx.prisma.bill.findFirst({
 				where: {
@@ -152,7 +153,7 @@ export const billRouter = router({
 	delete: protectedProcedure
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const targetBill = await ctx.prisma.bill.findFirst({
 				where: {

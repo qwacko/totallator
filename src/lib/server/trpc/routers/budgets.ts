@@ -6,18 +6,20 @@ import { createBudgetValidation } from '$lib/validation/budget/createBudgetValid
 import { getBudgetInputValidation } from '$lib/validation/budget/getBudgetInputValidation';
 import { updateBudgetValidation } from '$lib/validation/budget/updateBudgetValidation';
 
-import { protectedProcedure, router } from '../trpc';
-import { budgetSortToOrderBy } from './helpers/budgets/budgetSortToOrderBy';
-import { upsertBudget } from './helpers/budgets/upsertBudget';
+import { t } from '../t';
+import { protectedProcedure } from '../middleware/auth';
+
+import { budgetSortToOrderBy } from '../helpers/budgets/budgetSortToOrderBy';
+import { upsertBudget } from '../helpers/budgets/upsertBudget';
 import {
 	accountGroupingFilter,
 	checkAccountGroupingAccess
-} from './helpers/checkAccountGroupingAccess';
-import { getUserInfo } from './helpers/getUserInfo';
+} from '../helpers/accountGrouping/checkAccountGroupingAccess';
+import { getUserInfo } from '../helpers/getUserInfo';
 
-export const budgetRouter = router({
+export const budgetRouter = t.router({
 	get: protectedProcedure.input(getBudgetInputValidation).query(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		//Pagination
 		const take = input.pagination.pageSize;
@@ -63,7 +65,7 @@ export const budgetRouter = router({
 				.default({})
 		)
 		.query(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const budgets = await ctx.prisma.budget.findMany({
 				where: {
@@ -85,7 +87,7 @@ export const budgetRouter = router({
 			return returnData;
 		}),
 	create: protectedProcedure.input(createBudgetValidation).mutation(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		await checkAccountGroupingAccess({
 			accountGroupingId: input.accountGroupingId,
@@ -105,7 +107,7 @@ export const budgetRouter = router({
 		return true;
 	}),
 	update: protectedProcedure.input(updateBudgetValidation).mutation(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		await upsertBudget({
 			prisma: ctx.prisma,
@@ -121,7 +123,7 @@ export const budgetRouter = router({
 	clone: protectedProcedure
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const targetBudget = await ctx.prisma.budget.findFirst({
 				where: {
@@ -149,7 +151,7 @@ export const budgetRouter = router({
 	delete: protectedProcedure
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const targetBudget = await ctx.prisma.budget.findFirst({
 				where: {

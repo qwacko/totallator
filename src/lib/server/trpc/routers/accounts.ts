@@ -7,18 +7,19 @@ import { createAccountValidation } from '$lib/validation/account/createAccountVa
 import { getAccountInputValidation } from '$lib/validation/account/getAccountInputValidation';
 import { updateAccountValidation } from '$lib/validation/account/updateAccountValidation';
 
-import { protectedProcedure, router } from '../trpc';
-import { accountSortToOrderBy } from './helpers/accounts/accountSortToOrderBy';
-import { upsertAccount } from './helpers/accounts/upsertAccount';
+import { t } from '../t';
+import { protectedProcedure } from '../middleware/auth';
+import { accountSortToOrderBy } from '../helpers/accounts/accountSortToOrderBy';
+import { upsertAccount } from '../helpers/accounts/upsertAccount';
 import {
 	accountGroupingFilter,
 	checkAccountGroupingAccess
-} from './helpers/checkAccountGroupingAccess';
-import { getUserInfo } from './helpers/getUserInfo';
+} from '../helpers/accountGrouping/checkAccountGroupingAccess';
+import { getUserInfo } from '../helpers/getUserInfo';
 
-export const accountRouter = router({
+export const accountRouter = t.router({
 	get: protectedProcedure.input(getAccountInputValidation).query(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		//Pagination
 		const take = input.pagination.pageSize;
@@ -63,7 +64,7 @@ export const accountRouter = router({
 				.optional()
 		)
 		.query(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const accounts = await ctx.prisma.transactionAccount.findMany({
 				where: {
@@ -95,7 +96,7 @@ export const accountRouter = router({
 			return returnData;
 		}),
 	create: protectedProcedure.input(createAccountValidation).mutation(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		await checkAccountGroupingAccess({
 			accountGroupingId: input.accountGroupingId,
@@ -116,7 +117,7 @@ export const accountRouter = router({
 		return newAccount;
 	}),
 	update: protectedProcedure.input(updateAccountValidation).mutation(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		await upsertAccount({
 			userId: user.id,
@@ -132,7 +133,7 @@ export const accountRouter = router({
 	clone: protectedProcedure
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const targetAccount = await ctx.prisma.transactionAccount.findFirst({
 				where: {
@@ -178,7 +179,7 @@ export const accountRouter = router({
 	delete: protectedProcedure
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const targetAccount = await ctx.prisma.transactionAccount.findFirst({
 				where: {

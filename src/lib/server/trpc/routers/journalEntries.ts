@@ -2,8 +2,7 @@ import { TRPCError } from '@trpc/server';
 import { omit } from 'lodash';
 import { z } from 'zod';
 
-import { env } from 'src/env/server.mjs';
-import { removeUndefinedAndDuplicates } from 'src/utils/arrayHelpers';
+import { removeUndefinedAndDuplicates } from '../helpers/arrayHelpers';
 import { cloneTransactionInput } from '$lib/validation/journalEntries/cloneTransactionsValidation';
 import {
 	createSimpleTransactionValidation,
@@ -14,17 +13,19 @@ import { getJournalValidation } from '$lib/validation/journalEntries/getJournalV
 import { journalEntryGetValidation } from '$lib/validation/journalEntries/readJournalEntriesValidation';
 import { updateJournalInput } from '$lib/validation/journalEntries/updateJournalValidation';
 
-import { protectedProcedure, router } from '../trpc';
-import { getUserInfo } from './helpers/getUserInfo';
-import { checkTransactions } from './helpers/journals/checkTransactions';
-import { createSimpleTranasction } from './helpers/journals/createSimpleTranasction';
-import { createTransaction } from './helpers/journals/createTransaction';
-import { filtersToQuery, journalsWithStats } from './helpers/journals/journalsWithStats';
-import { journalSortToOrderBy } from './helpers/journals/sortToOrderBy';
-import { updateAllDateInfo, updateDateInfo } from './helpers/journals/updateDateInfo';
-import { updateSingleJournal } from './helpers/journals/updateSingleJournal';
+import { t } from '../t';
+import { protectedProcedure } from '../middleware/auth';
+import { getUserInfo } from '../helpers/getUserInfo';
+import { checkTransactions } from '../helpers/journals/checkTransactions';
+import { createSimpleTranasction } from '../helpers/journals/createSimpleTranasction';
+import { createTransaction } from '../helpers/journals/createTransaction';
+import { filtersToQuery, journalsWithStats } from '../helpers/journals/journalsWithStats';
+import { journalSortToOrderBy } from '../helpers/journals/sortToOrderBy';
+import { updateAllDateInfo, updateDateInfo } from '../helpers/journals/updateDateInfo';
+import { updateSingleJournal } from '../helpers/journals/updateSingleJournal';
+import { serverEnv } from '$lib/server/serverEnv';
 
-export const journalsRouter = router({
+export const journalsRouter = t.router({
 	getSelectionInfo: protectedProcedure
 		.input(
 			getJournalValidation.omit({ pagination: true, sort: true }).merge(
@@ -42,7 +43,7 @@ export const journalsRouter = router({
 			)
 		)
 		.query(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const journals = await ctx.prisma.journalEntry.findMany({
 				where: {
@@ -88,7 +89,7 @@ export const journalsRouter = router({
 		.input(getJournalValidation)
 		.output(journalEntryGetValidation)
 		.query(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			//Sorting
 			const orderBy = journalSortToOrderBy(input.sort);
@@ -131,7 +132,7 @@ export const journalsRouter = router({
 	createSimpleTransaction: protectedProcedure
 		.input(createSimpleTransactionValidation)
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			// Build up the transaction information / details from the provided information
 			await createSimpleTranasction({ input, user, prisma: ctx.prisma });
@@ -140,7 +141,7 @@ export const journalsRouter = router({
 	createTransaction: protectedProcedure
 		.input(createTransactionValidation)
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 			await createTransaction({ user, prisma: ctx.prisma, input });
 			return true;
 		}),
@@ -148,7 +149,7 @@ export const journalsRouter = router({
 		updateAllDateInfo(ctx.prisma);
 	}),
 	updateJournals: protectedProcedure.input(updateJournalInput).mutation(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		await updateDateInfo(ctx.prisma);
 
@@ -228,13 +229,13 @@ export const journalsRouter = router({
 					transactionIds: data.map((item) => item.transactionId)
 				});
 			},
-			{ timeout: env.BULK_TIMEOUT }
+			{ timeout: serverEnv.BULK_TIMEOUT }
 		);
 	}),
 	cloneTransactions: protectedProcedure
 		.input(cloneTransactionInput)
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const transactions = await ctx.prisma.transaction.findMany({
 				where: {
@@ -323,7 +324,7 @@ export const journalsRouter = router({
 	deleteTransactions: protectedProcedure
 		.input(deleteTransactionInput)
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
 			const transactions = await ctx.prisma.transaction.findMany({
 				where: {

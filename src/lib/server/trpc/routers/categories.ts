@@ -2,37 +2,39 @@ import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import { removeUndefinedAndDuplicates } from 'src/utils/arrayHelpers';
-import { createTagValidation } from '$lib/validation/tag/createTagValidation';
-import { getTagInputValidation } from '$lib/validation/tag/getTagInputValidation';
-import { updateTagValidation } from '$lib/validation/tag/updateTagValidation';
+import { removeUndefinedAndDuplicates } from '../helpers/arrayHelpers';
+import { createCategoryValidation } from '$lib/validation/category/createCategoryValidation';
+import { getCategoryInputValidation } from '$lib/validation/category/getCategoryInputValidation';
+import { updateCategoryValidation } from '$lib/validation/category/updateCategoryValidation';
 
-import { protectedProcedure, router } from '../trpc';
+import { t } from '../t';
+import { protectedProcedure } from '../middleware/auth';
+import { categorySortToOrderBy } from '../helpers/categories/categorySortToOrderBy';
+import { upsertCategory } from '../helpers/categories/upsertCategory';
 import {
 	accountGroupingFilter,
 	checkAccountGroupingAccess
-} from './helpers/checkAccountGroupingAccess';
-import { getUserInfo } from './helpers/getUserInfo';
-import { tagSortToOrderBy } from './helpers/tags/tagSortToOrderBy';
-import { upsertTag } from './helpers/tags/upsertTag';
+} from '../helpers/accountGrouping/checkAccountGroupingAccess';
+import { getUserInfo } from '../helpers/getUserInfo';
 
-export const tagRouter = router({
-	get: protectedProcedure.input(getTagInputValidation).query(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+export const categoryRouter = t.router({
+	get: protectedProcedure.input(getCategoryInputValidation).query(async ({ ctx, input }) => {
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		//Pagination
 		const take = input.pagination.pageSize;
 		const skip = input.pagination.pageNo * input.pagination.pageSize;
 
-		const where: Prisma.TagWhereInput = {
+		const where: Prisma.CategoryWhereInput = {
 			AND: [
 				{ accountGrouping: { viewUsers: { some: { id: user.id } } } },
 				...(input.filters ? input.filters : [])
 			]
 		};
-		const tags = await ctx.prisma.tag.findMany({
+
+		const categories = await ctx.prisma.category.findMany({
 			where,
-			orderBy: tagSortToOrderBy(input.sort),
+			orderBy: categorySortToOrderBy(input.sort),
 			take,
 			skip,
 			include: {
@@ -41,10 +43,10 @@ export const tagRouter = router({
 			}
 		});
 
-		const count = await ctx.prisma.tag.count({ where });
+		const count = await ctx.prisma.category.count({ where });
 
-		const processedData = tags.map((tag) => {
-			const { accountGrouping, ...otherData } = tag;
+		const processedData = categories.map((category) => {
+			const { accountGrouping, ...otherData } = category;
 			return {
 				...otherData,
 				userIsAdmin: Boolean(accountGrouping.adminUsers.find((agUser) => agUser.id === user.id))
@@ -65,9 +67,9 @@ export const tagRouter = router({
 				.default({})
 		)
 		.query(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
-			const tags = await ctx.prisma.tag.findMany({
+			const categories = await ctx.prisma.category.findMany({
 				where: {
 					AND: [
 						{
@@ -80,7 +82,7 @@ export const tagRouter = router({
 				}
 			});
 
-			const returnData = tags
+			const returnData = categories
 				.sort((a, b) => a.title.localeCompare(b.title))
 				.map((item) =>
 					input.showCombined
@@ -99,9 +101,9 @@ export const tagRouter = router({
 			})
 		)
 		.query(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
-			const categories = await ctx.prisma.tag.findMany({
+			const categories = await ctx.prisma.category.findMany({
 				where: {
 					AND: [
 						{
@@ -118,8 +120,8 @@ export const tagRouter = router({
 				(a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())
 			);
 		}),
-	create: protectedProcedure.input(createTagValidation).mutation(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+	create: protectedProcedure.input(createCategoryValidation).mutation(async ({ ctx, input }) => {
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
 		await checkAccountGroupingAccess({
 			accountGroupingId: input.accountGroupingId,
@@ -128,7 +130,7 @@ export const tagRouter = router({
 			adminRequired: true
 		});
 
-		await upsertTag({
+		await upsertCategory({
 			prisma: ctx.prisma,
 			userId: user.id,
 			userAdmin: user.admin,
@@ -139,10 +141,10 @@ export const tagRouter = router({
 
 		return true;
 	}),
-	update: protectedProcedure.input(updateTagValidation).mutation(async ({ ctx, input }) => {
-		const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+	update: protectedProcedure.input(updateCategoryValidation).mutation(async ({ ctx, input }) => {
+		const user = await getUserInfo(ctx.user, ctx.prisma);
 
-		await upsertTag({
+		await upsertCategory({
 			prisma: ctx.prisma,
 			userId: user.id,
 			userAdmin: user.admin,
@@ -156,28 +158,29 @@ export const tagRouter = router({
 	clone: protectedProcedure
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
-			const targetTag = await ctx.prisma.tag.findFirst({
+			const targetCategory = await ctx.prisma.category.findFirst({
 				where: {
 					id: input.id,
 					...accountGroupingFilter(user.id)
 				}
 			});
 
-			if (!targetTag) {
+			if (!targetCategory) {
 				throw new TRPCError({
-					message: "Cannot find tag or user doesn't have admin accces",
+					message: "Cannot find category or user doesn't have admin accces",
 					code: 'FORBIDDEN'
 				});
 			}
-			await upsertTag({
+
+			await upsertCategory({
 				userId: user.id,
 				userAdmin: user.admin,
 				prisma: ctx.prisma,
-				data: { ...targetTag, single: `${targetTag.single} (Clone)` },
+				data: { ...targetCategory, single: `${targetCategory.single} (Clone)` },
 				action: 'Create',
-				accountGroupingId: targetTag.accountGroupingId
+				accountGroupingId: targetCategory.accountGroupingId
 			});
 
 			return true;
@@ -185,9 +188,9 @@ export const tagRouter = router({
 	delete: protectedProcedure
 		.input(z.object({ id: z.string().cuid() }))
 		.mutation(async ({ ctx, input }) => {
-			const user = await getUserInfo(ctx.session.user.id, ctx.prisma);
+			const user = await getUserInfo(ctx.user, ctx.prisma);
 
-			const targetTag = await ctx.prisma.tag.findFirst({
+			const targetCategory = await ctx.prisma.category.findFirst({
 				where: {
 					id: input.id,
 					...accountGroupingFilter(user.id)
@@ -195,20 +198,20 @@ export const tagRouter = router({
 				include: { _count: { select: { journalEntries: true } } }
 			});
 
-			if (!targetTag) {
+			if (!targetCategory) {
 				throw new TRPCError({
-					message: "Cannot find tag or user doesn't have admin accces",
+					message: "Cannot find category or user doesn't have admin accces",
 					code: 'FORBIDDEN'
 				});
 			}
-			if (targetTag._count.journalEntries > 0) {
+			if (targetCategory._count.journalEntries > 0) {
 				throw new TRPCError({
-					message: 'Cannot remove tag that has journal entries associated',
+					message: 'Cannot remove category that has journal entries associated',
 					code: 'FORBIDDEN'
 				});
 			}
-			await ctx.prisma.tag.delete({
-				where: { id: targetTag.id }
+			await ctx.prisma.category.delete({
+				where: { id: targetCategory.id }
 			});
 
 			return true;
