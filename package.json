@@ -54,6 +54,7 @@
 		"lodash": "^4.17.21",
 		"lucia-auth": "^1.7.0",
 		"prisma": "^4.14.1",
+		"superjson": "^1.12.3",
 		"sveltekit-superforms": "^0.8.6",
 		"trpc-sveltekit": "^3.5.7",
 		"ws": "^8.13.0",
