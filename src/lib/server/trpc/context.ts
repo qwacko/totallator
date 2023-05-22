@@ -6,7 +6,7 @@ import { prisma } from '../db';
 // hence the eslint-disable rule
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function createContext(event: RequestEvent) {
-	const user = event.locals.auth.validate();
+	const user = await event.locals.auth.validate();
 	return {
 		user,
 		prisma,

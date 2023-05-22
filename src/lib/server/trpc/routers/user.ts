@@ -9,6 +9,10 @@ import { createUser } from '../helpers/createUser';
 import { removeUserSchema } from '$lib/schema/removeUserSchema';
 import { updatePasswordSchema } from '$lib/schema/updatePasswordSchema';
 import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
+import { currencyFormatValidation } from '$lib/validation/user/currencyFormats';
+import { dbDateFormatValidation } from '$lib/validation/user/dateFormats';
+import type { RouterOutputs } from '../router';
 
 const allowFirstUserCreation = async (prisma: PrismaClient) => {
 	const userCount = await prisma.authUser.count();
@@ -50,7 +54,12 @@ export const userRouter = t.router({
 		.use(authMiddleware)
 		.input(signupSchema)
 		.mutation(async ({ ctx, input }) => {
-			return createUser({ ...input, localAuth: ctx.event.locals.auth, autoLogin: false });
+			return createUser({
+				...input,
+				localAuth: ctx.event.locals.auth,
+				autoLogin: true,
+				admin: false
+			});
 		}),
 	createFirstUser: t.procedure.input(signupSchema).mutation(async ({ ctx, input }) => {
 		const allowed = await allowFirstUserCreation(ctx.prisma);
@@ -58,7 +67,7 @@ export const userRouter = t.router({
 			return { error: { location: 'username' as const, message: 'Not First User' } };
 		}
 
-		return createUser({ ...input, localAuth: ctx.event.locals.auth, autoLogin: true });
+		return createUser({ ...input, localAuth: ctx.event.locals.auth, autoLogin: true, admin: true });
 	}),
 	login: t.procedure.input(loginSchema).query(async ({ ctx, input }) => {
 		try {
@@ -96,6 +105,19 @@ export const userRouter = t.router({
 		.query(async ({ ctx, input }) => {
 			const user = await ctx.prisma.authUser.findUnique({ where: { id: input } });
 
-			return user;
+			if (!user) {
+				throw new TRPCError({
+					code: 'UNAUTHORIZED',
+					message: 'User Not Found'
+				});
+			}
+
+			return {
+				...user,
+				currencyFormat: currencyFormatValidation.parse(user.currencyFormat || 'USD'),
+				dateFormat: dbDateFormatValidation.parse(user.dateFormat || 'YYYYMMDD')
+			};
 		})
 });
+
+export type UserReturn = RouterOutputs['users']['getUserInfo'];

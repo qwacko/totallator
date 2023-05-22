@@ -3,9 +3,9 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { removeUndefinedAndDuplicates } from 'src/utils/arrayHelpers';
-import { createCategoryValidation } from 'src/utils/validation/category/createCategoryValidation';
-import { getCategoryInputValidation } from 'src/utils/validation/category/getCategoryInputValidation';
-import { updateCategoryValidation } from 'src/utils/validation/category/updateCategoryValidation';
+import { createCategoryValidation } from '$lib/validation/category/createCategoryValidation';
+import { getCategoryInputValidation } from '$lib/validation/category/getCategoryInputValidation';
+import { updateCategoryValidation } from '$lib/validation/category/updateCategoryValidation';
 
 import { protectedProcedure, router } from '../trpc';
 import { categorySortToOrderBy } from './helpers/categories/categorySortToOrderBy';

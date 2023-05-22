@@ -1,7 +1,7 @@
 import type { Decimal } from '@prisma/client/runtime';
 
-import { summaryInputValidation } from 'src/utils/validation/summary/summaryInputValidation';
-import { summaryReturnValidation } from 'src/utils/validation/summary/summaryReturnValidation';
+import { summaryInputValidation } from '$lib/validation/summary/summaryInputValidation';
+import { summaryReturnValidation } from '$lib/validation/summary/summaryReturnValidation';
 
 import { protectedProcedure, router } from '../trpc';
 import { getUserInfo } from './helpers/getUserInfo';

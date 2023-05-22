@@ -6,13 +6,15 @@ export const createUser = async ({
 	password,
 	confirmPassword,
 	localAuth,
-	autoLogin
+	autoLogin,
+	admin
 }: {
 	username: string;
 	password: string;
 	confirmPassword: string;
 	localAuth: AuthRequest;
 	autoLogin: boolean;
+	admin: boolean;
 }) => {
 	if (password !== confirmPassword) {
 		return {
@@ -30,7 +32,8 @@ export const createUser = async ({
 				password
 			},
 			attributes: {
-				username
+				username,
+				admin
 			}
 		});
 

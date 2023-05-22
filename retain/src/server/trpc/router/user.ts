@@ -3,11 +3,11 @@ import { TRPCError } from '@trpc/server';
 import bcrypt from 'bcrypt';
 
 import type { RouterOutputs } from 'src/utils/trpc';
-import { createUserValidation } from 'src/utils/validation/user/createUserValidation';
-import { currencyFormatValidation } from 'src/utils/validation/user/currencyFormats';
-import { dbDateFormatValidation } from 'src/utils/validation/user/dateFormats';
-import { updatePasswordResolver } from 'src/utils/validation/user/updatePasswordValidation';
-import { updateUserValidation } from 'src/utils/validation/user/updateUserValidation';
+import { createUserValidation } from '$lib/validation/user/createUserValidation';
+import { currencyFormatValidation } from '$lib/validation/user/currencyFormats';
+import { dbDateFormatValidation } from '$lib/validation/user/dateFormats';
+import { updatePasswordResolver } from '$lib/validation/user/updatePasswordValidation';
+import { updateUserValidation } from '$lib/validation/user/updateUserValidation';
 
 import { protectedProcedure, publicProcedure, router, unprotectedProcedure } from '../trpc';
 

@@ -4,15 +4,15 @@ import { z } from 'zod';
 
 import { env } from 'src/env/server.mjs';
 import { removeUndefinedAndDuplicates } from 'src/utils/arrayHelpers';
-import { cloneTransactionInput } from 'src/utils/validation/journalEntries/cloneTransactionsValidation';
+import { cloneTransactionInput } from '$lib/validation/journalEntries/cloneTransactionsValidation';
 import {
 	createSimpleTransactionValidation,
 	createTransactionValidation
-} from 'src/utils/validation/journalEntries/createJournalValidation';
-import { deleteTransactionInput } from 'src/utils/validation/journalEntries/deleteTransactionsValidation';
-import { getJournalValidation } from 'src/utils/validation/journalEntries/getJournalValidation';
-import { journalEntryGetValidation } from 'src/utils/validation/journalEntries/readJournalEntriesValidation';
-import { updateJournalInput } from 'src/utils/validation/journalEntries/updateJournalValidation';
+} from '$lib/validation/journalEntries/createJournalValidation';
+import { deleteTransactionInput } from '$lib/validation/journalEntries/deleteTransactionsValidation';
+import { getJournalValidation } from '$lib/validation/journalEntries/getJournalValidation';
+import { journalEntryGetValidation } from '$lib/validation/journalEntries/readJournalEntriesValidation';
+import { updateJournalInput } from '$lib/validation/journalEntries/updateJournalValidation';
 
 import { protectedProcedure, router } from '../trpc';
 import { getUserInfo } from './helpers/getUserInfo';

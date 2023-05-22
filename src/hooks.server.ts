@@ -8,6 +8,7 @@ import { createTRPCHandle } from 'trpc-sveltekit';
 const authHandler: Handle = async ({ event, resolve }) => {
 	event.locals.auth = auth.handleRequest(event);
 	const user = await event.locals.auth.validate();
+	event.locals.userId = user?.userId;
 
 	if (event.route.id?.startsWith('/(loggedIn)') && !user) {
 		console.log('User Not Logged In - Redirecting to Login');

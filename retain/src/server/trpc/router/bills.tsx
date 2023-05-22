@@ -2,9 +2,9 @@ import type { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import { createBillValidation } from 'src/utils/validation/bill/createBillValidation';
-import { getBillInputValidation } from 'src/utils/validation/bill/getBillInputValidation';
-import { updateBillValidation } from 'src/utils/validation/bill/updateBillValidation';
+import { createBillValidation } from '$lib/validation/bill/createBillValidation';
+import { getBillInputValidation } from '$lib/validation/bill/getBillInputValidation';
+import { updateBillValidation } from '$lib/validation/bill/updateBillValidation';
 
 import { protectedProcedure, router } from '../trpc';
 import { billSortToOrderBy } from './helpers/bills/billSortToOrderBy';

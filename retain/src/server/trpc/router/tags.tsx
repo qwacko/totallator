@@ -3,9 +3,9 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { removeUndefinedAndDuplicates } from 'src/utils/arrayHelpers';
-import { createTagValidation } from 'src/utils/validation/tag/createTagValidation';
-import { getTagInputValidation } from 'src/utils/validation/tag/getTagInputValidation';
-import { updateTagValidation } from 'src/utils/validation/tag/updateTagValidation';
+import { createTagValidation } from '$lib/validation/tag/createTagValidation';
+import { getTagInputValidation } from '$lib/validation/tag/getTagInputValidation';
+import { updateTagValidation } from '$lib/validation/tag/updateTagValidation';
 
 import { protectedProcedure, router } from '../trpc';
 import {

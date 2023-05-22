@@ -6,3 +6,5 @@ export const authMiddleware = t.middleware(async ({ next, ctx }) => {
 	if (!user?.userId) throw new TRPCError({ code: 'UNAUTHORIZED' });
 	return next();
 });
+
+export const protectedProcedure = t.procedure.use(authMiddleware);

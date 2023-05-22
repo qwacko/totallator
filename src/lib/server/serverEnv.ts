@@ -10,6 +10,10 @@ const serverEnvValidation = z
 		DEV_OVERRIDE: z.coerce.boolean().optional().default(false),
 		CSRF_CHECK_ORIGIN: z.coerce.boolean(),
 		LOGGING: z.coerce.boolean().optional(),
+		BULK_TIMEOUT: z.coerce
+			.number()
+			.optional()
+			.default(1000 * 60 * 5), //5 Minutes Timeout
 		LOGGING_CLASSES: z
 			.string()
 			.optional()
@@ -34,5 +38,6 @@ export const serverEnv = serverEnvValidation.parse({
 	DEV_OVERRIDE: env.DEV,
 	CSRF_CHECK_ORIGIN: env.CSRF_CHECK_ORIGIN,
 	DEBUG: env.DEBUG,
-	DEBUG_CLASSES: env.DEBUG_CLASSES
+	DEBUG_CLASSES: env.DEBUG_CLASSES,
+	BULK_TIMEOUT: env.BULK_TIMEOUT
 });

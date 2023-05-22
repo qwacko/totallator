@@ -3,9 +3,9 @@ import { TRPCError } from '@trpc/server';
 import { omit } from 'lodash';
 import { z } from 'zod';
 
-import { createAccountValidation } from 'src/utils/validation/account/createAccountValidation';
-import { getAccountInputValidation } from 'src/utils/validation/account/getAccountInputValidation';
-import { updateAccountValidation } from 'src/utils/validation/account/updateAccountValidation';
+import { createAccountValidation } from '$lib/validation/account/createAccountValidation';
+import { getAccountInputValidation } from '$lib/validation/account/getAccountInputValidation';
+import { updateAccountValidation } from '$lib/validation/account/updateAccountValidation';
 
 import { protectedProcedure, router } from '../trpc';
 import { accountSortToOrderBy } from './helpers/accounts/accountSortToOrderBy';

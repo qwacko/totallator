@@ -16,10 +16,14 @@
 
 <CenterCard title="User"
 	><DataWrapper>
-		<h1>User id:</h1>
-		<p>{data.user.user.userId}</p>
-		<h1>Username:</h1>
-		<p>{data.user.user.username}</p>
+		{#if data.user}
+			<h1>User id:</h1>
+			<p>{data.user.id}</p>
+			<h1>Username:</h1>
+			<p>{data.user.username}</p>
+			<h1>Admin:</h1>
+			<p>{data.user.admin}</p>
+		{/if}
 	</DataWrapper>
 
 	<SpreadButtons>
