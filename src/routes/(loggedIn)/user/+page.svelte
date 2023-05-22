@@ -9,25 +9,9 @@
 
 	export let data: PageData;
 
-	let loading = false;
-	let localData: null | string = null;
-
-	const isBrowser = typeof window !== 'undefined';
-
 	const invalidate = () => {
 		invalidateAll();
-		loadData();
 	};
-
-	const loadData = async () => {
-		loading = true;
-		localData = await 'Found The Data';
-		loading = false;
-	};
-
-	if (isBrowser) {
-		loadData();
-	}
 </script>
 
 <CenterCard title="User"
@@ -38,13 +22,6 @@
 		<p>{data.user.user.username}</p>
 	</DataWrapper>
 
-	<DataWrapper>
-		<h1>TRPC Data Sources</h1>
-		<p>
-			Local Request : {#if loading}Loading...{:else}{localData}
-			{/if}
-		</p>
-	</DataWrapper>
 	<SpreadButtons>
 		<form use:enhance method="post" action="?/logout">
 			<Button type="submit" style="primary">Sign out</Button>
