@@ -1,8 +1,7 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import { superValidate, setError } from 'sveltekit-superforms/server';
 import { signupSchema } from '$lib/schema/signupSchema';
 import type { PageServerLoad } from './$types';
-import { prisma } from '$lib/server/db';
 
 // If the user exists, redirect authenticated users to the profile page.
 export const load = (async (event) => {

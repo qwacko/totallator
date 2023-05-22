@@ -7,4 +7,3 @@
 		<div class="alert-message">{message}</div>
 	</aside>
 {/if}
-

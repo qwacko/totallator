@@ -1,7 +1,5 @@
 import delay from 'delay';
-import type { AuthRequest } from 'lucia-auth';
 import { z } from 'zod';
-import { auth } from '../lucia';
 import { authMiddleware } from './middleware/auth';
 import { userRouter } from './routers/user';
 import { t } from './t';

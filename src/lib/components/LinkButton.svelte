@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let style: 'primary' | 'secondary' = 'primary';
-	export let href: string = '#';
+	export let href = '#';
 </script>
 
 <a
@@ -12,4 +12,3 @@
 >
 	<slot />
 </a>
-

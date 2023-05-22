@@ -1,22 +1,22 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": ["source.formatDocument", "source.fixAll.eslint"],
-  "editor.formatOnSave": false,
-  "files.autoSaveDelay": 500,
-  "eslint.probe": ["javascript", "javascriptreact", "typescript","typescriptreact"],
-  "files.autoSave": "onFocusChange",
-  "[prisma]": {
-    "editor.defaultFormatter": "Prisma.prisma"
-  },
-  "[graphql]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "workbench.editor.labelFormat": "medium",
- 
-  "todo-tree.tree.showBadges": false,
-  "editor.tabCompletion": "on",
-  "diffEditor.codeLens": true,
-  "[svelte]": {
-    "editor.defaultFormatter": "svelte.svelte-vscode"
-  }
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.codeActionsOnSave": ["source.formatDocument", "source.fixAll.eslint"],
+	"editor.formatOnSave": false,
+	"files.autoSaveDelay": 500,
+	"eslint.probe": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+	"files.autoSave": "onFocusChange",
+	"[prisma]": {
+		"editor.defaultFormatter": "Prisma.prisma"
+	},
+	"[graphql]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"workbench.editor.labelFormat": "medium",
+
+	"todo-tree.tree.showBadges": false,
+	"editor.tabCompletion": "on",
+	"diffEditor.codeLens": true,
+	"[svelte]": {
+		"editor.defaultFormatter": "svelte.svelte-vscode"
+	}
 }

@@ -1,5 +1,5 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const booleanFilter = z
-  .object({ equals: z.boolean().optional(), not: z.boolean().optional() })
-  .optional();
+	.object({ equals: z.boolean().optional(), not: z.boolean().optional() })
+	.optional();

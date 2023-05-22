@@ -1,17 +1,17 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const dateRanges = [
-  "all",
-  "thisCalendarYear",
-  "lastCalendarYear",
-  "thisQuarter",
-  "lastQuarter",
-  "thisFY",
-  "lastFY",
-  "thisMonth",
-  "lastMonth",
-  "thisYear",
-  "lastYear"
+	'all',
+	'thisCalendarYear',
+	'lastCalendarYear',
+	'thisQuarter',
+	'lastQuarter',
+	'thisFY',
+	'lastFY',
+	'thisMonth',
+	'lastMonth',
+	'thisYear',
+	'lastYear'
 ] as const;
 
 export type dateRangeType = (typeof dateRanges)[number];

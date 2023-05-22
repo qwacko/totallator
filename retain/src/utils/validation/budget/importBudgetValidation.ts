@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-import { PrismaStatusEnumValidation } from "../PrismaStatusEnumValidation";
+import { PrismaStatusEnumValidation } from '../PrismaStatusEnumValidation';
 
 export const importBudgetSingleValidation = z.object({
-  id: z.string().optional(),
-  title: z.string(),
-  status: PrismaStatusEnumValidation,
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional()
+	id: z.string().optional(),
+	title: z.string(),
+	status: PrismaStatusEnumValidation,
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional()
 });

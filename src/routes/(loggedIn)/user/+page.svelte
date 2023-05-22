@@ -8,7 +8,6 @@
 	import DataWrapper from '$lib/components/DataWrapper.svelte';
 	import SpreadButtons from '$lib/components/SpreadButtons.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import Title from '$lib/components/Title.svelte';
 
 	export let data: PageData;
 
@@ -33,7 +32,7 @@
 	}
 </script>
 
-<CenterCard title="User" 
+<CenterCard title="User"
 	><DataWrapper>
 		<h1>User id:</h1>
 		<p>{data.user.user.userId}</p>
