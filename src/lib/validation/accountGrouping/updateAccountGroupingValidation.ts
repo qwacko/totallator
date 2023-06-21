@@ -13,5 +13,7 @@ export type updateAccountGroupingDataValidationType = z.infer<
 
 export const updateAccountGroupingValidation = z.object({
 	id: z.string().cuid(),
-	data: updateAccountGroupingDataValidation
-});
+}).merge(updateAccountGroupingDataValidation);
+
+export type updateAccountGroupingValidationZodType = typeof updateAccountGroupingValidation;
+export type updateAccountGroupingValidationType = z.infer<updateAccountGroupingValidationZodType>

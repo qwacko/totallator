@@ -3,11 +3,11 @@
 </script>
 
 {#if style === 'primary'}
-	<button type="button" class="btn variant-filled-primary" {...$$restProps} on:click
+	<button type="button" class="btn variant-filled-primary {$$props.class}" {...$$restProps} on:click
 		><slot /></button
 	>
 {:else}
-	<button type="button" class="btn variant-filled-secondary" {...$$restProps} on:click
+	<button type="button" class="btn variant-filled-secondary {$$props.class}" {...$$restProps} on:click
 		><slot /></button
 	>
 {/if}

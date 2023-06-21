@@ -26,7 +26,8 @@ export const accountGroupingRouter = t.router({
 
 		const data = await ctx.prisma.accountGrouping.findMany({
 			//   where: user.admin ? { viewUsers: { some: { id: user.id } } } : {},
-			include: { viewUsers: true, adminUsers: true }
+			include: { viewUsers: true, adminUsers: true },			
+			orderBy: { title: 'asc' }
 		});
 
 		return data.map((item) => {
@@ -81,15 +82,16 @@ export const accountGroupingRouter = t.router({
 		.input(updateAccountGroupingValidation)
 		.mutation(async ({ ctx, input }) => {
 			const user = await getUserInfo(ctx.user, ctx.prisma);
+			const {id, ...data} = input
 
 			const result = await ctx.prisma.accountGrouping.updateMany({
 				where: {
-					id: input.id,
+					id,
 					...(user.admin ? {} : { adminUsers: { some: { id: user.id } } })
 				},
 				data: {
-					title: input.data.title,
-					...basicStatusToDB(input.data.status)
+					title: data.title,
+					...basicStatusToDB(data.status)
 				}
 			});
 

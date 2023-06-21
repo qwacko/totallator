@@ -14,8 +14,8 @@
 	};
 </script>
 
-<CenterCard title="User"
-	><DataWrapper>
+<div class="card variant-filled-primary">
+	<DataWrapper>
 		{#if data.user}
 			<h1>User id:</h1>
 			<p>{data.user.id}</p>
@@ -32,4 +32,4 @@
 		</form>
 		<Button type="button" style="secondary" on:click={invalidate}>Refresh Data</Button>
 	</SpreadButtons>
-</CenterCard>
+</div>

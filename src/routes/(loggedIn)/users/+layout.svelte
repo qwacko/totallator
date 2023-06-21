@@ -1,5 +1,4 @@
 <script lang="ts">
-	import CenterCard from '$lib/components/CenterCard.svelte';
 	import DataWrapper from '$lib/components/DataWrapper.svelte';
 	import EditButton from '$lib/components/EditButton.svelte';
 	import RemoveUserButton from '$lib/components/RemoveUserButton.svelte';
@@ -9,7 +8,7 @@
 	$: console.log('layout data', data);
 </script>
 
-<CenterCard title="Users">
+<div class="card variant-ghost-primary">
 	{#if data.users.length === 0}
 		<div class="no-users">No users found</div>
 	{:else}
@@ -30,7 +29,7 @@
 			{/each}
 		</div>
 	{/if}
-</CenterCard>
+</div>
 
 <slot />
 
